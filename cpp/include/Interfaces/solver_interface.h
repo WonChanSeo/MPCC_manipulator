@@ -23,6 +23,10 @@
 #include <array>
 
 namespace mpcc{
+// ▼▼▼▼▼▼▼▼▼▼▼ 여기에 전방 선언을 추가하세요 ▼▼▼▼▼▼▼▼▼▼▼
+class EnvCollNNmodel;
+// ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
 struct OptVariables;
 struct ComputeTime;
 enum Status
@@ -50,6 +54,11 @@ class SolverInterface {
         virtual void setInitialGuess(const std::vector<OptVariables> &initial_guess) = 0;
         virtual void setCurrentInput(const Input &cutrent_input) = 0;
         virtual bool solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count) = 0;
+
+        // ▼▼▼▼▼▼▼▼▼▼▼ 여기에 새로운 순수 가상 함수를 추가하세요 ▼▼▼▼▼▼▼▼▼▼▼
+        virtual const std::unique_ptr<EnvCollNNmodel>& getEnvColNN() const = 0;
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
         virtual ~SolverInterface(){std::cout << "Deleting Solver Interface" << std::endl;}
 };
 }

@@ -98,37 +98,45 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
 {
     auto start_mpc = std::chrono::high_resolution_clock::now();
     double last_s = x0.s;
-
     int iter_count = 0;
 
-    // correct s
+    // 1. 현재 상태(x0) 보정 (기존과 동일)
     Eigen::Matrix4d ee_pose = robot_->getEETransformation(stateToJointVector(x0));
     x0.s = track_.projectOnSpline(last_s, ee_pose);
 
-    //correct vs
-    // Eigen::VectorXd ee_vel = robot_->getJacobian(stateToJointVector(x0)) * inputTodJointVector(u0);
-    // Eigen::Vector3d ds_posi_dir = track_.getDerivative(x0.s).normalized();
-    // Eigen::Vector3d ds_ori_dir = track_.getOrientationDerivative(x0.s).normalized();
-    // x0.vs = (ee_vel.head(3).dot(ds_posi_dir) + ee_vel.tail(3).dot(ds_ori_dir)) / track_.getLength();
-
+    // ▼▼▼▼▼▼▼▼▼▼▼▼▼ (핵심 순서 변경) ▼▼▼▼▼▼▼▼▼▼▼▼▼
+    // 2. 경로 이탈 및 장애물 변경 여부 확인 -> valid_initial_guess_ 플래그 설정
     if(fabs(last_s - x0.s) > param_.max_dist_proj) 
     {
         valid_initial_guess_ = false;
         num_valid_guess_failed_++;
     }
 
-    if(valid_initial_guess_) updateInitialGuess(x0);
-    else generateNewInitialGuess(x0);
+    // 3. 플래그 상태에 따라 초기 추정치 전체 시퀀스를 먼저 생성/업데이트
+    if(valid_initial_guess_) 
+        updateInitialGuess(x0); // Warm Start
+    else 
+        generateNewInitialGuess(x0); // Cold Start
 
-    solver_interface_->setCurrentInput(u0);
+    // 4. 최신 initial_guess_를 솔버에 전달
     solver_interface_->setInitialGuess(initial_guess_);
+    solver_interface_->setCurrentInput(u0);
+
+    // 5. 이제 최신 상태가 반영된 rb_를 사용하여 환경 데이터 설정
     auto start_env = std::chrono::high_resolution_clock::now();
     solver_interface_->setEnvData(obs_positions, obs_radius);
     auto end_env = std::chrono::high_resolution_clock::now();
 
+    // 6. 가장 위험한 장애물이 바뀌었는지 확인하고, 바뀌었다면 다음 스텝을 위해 Cold Start를 강제
+    if (solver_interface_->getEnvColNN()->obstacle_switched) {
+        std::cout << "[MPC] Obstacle switch detected! Forcing a new initial guess for the next step." << std::endl;
+        valid_initial_guess_ = false;
+    }
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+    // 7. QP 문제 풀이
     Status sqp_status;
     ComputeTime time_nmpc;
-
     solver_interface_->solveOCP(initial_guess_, &sqp_status, &time_nmpc, iter_count);
 
     // printf("sqp_status: %d\n", sqp_status);
@@ -137,6 +145,10 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     {
         valid_initial_guess_ = true;
         num_valid_guess_failed_ = 0;
+
+        // ▼▼▼▼▼ 성공했을 때만 최적의 제어 입력을 반환값에 할당합니다. ▼▼▼▼▼
+        mpc_return.u0 = initial_guess_[0].uk;
+        mpc_return.mpc_horizon = initial_guess_;
     }
     else
     {
@@ -175,15 +187,26 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
         std::cout << "===================================================" << std::endl;
         valid_initial_guess_ = false;
         num_valid_guess_failed_++;
+
+        // ▼▼▼▼▼ 실패했을 때는 '정지' 명령(0)을 반환값에 할당합니다. ▼▼▼▼▼
+        mpc_return.u0.setZero();
+        // 디버깅 및 시각화를 위해, 솔버가 마지막으로 계산한 예측 경로는 그대로 유지합니다.
+        mpc_return.mpc_horizon = initial_guess_;
     }
 
-    mpc_return = {initial_guess_[0].uk,initial_guess_,time_nmpc};
+    // 공통적으로 적용되는 반환값들을 설정합니다.
+    mpc_return.compute_time = time_nmpc;
     auto end_mpc = std::chrono::high_resolution_clock::now();
     mpc_return.compute_time.total = std::chrono::duration_cast<std::chrono::duration<double>>(end_mpc - start_mpc).count();
     mpc_return.compute_time.set_env = std::chrono::duration_cast<std::chrono::duration<double>>(end_env - start_env).count();
     mpc_return.iter_count = iter_count;
 
-    if(sqp_status == SOLVED || (sqp_status == MAX_ITER_EXCEEDED && num_valid_guess_failed_ < 5)) return true;
+    // 함수 반환 조건은 그대로 유지 (MAX_ITER_EXCEEDED가 5회 미만일 때는 일단 계속 시도)
+    if(sqp_status == SOLVED || 
+        ((sqp_status == MAX_ITER_EXCEEDED || sqp_status == QP_MaxIterReached) && num_valid_guess_failed_ < 5))
+      {
+          return true;
+      }
     else {
         printf("MPC did not solve, status: %d, num_valid_guess_failed: %d\n", sqp_status, num_valid_guess_failed_);
         

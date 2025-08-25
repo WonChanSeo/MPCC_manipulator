@@ -51,6 +51,10 @@ namespace mpcc
             // ▼▼▼▼▼ 여기에 시간 저장을 위한 변수를 추가합니다. ▼▼▼▼▼
             std::vector<double> inference_times_ms;
 
+            // ▼▼▼▼▼ 여기에 이전 인덱스 저장 변수를 추가합니다. ▼▼▼▼▼
+            Eigen::Index previous_min_col = -1; // 초기값 -1
+            
+
             // --- 기타 설정 ---
             bool loadweightfile_verbose = false;
             bool loadbiasfile_verbose = false;
@@ -68,6 +72,9 @@ namespace mpcc
             
             // 추가: 여러 입력을 한 번에 처리하는 배치 추론 함수
             std::pair<Eigen::VectorXd, Eigen::MatrixXd> calculateMlpOutputBatch(const Eigen::MatrixXd& inputs, bool time_verbose = false);
+
+            // ▼▼▼▼▼ 여기에 상태 플래그를 추가합니다. ▼▼▼▼▼
+            bool obstacle_switched = false;
             
             // ▼▼▼▼▼ 저장된 시간들을 반환하는 getter 함수를 선언합니다. ▼▼▼▼▼
             const std::vector<double>& getInferenceTimes() const;

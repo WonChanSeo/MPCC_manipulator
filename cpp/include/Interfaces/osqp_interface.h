@@ -89,7 +89,12 @@ public:
     void setCurrentInput(const Input &cutrent_input);
     void setInitialGuess(const std::vector<OptVariables> &initial_guess);
     bool solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count);
+    // ▼▼▼▼▼▼▼▼▼▼▼ 여기에 getter 함수를 추가하세요 ▼▼▼▼▼▼▼▼▼▼▼
+    const std::unique_ptr<EnvCollNNmodel>& getEnvColNN() const { return envcolNN_; }
+
     ~OsqpInterface(){ std::cout << "Deleting Osqp Interface" << std::endl;}
+
+    
 
 private:
     ArcLengthSpline track_;
