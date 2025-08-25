@@ -90,7 +90,7 @@ struct RobotData
         Eigen::MatrixXd batch_input(PANDA_DOF + 3, num_obstacles);
 
         // 행렬의 윗부분(DOF x N)은 현재 로봇 관절각 q_를 N번 복제하여 채웁니다.
-        printf("q_ : %f %f %f %f %f %f %f\n", q_(0), q_(1), q_(2), q_(3), q_(4), q_(5), q_(6));
+        // printf("q_ : %f %f %f %f %f %f %f\n", q_(0), q_(1), q_(2), q_(3), q_(4), q_(5), q_(6));
         batch_input.topRows(PANDA_DOF) = q_.replicate(1, num_obstacles);
 
         // 행렬의 아랫부분(3 x N)은 N x 3 크기의 장애물 위치를 전치(transpose)하여 채웁니다.
