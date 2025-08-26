@@ -38,19 +38,35 @@ fi
 . ~/.bashrc
 
 
+# 1. 프로젝트 루트 디렉토리로 이동
 cd ~/git/MPCC_manipulator/cpp
-export LD_LIBRARY_PATH="/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/lib/lib":$LD_LIBRARY_PATH
-    export OsqpEigen_DIR="/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp_eigen"
-    echo "MPCC_manipulator Env set activated."
 
-# 기존 build 디렉토리를 삭제하고 새로 생성
+# 2. 환경 변수 설정 (터미널 세션용)
+#    - 이 부분은 스크립트 실행에 필수적이지는 않지만, 수동으로 디버깅할 때를 위해 유지합니다.
+export LD_LIBRARY_PATH="/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/lib/lib":$LD_LIBRARY_PATH
+export OsqpEigen_DIR="/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp_eigen"
+echo "MPCC_manipulator Env set activated."
+echo "Using OsqpEigen from: $OsqpEigen_DIR" # 경로 확인용 출력
+
+# 3. 기존 build 디렉토리를 완전히 삭제
+echo "Removing old build directory..."
 rm -rf build
 mkdir build
 cd build
 
-# cmake로 빌드 설정 및 make 실행
-cmake ..
+# 4. cmake 실행 시 경로를 직접 인자로 전달 (가장 중요한 부분!)
+#    - CMAKE_PREFIX_PATH: osqp 라이브러리 경로를 알려줌
+#    - OsqpEigen_DIR: OsqpEigen 경로를 알려줌
+echo "Running cmake with explicit paths..."
+cmake .. \
+    -DCMAKE_PREFIX_PATH="/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/lib" \
+    -DOsqpEigen_DIR="/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp_eigen"
+
+# 5. 빌드 실행
+echo "Building project..."
 make -j8
+
+echo "Build complete."
 
 # 빌드 디렉토리에서 상위 디렉토리로 이동
 cd ..

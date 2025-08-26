@@ -18,9 +18,9 @@ add_definitions(-DBUILD_DIRECTORY=\"${CMAKE_SOURCE_DIR}\")
 
 include_directories(.)
 include_directories(External/json/include)
-include_directories(/home/mms-wonchan/MPCC_manipulator/cpp/External/Eigen)
+include_directories(/home/mms-wonchan/git/MPCC_manipulator/cpp/External/Eigen)
 
-set(EIGEN3_INCLUDE_DIR "/home/mms-wonchan/MPCC_manipulator/cpp/External/Eigen")
+set(EIGEN3_INCLUDE_DIR "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/Eigen")
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 

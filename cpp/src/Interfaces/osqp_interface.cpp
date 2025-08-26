@@ -553,7 +553,7 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
                 break;
             }
 
-            break;
+            if(qp_status_ == OsqpEigen::Status::MaxIterReached) break;
         }
 
         // printf("qp_status_: %d\n", qp_status_);

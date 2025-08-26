@@ -109,6 +109,11 @@ private:
     /// @param x0 (State) current state
     void generateNewInitialGuess(const State &x0);
 
+    /// @brief generate new initial variables for MPC using previous input
+    /// @param x0 (State) current state
+    /// @param u0 (Input) previous control input
+    void generateGuessWithPreviousInput(const State &x0, const Input &u0);
+
     /// @brief print parameter value
     /// @param param_value (ParamValue) parameter value
     void printParamValue(const ParamValue& param_value);
@@ -122,6 +127,9 @@ private:
     std::unique_ptr<SolverInterface> solver_interface_;
     PathToJson path_;
     unsigned int num_valid_guess_failed_;
+
+    // ▼▼▼ ADD THIS LINE ▼▼▼
+    bool max_iter_failure_; 
 };
 
 }

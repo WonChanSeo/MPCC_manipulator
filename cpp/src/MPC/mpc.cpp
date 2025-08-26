@@ -86,6 +86,33 @@ void MPC::generateNewInitialGuess(const State &x0)
     valid_initial_guess_ = true;
 }
 
+void MPC::generateGuessWithPreviousInput(const State &x0, const Input &u0)
+{
+    std::cout << "[MPC] Generating fallback initial guess using previous input." << std::endl;
+
+    // 1. 예측 호라이즌의 시작점은 현재 상태(x0)로 설정합니다.
+    initial_guess_[0].xk = x0;
+
+    // 2. 예측 호라이즌 전체에 걸쳐 u0를 적용하며 다음 상태를 순차적으로 계산합니다.
+    for (int i = 0; i < N; ++i)
+    {
+        // 제어 입력은 u0로 고정합니다.
+        initial_guess_[i].uk = u0;
+
+        // 현재 스텝(i)의 상태와 제어 입력을 사용해 다음 스텝(i+1)의 상태를 계산합니다.
+        initial_guess_[i+1].xk = integrator_.RK4(initial_guess_[i].xk, initial_guess_[i].uk, Ts_);
+    }
+
+    // 3. 마지막 제어 입력은 0으로 설정합니다.
+    initial_guess_[N].uk.setZero();
+
+    // 4. 계산된 경로 변수(s)가 [0, 1] 범위를 벗어나지 않도록 보정합니다.
+    unwrapInitialGuess();
+
+    // 5. 새로운 추정치가 생성되었으므로 플래그를 true로 설정합니다.
+    valid_initial_guess_ = true;
+}
+
 bool MPC::runMPC(MPCReturn &mpc_return, State &x0, Input &u0)
 {
     Eigen::MatrixX3d dummy_position;
@@ -112,11 +139,25 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
         num_valid_guess_failed_++;
     }
 
-    // 3. 플래그 상태에 따라 초기 추정치 전체 시퀀스를 먼저 생성/업데이트
-    if(valid_initial_guess_) 
-        updateInitialGuess(x0); // Warm Start
+    // ▼▼▼▼▼ [변경] 초기 추정치 생성 로직 수정 ▼▼▼▼▼
+    // 3. 플래그 상태에 따라 초기 추정치 전체 시퀀스를 생성/업데이트
+    if (valid_initial_guess_) 
+    {
+        updateInitialGuess(x0); // Warm Start (성공적인 이전 스텝)
+    }
+    else if (max_iter_failure_)
+    {
+        // 이전 스텝에서 최대 반복 횟수 초과 실패가 있었을 경우,
+        // 이전 제어 입력을 기반으로 한 폴백 추정치를 생성합니다.
+        generateGuessWithPreviousInput(x0, u0);
+    }
     else 
+    {
+        // 그 외의 실패(경로 이탈 등)의 경우, 완전히 새로운 추정치를 생성합니다.
         generateNewInitialGuess(x0); // Cold Start
+    }
+    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
 
     // 4. 최신 initial_guess_를 솔버에 전달
     solver_interface_->setInitialGuess(initial_guess_);
@@ -185,12 +226,24 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
             break;
         }
         std::cout << "===================================================" << std::endl;
+        
         valid_initial_guess_ = false;
-        num_valid_guess_failed_++;
 
-        // ▼▼▼▼▼ 실패했을 때는 '정지' 명령(0)을 반환값에 할당합니다. ▼▼▼▼▼
-        mpc_return.u0.setZero();
-        // 디버깅 및 시각화를 위해, 솔버가 마지막으로 계산한 예측 경로는 그대로 유지합니다.
+        // ▼▼▼▼▼ [변경] 실패 유형에 따라 플래그 설정 ▼▼▼▼▼
+        if (sqp_status == MAX_ITER_EXCEEDED || sqp_status == QP_MaxIterReached)
+        {
+            max_iter_failure_ = true;
+        }
+        else
+        {
+            max_iter_failure_ = false;
+        }
+
+        // ... (실패 시 반환값 설정 로직은 이전 답변과 동일하게 유지) ...
+        mpc_return.u0 = u0;
+        for (auto& guess : initial_guess_) {
+            guess.uk = u0;
+        }
         mpc_return.mpc_horizon = initial_guess_;
     }
 
