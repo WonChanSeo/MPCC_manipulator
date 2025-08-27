@@ -456,7 +456,7 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
     // SQP itertion
     for(sqp_iter_=0; sqp_iter_<sqp_param_.max_iter; sqp_iter_++)
     {
-        // std::cout <<"sqp_iter_: " <<sqp_iter_<<std::endl;
+        std::cout <<"sqp_iter_: " <<sqp_iter_<<std::endl;
 
         auto start_set_qp = std::chrono::high_resolution_clock::now();
 
