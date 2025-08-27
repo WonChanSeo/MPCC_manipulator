@@ -107,7 +107,7 @@ void OsqpInterface::setEnvData(const Eigen::MatrixX3d &obs_positions, const doub
 
         rb_[i].updateEnv(obs_positions, obs_radius, envcolNN_);
         auto time = std::chrono::high_resolution_clock::now();
-        // printf("Env data updated for step %zu at time: %lld ms\n", i, std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()).count());
+        printf("Env data updated for step %zu at time: %lld ms\n", i, std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()).count());
     }
 }
 
@@ -595,6 +595,21 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         auto end_solve_qp = std::chrono::high_resolution_clock::now();
         auto start_get_alpha = std::chrono::high_resolution_clock::now();
 
+        // <<< START: 추가할 코드 >>>
+        // =========================================================================
+        // 현재 SQP 반복 횟수와 함께 step_ 및 step_lambda_ 벡터를 출력합니다.
+        std::cout << "===== SQP Iteration: " << sqp_iter_ << " =====" << std::endl;
+        
+        // step_ 벡터 출력 (결정 변수의 변화량)
+        std::cout << "step_ (" << step_.size() << " x 1): \n" << step_.transpose() << std::endl;
+        
+        // step_lambda_ 벡터 출력 (라그랑주 승수의 변화량)
+        // std::cout << "step_lambda_ (" << step_lambda_.size() << " x 1): \n" << step_lambda_.transpose() << std::endl;
+        
+        std::cout << "========================================" << std::endl;
+        // =========================================================================
+        // <<< END: 추가할 코드 >>>
+
         step_lambda_ -= lambda_;
 
         // double alpha = meritLineSearch(step_, Hess_, grad_obj_, obj_, constr_, l_, u_);
@@ -626,12 +641,12 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         // if(primal_step_norm_ < sqp_param_.eps_prim && dual_step_norm_ < sqp_param_.eps_dual)
         if(primal_step_norm_ < sqp_param_.eps_prim)
         {
-            // printf("primal_step_norm SUCCESS\n");
+            printf("primal_step_norm SUCCESS\n");
             (*status) = SOLVED;
             break;
         }
         else {
-            // printf("primal_step_norm FAILED\n");
+            printf("primal_step_norm FAILED\n");
         }
     }
     if(sqp_iter_ == sqp_param_.max_iter) (*status) = MAX_ITER_EXCEEDED;
@@ -641,13 +656,13 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
 
     if((*status) == SOLVED)
     {
-        // printf("SOLVED , sqp_iter_: %d\n", sqp_iter_);
+        printf("SOLVED , sqp_iter_: %d\n", sqp_iter_);
         opt_sol = initial_guess_;
         return true;
     }
     else
     {
-        // printf("NOT SOLVED , sqp_iter_: %d\n", sqp_iter_);
+        printf("NOT SOLVED , sqp_iter_: %d\n", sqp_iter_);
         opt_sol = zero_guess;
         return false;
     }
