@@ -107,7 +107,7 @@ void OsqpInterface::setEnvData(const Eigen::MatrixX3d &obs_positions, const doub
 
         rb_[i].updateEnv(obs_positions, obs_radius, envcolNN_);
         auto time = std::chrono::high_resolution_clock::now();
-        // printf("Env data updated for step %zu at time: %lld ms\n", i, std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()).count());
+        printf("Env data updated for step %zu at time: %lld ms\n", i, std::chrono::duration_cast<std::chrono::milliseconds>(time.time_since_epoch()).count());
     }
 }
 
