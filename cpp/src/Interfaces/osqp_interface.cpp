@@ -456,7 +456,7 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
     // SQP itertion
     for(sqp_iter_=0; sqp_iter_<sqp_param_.max_iter; sqp_iter_++)
     {
-        std::cout <<"sqp_iter_: " <<sqp_iter_<<std::endl;
+        // std::cout <<"sqp_iter_: " <<sqp_iter_<<std::endl;
 
         auto start_set_qp = std::chrono::high_resolution_clock::now();
 
@@ -593,6 +593,20 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         auto end_solve_qp = std::chrono::high_resolution_clock::now();
         auto start_get_alpha = std::chrono::high_resolution_clock::now();
 
+        // 현재 SQP 반복 횟수와 함께 step_ 및 step_lambda_ 벡터를 출력합니다.
+        std::cout << "===== SQP Iteration: " << sqp_iter_ << " =====" << std::endl;
+        
+        // step_ 벡터 출력 (결정 변수의 변화량)
+        std::cout << "step_ (" << step_.size() << " x 1): \n" << step_.transpose() << std::endl;
+        
+        // step_lambda_ 벡터 출력 (라그랑주 승수의 변화량)
+        // std::cout << "step_lambda_ (" << step_lambda_.size() << " x 1): \n" << step_lambda_.transpose() << std::endl;
+        
+        std::cout << "========================================" << std::endl;
+        // =========================================================================
+        // <<< END: 추가할 코드 >>>
+
+
         step_lambda_ -= lambda_;
 
         // double alpha = meritLineSearch(step_, Hess_, grad_obj_, obj_, constr_, l_, u_);
@@ -624,12 +638,12 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         // if(primal_step_norm_ < sqp_param_.eps_prim && dual_step_norm_ < sqp_param_.eps_dual)
         if(primal_step_norm_ < sqp_param_.eps_prim)
         {
-            // printf("primal_step_norm SUCCESS\n");
+            printf("primal_step_norm SUCCESS\n");
             (*status) = SOLVED;
             break;
         }
         else {
-            // printf("primal_step_norm FAILED\n");
+            printf("primal_step_norm FAILED\n");
         }
     }
     if(sqp_iter_ == sqp_param_.max_iter) (*status) = MAX_ITER_EXCEEDED;
