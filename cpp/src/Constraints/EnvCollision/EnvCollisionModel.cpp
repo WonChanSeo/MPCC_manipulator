@@ -330,6 +330,8 @@ namespace mpcc
         // ▼▼▼▼▼ 타이머 시작 ▼▼▼▼▼
         auto start_time = std::chrono::high_resolution_clock::now();
 
+        this->obstacle_switched = false; // 장애물 전환 플래그 초기화
+
         const int batch_size = inputs.cols();
         if (batch_size == 0) {
             return {Eigen::VectorXd(), Eigen::MatrixXd()};
@@ -408,10 +410,20 @@ namespace mpcc
         Eigen::Index min_row, min_col;
         mlp_.batch_output.minCoeff(&min_row, &min_col); // min_col이 가장 위험한 장애물의 인덱스
 
-        // ▼▼▼▼▼▼▼▼▼▼▼▼▼ 이 부분이 핵심 수정사항 ▼▼▼▼▼▼▼▼▼▼▼▼▼
+        // ▼▼▼▼▼ (수정된 부분) 이전 스텝과 비교하여 플래그 설정 ▼▼▼▼▼
+        if (mlp_.previous_min_col != -1 && mlp_.previous_min_col != min_col)
+        {
+            // std::cout 대신 플래그를 true로 설정
+            this->obstacle_switched = true;
+
+            std::cout << "Obstacle switched from " << mlp_.previous_min_col << " to " << min_col << std::endl;
+
+        }
+        mlp_.previous_min_col = min_col;
+        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
         // 찾은 열(min_col) 인덱스를 사용하여 '해당 열 벡터 전체'를 선택합니다.
         Eigen::VectorXd min_output_vec = mlp_.batch_output.col(min_col);
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
         // 해당 열(장애물)에 대한 자코비안을 선택합니다.
         Eigen::MatrixXd min_jacobian_mat = batch_jacobian[min_col];
