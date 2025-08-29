@@ -943,6 +943,7 @@ double OsqpInterface::filterLineSearch(const std::vector<OptVariables> &initial_
     bool is_alpha_accepted = true;
 
     double alpha = 1.0;
+    printf("line_search_max_iter: %d\n", sqp_param_.line_search_max_iter);
     for(size_t i=0; i<sqp_param_.line_search_max_iter; i++)
     {
         // get updated cost and constraint wrt x+delta_x
