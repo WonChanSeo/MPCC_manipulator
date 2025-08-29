@@ -804,6 +804,14 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     iter_count = solver_.getNumberOfIterations();
     qp_status = solver_.getStatus();
     // printf("qp_status solved inaccurate : %s\n", qp_status == OsqpEigen::Status::SolvedInaccurate ? "true" : "false");
+
+    step_FP32 = solver_.getSolution();
+    step_lambda_FP32 = solver_.getDualSolution();
+    // get the controller input
+    step = step_FP32.cast<double>();
+    step_lambda = step_lambda_FP32.cast<double>();
+
+    
     if (!(solver_.getStatus() == OsqpEigen::Status::Solved || solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate)) return false;
     // if (!(solver_.getStatus() == OsqpEigen::Status::Solved)) return false;
     // if (!(solver_.getStatus() == OsqpEigen::Status::Solved || solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate) && solver_.getStatus() != OsqpEigen::Status::TimeLimitReached) return false;
@@ -811,11 +819,7 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
 
     // printf("solver_.getSolution_size : %ld", solver_.getSolution().rows());
     // printf("solver_.getDualSolution_size : %ld", solver_.getDualSolution().rows());
-    step_FP32 = solver_.getSolution();
-    step_lambda_FP32 = solver_.getDualSolution();
-    // get the controller input
-    step = step_FP32.cast<double>();
-    step_lambda = step_lambda_FP32.cast<double>();
+    
 
     solver_.clearSolverVariables();
     solver_.clearSolver();
