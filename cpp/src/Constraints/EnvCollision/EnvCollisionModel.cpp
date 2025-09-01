@@ -330,8 +330,6 @@ namespace mpcc
         // ▼▼▼▼▼ 타이머 시작 ▼▼▼▼▼
         auto start_time = std::chrono::high_resolution_clock::now();
 
-        this->obstacle_switched = false; // 장애물 전환 플래그 초기화
-
         const int batch_size = inputs.cols();
         if (batch_size == 0) {
             return {Eigen::VectorXd(), Eigen::MatrixXd()};
@@ -392,46 +390,41 @@ namespace mpcc
             batch_jacobian[i] = mlp_.weight.back() * temp_derivative;
         }
 
-        // ===== 2. 최소값 찾기 및 해당 결과 선택 =====
-        
-        // 신경망 출력이 1차원(n_output = 1)이라고 가정
-        // if (mlp_.batch_output.rows() != 1) {
-        //     // 문제가 발생했을 때 어떤 상황인지 알려주는 상세한 에러 메시지를 만듭니다.
-        //     std::string error_msg = "Error: Neural network output must be 1-dimensional to find a minimum value, but it is " 
-        //                           + std::to_string(mlp_.batch_output.rows()) + "-dimensional.";
-            
-        //     // std::runtime_error 예외를 발생시켜 프로그램을 중단시킵니다.
-        //     throw std::runtime_error(error_msg);
-        // }
+        // ===== 2. 각 행(링크)별 최소값 탐색 및 결과 재구성 =====
 
-        // ===== 2. 최소값 찾기 및 해당 결과 선택 (열 벡터 반환용으로 수정) =====
+        const int n_output = mlp_.n_output;
+        const int n_input_total = inputs.rows(); // 예: 7(dof) + 3(obs) = 10
 
-        // Eigen의 내장 함수를 사용하여 전체 결과 행렬에서 최소값의 위치(열 인덱스)를 찾습니다.
-        Eigen::Index min_row, min_col;
-        mlp_.batch_output.minCoeff(&min_row, &min_col); // min_col이 가장 위험한 장애물의 인덱스
+        // 1. 최종 결과를 담을 새로운 벡터와 자코비안 행렬을 초기화합니다.
+        Eigen::VectorXd final_min_output(n_output);
+        Eigen::MatrixXd final_min_jacobian(n_output, n_input_total);
 
-        // ▼▼▼▼▼ (수정된 부분) 이전 스텝과 비교하여 플래그 설정 ▼▼▼▼▼
-        if (mlp_.previous_min_col != -1 && mlp_.previous_min_col != min_col)
+        // 2. 각 행(각 링크)을 순회하는 루프를 실행합니다.
+        for (int i = 0; i < n_output; ++i)
         {
-            // std::cout 대신 플래그를 true로 설정
-            this->obstacle_switched = true;
+            // i번째 행에서 최소값과 그 값의 열(column) 인덱스를 찾습니다.
+            // 이 min_col_for_row는 i번째 링크에 가장 가까운 장애물의 인덱스를 의미합니다.
+            Eigen::Index min_col_for_row;
+            mlp_.batch_output.row(i).minCoeff(&min_col_for_row);
+
+            // 3. 최종 결과 벡터의 i번째 원소를 채웁니다.
+            // i번째 링크와 가장 가까운 장애물과의 거리(최소값)를 저장합니다.
+            final_min_output(i) = mlp_.batch_output(i, min_col_for_row);
+
+            // 4. 최종 자코비안 행렬의 i번째 행을 채웁니다.
+            // i번째 링크에 가장 위협적인 장애물(min_col_for_row)의 자코비안 행렬을 가져와서,
+            // 그 행렬의 i번째 행(i번째 링크에 대한 미분값)만 복사합니다.
+            final_min_jacobian.row(i) = batch_jacobian[min_col_for_row].row(i);
         }
-        mlp_.previous_min_col = min_col;
-        // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
-        // 찾은 열(min_col) 인덱스를 사용하여 '해당 열 벡터 전체'를 선택합니다.
-        Eigen::VectorXd min_output_vec = mlp_.batch_output.col(min_col);
-
-        // 해당 열(장애물)에 대한 자코비안을 선택합니다.
-        Eigen::MatrixXd min_jacobian_mat = batch_jacobian[min_col];
-
-        // ▼▼▼▼▼ 타이머 종료 및 시간 계산/저장 ▼▼▼▼▼
+        // ▼▼▼▼▼ 타이머 종료 및 시간 계산/저장 (기존과 동일) ▼▼▼▼▼
         auto end_time = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> elapsed_ms = end_time - start_time;
         mlp_.inference_times_ms.push_back(elapsed_ms.count());
         // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
-        return std::make_pair(min_output_vec, min_jacobian_mat);
+        // 재구성된 최종 결과 벡터와 자코비안 행렬을 반환합니다.
+        return std::make_pair(final_min_output, final_min_jacobian);
     }
 
     // ▼▼▼▼▼ 파일 하단에 getter 함수 구현을 추가합니다. ▼▼▼▼▼
@@ -440,5 +433,6 @@ namespace mpcc
         return mlp_.inference_times_ms;
     }
 }
+
 
 
