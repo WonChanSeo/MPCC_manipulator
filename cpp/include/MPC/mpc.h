@@ -119,6 +119,7 @@ private:
     const double Ts_;
     Integrator integrator_;
     Param param_;
+    BoundsParam bounds_param_;
     std::unique_ptr<SolverInterface> solver_interface_;
     PathToJson path_;
     unsigned int num_valid_guess_failed_;

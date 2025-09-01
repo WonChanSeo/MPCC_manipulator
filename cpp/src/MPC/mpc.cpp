@@ -74,16 +74,81 @@ void MPC::unwrapInitialGuess()
     }
 }
 
+// void MPC::generateNewInitialGuess(const State &x0)
+// {
+//     std::cout<< "generate new initial guess!!"<<std::endl;
+//     for(int i = 0;i<=N;i++)
+//     {
+//         initial_guess_[i].xk = x0;
+//         initial_guess_[i].uk.setZero();
+//     }
+//     unwrapInitialGuess();
+//     valid_initial_guess_ = true;
+// }
+
+
+/*
+* Braking QP와 같은 폴백 솔버의 성능을 향상시킵니다.
+* @param x0 로봇의 현재 상태 (위치 및 속도 포함)
+*/
 void MPC::generateNewInitialGuess(const State &x0)
 {
-    std::cout<< "generate new initial guess!!"<<std::endl;
-    for(int i = 0;i<=N;i++)
-    {
-        initial_guess_[i].xk = x0;
-        initial_guess_[i].uk.setZero();
-    }
-    unwrapInitialGuess();
-    valid_initial_guess_ = true;
+   std::cout << "[MPC] Generating a new initial guess based on maximum deceleration." << std::endl;
+
+   // 1. 예측 호라이즌의 시작점은 현재 상태(x0)로 설정
+   initial_guess_[0].xk = x0;
+
+   // 2. 예측 호라이즌 전체에 걸쳐 순차적으로 시뮬레이션
+   for (int i = 0; i < N; ++i)
+   {
+       State& current_state = initial_guess_[i].xk;
+       Input& current_input = initial_guess_[i].uk;
+       Input& next_input = initial_guess_[i + 1].uk;
+        State& next_state = initial_guess_[i + 1].xk;
+
+       std::array<double, 7> ddq_array = {0, 0, 0, 0, 0, 0, 0};
+
+       // 현재 스텝의 속도를 기반으로 최대 감속 제어 입력(가속도) 결정
+       for (int j = 0; j < 7; ++j)
+       {
+           double current_dq = current_input.get_dq(j);
+
+           // 속도가 임계값보다 크면 (움직이고 있으면)
+           if (current_dq > 1e-4) // 양의 방향으로 움직일 때
+           {
+               ddq_array[j] = bounds_param_.get_ddq(j, "l"); // 최대 음의 가속도 적용
+           }
+           else if (current_dq < -1e-4) // 음의 방향으로 움직일 때
+           {
+                ddq_array[j] = bounds_param_.get_ddq(j, "u"); // 최대 양의 가속도 적용
+           }
+           else // 거의 멈춰있을 때
+           {
+                ddq_array[j] = 0.0;
+           }
+       }
+
+       // 3. 현재 상태와 계산된 제어 입력을 사용하여 다음 상태를 계산 (적분)
+       next_state = integrator_.RK4(current_state, current_input, Ts_);
+
+       // 4. 속도가 0을 지나 부호가 바뀌었는지 확인하고, 바뀌었다면 0으로 고정 (Overshoot 방지)
+       for (int j = 0; j < 7; ++j)
+       {
+           // 이전 속도와 현재 속도의 부호가 다르면 정지한 것으로 간주
+           next_input.set_dq(j, current_input.get_dq(j) + ddq_array[j] * Ts_);
+
+           if (current_input.get_dq(j) * next_input.get_dq(j) < 0.0)
+           {
+                next_input.set_dq(j, 0.0); // 속도를 0으로 설정
+           }
+       }
+   }
+
+   // 5. 마지막 제어 입력은 0으로 설정
+   initial_guess_[N].uk.setZero();
+
+   unwrapInitialGuess();
+   valid_initial_guess_ = true;
 }
 
 bool MPC::runMPC(MPCReturn &mpc_return, State &x0, Input &u0)
@@ -115,8 +180,10 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     // 3. 플래그 상태에 따라 초기 추정치 전체 시퀀스를 먼저 생성/업데이트
     if(valid_initial_guess_) 
         updateInitialGuess(x0); // Warm Start
-    else 
+    else {
+        updateInitialGuess(x0);
         generateNewInitialGuess(x0); // Cold Start
+    }
 
     // 4. 최신 initial_guess_를 솔버에 전달
     solver_interface_->setInitialGuess(initial_guess_);
@@ -146,9 +213,9 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
         valid_initial_guess_ = true;
         num_valid_guess_failed_ = 0;
 
-        // ▼▼▼▼▼ 성공했을 때만 최적의 제어 입력을 반환값에 할당합니다. ▼▼▼▼▼
-        mpc_return.u0 = initial_guess_[0].uk;
-        mpc_return.mpc_horizon = initial_guess_;
+        // // ▼▼▼▼▼ 성공했을 때만 최적의 제어 입력을 반환값에 할당합니다. ▼▼▼▼▼
+        // mpc_return.u0 = initial_guess_[0].uk;
+        // mpc_return.mpc_horizon = initial_guess_;
     }
     else
     {
@@ -186,15 +253,16 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
         }
         std::cout << "===================================================" << std::endl;
         valid_initial_guess_ = false;
-        num_valid_guess_failed_++;
+        // num_valid_guess_failed_++;
 
         // ▼▼▼▼▼ 실패했을 때는 '정지' 명령(0)을 반환값에 할당합니다. ▼▼▼▼▼
-        mpc_return.u0.setZero();
+        // mpc_return.u0.setZero();
         // 디버깅 및 시각화를 위해, 솔버가 마지막으로 계산한 예측 경로는 그대로 유지합니다.
         mpc_return.mpc_horizon = initial_guess_;
     }
 
     // 공통적으로 적용되는 반환값들을 설정합니다.
+    mpc_return = {initial_guess_[0].uk,initial_guess_,time_nmpc};
     mpc_return.compute_time = time_nmpc;
     auto end_mpc = std::chrono::high_resolution_clock::now();
     mpc_return.compute_time.total = std::chrono::duration_cast<std::chrono::duration<double>>(end_mpc - start_mpc).count();

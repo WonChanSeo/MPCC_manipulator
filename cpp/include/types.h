@@ -92,6 +92,45 @@ struct Input{
     double dq7;
     double dVs;
 
+    // ========================================================== //
+    // ## 요청하신 get 함수 ##
+    // 인덱스를 받아 해당하는 dq 값을 반환합니다.
+    // const 키워드를 추가하여 이 함수가 멤버 변수를 변경하지 않음을 명시합니다.
+    // ========================================================== //
+    double get_dq(int index) const
+    {
+        switch (index)
+        {
+            case 0: return dq1;
+            case 1: return dq2;
+            case 2: return dq3;
+            case 3: return dq4;
+            case 4: return dq5;
+            case 5: return dq6;
+            case 6: return dq7;
+            default:
+                // 유효하지 않은 인덱스가 들어왔을 경우, 오류를 발생시킵니다.
+                throw std::out_of_range("Invalid index for get_dq. Index must be between 0 and 6.");
+        }
+    }
+
+    void set_dq(int index, double value)
+    {
+        switch (index)
+        {
+            case 0: dq1 = value; break;
+            case 1: dq2 = value; break;
+            case 2: dq3 = value; break;
+            case 3: dq4 = value; break;
+            case 4: dq5 = value; break;
+            case 5: dq6 = value; break;
+            case 6: dq7 = value; break;
+            default:
+                // 유효하지 않은 인덱스가 들어왔을 경우, 오류를 발생시킵니다.
+                throw std::out_of_range("Invalid index for set_dq. Index must be between 0 and 6.");
+        }
+    }
+
     void setZero()
     {
         dq1 = 0.0;

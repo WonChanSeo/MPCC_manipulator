@@ -23,6 +23,7 @@
 #include <nlohmann/json.hpp>
 #include "config.h"
 #include "types.h"
+#include <string>
 
 namespace mpcc{
 //used namespace
@@ -198,6 +199,23 @@ public:
         double ddq6_u;
         double ddq7_u;
     };
+
+    double get_ddq(int index, const std::string& bound_type) const
+    {
+        switch (index)
+        {
+            case 0: return (bound_type == "l") ? lower_ddjoint_bounds.ddq1_l : upper_ddjoint_bounds.ddq1_u;
+            case 1: return (bound_type == "l") ? lower_ddjoint_bounds.ddq2_l : upper_ddjoint_bounds.ddq2_u;
+            case 2: return (bound_type == "l") ? lower_ddjoint_bounds.ddq3_l : upper_ddjoint_bounds.ddq3_u;
+            case 3: return (bound_type == "l") ? lower_ddjoint_bounds.ddq4_l : upper_ddjoint_bounds.ddq4_u;
+            case 4: return (bound_type == "l") ? lower_ddjoint_bounds.ddq5_l : upper_ddjoint_bounds.ddq5_u;
+            case 5: return (bound_type == "l") ? lower_ddjoint_bounds.ddq6_l : upper_ddjoint_bounds.ddq6_u;
+            case 6: return (bound_type == "l") ? lower_ddjoint_bounds.ddq7_l : upper_ddjoint_bounds.ddq7_u;
+            default:
+                // 유효하지 않은 인덱스가 들어왔을 경우, 오류를 발생시킵니다.
+                throw std::out_of_range("Invalid index for get_ddq. Index must be between 0 and 6.");
+        }
+    }
 
     LowerStateBounds lower_state_bounds;
     UpperStateBounds upper_state_bounds;
