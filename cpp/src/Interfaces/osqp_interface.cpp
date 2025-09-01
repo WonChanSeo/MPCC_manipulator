@@ -663,7 +663,7 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
     else
     {
         printf("NOT SOLVED , sqp_iter_: %d\n", sqp_iter_);
-        opt_sol = zero_guess;
+        // opt_sol = zero_guess;
         return false;
     }
 }

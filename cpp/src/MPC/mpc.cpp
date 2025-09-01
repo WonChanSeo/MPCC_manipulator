@@ -93,6 +93,7 @@ void MPC::unwrapInitialGuess()
 */
 void MPC::generateNewInitialGuess(const State &x0)
 {
+    std::cout << "====================================================================" << std::endl;
    std::cout << "[MPC] Generating a new initial guess based on maximum deceleration." << std::endl;
 
    // 1. 예측 호라이즌의 시작점은 현재 상태(x0)로 설정
@@ -116,10 +117,12 @@ void MPC::generateNewInitialGuess(const State &x0)
            // 속도가 임계값보다 크면 (움직이고 있으면)
            if (current_dq > 1e-4) // 양의 방향으로 움직일 때
            {
+                printf("bounds_param_.get_ddq(%d, \"l\") = %f\n", j, bounds_param_.get_ddq(j, "l"));
                ddq_array[j] = bounds_param_.get_ddq(j, "l"); // 최대 음의 가속도 적용
            }
            else if (current_dq < -1e-4) // 음의 방향으로 움직일 때
            {
+                printf("bounds_param_.get_ddq(%d, \"u\") = %f\n", j, bounds_param_.get_ddq(j, "u"));
                 ddq_array[j] = bounds_param_.get_ddq(j, "u"); // 최대 양의 가속도 적용
            }
            else // 거의 멈춰있을 때
@@ -127,6 +130,10 @@ void MPC::generateNewInitialGuess(const State &x0)
                 ddq_array[j] = 0.0;
            }
        }
+
+       printf("Step %d - Current Input: [%f, %f, %f, %f, %f, %f, %f], ddq: [%f, %f, %f, %f, %f, %f, %f]\n", 
+              i, current_input.dq1, current_input.dq2, current_input.dq3, current_input.dq4, current_input.dq5, current_input.dq6, current_input.dq7,
+              ddq_array[0], ddq_array[1], ddq_array[2], ddq_array[3], ddq_array[4], ddq_array[5], ddq_array[6]);
 
        // 3. 현재 상태와 계산된 제어 입력을 사용하여 다음 상태를 계산 (적분)
        next_state = integrator_.RK4(current_state, current_input, Ts_);
@@ -144,10 +151,12 @@ void MPC::generateNewInitialGuess(const State &x0)
        }
    }
 
-   // 5. 마지막 제어 입력은 0으로 설정
-   initial_guess_[N].uk.setZero();
+//    // 5. 마지막 제어 입력은 0으로 설정
+//    initial_guess_[N].uk.setZero();
 
-   unwrapInitialGuess();
+//    unwrapInitialGuess();
+
+    std::cout << "====================================================================" << std::endl;
    valid_initial_guess_ = true;
 }
 
@@ -181,13 +190,14 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     if(valid_initial_guess_) 
         updateInitialGuess(x0); // Warm Start
     else {
-        updateInitialGuess(x0);
         generateNewInitialGuess(x0); // Cold Start
+        updateInitialGuess(x0);
     }
 
     // 4. 최신 initial_guess_를 솔버에 전달
-    solver_interface_->setInitialGuess(initial_guess_);
     solver_interface_->setCurrentInput(u0);
+    solver_interface_->setInitialGuess(initial_guess_);
+
 
     // 5. 이제 최신 상태가 반영된 rb_를 사용하여 환경 데이터 설정
     auto start_env = std::chrono::high_resolution_clock::now();
@@ -200,6 +210,8 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
         valid_initial_guess_ = false;
     }
     // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+
+    printf("BEFORE initial_guess_[0].uk: [%f, %f, %f, %f, %f, %f, %f, %f]\n", initial_guess_[0].uk.dq1, initial_guess_[0].uk.dq2, initial_guess_[0].uk.dq3, initial_guess_[0].uk.dq4, initial_guess_[0].uk.dq5, initial_guess_[0].uk.dq6, initial_guess_[0].uk.dq7, initial_guess_[0].uk.dVs);
 
     // 7. QP 문제 풀이
     Status sqp_status;
@@ -262,6 +274,7 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     }
 
     // 공통적으로 적용되는 반환값들을 설정합니다.
+    printf("AFTER initial_guess_[0].uk: [%f, %f, %f, %f, %f, %f, %f, %f]\n", initial_guess_[0].uk.dq1, initial_guess_[0].uk.dq2, initial_guess_[0].uk.dq3, initial_guess_[0].uk.dq4, initial_guess_[0].uk.dq5, initial_guess_[0].uk.dq6, initial_guess_[0].uk.dq7, initial_guess_[0].uk.dVs);
     mpc_return = {initial_guess_[0].uk,initial_guess_,time_nmpc};
     mpc_return.compute_time = time_nmpc;
     auto end_mpc = std::chrono::high_resolution_clock::now();
@@ -297,6 +310,7 @@ double MPC::getTrackLength()
 void MPC::setParam(const ParamValue &param_value)
 {
     param_ = Param(path_.param_path, param_value.param);
+    bounds_param_ = BoundsParam(path_.bounds_path, param_value.bounds);
     solver_interface_->setParam(param_value);
     printParamValue(param_value);
 }
