@@ -85,7 +85,7 @@ def main(args):
     obs_positions = np.array([
         [0.48,  0.218, 0.521],
         [0.40, -0.200, 0.450],
-        [0.55, -0.200, 0.55]
+        [0.55, -0.200, 0.53]
     ])
 
     # 각 장애물의 이동 한계와 속도도 배열로 관리
@@ -94,7 +94,7 @@ def main(args):
     obs_limits[0] = np.array([obs_positions[0], obs_positions[0]]) 
     obs_limits[1] = np.array([obs_positions[1], obs_positions[1]])
     # Obstacle 3: Y축(좌우)으로 -0.2에서 0.2까지 움직이도록 설정
-    obs_limits[2] = np.array([[0.55, -0.2, 0.450], [0.55, 0.1, 0.450]])
+    obs_limits[2] = np.array([[0.55, -0., 0.450], [0.55, 20, 0.450]])
 
     # Create publishers
     node = rclpy.create_node('mpcc_node')
