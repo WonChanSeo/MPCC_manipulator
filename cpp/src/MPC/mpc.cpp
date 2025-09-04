@@ -108,6 +108,7 @@ void MPC::generateNewInitialGuess(const State &x0)
         State& next_state = initial_guess_[i + 1].xk;
 
        std::array<double, 7> ddq_array = {0, 0, 0, 0, 0, 0, 0};
+       double dV_s = 0.0;
 
        // 현재 스텝의 속도를 기반으로 최대 감속 제어 입력(가속도) 결정
        for (int j = 0; j < 7; ++j)
@@ -131,9 +132,19 @@ void MPC::generateNewInitialGuess(const State &x0)
            }
        }
 
-       printf("Step %d - Current Input: [%f, %f, %f, %f, %f, %f, %f], ddq: [%f, %f, %f, %f, %f, %f, %f]\n", 
-              i, current_input.dq1, current_input.dq2, current_input.dq3, current_input.dq4, current_input.dq5, current_input.dq6, current_input.dq7,
-              ddq_array[0], ddq_array[1], ddq_array[2], ddq_array[3], ddq_array[4], ddq_array[5], ddq_array[6]);
+       if (current_state.vs > 1e-4) // 양의 방향으로 움직일 때
+       {
+            dV_s = bounds_param_.get_dVs("l"); // 최대 음의 가속도 적용
+       }
+       else if (current_state.vs < -1e-4) // 음의 방향으로 움직일 때
+       {
+            dV_s = bounds_param_.get_dVs("u"); // 최대 양의 가속도 적용
+       }
+       else // 거의 멈춰있을 때
+       {
+            dV_s = 0.0;
+       }
+
 
        // 3. 현재 상태와 계산된 제어 입력을 사용하여 다음 상태를 계산 (적분)
        next_state = integrator_.RK4(current_state, current_input, Ts_);
@@ -149,8 +160,27 @@ void MPC::generateNewInitialGuess(const State &x0)
                 next_input.set_dq(j, 0.0); // 속도를 0으로 설정
            }
        }
+    
+        next_state.vs = current_state.vs + dV_s * Ts_;
+        current_input.dVs = dV_s;
 
-       current_input.dVs = 0.0; // 경로 속도는 계속 감소
+        if(current_state.vs * next_state.vs < 0.0)
+        {
+            next_state.vs = 0.0; // 속도를 0으로 설정
+            current_input.dVs = abs(next_state.vs - current_state.vs);
+        }
+
+
+        printf("----------------------------------------------------\n");
+       printf("Step %d - Current Input: [%f, %f, %f, %f, %f, %f, %f, %f], ddq: [%f, %f, %f, %f, %f, %f, %f], dVs: [%f]\n", 
+        i, current_input.dq1, current_input.dq2, current_input.dq3, current_input.dq4, current_input.dq5, current_input.dq6, current_input.dq7, current_input.dVs,
+        ddq_array[0], ddq_array[1], ddq_array[2], ddq_array[3], ddq_array[4], ddq_array[5], ddq_array[6], dV_s);
+
+        printf("Step %d - Current State: [q: %f, %f %f %f %f %f %f, s: %f, vs: %f]\n", 
+        i, current_state.q1, current_state.q2, current_state.q3, current_state.q4, current_state.q5, current_state.q6, current_state.q7, current_state.s, current_state.vs);
+        printf("Next State: [q: %f, %f %f %f %f %f %f, s: %f, vs: %f]\n", 
+        next_state.q1, next_state.q2, next_state.q3, next_state.q4, next_state.q5, next_state.q6, next_state.q7, next_state.s, next_state.vs);
+        printf("----------------------------------------------------\n");
    }
 
 //    // 5. 마지막 제어 입력은 0으로 설정
