@@ -681,7 +681,7 @@ void checkForFloatOverflow(const Eigen::MatrixBase<Derived>& M, const std::strin
 
 
 bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, const Eigen::MatrixXd &A, const Eigen::VectorXd &l,const Eigen::VectorXd &u,
-                            Eigen::VectorXd &step, Eigen::VectorXd &step_lambda, OsqpEigen::Status &qp_status, int &iter_count)
+                            Eigen::VectorXd &step, Eigen::VectorXd &step_lambda, OsqpEigen::Status &qp_status)
 {
     /*
     min   1/2 x' P x + q' x
@@ -697,66 +697,24 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     l dense  (nc x 1)
     u dense  (nc x 1)
     */
-
-    // saveMatrixToFile(l, "lower", "/home/mms-wonchan/Studies/OSQP/Precision/lower.txt");
-    // saveMatrixToFile(u, "lower", "/home/mms-wonchan/Studies/OSQP/Precision/upper.txt");
-
-    Eigen::MatrixX<_Float32> P_FP32(N_var, N_var);
-    Eigen::MatrixX<_Float32> A_FP32(N_constr, N_var);
-    Eigen::MatrixX<_Float32> q_FP32(N_var, 1);
-    Eigen::MatrixX<_Float32> l_FP32(N_constr, 1);
-    Eigen::MatrixX<_Float32> u_FP32(N_constr, 1);
-
-    // // 각 행렬에 대해 FP32 범위 초과 여부를 검사
-    // checkForFloatOverflow(P, "P");
-    // checkForFloatOverflow(A, "A");
-    // checkForFloatOverflow(q, "q");
-    // checkForFloatOverflow(l, "l");
-    // checkForFloatOverflow(u, "u");
-
-
-    P_FP32 = P.cast<_Float32>();
-    A_FP32 = A.cast<_Float32>();
-    q_FP32 = q.cast<_Float32>();
-    l_FP32 = l.cast<_Float32>();
-    u_FP32 = u.cast<_Float32>();
-
-    // saveMatrixToFile(P_FP32, "P_FP32", "/home/mms-wonchan/Studies/OSQP/Precision/P_FP32.txt");
-    // saveMatrixToFile(A_FP32, "A_FP32", "/home/mms-wonchan/Studies/OSQP/Precision/A_FP32.txt");
-    // saveMatrixToFile(q_FP32, "q_FP32", "/home/mms-wonchan/Studies/OSQP/Precision/q_FP32.txt");
-    // saveMatrixToFile(l_FP32, "l_FP32", "/home/mms-wonchan/Studies/OSQP/Precision/l_FP32.txt");
-    // saveMatrixToFile(u_FP32, "u_FP32", "/home/mms-wonchan/Studies/OSQP/Precision/u_FP32.txt");
-
-    Eigen::VectorX<_Float32> step_FP32(N_var, 1);
-    Eigen::VectorX<_Float32> step_lambda_FP32(N_constr, 1);
-
-   Eigen::SparseMatrix<_Float32> P_sp(N_var, N_var);
-   Eigen::SparseMatrix<_Float32> A_sp(N_constr, N_var);
-   Eigen::Matrix<_Float32, N_var,1> q_ds;
-   Eigen::Matrix<_Float32, N_constr,1> l_ds;
-   Eigen::Matrix<_Float32, N_constr,1> u_ds;
-   P_sp = P_FP32.sparseView();
-   A_sp = A_FP32.sparseView();
-   q_ds = q_FP32;
-   l_ds = l_FP32;
-   u_ds = u_FP32;
-
-//    saveSparseMatrixToFile(P_sp, "P_sp", "./P_sp.txt");
-//    saveSparseMatrixToFile(A_sp, "A_sp", "./A_sp.txt");
-//    saveMatrixToFile(q_ds, "q_ds", "./q_ds.txt");
-//    saveMatrixToFile(l_ds, "l_ds", "./l_ds.txt");
-//    saveMatrixToFile(u_ds, "u_ds", "./u_ds.txt");
-
-    // saveMatrixToFile(l_ds, "l_ds", "/home/mms-wonchan/Studies/OSQP/Precision/l_ds.txt");
-    // saveMatrixToFile(u_ds, "u_ds", "/home/mms-wonchan/Studies/OSQP/Precision/u_ds.txt");
+   Eigen::SparseMatrix<double> P_sp(N_var, N_var);
+   Eigen::SparseMatrix<double> A_sp(N_constr, N_var);
+   Eigen::Matrix<double, N_var,1> q_ds;
+   Eigen::Matrix<double, N_constr,1> l_ds;
+   Eigen::Matrix<double, N_constr,1> u_ds;
+   P_sp = P.sparseView();
+   A_sp = A.sparseView();
+   q_ds = q;
+   l_ds = l;
+   u_ds = u;
 
     OsqpEigen::Solver solver_;
     // settings
-    solver_.settings()->setWarmStart(false); //fasle
-    solver_.settings()->getSettings()->eps_abs = 1e-3; // MODI 1e-4
-    solver_.settings()->getSettings()->eps_rel = 1e-4; // MODI 1e-5
+    solver_.settings()->setWarmStart(false);
+    solver_.settings()->getSettings()->eps_abs = 1e-4;
+    solver_.settings()->getSettings()->eps_rel = 1e-5;
     // time limit
-    // solver_.settings()->getSettings()->time_limit = (Ts_ / 5.);
+    solver_.settings()->getSettings()->time_limit = (Ts_ / 5.);
     solver_.settings()->getSettings()->verbose = false;
 
     // set the initial data of the QP solver
@@ -768,40 +726,18 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     if (!solver_.data()->setLowerBound(l_ds))              return false;
     if (!solver_.data()->setUpperBound(u_ds))              return false;
 
-    // printf("Before initSolver\n");
     // instantiate the solver
     if (!solver_.initSolver()) return false;
-    // printf("After initSolver : %d\n", solver_.getStatus());
 
-    // printf("Solver settings :\n");
-    // printf("  eps_abs : %f\n", solver_.settings()->getSettings()->eps_abs);
-    // printf("  eps_rel : %f\n", solver_.settings()->getSettings()->eps_rel);
-    // printf("  time_limit : %f\n", solver_.settings()->getSettings()->time_limit);
-    // printf("  verbose : %d\n", solver_.settings()->getSettings()->verbose);
-    // printf("  max_iter : %d\n", solver_.settings()->getSettings()->max_iter);
-    // printf("  polishing : %d\n", solver_.settings()->getSettings()->polishing);
-    // printf("  polish_refine_iter : %d\n", solver_.settings()->getSettings()->polish_refine_iter);
-
-
- 
     // solve the QP problem
     if (solver_.solveProblem() != OsqpEigen::ErrorExitFlag::NoError) return false;
-    // printf("After solveProblem : %d\n", solver_.getStatus());
-    iter_count = solver_.getNumberOfIterations();
     qp_status = solver_.getStatus();
-    // printf("qp_status solved inaccurate : %s\n", qp_status == OsqpEigen::Status::SolvedInaccurate ? "true" : "false");
-    if (!(solver_.getStatus() == OsqpEigen::Status::Solved || solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate)) return false;
-    // if (!(solver_.getStatus() == OsqpEigen::Status::Solved)) return false;
-    // if (!(solver_.getStatus() == OsqpEigen::Status::Solved || solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate) && solver_.getStatus() != OsqpEigen::Status::TimeLimitReached) return false;
-    // printf("After getStatus : %d\n", solver_.getStatus());
+    // if (solver_.getStatus() != OsqpEigen::Status::Solved) return false;
+    if (solver_.getStatus() != OsqpEigen::Status::Solved && solver_.getStatus() != OsqpEigen::Status::TimeLimitReached) return false;
 
-    // printf("solver_.getSolution_size : %ld", solver_.getSolution().rows());
-    // printf("solver_.getDualSolution_size : %ld", solver_.getDualSolution().rows());
-    step_FP32 = solver_.getSolution();
-    step_lambda_FP32 = solver_.getDualSolution();
     // get the controller input
-    step = step_FP32.cast<double>();
-    step_lambda = step_lambda_FP32.cast<double>();
+    step = solver_.getSolution();
+    step_lambda = solver_.getDualSolution();
 
     solver_.clearSolverVariables();
     solver_.clearSolver();
