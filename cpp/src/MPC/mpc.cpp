@@ -149,6 +149,8 @@ void MPC::generateNewInitialGuess(const State &x0)
                 next_input.set_dq(j, 0.0); // 속도를 0으로 설정
            }
        }
+
+       current_input.dVs = 0.0; // 경로 속도는 계속 감소
    }
 
 //    // 5. 마지막 제어 입력은 0으로 설정

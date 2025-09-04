@@ -217,6 +217,11 @@ public:
         }
     }
 
+    double get_dVs(const std::string& bound_type) const
+    {
+        // return (bound_type == "l") ? lower_ddjoint_bounds.dVs_l : upper_ddjoint_bounds.ddq1_u;
+    }
+
     LowerStateBounds lower_state_bounds;
     UpperStateBounds upper_state_bounds;
 
