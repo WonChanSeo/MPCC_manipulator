@@ -597,10 +597,12 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
                                              &work->scaled_prim_res, &work->scaled_dual_res, 0);
 
   if (exitflag == OSQP_NONCVX_ERROR) {
+    printf("Error: Problem is non-convex.\n");
     update_status(solver->info, OSQP_NON_CVX);
     return osqp_error(exitflag);
   }
   else if (exitflag) {
+    printf("Error: Unable to setup linear system solver.\n");
     return osqp_error(exitflag);
   }
 
@@ -618,6 +620,8 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
   if (!(work->pol->active_flags) ||
       !(work->pol->z) || !(work->pol->y))
     return osqp_error(OSQP_MEM_ALLOC_ERROR);
+  
+  printf("Initialization finished.\n");
 
   // Allocate solution
   if (settings->allocate_solution) {
@@ -639,6 +643,8 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
   else {
     solver->solution = OSQP_NULL;
   }
+
+  printf("Allocations finished.\n");
 
   // Initialize information
   solver->info->status_polish = OSQP_POLISH_NOT_PERFORMED; // Polishing not performed
@@ -713,6 +719,8 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
     return osqp_error(OSQP_MEM_ALLOC_ERROR);
 # endif /* ifdef OSQP_ENABLE_DERIVATIVES */
 
+  printf("Setup successful.\n");
+
   osqp_profiler_sec_pop(OSQP_PROFILER_SEC_SETUP);
 
   // Print header
@@ -720,6 +728,8 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
   if (solver->settings->verbose) print_setup_header(solver);
   work->summary_printed = 0; // Initialize last summary  to not printed
 # endif /* ifdef OSQP_ENABLE_PRINTING */
+
+  printf("Solver is ready.\n");
 
   // Return exit flag
   return 0;
@@ -729,6 +739,9 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
 
 
 OSQPInt osqp_solve(OSQPSolver *solver) {
+
+  printf("Starting solver...\n");
+
 
   OSQPInt exitflag;
   OSQPInt iter, max_iter;
@@ -746,6 +759,8 @@ OSQPInt osqp_solve(OSQPSolver *solver) {
 
   // Check if solver has been initialized
   if (!solver || !solver->work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+
+  printf("Solver initialization verified.\n");
 
   work = solver->work;
   settings = solver->settings;
@@ -1129,6 +1144,8 @@ exit:
 #endif /* ifdef OSQP_ENABLE_INTERRUPT */
 
   osqp_profiler_sec_pop(OSQP_PROFILER_SEC_OPT_SOLVE);
+
+  printf("Solver finished.\n");
 
   return exitflag;
 }

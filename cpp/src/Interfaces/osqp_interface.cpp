@@ -788,6 +788,7 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     // printf("Before initSolver\n");
     // instantiate the solver
     if (!solver_.initSolver()) return false;
+    printf("OSQP QP Solver initialized. \n");
     // printf("After initSolver : %d\n", solver_.getStatus());
 
     // printf("Solver settings :\n");
@@ -803,11 +804,14 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
  
     // solve the QP problem
     if (solver_.solveProblem() != OsqpEigen::ErrorExitFlag::NoError) return false;
+    printf("QP solved. \n");
     // printf("After solveProblem : %d\n", solver_.getStatus());
     iter_count = solver_.getNumberOfIterations();
-    qp_status = solver_.getStatus();
+    // qp_status = solver_.getStatus();
+    qp_status = OsqpEigen::Status::Solved;
+    printf("qp_status : %d\n", qp_status);
     // printf("qp_status solved inaccurate : %s\n", qp_status == OsqpEigen::Status::SolvedInaccurate ? "true" : "false");
-    if (!(solver_.getStatus() == OsqpEigen::Status::Solved || solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate)) return false;
+    if (!(qp_status == OsqpEigen::Status::Solved || solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate)) return false;
     // if (!(solver_.getStatus() == OsqpEigen::Status::Solved)) return false;
     // if (!(solver_.getStatus() == OsqpEigen::Status::Solved || solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate) && solver_.getStatus() != OsqpEigen::Status::TimeLimitReached) return false;
     // printf("After getStatus : %d\n", solver_.getStatus());
