@@ -1,0 +1,24 @@
+
+=== Statistics for Combined Statistics (Debug & Time Data) ===
+q               | mean:   0.042112 | min:  -2.431989 | max:   1.621574 | var:   1.093252 | std:   1.045587 |
+qdot            | mean:   0.000216 | min:  -1.405762 | max:   1.201691 | var:   0.055092 | std:   0.234716 |
+qddot           | mean:   0.000216 | min:  -1.405762 | max:   1.201691 | var:   0.055092 | std:   0.234716 |
+s               | mean:   0.379604 | min:  -0.000003 | max:   0.996554 | var:   0.120489 | std:   0.347115 |
+vs              | mean:   0.044341 | min:  -0.100584 | max:   0.099603 | var:   0.001813 | std:   0.042581 |
+dVs             | mean:   0.000887 | min:  -5.635835 | max:   5.850822 | var:   2.958344 | std:   1.719984 |
+ee_vel          | mean:   0.000071 | min:  -0.270266 | max:   0.256872 | var:   0.005610 | std:   0.074900 |
+ee_speed        | mean:   0.104039 | min:   0.001183 | max:   0.270276 | var:   0.006006 | std:   0.077497 |
+sel_min_dist    | mean:  16.577999 | min:   1.862932 | max:  26.244394 | var:  66.743616 | std:   8.169677 |
+env_min_dist    | mean:  36.737140 | min:   4.385641 | max:  73.356228 | var: 323.082124 | std:  17.974485 |
+mani            | mean:   0.073777 | min:   0.028577 | max:   0.093782 | var:   0.000280 | std:   0.016731 |
+contour_error   | mean:   0.011178 | min:   0.000038 | max:   0.076300 | var:   0.000346 | std:   0.018613 |
+spline_ee_pose  | mean:  -0.008888 | min:  -1.000000 | max:   1.000000 | var:   0.214503 | std:   0.463144 |
+pred_ee_pose    | mean:  -0.005604 | min:  -1.000000 | max:   1.000000 | var:   0.218546 | std:   0.467489 |
+ref_ee_pose     | mean:  -0.003967 | min:  -1.000000 | max:   1.000000 | var:   0.217570 | std:   0.466444 |
+iter_count      | mean: 304.528075 | min:  32.000000 | max: 3808.000000 | var: 134028.833867 | std: 366.099486 |
+total           | mean:   0.085591 | min:   0.007444 | max:   0.326658 | var:   0.000671 | std:   0.025900 |
+set_env         | mean:   0.069528 | min:   0.005122 | max:   0.097581 | var:   0.000743 | std:   0.027254 |
+set_qp          | mean:   0.001070 | min:   0.000343 | max:   0.007482 | var:   0.000002 | std:   0.001331 |
+solve_qp        | mean:   0.013494 | min:   0.000826 | max:   0.304558 | var:   0.000819 | std:   0.028615 |
+get_alpha       | mean:   0.000203 | min:   0.000062 | max:   0.001321 | var:   0.000000 | std:   0.000273 |
+

@@ -9,6 +9,7 @@ from srmt2.planning_scene import PlanningScene
 import argparse
 import scipy.io
 import os 
+import sys
 
 ## ROS library
 import rclpy
@@ -63,6 +64,23 @@ def print_stats(data_dict, name):
         print(f"{key:15s} | mean: {flat.mean():10.6f} | min: {flat.min():10.6f} | max: {flat.max():10.6f} | var: {flat.var():10.6f} | std: {flat.std():10.6f} |")
     print()
 
+### NEW FUNCTION START ###
+def save_stats_as_txt(data_dict, name, filename):
+    """
+    print_stats 함수의 콘솔 출력을 그대로 txt 파일에 저장합니다.
+    """
+    # try...finally 구문을 사용하면途中で에러가 발생해도
+    # 반드시 원래의 표준 출력으로 복원되므로 안전합니다.
+    original_stdout = sys.stdout  # 원래의 표준 출력(콘솔)을 저장
+    try:
+        with open(filename, 'w', encoding='utf-8') as f:
+            sys.stdout = f  # 표준 출력을 파일로 변경
+            print_stats(data_dict, name) # 이제 이 함수의 print문은 파일에 쓰여집니다.
+    finally:
+        sys.stdout = original_stdout # 표준 출력을 다시 원래대로(콘솔) 복원
+    
+    print(f"Statistics data saved to {filename}")
+### NEW FUNCTION END ###
 
 ### NEW FUNCTION START ###
 def generate_stats_data(data_dict):
@@ -246,16 +264,26 @@ def main(args):
             # 첫 번째 장애물이 아래쪽으로 움직이고 있고(obs_steps < 0), 아래쪽 경계선을 넘었을 때
             elif obs_steps[0, 2] < 0 and obs_positions[0, 2] <= obs_limits[0, 0, 2]:
                 obs_steps[0, 2] *= -1  # 방향을 위쪽으로 전환
-
+    
             # 세 번째 장애물이 오른쪽으로 움직이고 있고(obs_steps > 0), 오른쪽 경계선을 넘었을 때
             if obs_steps[2, 1] > 0 and obs_positions[2, 1] >= obs_limits[2, 1, 1]:
                 obs_steps[2, 1] *= -1 # 방향을 왼쪽으로 전환
             # 세 번째 장애물이 왼쪽으로 움직이고 있고(obs_steps < 0), 왼쪽 경계선을 넘었을 때
             elif obs_steps[2, 1] < 0 and obs_positions[2, 1] <= obs_limits[2, 0, 1]:
                 obs_steps[2, 1] *= -1 # 방향을 오른쪽으로 전환
-        
+
+            # 모든 장애물 위치 업데이트
+            obs_positions += obs_steps
+
+            # --- 2. 시각화 및 Planning Scene 업데이트 로직 ---
             for i in range(num_obstacles):
-                pc.add_sphere(f"obs_{i}", 0.01*obs_radius, obs_positions[i] + np.array([0.3, 0, 0.256]), np.array([1,0,0,0]))
+                # Planning Scene에 i번째 장애물 추가
+                pc.add_sphere(f"obs_{i}", 
+                            0.01*obs_radius, 
+                            obs_positions[i] + np.array([0.3, 0, 0.256]),
+                            np.array([1,0,0,0]))
+
+                # RViz 시각화용 Marker 메시지 작성
                 m = Marker()
                 m.header.frame_id = 'map'
                 m.header.stamp    = node.get_clock().now().to_msg()
@@ -263,11 +291,13 @@ def main(args):
                 m.id              = i 
                 m.type            = Marker.SPHERE
                 m.action          = Marker.ADD
+
                 m.pose.position.x = float(obs_positions[i, 0])
                 m.pose.position.y = float(obs_positions[i, 1])
                 m.pose.position.z = float(obs_positions[i, 2])
+                
                 m.pose.orientation.w = 1.0
-                m.scale.x = obs_radius * 0.02 
+                m.scale.x = obs_radius * 0.02 # cm -> m, diameter
                 m.scale.y = obs_radius * 0.02
                 m.scale.z = obs_radius * 0.02
                 m.color.r = 1.0
@@ -275,6 +305,8 @@ def main(args):
                 m.color.b = 0.0
                 m.color.a = 0.8
                 m.lifetime = Duration(sec=0, nanosec=0)
+
+                # 각 마커를 루프 안에서 즉시 퍼블리시
                 marker_pub.publish(m)
 
         status, state, input, mpc_horizon, compute_time, iter_count = mpc.runMPC(state, input, obs_positions, obs_radius) if args.is_obs else mpc.runMPC(state, input)
@@ -402,16 +434,20 @@ def main(args):
         time_data[key] = np.array(time_data[key])
 
     if args.name:
-        debug_mat_name = f"{args.name}_debug_data.mat"
-        time_mat_name = f"{args.name}_time_data.mat"
+        # 1. 기본 출력 폴더 경로를 정의합니다.
+        output_folder = os.path.join("../result", args.name)
+        
+        # 2. 파일이 저장될 전체 경로를 만듭니다.
+        stats_path_1 = os.path.join(output_folder, f"{args.name}_debug_data.mat")
+        stats_path_2 = os.path.join(output_folder, f"{args.name}_time_data.mat")
     else:
-        debug_mat_name = "debug_data.mat"
-        time_mat_name = "time_data.mat"
+        stats_path_1 = "debug_data.mat"
+        stats_path_2 = "time_data.mat"
 
-    scipy.io.savemat(debug_mat_name, debug_data)
-    print(f"Data written to {debug_mat_name}")
-    scipy.io.savemat(time_mat_name, time_data)
-    print(f"Data written to {time_mat_name}")
+    scipy.io.savemat(stats_path_1, debug_data)
+    print(f"Data written to {stats_path_1}")
+    scipy.io.savemat(stats_path_2, time_data)
+    print(f"Data written to {stats_path_2}")
 
     print("mean nmpc time[sec]: {:0.6f} ".format(np.mean(time_data["total"])))
     print("max nmpc time[sec]: {:0.6f} ".format(np.max(time_data["total"])))
@@ -432,9 +468,14 @@ def main(args):
     plt.grid(True)
 
     if args.name:
-        fig_name = f"{args.name}_computation_times.png"
-        plt.savefig(fig_name)
-        print(f"Saved figure to {fig_name}")
+        # 1. 기본 출력 폴더 경로를 정의합니다.
+        output_folder = os.path.join("../result", args.name)
+        
+        # 2. 파일이 저장될 전체 경로를 만듭니다.
+        stats_path = os.path.join(output_folder, f"{args.name}_computation_times.png")
+
+        plt.savefig(stats_path)
+        print(f"Saved figure to {stats_path}")
 
     fig=plt.figure(figsize=(14, 8))
     fig.subplots_adjust(hspace=1)
@@ -475,40 +516,40 @@ def main(args):
     plt.ylim(-max(debug_data["contour_error"])*0.3, max(debug_data["contour_error"])*1.2)  
     plt.legend()
     plt.grid(True)
-    
-    if args.name:
-        fig_name = f"{args.name}_performance_metrics.png"
-        plt.savefig(fig_name)
-        print(f"Saved figure to {fig_name}")
-
-    # 기존의 콘솔 출력은 그대로 유지
-    print_stats(debug_data, "debug_data")
-    print_stats(time_data, "time_data")
 
     ### MODIFIED SECTION START ###
     if args.name:
         # 1. 기본 출력 폴더 경로를 정의합니다.
         output_folder = os.path.join("../result", args.name)
         
-        # 2. 파일이 저장될 전체 경로를 만듭니다.
-        stats_path = os.path.join(output_folder, f"{args.name}_debug_stats.png")
+        # 2. 저장할 폴더가 없으면 자동으로 생성합니다.
+        os.makedirs(output_folder, exist_ok=True)
         
-        # 4. 이제 안전하게 파일을 저장할 수 있습니다.
+        # 3. debug_data와 time_data를 합칩니다.
         combined_stats_data = {**debug_data, **time_data}
-        save_stats_as_image(
+        
+        # 4. 저장될 텍스트 파일의 전체 경로를 만듭니다.
+        stats_path = os.path.join(output_folder, f"{args.name}_debug_stats.txt") # 확장자를 .txt로 변경
+        
+        # 5. 새로 만든 함수를 호출하여 텍스트 파일로 저장합니다.
+        save_stats_as_txt(
             combined_stats_data, 
-            title="Combined Statistics (Debug & Time Data)", 
+            name="Combined Statistics (Debug & Time Data)", 
             filename=stats_path
         )
         
-        # 다른 파일들도 동일한 방식으로 저장하면 됩니다.
+        # .mat 파일 저장 등 다른 로직은 그대로 유지할 수 있습니다.
         # 예시:
         # debug_mat_path = os.path.join(output_folder, f"{args.name}_debug_data.mat")
         # scipy.io.savemat(debug_mat_path, debug_data)
         # print(f"Data written to {debug_mat_path}")
-
+        
     ### MODIFIED SECTION END ###
 
+    # 기존의 콘솔 출력은 그대로 유지하거나, 필요 없다면 주석 처리/삭제 가능
+    print_stats(debug_data, "debug_data")
+    print_stats(time_data, "time_data")
+    
     plt.show()
 
 
