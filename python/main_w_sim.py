@@ -94,7 +94,8 @@ def main(args):
     # 각 장애물의 이동 한계와 속도도 배열로 관리
     obs_limits = np.zeros((num_obstacles, 2, 3))
     # Obstacle 1 & 2: 상한/하한을 초기 위치와 같게 설정하여 고정
-    obs_limits[0] = np.array([obs_positions[0], obs_positions[0]]) 
+    obs_limits[0] = np.array([[0.48,  0.218, 0.421],   # lower limit
+                      [0.48,  0.218, 0.621]])  # upper limit
     obs_limits[1] = np.array([obs_positions[1], obs_positions[1]])
     # Obstacle 3: Y축(좌우)으로 -0.2에서 0.2까지 움직이도록 설정
     obs_limits[2] = np.array([[0.55, -0., 0.450], [0.55, 20, 0.450]])
@@ -192,6 +193,13 @@ def main(args):
         # while 루프 내부
         if args.is_obs:
             # --- 1. 장애물 이동 로직 (수정된 버전) ---
+            # 첫 번째 장애물이 위쪽으로 움직이고 있고(obs_steps > 0), 위쪽 경계선을 넘었을 때
+            if obs_steps[0, 2] > 0 and obs_positions[0, 2] >= obs_limits[0, 1, 2]:
+                obs_steps[0, 2] *= -1  # 방향을 아래쪽으로 전환
+            # 첫 번째 장애물이 아래쪽으로 움직이고 있고(obs_steps < 0), 아래쪽 경계선을 넘었을 때
+            elif obs_steps[0, 2] < 0 and obs_positions[0, 2] <= obs_limits[0, 0, 2]:
+                obs_steps[0, 2] *= -1  # 방향을 위쪽으로 전환
+    
             # 세 번째 장애물이 오른쪽으로 움직이고 있고(obs_steps > 0), 오른쪽 경계선을 넘었을 때
             if obs_steps[2, 1] > 0 and obs_positions[2, 1] >= obs_limits[2, 1, 1]:
                 obs_steps[2, 1] *= -1 # 방향을 왼쪽으로 전환
