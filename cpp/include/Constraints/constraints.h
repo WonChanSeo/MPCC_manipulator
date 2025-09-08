@@ -120,31 +120,31 @@ struct XDConstraintsJac{
 /// @param delta (double) switching point from logarithm to quadratic function
 /// @param h (double) input value
 /// @return (double) RBF value
-double getRBF(const double &delta, const double &h);
+float getRBF(const float &delta, const float &h);
 
 /// @brief compute Relaxed Barrier Function of h
 /// @param delta (Eigen::VectorXd) switching point from logarithm to quadratic function
 /// @param h (Eigen::VectorXd) input value
 /// @return (Eigen::VectorXd) RBF value
-Eigen::VectorXd getRBF(const Eigen::VectorXd& delta, const Eigen::VectorXd &h);
+Eigen::VectorXf getRBF(const Eigen::VectorXf& delta, const Eigen::VectorXf &h);
 
 /// @brief compute derivative ofRelaxed Barrier Function wrt h
-/// @param delta (double) switching point from logarithm to quadratic function
-/// @param h (double) input value
-/// @return (double) derivation RBF value
-double getDRBF(const double &delta, const double &h);
+/// @param delta (float) switching point from logarithm to quadratic function
+/// @param h (float) input value
+/// @return (float) derivation RBF value
+float getDRBF(const float &delta, const float &h);
 
 /// @brief compute derivative ofRelaxed Barrier Function wrt h
-/// @param delta (Eigen::VectorXd) switching point from logarithm to quadratic function
-/// @param h (Eigen::VectorXd) input value
-/// @return (Eigen::VectorXd) derivation RBF value
-Eigen::VectorXd getDRBF(const Eigen::VectorXd &delta, const Eigen::VectorXd &h);
+/// @param delta (Eigen::VectorXf) switching point from logarithm to quadratic function
+/// @param h (Eigen::VectorXf) input value
+/// @return (Eigen::VectorXf) derivation RBF value
+Eigen::VectorXf getDRBF(const Eigen::VectorXf &delta, const Eigen::VectorXf &h);
 
 class Constraints {
 public:
     Constraints();
-    Constraints(double Ts,const PathToJson &path);
-    Constraints(double Ts,const PathToJson &path,const ParamValue &param_value);
+    Constraints(float Ts,const PathToJson &path);
+    Constraints(float Ts,const PathToJson &path,const ParamValue &param_value);
     
     /// @brief compute all the polytopic state constraints given current state
     /// @param x (State) current state

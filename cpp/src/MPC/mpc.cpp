@@ -161,7 +161,7 @@ void MPC::generateNewInitialGuess(const State &x0)
            }
        }
     
-        next_state.vs = current_state.vs + dV_s * Ts_;
+        // next_state.vs = current_state.vs + dV_s * Ts_;
         current_input.dVs = dV_s;
 
         if(current_state.vs * next_state.vs < 0.0)
