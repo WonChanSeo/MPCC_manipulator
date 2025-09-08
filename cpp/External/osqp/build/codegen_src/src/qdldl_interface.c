@@ -348,9 +348,9 @@ OSQPInt init_linsys_solver_qdldl(qdldl_solver**      sp,
                             sigma, s->rho_inv_vec, sigma,
                             OSQP_NULL, OSQP_NULL, OSQP_NULL);
 
-        // // Permute matrix
-        // if (KKT_temp)
-        //     permute_KKT(&KKT_temp, s, OSQP_NULL, OSQP_NULL, OSQP_NULL, OSQP_NULL, OSQP_NULL, OSQP_NULL);
+        // Permute matrix
+        if (KKT_temp)
+            permute_KKT(&KKT_temp, s, OSQP_NULL, OSQP_NULL, OSQP_NULL, OSQP_NULL, OSQP_NULL, OSQP_NULL);
     }
     else { // Called from ADMM algorithm
 
@@ -375,10 +375,10 @@ OSQPInt init_linsys_solver_qdldl(qdldl_solver**      sp,
                             sigma, s->rho_inv_vec, s->rho_inv,
                             s->PtoKKT, s->AtoKKT,s->rhotoKKT);
 
-        // // Permute matrix
-        // if (KKT_temp){
-        //     permute_KKT(&KKT_temp, s, P->csc->p[n], A->csc->p[n], m, s->PtoKKT, s->AtoKKT, s->rhotoKKT);
-        // }
+        // Permute matrix
+        if (KKT_temp){
+            permute_KKT(&KKT_temp, s, P->csc->p[n], A->csc->p[n], m, s->PtoKKT, s->AtoKKT, s->rhotoKKT);
+        }
     }
 
     // Check if matrix has been created
@@ -389,24 +389,16 @@ OSQPInt init_linsys_solver_qdldl(qdldl_solver**      sp,
         return OSQP_LINSYS_SOLVER_INIT_ERROR;
     }
 
-    // --- PERMUTATION SKIPPED ---
-    // permute_KKT를 호출하는 대신 항등 순열을 직접 생성합니다.
-    // 이렇게 하면 LDL_factor 함수가 순서 변경 없이 원본 행렬을 사용하게 됩니다.
-    for (i = 0; i < n_plus_m; i++) {
-        s->P[i] = i;
-    }
-    // ----------------------------
-
     // Factorize the KKT matrix
     if (LDL_factor(KKT_temp, s, n) < 0) {
         csc_spfree(KKT_temp);
         free_linsys_solver_qdldl(s);
         *sp = OSQP_NULL;
-        printf("Error in KKT matrix LDL factorization. The problem seems to be non-convex.\n");
+        // printf("Error in KKT matrix LDL factorization. The problem seems to be non-convex.\n");
         return OSQP_NONCVX_ERROR;
     } else {
         // Successful factorization
-        printf("KKT matrix LDL factorization successful.\n");
+        // printf("KKT matrix LDL factorization successful.\n");
     }
 
     // dump_L_to_file(s, "/home/mms-wonchan/Studies/OSQP/Precision/L.txt");

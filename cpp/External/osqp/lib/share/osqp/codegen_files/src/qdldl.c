@@ -194,7 +194,7 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
     QDLDL_bool*  yMarkers;
     QDLDL_int    positiveValuesInD = 0;
 
-    printf("In QDLDL_factor\n");
+    // printf("In QDLDL_factor\n");
 
     // printf("QDLDL_float = %zu bytes\n", sizeof(QDLDL_float));
 
@@ -332,7 +332,7 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
         // in D.  If we hit a zero, we can't factor
         // this matrix, so abort
         if(D[k] == 0.0) {
-            printf("Zero diagonal entry found at k = %" PRId64 "\n", (int64_t)k);
+            // printf("Zero diagonal entry found at k = %" PRId64 "\n", (int64_t)k);
             return -1;
         }
 
@@ -346,20 +346,20 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
 
     }
 
-    dump_int_hex  ("Ap_skip.hex",    Ap,    n + 1);
-    dump_int_hex  ("Ai_skip.hex",    Ai,    Ap[n]);
-    dump_float_hex("Ax_skip.hex",    Ax,    Ap[n]);
-    append_dec_qint("Ap_n_skip.dec", Ap ? Ap[n] : 0);
+    // dump_int_hex  ("Ap_skip.hex",    Ap,    n + 1);
+    // dump_int_hex  ("Ai_skip.hex",    Ai,    Ap[n]);
+    // dump_float_hex("Ax_skip.hex",    Ax,    Ap[n]);
+    // append_dec_qint("Ap_n_skip.dec", Ap ? Ap[n] : 0);
 
 
-    dump_float_hex("D_skip.hex",     D,     n);
-    dump_float_hex("Dinv_skip.hex",  Dinv,  n);
+    // dump_float_hex("D_skip.hex",     D,     n);
+    // dump_float_hex("Dinv_skip.hex",  Dinv,  n);
 
-    dump_int_hex  ("Lnz_skip.hex",   Lnz,   n);
-    dump_int_hex  ("etree_skip.hex", etree, n);
+    // dump_int_hex  ("Lnz_skip.hex",   Lnz,   n);
+    // dump_int_hex  ("etree_skip.hex", etree, n);
 
-    printf("Factorization complete.  %" PRId64 " positive entries in D out of %" PRId64 " total.\n",
-           (int64_t)positiveValuesInD, (int64_t)n);
+    // printf("Factorization complete.  %" PRId64 " positive entries in D out of %" PRId64 " total.\n",
+    //        (int64_t)positiveValuesInD, (int64_t)n);
     
 
     return positiveValuesInD;
@@ -401,11 +401,11 @@ void QDLDL_solve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li, co
                  const QDLDL_float* Dinv, QDLDL_float* x) {
     QDLDL_int i = 0;
 
-    printf("In QDLDL_solve\n");
+    // printf("In QDLDL_solve\n");
 
     QDLDL_Lsolve(n, Lp, Li, Lx, x);
 
-    printf("After Lsolve\n");
+    // printf("After Lsolve\n");
 
     for(i = 0; i < n; i++) {
         x[i] *= Dinv[i];
@@ -413,10 +413,10 @@ void QDLDL_solve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li, co
 
     QDLDL_Ltsolve(n, Lp, Li, Lx, x);
 
-    printf("After Ltsolve\n");
+    // printf("After Ltsolve\n");
 
-    dump_int_hex  ("Lp_skip.hex",    Lp,    n + 1);
-    dump_int_hex  ("Li_skip.hex",    Li,    Lp[n]);
-    dump_float_hex("Lx_skip.hex",    Lx,    Lp[n]);
-    append_dec_qint("Lp_n.dec", Lp ? Lp[n] : 0);
+    // dump_int_hex  ("Lp_skip.hex",    Lp,    n + 1);
+    // dump_int_hex  ("Li_skip.hex",    Li,    Lp[n]);
+    // dump_float_hex("Lx_skip.hex",    Lx,    Lp[n]);
+    // append_dec_qint("Lp_n.dec", Lp ? Lp[n] : 0);
 }
