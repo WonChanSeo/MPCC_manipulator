@@ -123,6 +123,19 @@ private:
     std::unique_ptr<SolverInterface> solver_interface_;
     PathToJson path_;
     unsigned int num_valid_guess_failed_;
+
+    // vs = dot(xdot, a)/||a||^2  (arc-length면 a는 단위접선)
+    double project_vs_workspace(double s,
+    const Eigen::Ref<const Eigen::VectorXd>& q,
+    const Eigen::Ref<const Eigen::VectorXd>& dq) const;
+
+    // 관절공간 경로를 쓰는 경우에만 필요 (없으면 제거)
+    double project_vs_joint(double s,
+    const Eigen::Ref<const Eigen::VectorXd>& dq) const;
+
+    // 보조: State/Input → Eigen 벡터
+    Eigen::VectorXd stateToJointVector(const State& x) const;
+    Eigen::VectorXd inputToDqVector(const Input& u) const;
 };
 
 }
