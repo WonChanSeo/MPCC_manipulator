@@ -132,18 +132,18 @@ void MPC::generateNewInitialGuess(const State &x0)
            }
        }
 
-       if (current_state.vs > 1e-4) // 양의 방향으로 움직일 때
-       {
-            dV_s = bounds_param_.get_dVs("l"); // 최대 음의 가속도 적용
-       }
-       else if (current_state.vs < -1e-4) // 음의 방향으로 움직일 때
-       {
-            dV_s = bounds_param_.get_dVs("u"); // 최대 양의 가속도 적용
-       }
-       else // 거의 멈춰있을 때
-       {
-            dV_s = 0.0;
-       }
+    //    if (current_state.vs > 1e-4) // 양의 방향으로 움직일 때
+    //    {
+    //         dV_s = bounds_param_.get_dVs("l"); // 최대 음의 가속도 적용
+    //    }
+    //    else if (current_state.vs < -1e-4) // 음의 방향으로 움직일 때
+    //    {
+    //         dV_s = bounds_param_.get_dVs("u"); // 최대 양의 가속도 적용
+    //    }
+    //    else // 거의 멈춰있을 때
+    //    {
+    //         dV_s = 0.0;
+    //    }
 
 
        // 3. 현재 상태와 계산된 제어 입력을 사용하여 다음 상태를 계산 (적분)
@@ -160,14 +160,28 @@ void MPC::generateNewInitialGuess(const State &x0)
                 next_input.set_dq(j, 0.0); // 속도를 0으로 설정
            }
        }
+
+       if (next_state.vs > 1e-4) // 양의 방향으로 움직일 때
+       {
+            dV_s = bounds_param_.get_dVs("l"); // 최대 음의 가속도 적용
+       }
+       else if (current_state.vs < -1e-4) // 음의 방향으로 움직일 때
+       {
+            dV_s = bounds_param_.get_dVs("u"); // 최대 양의 가속도 적용
+       }
+       else // 거의 멈춰있을 때
+       {
+            dV_s = 0.0;
+       }
     
         // next_state.vs = current_state.vs + dV_s * Ts_;
-        current_input.dVs = dV_s;
 
-        if(current_state.vs * next_state.vs < 0.0)
+
+        if(abs(next_state.vs) <= 10.0 * Ts_)
         {
-            next_state.vs = 0.0; // 속도를 0으로 설정
-            current_input.dVs = abs(next_state.vs - current_state.vs);
+            next_input.set_dVs(-next_state.vs / Ts_);;
+        } else {
+            next_input.set_dVs(dV_s);
         }
 
 

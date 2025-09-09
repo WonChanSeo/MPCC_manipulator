@@ -131,6 +131,11 @@ struct Input{
         }
     }
 
+    void set_dVs(double value)
+    {
+        dVs = value;
+    }
+
     void setZero()
     {
         dq1 = 0.0;
