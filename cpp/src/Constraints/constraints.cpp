@@ -147,41 +147,72 @@ double cordic_log(double z, int iterations = 48) {
 
 // [1,2)에서 log2(1+f)를 f*(c1 + c2 f + c3 f^2 [+ c4 f^3])로 근사
 // Horner + FMA 사용 (MAC 친화)
+// static inline float poly_log2_1pf_deg3(float f) {
+//     float p = fmaf(0.15391353f, f, -0.56775215f);  // c3 * f + c2
+//     p = fmaf(p, f, 1.41348539f);                   // (..)*f + c1
+//     return f * p;
+// }
+
+// static inline float poly_log2_1pf_deg4(float f) {
+//     float p = fmaf(-0.07915037f, f, 0.31221427f);  // c4 * f + c3
+//     p = fmaf(p, f, -0.66951521f);                  // (..)*f + c2
+//     p = fmaf(p, f,  1.43609808f);                  // (..)*f + c1
+//     return f * p;
+// }
+
+// // [1,2)에서 log2(1+f) 근사: 5차 (정확도↑)
+// static inline float poly_log2_1pf_deg5(float f) {
+//     // log2(1+f) ≈ f * (((((c5*f + c4)*f + c3)*f + c2)*f + c1))
+//     float p = fmaf( 0.04588701f, f, -0.19442591f); // c5*f + c4
+//     p = fmaf(p, f,  0.41542437f);                  // ... + c3
+//     p = fmaf(p, f, -0.70868282f);                  // ... + c2
+//     p = fmaf(p, f,  1.44182586f);                  // ... + c1
+//     return f * p;
+// }
+
+// // log2(1+f) 다항식: horner_coeffs = [0.126333, -0.180459, 0.25146527, -0.34298104,
+// //                                     0.47289345, -0.72011235, 1.44266956]
+// // 평가식은 (…(((a0 f + a1) f + a2) … + a6) f)  == 기존 코드와 동일
+// static inline float poly_log2_1pf_deg6(float f) {
+//     float p = fmaf(-0.03465904f, f, 0.14683537f);
+//     p = fmaf(p, f, -0.30403335f);
+//     p = fmaf(p, f,  0.46972589f);
+//     p = fmaf(p, f, -0.72056392f);
+//     p = fmaf(p, f,  1.44269504f);  // = 1/ln(2)
+//     return f * p;
+// }
+
 static inline float poly_log2_1pf_deg3(float f) {
-    float p = fmaf(0.15391353f, f, -0.56775215f);  // c3 * f + c2
-    p = fmaf(p, f, 1.41348539f);                   // (..)*f + c1
+    // p(f) = c2 f^2 + c1 f + c0
+    float p = fmaf( 0.22455320f, f, -0.66054761f);
+    p = fmaf(p, f,  1.44269504f);   // = 1/ln(2)
     return f * p;
 }
 
 static inline float poly_log2_1pf_deg4(float f) {
-    float p = fmaf(-0.07915037f, f, 0.31221427f);  // c4 * f + c3
-    p = fmaf(p, f, -0.66951521f);                  // (..)*f + c2
-    p = fmaf(p, f,  1.43609808f);                  // (..)*f + c1
+    float p = fmaf(-0.11540849f, f,  0.37846963f);
+    p = fmaf(p, f, -0.70673408f);
+    p = fmaf(p, f,  1.44269504f);
     return f * p;
 }
 
-// [1,2)에서 log2(1+f) 근사: 5차 (정확도↑)
 static inline float poly_log2_1pf_deg5(float f) {
-    // log2(1+f) ≈ f * (((((c5*f + c4)*f + c3)*f + c2)*f + c1))
-    float p = fmaf( 0.04588701f, f, -0.19442591f); // c5*f + c4
-    p = fmaf(p, f,  0.41542437f);                  // ... + c3
-    p = fmaf(p, f, -0.70868282f);                  // ... + c2
-    p = fmaf(p, f,  1.44182586f);                  // ... + c1
+    float p = fmaf( 0.06330085f, f, -0.23412722f);
+    p = fmaf(p, f,  0.44632584f);
+    p = fmaf(p, f, -0.71804627f);
+    p = fmaf(p, f,  1.44269504f);
     return f * p;
 }
 
-// log2(1+f) 다항식: horner_coeffs = [0.126333, -0.180459, 0.25146527, -0.34298104,
-//                                     0.47289345, -0.72011235, 1.44266956]
-// 평가식은 (…(((a0 f + a1) f + a2) … + a6) f)  == 기존 코드와 동일
 static inline float poly_log2_1pf_deg6(float f) {
-    float p = fmaf(0.126333f,   f, -0.180459f);
-    p = fmaf(p,                 f,  0.25146527f);
-    p = fmaf(p,                 f, -0.34298104f);
-    p = fmaf(p,                 f,  0.47289345f);
-    p = fmaf(p,                 f, -0.72011235f);
-    p = fmaf(p,                 f,  1.44266956f);
-    return f * p;  // 상수항 0을 보장(= log2(1+0)=0)
+    float p = fmaf(-0.03617690f, f,  0.15014706f);
+    p = fmaf(p, f, -0.30651712f);
+    p = fmaf(p, f,  0.47046182f);
+    p = fmaf(p, f, -0.72063291f);
+    p = fmaf(p, f,  1.44269504f);
+    return f * p;
 }
+
 
 float mac_log2(float y) {
     if (y <= 0.0f) return NAN;
@@ -194,7 +225,7 @@ float mac_log2(float y) {
 
     // --- 여기서 원하는 차수 선택 ---
     // float log_m = poly_log2_1pf_cubic(f);   // 3차: 더 가벼움(~2% 오차)
-    float log_m = poly_log2_1pf_deg6(f);    // 4차: 정밀(~0.5% 오차)
+    float log_m = poly_log2_1pf_deg4(f);    // 4차: 정밀(~0.5% 오차)
 
     return log_m + (float)e_prime;
 }
@@ -272,8 +303,8 @@ void Constraints::getSelcollConstraint(const State &x,const Input &u,const Robot
     Eigen::VectorXf d_min_dist = 0.01f*rb.d_sel_min_dist_.cast<float>(); // unit: [cm]->[m]
 
     // compute RBF value of minimum distance and its derivative
-    float r = param_.tol_selcol*0.01; // buffer [cm] -> [m]
-    float delta = -0.5; // switching point of RBF
+    float r = static_cast<float>(param_.tol_selcol)*0.01f; // buffer [cm] -> [m]
+    float delta = -0.5f; // switching point of RBF
     float RBF = getRBF(delta, min_dist - r);
 
     if(constraint)
