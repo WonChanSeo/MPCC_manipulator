@@ -627,6 +627,10 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         // update step info
         step_prev_ = alpha * step_;
         primal_step_norm_ = alpha * step_.template lpNorm<Eigen::Infinity>();
+        // // Fixed : step_이 정규화된 공간에서의 변화량이므로, 이를 비정규화된 공간으로 변환하여 노름을 계산해야 함.
+        // const auto dx_denorm = deNormalizeStep(step_); // 적용과 동일한 공간
+        // const double alpha_abs = std::abs(alpha);
+        // primal_step_norm_ = (alpha_abs * dx_denorm).template lpNorm<Eigen::Infinity>();
         // primal_step_norm_ = (alpha * step_).norm();
         dual_step_norm_ = alpha * step_lambda_.template lpNorm<Eigen::Infinity>();
         // std::cout << "\tprimal_step_norm_: " << primal_step_norm_ << std::endl;
