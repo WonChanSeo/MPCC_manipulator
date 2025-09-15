@@ -153,8 +153,8 @@ void MPC::generateNewInitialGuess(const State &x0)
         Eigen::VectorXd q_now  = stateToJointVector(cur_x);
         Eigen::VectorXd dq_now = inputToDqVector(cur_u);
 
-        double vs_now = project_vs_workspace(cur_x.s, q_now, dq_now);
-        cur_x.vs = vs_now;
+        // double vs_now = project_vs_workspace(cur_x.s, q_now, dq_now);
+        // cur_x.vs = vs_now;
 
         // 3) 1-스텝 예측 vs_next → dVs = (vs_next - vs_now)/Ts_
         Eigen::VectorXd dq_next = dq_now;
@@ -165,14 +165,14 @@ void MPC::generateNewInitialGuess(const State &x0)
 
         Eigen::Map<Eigen::VectorXd> ddq_vec(ddq_array.data(), 7);
         Eigen::VectorXd q_next_pred = q_now + dq_now * Ts_ + 0.5 * ddq_vec * (Ts_ * Ts_);
-        double s_next_pred = cur_x.s + vs_now * Ts_;
+        double s_next_pred = cur_x.s + cur_x.vs * Ts_;
 
         // 예측 기하 사용(보수적으로 현재 기하 사용해도 됨)
         double vs_next = project_vs_workspace(s_next_pred, q_next_pred, dq_next);
 
-        double dVs = (vs_next - vs_now) / Ts_;
-        if (vs_now * vs_next < 0.0) {          // vs 부호 반전 시 정확히 0으로 스냅
-            dVs = -vs_now / Ts_;
+        double dVs = (vs_next - cur_x.vs) / Ts_;
+        if (cur_x.vs * vs_next < 0.0) {          // vs 부호 반전 시 정확히 0으로 스냅
+            dVs = -cur_x.vs / Ts_;
             vs_next = 0.0;
         }
         dVs = std::clamp(dVs, dVs_min, dVs_max);
