@@ -179,6 +179,9 @@ static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
 
     OSQPCscMatrix* KKT_temp;
 
+    static int run_counter = 0; // Counter to track the number of runs
+    char filename[256];        // Buffer for the filename
+
     info = (OSQPFloat *)c_malloc(AMD_INFO * sizeof(OSQPFloat));
 
     // Compute permutation matrix P using AMD
@@ -193,6 +196,20 @@ static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
         return amd_status;
     }
 
+    // Generate a unique filename for this run
+    snprintf(filename, sizeof(filename), "../result/permutation_vector/permutation_vector_run_%d.txt", run_counter);
+    run_counter++; // Increment the counter for the next run
+
+    // Save p->P to the file
+    FILE* file = fopen(filename, "w");
+    if (file) {
+        for (i = 0; i < (*KKT)->n; i++) {
+            fprintf(file, "%lld\n", (long long)p->P[i]); // Use %lld for OSQPInt
+        }
+        fclose(file);
+    } else {
+        c_eprint("Failed to open file %s for saving permutation vector.", filename);
+    }
 
     // Inverse of the permutation vector
     Pinv = csc_pinv(p->P, (*KKT)->n);
