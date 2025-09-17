@@ -257,12 +257,26 @@ void OsqpInterface::setDynamics(const std::vector<OptVariables> &initial_guess,
             if(jac_constr_eq)
             {
                 jac_constr_eq->block(NX*i, NX*(i-1), NX, NX) = -normalization_param_.T_x_inv*lin_model_prev.A*normalization_param_.T_x;
+                // std::cout << "lin_model_prev.A: \n" << lin_model_prev.A << std::endl;
+                // std::cout << "normalization_param_.T_x: \n" << normalization_param_.T_x << std::endl;
+                // std::cout << "normalization_param_.T_x_inv: \n" << normalization_param_.T_x_inv << std::endl;
+                // std::cout << "Block being set at iteration " << i << ": \n" << -normalization_param_.T_x_inv*lin_model_prev.A*normalization_param_.T_x << std::endl;
                 jac_constr_eq->block(NX*i, NX*i, NX, NX) = MatrixXd::Identity(NX,NX);
                 jac_constr_eq->block(NX*i, NX*(N+1) + NU*(i-1), NX, NU) = -normalization_param_.T_x_inv*lin_model_prev.B*normalization_param_.T_u;
+                // std::cout << "lin_model_prev.B: \n" << lin_model_prev.B << std::endl;
+                // std::cout << "normalization_param_.T_u: \n" << normalization_param_.T_u << std::endl;
+                // std::cout << "normalization_param_.T_x_inv: \n" << normalization_param_.T_x_inv << std::endl;
+                // std::cout << "Block being set at iteration " << i << ": \n" << -normalization_param_.T_x_inv*lin_model_prev.B*normalization_param_.T_u << std::endl;
+
             }
             if(constr_eq) constr_eq->segment(NX*i, NX) = normalization_param_.T_x_inv * (stateToVector(initial_guess[i].xk) - (lin_model_prev.A*stateToVector(initial_guess[i-1].xk) + lin_model_prev.B*inputToVector(initial_guess[i-1].uk) +  lin_model_prev.g));
             if(l_eq) l_eq->segment(NX*i, NX) = VectorXd::Zero(NX);
             if(u_eq) u_eq->segment(NX*i, NX) = VectorXd::Zero(NX);
+        }
+
+        if (jac_constr_eq) {
+            std::cout << "jac_constr_eq matrix after iteration " << i << ": \n" << *jac_constr_eq << std::endl;
+            std::cout << "jac_constr_eq matrix: \n" << *jac_constr_eq << std::endl;
         }
     }
 }

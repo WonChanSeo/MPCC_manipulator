@@ -253,7 +253,7 @@ float mac_log2(float y) {
 
     // --- 여기서 원하는 차수 선택 ---
     // float log_m = poly_log2_1pf_cubic(f);   // 3차: 더 가벼움(~2% 오차)
-    float log_m = poly_log2_1pf_deg4(f);    // 4차: 정밀(~0.5% 오차)
+    float log_m = poly_log2_1pf_deg6(f);    // 4차: 정밀(~0.5% 오차)
 
     return log_m + (float)e_prime;
 }
