@@ -23,6 +23,436 @@
 #define STRINGIZE_(x) #x
 #define STRINGIZE(x) STRINGIZE_(x)
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <inttypes.h>
+
+#ifdef OSQP_USE_LONG
+#  define OSQP_INT_FMT "%" PRId64
+#else
+#  define OSQP_INT_FMT "%d"
+#endif
+
+// 구분자: 콤마/공백/탭/세미콜론
+static const char* CSV_DELIMS = " ,\t;";
+
+// ===== External permutation reader =====
+#ifndef OSQP_PERM_PATH
+// 기본 경로를 매크로로 지정해두고 필요 시 컴파일 옵션으로 바꿔도 됨
+#define OSQP_PERM_PATH "./P_ref.txt"
+#endif
+
+// 파일에서 정수 토큰 하나를 읽어 n개 채운다. 구분자는 공백/탭/콤마/세미콜론 허용.
+static int _read_int_tokens(FILE* f, OSQPInt *out, OSQPInt n_expected) {
+    OSQPInt count = 0;
+    char buf[1<<15];
+    while (count < n_expected && fgets(buf, sizeof(buf), f)) {
+        char *tok = strtok(buf, " ,\t;\r\n");
+        while (tok && count < n_expected) {
+#ifdef OSQP_USE_LONG
+            long long v; 
+            if (sscanf(tok, "%lld", &v) != 1) return -1;
+#else
+            int v;
+            if (sscanf(tok, "%d", &v) != 1) return -1;
+#endif
+            out[count++] = (OSQPInt)v;
+            tok = strtok(NULL, " ,\t;\r\n");
+        }
+    }
+    return (count == n_expected) ? 0 : -2; // 부족하면 에러
+}
+
+// P의 0/1 기반 판별 및 0-based 변환, 유효성 검사(중복/범위 체크)
+static int normalize_and_validate_perm(OSQPInt *P, OSQPInt n) {
+    // 범위 스캔
+    OSQPInt minv = P[0], maxv = P[0];
+    for (OSQPInt i=1;i<n;++i){ if (P[i]<minv) minv=P[i]; if (P[i]>maxv) maxv=P[i]; }
+
+    int one_based = (minv == 1 && maxv == n);
+    int zero_based= (minv == 0 && maxv == n-1);
+    if (!one_based && !zero_based) {
+        // 혼합/범위 이상
+        return -3;
+    }
+    if (one_based) {
+        for (OSQPInt i=0;i<n;++i) P[i] = P[i]-1;
+    }
+
+    // 중복 체크
+    unsigned char *seen = (unsigned char*)c_calloc((size_t)n, 1);
+    if (!seen) return -4;
+    for (OSQPInt i=0;i<n;++i){
+        OSQPInt v = P[i];
+        if (v < 0 || v >= n) { c_free(seen); return -5; }
+        if (seen[v]) { c_free(seen); return -6; }  // duplicate
+        seen[v] = 1;
+    }
+    c_free(seen);
+    return 0;
+}
+
+// 외부 파일에서 P를 읽어와 P_out에 0-based로 채움
+static int read_perm_from_file(const char *path, OSQPInt n, OSQPInt *P_out){
+    if (!path || !P_out) return -10;
+    FILE *fp = fopen(path, "r");
+    if (!fp) return -11;
+
+    int rc = _read_int_tokens(fp, P_out, n);
+    fclose(fp);
+    if (rc) return rc;
+
+    rc = normalize_and_validate_perm(P_out, n);
+    return rc; // 0이면 OK
+}
+
+// 한 줄에서 토큰을 최대 n개까지 파싱하여 double로 채움.
+// expected_cols<0 이면 개수 제한 없음, >=0 이면 정확히 expected_cols개여야 함.
+// 반환: 읽은 개수(>=0). 오류시 -1
+static int parse_numeric_line(char *line, int expected_cols, double *out_vals) {
+    int count = 0;
+    for (char *tok = strtok(line, CSV_DELIMS); tok; tok = strtok(NULL, CSV_DELIMS)) {
+        char *endp = NULL;
+        double v = strtod(tok, &endp);
+        if (endp == tok) return -1; // 숫자 파싱 실패
+        if (expected_cols >= 0 && count >= expected_cols) return -1;
+        out_vals[count++] = v;
+    }
+    return count;
+}
+
+/**
+ * Dense CSV -> OSQPCscMatrix (CSC)
+ *  - path: 숫자만 있는 CSV/TSV(구분자: , \t 공백 ; 허용)
+ *  - tol : |v| <= tol 이면 0으로 간주(무시)
+ *  - store_values!=0 이면 x[]에 실제 값 저장, 0이면 모두 1.0 저장(패턴만)
+ *  - out : 결과 CSC (csc_spalloc로 할당됨). 실패 시 NULL.
+ *
+ * 반환: 0 성공, <0 오류
+ */
+static int read_dense_csv_to_csc(const char *path, double tol, int store_values,
+                                 OSQPCscMatrix **out)
+{
+    if (!path || !out) return -1;
+    *out = OSQP_NULL;
+
+    FILE *f = fopen(path, "r");
+    if (!f) return -2;
+
+    const int MAX_LINE = 1<<20; // 1MB 라인 버퍼
+    char *line = (char*)c_malloc(MAX_LINE);
+    if (!line){ fclose(f); return -3; }
+
+    // --- 1pass: 첫 줄 읽고 열 개수 n 결정 ---
+    if (!fgets(line, MAX_LINE, f)){ c_free(line); fclose(f); return -4; }
+
+    // 첫 줄을 파싱하기 위해 임시 버퍼 준비
+    int max_tokens = (int)strlen(line);
+    if (max_tokens < 1) { c_free(line); fclose(f); return -5; }
+    double *rowbuf = (double*)c_malloc(sizeof(double)*max_tokens);
+    if (!rowbuf){ c_free(line); fclose(f); return -6; }
+
+    int n = parse_numeric_line(line, -1, rowbuf);
+    if (n <= 0){ c_free(rowbuf); c_free(line); fclose(f); return -7; }
+
+    // 열별 nnz 카운트
+    OSQPInt *col_counts = (OSQPInt*)c_calloc((size_t)n, sizeof(OSQPInt));
+    if (!col_counts){ c_free(rowbuf); c_free(line); fclose(f); return -8; }
+
+    // 첫 줄의 nnz 반영
+    OSQPInt nnz = 0;
+    for (int j=0;j<n;++j){
+        if (fabs(rowbuf[j]) > tol) { col_counts[j]++; nnz++; }
+    }
+
+    // --- 나머지 줄 스캔: m/nnz/열카운트 ---
+    OSQPInt m = 1;
+    while (fgets(line, MAX_LINE, f)) {
+        // 공백/빈 줄 스킵
+        int only_ws = 1;
+        for (char *q=line; *q; ++q) {
+            if (!isspace((unsigned char)*q) && *q!=',' && *q!=';') { only_ws=0; break; }
+        }
+        if (only_ws) continue;
+
+        int k = parse_numeric_line(line, n, rowbuf);
+        if (k != n){ c_free(col_counts); c_free(rowbuf); c_free(line); fclose(f); return -9; }
+        m++;
+        for (int j=0;j<n;++j){
+            if (fabs(rowbuf[j]) > tol) { col_counts[j]++; nnz++; }
+        }
+    }
+
+    // --- CSC 메모리 할당 ---
+    OSQPCscMatrix *A = csc_spalloc(m, n, nnz, /*values*/1, /*triplet*/0);
+    if (!A){ c_free(col_counts); c_free(rowbuf); c_free(line); fclose(f); return -10; }
+
+    // p: 누적합
+    A->p[0] = 0;
+    for (OSQPInt j=0;j<n;++j){
+        A->p[j+1] = A->p[j] + col_counts[j];
+    }
+
+    // 열별 삽입 cursor
+    OSQPInt *cursor = (OSQPInt*)c_malloc(sizeof(OSQPInt)*(size_t)n);
+    if (!cursor){ csc_spfree(A); c_free(col_counts); c_free(rowbuf); c_free(line); fclose(f); return -11; }
+    for (OSQPInt j=0;j<n;++j) cursor[j] = A->p[j];
+
+    // --- 2pass: 다시 읽어서 i/x 채우기 ---
+    rewind(f);
+    if (!fgets(line, MAX_LINE, f)){} // 첫 줄 재독
+
+    // 첫 줄 채우기 (row=0)
+    {
+        int k = parse_numeric_line(line, n, rowbuf);
+        if (k != n){ c_free(cursor); csc_spfree(A); c_free(col_counts); c_free(rowbuf); c_free(line); fclose(f); return -12; }
+        for (OSQPInt j=0;j<n;++j){
+            double v = rowbuf[j];
+            if (fabs(v) > tol){
+                OSQPInt pos = cursor[j]++;
+                A->i[pos] = 0;
+                A->x[pos] = store_values ? (OSQPFloat)v : (OSQPFloat)1.0;
+            }
+        }
+    }
+
+    // 나머지 행들
+    OSQPInt row = 1;
+    while (fgets(line, MAX_LINE, f)) {
+        int only_ws = 1;
+        for (char *q=line; *q; ++q) {
+            if (!isspace((unsigned char)*q) && *q!=',' && *q!=';') { only_ws=0; break; }
+        }
+        if (only_ws) continue;
+
+        int k = parse_numeric_line(line, n, rowbuf);
+        if (k != n){ c_free(cursor); csc_spfree(A); c_free(col_counts); c_free(rowbuf); c_free(line); fclose(f); return -13; }
+
+        for (OSQPInt j=0;j<n;++j){
+            double v = rowbuf[j];
+            if (fabs(v) > tol){
+                OSQPInt pos = cursor[j]++;
+                A->i[pos] = row;
+                A->x[pos] = store_values ? (OSQPFloat)v : (OSQPFloat)1.0;
+            }
+        }
+        row++;
+    }
+
+    // 정리
+    c_free(cursor);
+    c_free(col_counts);
+    c_free(rowbuf);
+    c_free(line);
+    fclose(f);
+
+    *out = A;
+    return 0;
+}
+
+// === CSC 덤프: 텍스트 1파일 형식 ===
+// 파일 포맷 (0-based index):
+//   % CSC matrix dump
+//   m n nnz
+//   p: p0 p1 ... p_n
+//   i: i0 i1 ... i_(nnz-1)
+//   x: x0 x1 ... x_(nnz-1)   (x가 NULL이면 "x:none")
+static int dump_csc_text(const OSQPCscMatrix* M, const char* filepath) {
+    if (!M || !filepath) return -1;
+    FILE* f = fopen(filepath, "w");
+    if (!f) return -2;
+
+    const OSQPInt m = M->m;
+    const OSQPInt n = M->n;
+    const OSQPInt nnz = M->p[n];
+
+    fprintf(f, "%% CSC matrix dump\n");
+    fprintf(f, OSQP_INT_FMT " " OSQP_INT_FMT " " OSQP_INT_FMT "\n",
+            (long long)m, (long long)n, (long long)nnz);
+
+    // p array
+    fputs("p:", f);
+    for (OSQPInt j = 0; j <= n; ++j) {
+        fprintf(f, " " OSQP_INT_FMT, (long long)M->p[j]);
+    }
+    fputc('\n', f);
+
+    // i array
+    fputs("i:", f);
+    for (OSQPInt k = 0; k < nnz; ++k) {
+        fprintf(f, " " OSQP_INT_FMT, (long long)M->i[k]);
+    }
+    fputc('\n', f);
+
+    // x array (값이 NULL이면 구조만)
+    if (M->x) {
+        fputs("x:", f);
+        for (OSQPInt k = 0; k < nnz; ++k) {
+            // double/float 상관없이 손실 적은 출력
+            fprintf(f, " %.17g", (double)M->x[k]);
+        }
+        fputc('\n', f);
+    } else {
+        fputs("x:none\n", f);
+    }
+
+    fclose(f);
+    return 0;
+}
+
+// CSC -> CSR 변환 (대칭 확장 옵션 포함)
+// 입력: M (CSC: m x n), expand_sym!=0이면 (i,j)와 (j,i) 모두 반영(대각은 중복 제거)
+typedef struct {
+    OSQPInt m, n;
+    OSQPInt *rp;  // row pointer size m+1
+    OSQPInt *ci;  // col indices size nnz'
+    OSQPFloat *x; // values size nnz'
+} CSR;
+
+static void csr_free(CSR* R){
+    if(!R) return;
+    c_free(R->rp); c_free(R->ci); c_free(R->x);
+    memset(R, 0, sizeof(*R));
+}
+
+static int csc_to_csr_with_sym(const OSQPCscMatrix* M, int expand_sym, CSR* out){
+    if(!M || !out) return -1;
+    const OSQPInt m = M->m;
+    const OSQPInt n = M->n;
+    const OSQPInt nnz = M->p[n];
+
+    out->m = m; out->n = n;
+    out->rp = c_calloc(m+1, sizeof(OSQPInt));
+    if(!out->rp) return -2;
+
+    // 1) row counts
+    if (!expand_sym){
+        for(OSQPInt j=0;j<n;++j){
+            for(OSQPInt k=M->p[j]; k<M->p[j+1]; ++k){
+                OSQPInt i = M->i[k];
+                if(i<0 || i>=m) return -3;
+                out->rp[i]++;  // count per row
+            }
+        }
+    } else {
+        for(OSQPInt j=0;j<n;++j){
+            for(OSQPInt k=M->p[j]; k<M->p[j+1]; ++k){
+                OSQPInt i = M->i[k];
+                if(i<0 || i>=m) return -3;
+                out->rp[i]++;           // (i,j)
+                if(i!=j) out->rp[j]++;  // (j,i) for off-diagonal
+            }
+        }
+    }
+
+    // prefix sum -> rp
+    OSQPInt total = 0;
+    for(OSQPInt i=0;i<m;++i){
+        OSQPInt c = out->rp[i];
+        out->rp[i] = total;
+        total += c;
+    }
+    out->rp[m] = total;
+
+    out->ci = c_malloc(total * sizeof(OSQPInt));
+    out->x  = c_malloc(total * sizeof(OSQPFloat));
+    if(!out->ci || !out->x){ csr_free(out); return -4; }
+
+    // 2) fill rows
+    // use a working copy of rp as insertion cursor
+    OSQPInt* wr = c_malloc((m+1)*sizeof(OSQPInt));
+    if(!wr){ csr_free(out); return -5; }
+    memcpy(wr, out->rp, (m+1)*sizeof(OSQPInt));
+
+    if(!expand_sym){
+        for(OSQPInt j=0;j<n;++j){
+            for(OSQPInt k=M->p[j]; k<M->p[j+1]; ++k){
+                OSQPInt i = M->i[k];
+                OSQPInt pos = wr[i]++;
+                out->ci[pos] = j;
+                out->x[pos]  = M->x ? M->x[k] : (OSQPFloat)1.0;
+            }
+        }
+    } else {
+        for(OSQPInt j=0;j<n;++j){
+            for(OSQPInt k=M->p[j]; k<M->p[j+1]; ++k){
+                OSQPInt i = M->i[k];
+                OSQPFloat v = M->x ? M->x[k] : (OSQPFloat)1.0;
+
+                OSQPInt pos1 = wr[i]++;
+                out->ci[pos1] = j;
+                out->x[pos1]  = v;
+
+                if(i!=j){
+                    OSQPInt pos2 = wr[j]++;
+                    out->ci[pos2] = i;
+                    out->x[pos2]  = v;
+                }
+            }
+        }
+    }
+
+    c_free(wr);
+    return 0;
+}
+
+// CSR(희소) -> 행렬 모양(행 기준)으로 파일에 저장 (dense stream, 한 행씩 버퍼)
+// sep: ","면 CSV, "\t"면 TSV
+// precision: 예) 17 -> "%.17g"
+static int dump_dense_rows_from_csr(const CSR* R, const char* path,
+                                    const char* sep, int precision){
+    if(!R || !path || !sep) return -1;
+    FILE* f = fopen(path, "w");
+    if(!f) return -2;
+
+    // 헤더(선택): 첫 줄에 m,n
+    // fprintf(f, OSQP_INT_FMT "," OSQP_INT_FMT "\n", (long long)R->m, (long long)R->n);
+
+    OSQPFloat* rowbuf = c_calloc(R->n, sizeof(OSQPFloat));
+    if(!rowbuf){ fclose(f); return -3; }
+
+    char fmt[32];
+    // "%.17g" 형태 포맷 문자열 구성
+    snprintf(fmt, sizeof(fmt), "%%.%dg", precision > 0 ? precision : 17);
+
+    for(OSQPInt i=0;i<R->m;++i){
+        // 0으로 초기화 (이미 calloc했지만 매 행마다 reset)
+        memset(rowbuf, 0, R->n * sizeof(OSQPFloat));
+
+        for(OSQPInt k=R->rp[i]; k<R->rp[i+1]; ++k){
+            OSQPInt j = R->ci[k];
+            rowbuf[j] = R->x[k];
+        }
+
+        // 한 행 출력
+        for(OSQPInt j=0;j<R->n;++j){
+            // 값 출력
+            // CSV에서 0도 명시적으로 찍는다. (희소가 아닌 "행렬 모양" 보존)
+            fprintf(f, fmt, (double)rowbuf[j]);
+            if(j+1 < R->n) fputs(sep, f);
+        }
+        fputc('\n', f);
+    }
+
+    c_free(rowbuf);
+    fclose(f);
+    return 0;
+}
+
+// 통합: CSC 행렬을 행렬 모양(행 기준)으로 저장
+// expand_sym: 0 그대로, 1 대칭확장
+static int dump_matrix_shape(const OSQPCscMatrix* M, const char* path,
+                             int expand_sym, const char* sep, int precision){
+    CSR R = {0};
+    int st = csc_to_csr_with_sym(M, expand_sym, &R);
+    if(st) { csr_free(&R); return st; }
+    st = dump_dense_rows_from_csr(&R, path, sep, precision);
+    csr_free(&R);
+    return st;
+}
+
+
 static void dump_L_to_file(const qdldl_solver *s, const char *filename) {
     FILE *f = fopen(filename, "w");
     if (!f) {
@@ -47,6 +477,97 @@ static void dump_L_to_file(const qdldl_solver *s, const char *filename) {
 
     fclose(f);
 }
+
+
+// ==== Dense 0/1 mask dumper ====
+// CSC -> CSR 변환은 기존 함수를 재사용(csc_to_csr_with_sym).
+// tol > 0 이면 |x| <= tol 은 0 으로 간주.
+
+static int dump_dense_mask_from_csr(const CSR* R,
+                                    const char* path,
+                                    const char* sep) {
+    if(!R || !path || !sep) return -1;
+    FILE* f = fopen(path, "w");
+    if(!f) return -2;
+
+    // 한 행씩 0/1 출력 (메모리 O(n))
+    unsigned char* rowmask = (unsigned char*)c_calloc(R->n, sizeof(unsigned char));
+    if(!rowmask){ fclose(f); return -3; }
+
+    for(OSQPInt i=0;i<R->m;++i){
+        memset(rowmask, 0, (size_t)R->n * sizeof(unsigned char));
+
+        for(OSQPInt k=R->rp[i]; k<R->rp[i+1]; ++k){
+            OSQPInt j = R->ci[k];
+            rowmask[j] = 1; // 값 무시, 존재 여부만 표시
+        }
+
+        for(OSQPInt j=0;j<R->n;++j){
+            fputc(rowmask[j] ? '1' : '0', f);
+            if(j+1 < R->n) fputs(sep, f);
+        }
+        fputc('\n', f);
+    }
+
+    c_free(rowmask);
+    fclose(f);
+    return 0;
+}
+
+// tol 적용 버전: |x| > tol 인 항만 1로 인정.
+// (CSR 값 배열을 tol에 따라 걸러서 마스크 생성)
+static int dump_dense_mask_from_csr_with_tol(const CSR* R,
+                                             const char* path,
+                                             const char* sep,
+                                             double tol) {
+    if(!R || !path || !sep) return -1;
+    FILE* f = fopen(path, "w");
+    if(!f) return -2;
+
+    unsigned char* rowmask = (unsigned char*)c_calloc(R->n, sizeof(unsigned char));
+    if(!rowmask){ fclose(f); return -3; }
+
+    for(OSQPInt i=0;i<R->m;++i){
+        memset(rowmask, 0, (size_t)R->n * sizeof(unsigned char));
+
+        for(OSQPInt k=R->rp[i]; k<R->rp[i+1]; ++k){
+            OSQPInt j = R->ci[k];
+            OSQPFloat v = R->x ? R->x[k] : (OSQPFloat)1.0;
+            if ((double)((v>=0)?v:-v) > tol) rowmask[j] = 1;
+        }
+
+        for(OSQPInt j=0;j<R->n;++j){
+            fputc(rowmask[j] ? '1' : '0', f);
+            if(j+1 < R->n) fputs(sep, f);
+        }
+        fputc('\n', f);
+    }
+
+    c_free(rowmask);
+    fclose(f);
+    return 0;
+}
+
+// 통합 엔트리: CSC -> CSR(필요시 대칭 확장) -> 0/1 마스크 저장
+// expand_sym: 0 원본 그대로, 1 대칭 확장(A + A^T - diag(A))
+// sep: ","(CSV) 또는 "\t"(TSV) 등
+// tol <= 0  이면 값 무관 존재여부(구조)만 1, 0 처리
+// tol >  0  이면 |x| > tol 일 때만 1
+static int dump_matrix_mask_shape(const OSQPCscMatrix* M, const char* path,
+                                  int expand_sym, const char* sep, double tol) {
+    CSR R = {0};
+    int st = csc_to_csr_with_sym(M, expand_sym, &R);
+    if(st) { csr_free(&R); return st; }
+
+    if (tol > 0.0)
+        st = dump_dense_mask_from_csr_with_tol(&R, path, sep, tol);
+    else
+        st = dump_dense_mask_from_csr(&R, path, sep);
+
+    csr_free(&R);
+    return st;
+}
+
 
 
 void update_settings_linsys_solver_qdldl(qdldl_solver*       s,
@@ -162,7 +683,7 @@ static OSQPInt LDL_factor(OSQPCscMatrix* A,
 
 }
 
-
+/* MODIFIED */
 static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
                            qdldl_solver*   p,
                            OSQPInt         Pnz,
@@ -175,56 +696,105 @@ static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
     OSQPInt    amd_status;
     OSQPInt*   Pinv;
     OSQPInt*   KtoPKPt;
-    OSQPInt    i; // Indexing
+    OSQPInt    i;
 
     OSQPCscMatrix* KKT_temp;
 
-    static int run_counter = 0; // Counter to track the number of runs
-    char filename[256];        // Buffer for the filename
+    // OSQPCscMatrix* A = NULL;
+    // // 값까지 저장( store_values=1 ), 아주 작은 값은 0으로 취급(tol=1e-15)
+    // int rc = read_dense_csv_to_csc("./KKT_mask.csv",
+    //                             0, /*store_values=*/1, &A);
+
+    static int run_counter = 0;
+    char path[512];
 
     info = (OSQPFloat *)c_malloc(AMD_INFO * sizeof(OSQPFloat));
 
-    // Compute permutation matrix P using AMD
-#ifdef OSQP_USE_LONG
-    amd_status = amd_l_order((*KKT)->n, (*KKT)->p, (*KKT)->i, p->P, (OSQPFloat *)OSQP_NULL, info);
-#else
-    amd_status = amd_order((*KKT)->n, (*KKT)->p, (*KKT)->i, p->P, (OSQPFloat *)OSQP_NULL, info);
-#endif
-    if (amd_status < 0) {
-        // Free Amd info and return an error
-        c_free(info);
-        return amd_status;
+    // (A) 퍼뮤테이션 전 KKT를 "행렬 모양"으로 저장
+    // 예: CSV, 대칭 확장 on, 소수 17자리
+    snprintf(path, sizeof(path),
+             "../result/KKT_dense/KKT_before_run_%d.csv", run_counter);
+    if (dump_matrix_shape((*KKT), path, /*expand_sym=*/1, /*sep=*/",", /*precision=*/17) != 0){
+        c_eprint("Failed to dump dense matrix (before) to %s.", path);
     }
 
-    // Generate a unique filename for this run
-    snprintf(filename, sizeof(filename), "../result/permutation_vector/permutation_vector_run_%d.txt", run_counter);
-    run_counter++; // Increment the counter for the next run
+    snprintf(path, sizeof(path),
+             "../result/KKT_csc/KKT_before_run_%d.csc.txt", run_counter);
+    if (dump_csc_text((*KKT), path) != 0) {
+        c_eprint("Failed to dump CSC (before) to %s.", path);
+    }
+    // (A) 퍼뮤테이션 전: 0/1 마스크 저장
+    snprintf(path, sizeof(path),
+            "../result/KKT_mask/KKT_mask_before_run_%d.csv", run_counter);
+    if (dump_matrix_mask_shape((*KKT), path, /*expand_sym=*/1, ",", /*tol=*/0.0) != 0){
+        c_eprint("Failed to dump dense mask (before) to %s.", path);
+    }
 
-    // Save p->P to the file
-    FILE* file = fopen(filename, "w");
-    if (file) {
-        for (i = 0; i < (*KKT)->n; i++) {
-            fprintf(file, "%lld\n", (long long)p->P[i]); // Use %lld for OSQPInt
+//     // (B) AMD로 P 계산
+// #ifdef OSQP_USE_LONG
+//     amd_status = amd_l_order((*KKT)->n, (*KKT)->p, (*KKT)->i, p->P, (OSQPFloat *)OSQP_NULL, info);
+
+// #else
+//     amd_status = amd_order((*KKT)->n, (*KKT)->p, (*KKT)->i, p->P, (OSQPFloat *)OSQP_NULL, info);
+// #endif
+//     if (amd_status < 0) {
+//         c_free(info);
+//         return amd_status;
+//     }
+
+//     // (C) P 저장 (기존 코드 그대로)
+//     snprintf(path, sizeof(path),
+//              "../result/permutation_vector/permutation_vector_run_%d.txt", run_counter);
+//     {
+//         FILE* file = fopen(path, "w");
+//         if (file) {
+//             for (i = 0; i < (*KKT)->n; i++) {
+// #ifdef OSQP_USE_LONG
+//                 fprintf(file, "%lld\n", (long long)p->P[i]);
+// #else
+//                 fprintf(file, "%d\n", p->P[i]);
+// #endif
+//             }
+//             fclose(file);
+//         } else {
+//             c_eprint("Failed to open file %s for saving permutation vector.", path);
+//         }
+//     }
+
+    // (B) AMD 대신 외부 P를 읽어 사용
+    {
+        OSQPInt n = (*KKT)->n;
+        int rcP = read_perm_from_file(OSQP_PERM_PATH, n, p->P);
+        if (rcP){
+            c_eprint("Failed to read permutation P from '%s' (rc=%d).", OSQP_PERM_PATH, rcP);
+            return -100;  // 적절한 에러 코드로 조정 가능
         }
-        fclose(file);
-    } else {
-        c_eprint("Failed to open file %s for saving permutation vector.", filename);
+        // 참고: 필요 시 여기서 P를 저장도 가능
+        snprintf(path, sizeof(path),
+                 "../result/permutation_vector/permutation_vector_run_%d.txt", run_counter);
+        FILE* file = fopen(path, "w");
+        if (file) {
+            for (i = 0; i < n; i++) {
+#ifdef OSQP_USE_LONG
+                fprintf(file, "%lld\n", (long long)p->P[i]);
+#else
+                fprintf(file, "%d\n", p->P[i]);
+#endif
+            }
+            fclose(file);
+        } else {
+            c_eprint("Failed to open file %s for saving permutation vector.", path);
+        }
     }
 
-    // Inverse of the permutation vector
+    // (D) Pinv 및 대칭 퍼뮤테이션
     Pinv = csc_pinv(p->P, (*KKT)->n);
-
-    // Permute KKT matrix
-    if (!PtoKKT && !AtoKKT && !rhotoKKT){  // No vectors to be stored
-        // Assign values of mapping
+    if (!PtoKKT && !AtoKKT && !rhotoKKT){
         KKT_temp = csc_symperm((*KKT), Pinv, OSQP_NULL, 1);
-    }
-    else {
-        // Allocate vector of mappings from unpermuted to permuted
+    } else {
         KtoPKPt = c_malloc((*KKT)->p[(*KKT)->n] * sizeof(OSQPInt));
         KKT_temp = csc_symperm((*KKT), Pinv, KtoPKPt, 1);
 
-        // Update vectors PtoKKT, AtoKKT and rhotoKKT
         if (PtoKKT){
             for (i = 0; i < Pnz; i++){
                 PtoKKT[i] = KtoPKPt[PtoKKT[i]];
@@ -240,22 +810,116 @@ static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
                 rhotoKKT[i] = KtoPKPt[rhotoKKT[i]];
             }
         }
-
-        // Cleanup vector of mapping
         c_free(KtoPKPt);
     }
 
-    // Cleanup
-    // Free previous KKT matrix and assign pointer to new one
+    // (E) 퍼뮤테이션 후 KKT를 "행렬 모양"으로 저장
+    snprintf(path, sizeof(path),
+             "../result/KKT_dense/KKT_after_run_%d.csv", run_counter);
+    if (dump_matrix_shape(KKT_temp, path, /*expand_sym=*/1, /*sep=*/",", /*precision=*/17) != 0){
+        c_eprint("Failed to dump dense matrix (after) to %s.", path);
+    }
+    snprintf(path, sizeof(path),
+             "../result/KKT_csc/KKT_after_run_%d.csc.txt", run_counter);
+    if (dump_csc_text(KKT_temp, path) != 0) {
+        c_eprint("Failed to dump CSC (after) to %s.", path);
+    }
+    // (E) 퍼뮤테이션 후: 0/1 마스크 저장
+    snprintf(path, sizeof(path),
+            "../result/KKT_mask/KKT_mask_after_run_%d.csv", run_counter);
+    if (dump_matrix_mask_shape(KKT_temp, path, /*expand_sym=*/1, ",", /*tol=*/0.0) != 0){
+        c_eprint("Failed to dump dense mask (after) to %s.", path);
+    }
+
+    // (F) 교체/정리
     csc_spfree((*KKT));
     (*KKT) = KKT_temp;
-    // Free Pinv
     c_free(Pinv);
-    // Free Amd info
     c_free(info);
+
+    // (G) run id 증가 (before/after/P 파일이 동일 인덱스로 묶임)
+    run_counter++;
 
     return 0;
 }
+
+// static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
+//                            qdldl_solver*   p,
+//                            OSQPInt         Pnz,
+//                            OSQPInt         Anz,
+//                            OSQPInt         m,
+//                            OSQPInt*        PtoKKT,
+//                            OSQPInt*        AtoKKT,
+//                            OSQPInt*        rhotoKKT) {
+//     OSQPFloat* info;
+//     OSQPInt    amd_status;
+//     OSQPInt*   Pinv;
+//     OSQPInt*   KtoPKPt;
+//     OSQPInt    i; // Indexing
+
+//     OSQPCscMatrix* KKT_temp;
+
+//     info = (OSQPFloat *)c_malloc(AMD_INFO * sizeof(OSQPFloat));
+
+//     // Compute permutation matrix P using AMD
+// #ifdef OSQP_USE_LONG
+//     amd_status = amd_l_order((*KKT)->n, (*KKT)->p, (*KKT)->i, p->P, (OSQPFloat *)OSQP_NULL, info);
+// #else
+//     amd_status = amd_order((*KKT)->n, (*KKT)->p, (*KKT)->i, p->P, (OSQPFloat *)OSQP_NULL, info);
+// #endif
+//     if (amd_status < 0) {
+//         // Free Amd info and return an error
+//         c_free(info);
+//         return amd_status;
+//     }
+
+
+//     // Inverse of the permutation vector
+//     Pinv = csc_pinv(p->P, (*KKT)->n);
+
+//     // Permute KKT matrix
+//     if (!PtoKKT && !AtoKKT && !rhotoKKT){  // No vectors to be stored
+//         // Assign values of mapping
+//         KKT_temp = csc_symperm((*KKT), Pinv, OSQP_NULL, 1);
+//     }
+//     else {
+//         // Allocate vector of mappings from unpermuted to permuted
+//         KtoPKPt = c_malloc((*KKT)->p[(*KKT)->n] * sizeof(OSQPInt));
+//         KKT_temp = csc_symperm((*KKT), Pinv, KtoPKPt, 1);
+
+//         // Update vectors PtoKKT, AtoKKT and rhotoKKT
+//         if (PtoKKT){
+//             for (i = 0; i < Pnz; i++){
+//                 PtoKKT[i] = KtoPKPt[PtoKKT[i]];
+//             }
+//         }
+//         if (AtoKKT){
+//             for (i = 0; i < Anz; i++){
+//                 AtoKKT[i] = KtoPKPt[AtoKKT[i]];
+//             }
+//         }
+//         if (rhotoKKT){
+//             for (i = 0; i < m; i++){
+//                 rhotoKKT[i] = KtoPKPt[rhotoKKT[i]];
+//             }
+//         }
+
+//         // Cleanup vector of mapping
+//         c_free(KtoPKPt);
+//     }
+
+//     // Cleanup
+//     // Free previous KKT matrix and assign pointer to new one
+//     csc_spfree((*KKT));
+//     (*KKT) = KKT_temp;
+//     // Free Pinv
+//     c_free(Pinv);
+//     // Free Amd info
+//     c_free(info);
+
+//     return 0;
+// }
+
 
 
 // Initialize LDL Factorization structure

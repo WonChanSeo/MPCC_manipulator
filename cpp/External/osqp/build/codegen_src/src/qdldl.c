@@ -418,5 +418,5 @@ void QDLDL_solve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li, co
     // dump_int_hex  ("Lp_skip.hex",    Lp,    n + 1);
     // dump_int_hex  ("Li_skip.hex",    Li,    Lp[n]);
     // dump_float_hex("Lx_skip.hex",    Lx,    Lp[n]);
-    // append_dec_qint("Lp_n.dec", Lp ? Lp[n] : 0);
+    // append_dec_qint("../result/PKPT_test/Lp_n_P_ref.dec", Lp ? Lp[n] : 0);
 }

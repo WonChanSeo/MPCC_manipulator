@@ -76,9 +76,9 @@ LinModelMatrix Model::discretizeModel(const LinModelMatrix &lin_model_c) const
     temp.block<NX,1>(0,NX+NU) = lin_model_c.g;
     temp = temp*Ts_;
     // take the matrix exponential of temp
-    std::cout << "Computing matrix exponential of: \n" << temp << std::endl;
+    // std::cout << "Computing matrix exponential of: \n" << temp << std::endl;
     const Eigen::Matrix<double,NX+NU+1,NX+NU+1> temp_res = temp.exp();
-    std::cout << "Resulting matrix exponential: \n" << temp_res << std::endl;
+    // std::cout << "Resulting matrix exponential: \n" << temp_res << std::endl;
     // extract dynamics out of big matrix
     // x_{k+1} = Ad x_k + Bd u_k + gd
     //temp_res = [Ad,Bd,gd;zeros]

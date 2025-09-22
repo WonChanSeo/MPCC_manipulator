@@ -274,10 +274,10 @@ void OsqpInterface::setDynamics(const std::vector<OptVariables> &initial_guess,
             if(u_eq) u_eq->segment(NX*i, NX) = VectorXd::Zero(NX);
         }
 
-        if (jac_constr_eq) {
-            std::cout << "jac_constr_eq matrix after iteration " << i << ": \n" << *jac_constr_eq << std::endl;
-            std::cout << "jac_constr_eq matrix: \n" << *jac_constr_eq << std::endl;
-        }
+        // if (jac_constr_eq) {
+        //     std::cout << "jac_constr_eq matrix after iteration " << i << ": \n" << *jac_constr_eq << std::endl;
+        //     std::cout << "jac_constr_eq matrix: \n" << *jac_constr_eq << std::endl;
+        // }
     }
 }
 

@@ -100,4 +100,8 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o: \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/include/amd.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/include/SuiteSparse_config.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/../_common/kkt.h \
- /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/../_common/csc_utils.h
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/../_common/csc_utils.h \
+ /usr/include/inttypes.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h

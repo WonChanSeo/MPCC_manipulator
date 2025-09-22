@@ -1362,7 +1362,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o: ../alg
   ../algebra/_common/lin_sys/qdldl/amd/include/amd.h \
   ../algebra/_common/lin_sys/qdldl/amd/include/SuiteSparse_config.h \
   ../algebra/_common/kkt.h \
-  ../algebra/_common/csc_utils.h
+  ../algebra/_common/csc_utils.h \
+  /usr/include/inttypes.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h
 
 CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o: ../algebra/builtin/algebra_libs.c \
   /usr/include/stdc-predef.h \
@@ -2396,6 +2401,12 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
 
 ../include/private/auxil.h:
 
+../include/private/lin_alg.h:
+
+../algebra/builtin/matrix.c:
+
+../algebra/builtin/algebra_libs.c:
+
 /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
 
 /usr/include/x86_64-linux-gnu/bits/fp-fast.h:
@@ -2405,8 +2416,6 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
 ../src/scaling.c:
 
 /usr/include/x86_64-linux-gnu/bits/math-vector.h:
-
-../algebra/builtin/matrix.c:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
 
@@ -2455,10 +2464,6 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
 /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
-
-../src/auxil.c:
-
-/usr/include/x86_64-linux-gnu/sys/select.h:
 
 ../algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c:
 
@@ -2516,7 +2521,7 @@ include/public/osqp_configure.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
 
-../include/private/lin_alg.h:
+/usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h:
 
 /usr/include/x86_64-linux-gnu/bits/signum-generic.h:
 
@@ -2545,6 +2550,12 @@ include/public/osqp_configure.h:
 ../include/public/osqp_api_constants.h:
 
 ../include/public/osqp_api_types.h:
+
+../src/auxil.c:
+
+/usr/include/x86_64-linux-gnu/sys/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
 ../include/public/osqp_api_functions.h:
 
@@ -2592,8 +2603,6 @@ _deps/qdldl-build/include/qdldl_version.h:
 
 ../include/private/util.h:
 
-../algebra/builtin/algebra_libs.c:
-
 /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h:
@@ -2615,6 +2624,8 @@ _deps/qdldl-build/include/qdldl_version.h:
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
 ../algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c:
+
+/usr/include/inttypes.h:
 
 ../algebra/builtin/algebra_impl.h:
 
@@ -2642,7 +2653,11 @@ _deps/qdldl-build/include/qdldl_version.h:
 
 ../algebra/_common/lin_sys/qdldl/amd/src/amd_order.c:
 
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
+
 /usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/include/stdint.h:
 
 /usr/include/linux/limits.h:
 
