@@ -710,25 +710,25 @@ static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
 
     info = (OSQPFloat *)c_malloc(AMD_INFO * sizeof(OSQPFloat));
 
-    // (A) 퍼뮤테이션 전 KKT를 "행렬 모양"으로 저장
-    // 예: CSV, 대칭 확장 on, 소수 17자리
-    snprintf(path, sizeof(path),
-             "../result/KKT_dense/KKT_before_run_%d.csv", run_counter);
-    if (dump_matrix_shape((*KKT), path, /*expand_sym=*/1, /*sep=*/",", /*precision=*/17) != 0){
-        c_eprint("Failed to dump dense matrix (before) to %s.", path);
-    }
+    // // (A) 퍼뮤테이션 전 KKT를 "행렬 모양"으로 저장
+    // // 예: CSV, 대칭 확장 on, 소수 17자리
+    // snprintf(path, sizeof(path),
+    //          "../result/KKT_dense/KKT_before_run_%d.csv", run_counter);
+    // if (dump_matrix_shape((*KKT), path, /*expand_sym=*/1, /*sep=*/",", /*precision=*/17) != 0){
+    //     c_eprint("Failed to dump dense matrix (before) to %s.", path);
+    // }
 
-    snprintf(path, sizeof(path),
-             "../result/KKT_csc/KKT_before_run_%d.csc.txt", run_counter);
-    if (dump_csc_text((*KKT), path) != 0) {
-        c_eprint("Failed to dump CSC (before) to %s.", path);
-    }
-    // (A) 퍼뮤테이션 전: 0/1 마스크 저장
-    snprintf(path, sizeof(path),
-            "../result/KKT_mask/KKT_mask_before_run_%d.csv", run_counter);
-    if (dump_matrix_mask_shape((*KKT), path, /*expand_sym=*/1, ",", /*tol=*/0.0) != 0){
-        c_eprint("Failed to dump dense mask (before) to %s.", path);
-    }
+    // snprintf(path, sizeof(path),
+    //          "../result/KKT_csc/KKT_before_run_%d.csc.txt", run_counter);
+    // if (dump_csc_text((*KKT), path) != 0) {
+    //     c_eprint("Failed to dump CSC (before) to %s.", path);
+    // }
+    // // (A) 퍼뮤테이션 전: 0/1 마스크 저장
+    // snprintf(path, sizeof(path),
+    //         "../result/KKT_mask/KKT_mask_before_run_%d.csv", run_counter);
+    // if (dump_matrix_mask_shape((*KKT), path, /*expand_sym=*/1, ",", /*tol=*/0.0) != 0){
+    //     c_eprint("Failed to dump dense mask (before) to %s.", path);
+    // }
 
 //     // (B) AMD로 P 계산
 // #ifdef OSQP_USE_LONG
@@ -769,22 +769,22 @@ static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
             c_eprint("Failed to read permutation P from '%s' (rc=%d).", OSQP_PERM_PATH, rcP);
             return -100;  // 적절한 에러 코드로 조정 가능
         }
-        // 참고: 필요 시 여기서 P를 저장도 가능
-        snprintf(path, sizeof(path),
-                 "../result/permutation_vector/permutation_vector_run_%d.txt", run_counter);
-        FILE* file = fopen(path, "w");
-        if (file) {
-            for (i = 0; i < n; i++) {
-#ifdef OSQP_USE_LONG
-                fprintf(file, "%lld\n", (long long)p->P[i]);
-#else
-                fprintf(file, "%d\n", p->P[i]);
-#endif
-            }
-            fclose(file);
-        } else {
-            c_eprint("Failed to open file %s for saving permutation vector.", path);
-        }
+//         // 참고: 필요 시 여기서 P를 저장도 가능
+//         snprintf(path, sizeof(path),
+//                  "../result/permutation_vector/permutation_vector_run_%d.txt", run_counter);
+//         FILE* file = fopen(path, "w");
+//         if (file) {
+//             for (i = 0; i < n; i++) {
+// #ifdef OSQP_USE_LONG
+//                 fprintf(file, "%lld\n", (long long)p->P[i]);
+// #else
+//                 fprintf(file, "%d\n", p->P[i]);
+// #endif
+//             }
+//             fclose(file);
+//         } else {
+//             c_eprint("Failed to open file %s for saving permutation vector.", path);
+//         }
     }
 
     // (D) Pinv 및 대칭 퍼뮤테이션
@@ -813,23 +813,23 @@ static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
         c_free(KtoPKPt);
     }
 
-    // (E) 퍼뮤테이션 후 KKT를 "행렬 모양"으로 저장
-    snprintf(path, sizeof(path),
-             "../result/KKT_dense/KKT_after_run_%d.csv", run_counter);
-    if (dump_matrix_shape(KKT_temp, path, /*expand_sym=*/1, /*sep=*/",", /*precision=*/17) != 0){
-        c_eprint("Failed to dump dense matrix (after) to %s.", path);
-    }
-    snprintf(path, sizeof(path),
-             "../result/KKT_csc/KKT_after_run_%d.csc.txt", run_counter);
-    if (dump_csc_text(KKT_temp, path) != 0) {
-        c_eprint("Failed to dump CSC (after) to %s.", path);
-    }
-    // (E) 퍼뮤테이션 후: 0/1 마스크 저장
-    snprintf(path, sizeof(path),
-            "../result/KKT_mask/KKT_mask_after_run_%d.csv", run_counter);
-    if (dump_matrix_mask_shape(KKT_temp, path, /*expand_sym=*/1, ",", /*tol=*/0.0) != 0){
-        c_eprint("Failed to dump dense mask (after) to %s.", path);
-    }
+    // // (E) 퍼뮤테이션 후 KKT를 "행렬 모양"으로 저장
+    // snprintf(path, sizeof(path),
+    //          "../result/KKT_dense/KKT_after_run_%d.csv", run_counter);
+    // if (dump_matrix_shape(KKT_temp, path, /*expand_sym=*/1, /*sep=*/",", /*precision=*/17) != 0){
+    //     c_eprint("Failed to dump dense matrix (after) to %s.", path);
+    // }
+    // snprintf(path, sizeof(path),
+    //          "../result/KKT_csc/KKT_after_run_%d.csc.txt", run_counter);
+    // if (dump_csc_text(KKT_temp, path) != 0) {
+    //     c_eprint("Failed to dump CSC (after) to %s.", path);
+    // }
+    // // (E) 퍼뮤테이션 후: 0/1 마스크 저장
+    // snprintf(path, sizeof(path),
+    //         "../result/KKT_mask/KKT_mask_after_run_%d.csv", run_counter);
+    // if (dump_matrix_mask_shape(KKT_temp, path, /*expand_sym=*/1, ",", /*tol=*/0.0) != 0){
+    //     c_eprint("Failed to dump dense mask (after) to %s.", path);
+    // }
 
     // (F) 교체/정리
     csc_spfree((*KKT));
