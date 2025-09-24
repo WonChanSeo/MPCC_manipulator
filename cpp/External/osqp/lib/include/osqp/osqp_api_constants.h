@@ -160,7 +160,7 @@ extern const char * OSQP_ERROR_MESSAGE[];
 # define OSQP_EPS_REL               (1E-3)
 # define OSQP_EPS_PRIM_INF          (1E-4)
 # define OSQP_EPS_DUAL_INF          (1E-4)
-# define OSQP_SCALED_TERMINATION    (0)
+# define OSQP_SCALED_TERMINATION    (0) 
 # define OSQP_TIME_LIMIT            (1e10)     ///< Disable time limit by default
 
 // Disable the duality gap termination criteria on float builds by default for now, because
