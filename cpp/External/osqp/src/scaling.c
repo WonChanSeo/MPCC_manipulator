@@ -10,8 +10,8 @@
 #define VEC_LEN(v)        OSQPVectorf_length((v))
 #define VEC_PTR(v)        OSQPVectorf_data((v))      // ← data_const 말고 data
 #define VEC_GET(v,i)      (VEC_PTR((v))[(i)])
-#define EXP_MIN -15
-#define EXP_MAX +15
+#define EXP_MIN -14
+#define EXP_MAX +14
 
 static OSQPInt check_bounds(const OSQPVectorf* l, const OSQPVectorf* u) {
   OSQPInt m = OSQPVectorf_length(l);
@@ -47,7 +47,9 @@ static inline int osqp_float_unbiased_exp_abs(OSQPFloat x) {
 }
 
 /* 2^{-k} as float */
-static inline OSQPFloat pow2_neg_k_int(int k) { return scalbnf(1.0f, -k); }
+static inline OSQPFloat pow2_neg_k_int(int k) { 
+  // printf("2^(%d) = %e\n", k, scalbnf(1.0f, -k));
+  return scalbnf(1.0f, k); }
 
 /* =========[ Exponent from norms (KKT-aware) ]========= */
 
@@ -79,6 +81,8 @@ static void OSQPMatrix_col_norm_inf_by_exponent_half(const OSQPMatrix* M,
     e_col_tmp = osqp_float_unbiased_exp_abs(mc[j]) > EXP_MAX ? EXP_MAX :
                osqp_float_unbiased_exp_abs(mc[j]) < EXP_MIN ? 0 :
                osqp_float_unbiased_exp_abs(mc[j]);
+    // printf("Column %d: norm_inf = %e, exp = %d, half exp = %d, scaling = %e\n",
+    //        j, mc[j], e_col_tmp, e_col_tmp >> 1, pow2_neg_k_int(e_col_tmp >> 1));
     VEC_PTR(Mcol_inf)[j] = pow2_neg_k_int(e_col_tmp >> 1); // 2^{-k
   }
 }
@@ -162,19 +166,6 @@ OSQPInt scale_data(OSQPSolver* solver) {
   OSQPVectorf_set_scalar(work->scaling->E,    1.0);
   OSQPVectorf_set_scalar(work->scaling->Einv, 1.0);
 
-  /* 버퍼 */
-  int*       kD    = (int*)       c_malloc(sizeof(int)       * (n ? n : 1));
-  int*       kE    = (int*)       c_malloc(sizeof(int)       * (m ? m : 1));
-  OSQPFloat* Darr  = (OSQPFloat*) c_malloc(sizeof(OSQPFloat) * (n ? n : 1));
-  OSQPFloat* Earr  = (OSQPFloat*) c_malloc(sizeof(OSQPFloat) * (m ? m : 1));
-  int*       e_P_col = (int*)       c_malloc(sizeof(int)       * (n ? n : 1));
-  int*       e_A_col = (int*)       c_malloc(sizeof(int)       * (m ? m : 1));
-  int*       e_A_row = (int*)       c_malloc(sizeof(int)       * (m ? m : 1));
-  if (!kD || !kE || !Darr || !Earr || !e_P_col || !e_A_col || !e_A_row) return OSQP_MEM_ALLOC_ERROR;
-
-  for (OSQPInt j = 0; j < n; ++j) kD[j] = 0;
-  for (OSQPInt i = 0; i < m; ++i) kE[i] = 0;
-
   OSQPFloat c_temp;     // Objective function scaling
   OSQPFloat inf_norm_q; // Infinity norm of q
 
@@ -191,6 +182,18 @@ OSQPInt scale_data(OSQPSolver* solver) {
                                work->D_temp,    // D_temp: P,A 열 노름의 최대값
                                work->D_temp_A,  // E_temp_A: A 행 노름의 최대값
                                work->E_temp);   // E_temp: A 행 노름
+
+    // printf("D_temp (col expmax of P,A): \n");
+    // for (OSQPInt i = 0; i < n; ++i) {
+    //   printf("%e ", VEC_GET(work->D_temp, i));
+    // }
+    // printf("\n");
+    // printf("E_temp (row expmax of A): \n");
+    // for (OSQPInt i = 0; i < m; ++i) {
+    //   printf("%e ", VEC_GET(work->E_temp, i));
+    // }
+    // printf("\n");
+
     
     // Copy inverses of D/E over themselves
     OSQPVectorf_ew_reciprocal(work->D_temp, work->D_temp);
@@ -218,7 +221,10 @@ OSQPInt scale_data(OSQPSolver* solver) {
     // Compute avg norm of cols of P.
     OSQPMatrix_col_norm_inf_by_exponent(work->data->P, work->D_temp);
     c_temp = OSQPVectorf_norm_1(work->D_temp);
+    printf("c_temp (norm of cols of P): %e\n", c_temp);
+    
     c_temp = c_temp / n;
+    printf("c_temp (avg norm of cols of P): %e\n", c_temp);
 
     // Compute inf norm of q
     inf_norm_q = col_expmax_KKT_using_norms_vec(work->data->q);
