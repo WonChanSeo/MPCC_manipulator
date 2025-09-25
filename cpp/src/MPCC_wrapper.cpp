@@ -423,6 +423,7 @@ BOOST_PYTHON_MODULE(MPCC_WRAPPER)
         .def_readwrite("mpc_horizon", &MPCReturn::mpc_horizon)
         .def_readwrite("compute_time", &MPCReturn::compute_time)
         .def_readwrite("iter_count", &MPCReturn::iter_count)
+        .def_readwrite("sqp_iter_count", &MPCReturn::sqp_iter_count)
         .def("setZero", &MPCReturn::setZero)
     ;
 }

@@ -47,6 +47,7 @@ struct MPCReturn {
     std::vector<OptVariables> mpc_horizon;
     ComputeTime compute_time;
     int iter_count;
+    int sqp_iter_count;
     void setZero()
     {
         u0.setZero();

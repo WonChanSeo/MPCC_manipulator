@@ -2177,21 +2177,7 @@ CMakeFiles/OSQPLIB.dir/src/scaling.c.o: ../src/scaling.c \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
   ../include/private/algebra_vector.h \
-  ../include/private/lin_alg.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h \
-  /usr/include/limits.h \
-  /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
-  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
-  /usr/include/linux/limits.h \
-  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
-  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
-  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
-  /usr/include/stdint.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  ../include/private/algebra_vector.h
+  ../include/private/lin_alg.h
 
 CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o: ../src/timing_linux.c \
   /usr/include/stdc-predef.h \

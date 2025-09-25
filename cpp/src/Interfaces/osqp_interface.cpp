@@ -434,7 +434,7 @@ void OsqpInterface::setQP(const std::vector<OptVariables> &initial_guess,
     setConstraints(initial_guess, jac_constr, constr, l, u);
 }
 
-bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count)
+bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count, int &sqp_iter_count)
 {
     auto start_total = std::chrono::high_resolution_clock::now();
 
@@ -671,6 +671,8 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
 
     auto end_total = std::chrono::high_resolution_clock::now();
     mpc_time->total = std::chrono::duration_cast<std::chrono::duration<double>>(end_total - start_total).count();
+
+    sqp_iter_count = sqp_iter_ + 1;
 
     if((*status) == SOLVED)
     {

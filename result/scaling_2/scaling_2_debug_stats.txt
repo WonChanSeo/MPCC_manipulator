@@ -16,9 +16,10 @@ spline_ee_pose  | mean:  -0.008888 | min:  -1.000000 | max:   1.000000 | var:   
 pred_ee_pose    | mean:  -0.004629 | min:  -1.000000 | max:   1.000000 | var:   0.218099 | std:   0.467011 |
 ref_ee_pose     | mean:  -0.003725 | min:  -1.000000 | max:   1.000000 | var:   0.217618 | std:   0.466495 |
 iter_count      | mean: 165.918280 | min:  32.000000 | max: 256.000000 | var: 5472.992892 | std:  73.979679 |
-total           | mean:   0.086697 | min:   0.010285 | max:   0.163305 | var:   0.000062 | std:   0.007901 |
-set_env         | mean:   0.081384 | min:   0.005272 | max:   0.154539 | var:   0.000066 | std:   0.008147 |
-set_qp          | mean:   0.000597 | min:   0.000000 | max:   0.005249 | var:   0.000000 | std:   0.000297 |
-solve_qp        | mean:   0.002710 | min:   0.000000 | max:   0.030253 | var:   0.000003 | std:   0.001691 |
-get_alpha       | mean:   0.000375 | min:   0.000000 | max:   0.002589 | var:   0.000000 | std:   0.000242 |
+sqp_iter_count  | mean:   1.119570 | min:   1.000000 | max:  14.000000 | var:   0.269574 | std:   0.519205 |
+total           | mean:   0.087061 | min:   0.012127 | max:   0.168314 | var:   0.000052 | std:   0.007222 |
+set_env         | mean:   0.081798 | min:   0.006658 | max:   0.160589 | var:   0.000053 | std:   0.007305 |
+set_qp          | mean:   0.000586 | min:   0.000000 | max:   0.005442 | var:   0.000000 | std:   0.000279 |
+solve_qp        | mean:   0.002699 | min:   0.000000 | max:   0.032447 | var:   0.000003 | std:   0.001691 |
+get_alpha       | mean:   0.000348 | min:   0.000000 | max:   0.002420 | var:   0.000000 | std:   0.000187 |
 

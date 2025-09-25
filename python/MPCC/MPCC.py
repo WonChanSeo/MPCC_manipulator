@@ -130,5 +130,6 @@ class MPCC():
                         }
         
         iter_count = mpc_sol.iter_count
+        sqp_iter_count = mpc_sol.sqp_iter_count
 
-        return mpc_status, updated_state, MPCC_CPP.inputToVector(mpc_sol.u0), mpc_horizon, compute_time, iter_count
+        return mpc_status, updated_state, MPCC_CPP.inputToVector(mpc_sol.u0), mpc_horizon, compute_time, iter_count, sqp_iter_count

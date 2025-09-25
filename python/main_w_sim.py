@@ -232,6 +232,7 @@ def main(args):
     debug_data["pred_ee_pose"] = []         # predicted End-Effector path pose (N+1, 4, 4)
     debug_data["ref_ee_pose"] = []          # predicted reference path pose (N+1, 4, 4)
     debug_data["iter_count"] = []             # Iteration count
+    debug_data["sqp_iter_count"] = []         # SQP Iteration count
 
     time_data = {}
     time_data["total"] = []
@@ -309,7 +310,7 @@ def main(args):
                 # 각 마커를 루프 안에서 즉시 퍼블리시
                 marker_pub.publish(m)
 
-        status, state, input, mpc_horizon, compute_time, iter_count = mpc.runMPC(state, input, obs_positions, obs_radius) if args.is_obs else mpc.runMPC(state, input)
+        status, state, input, mpc_horizon, compute_time, iter_count, sqp_iter_count = mpc.runMPC(state, input, obs_positions, obs_radius) if args.is_obs else mpc.runMPC(state, input)
         if status == False:
             print("MPC did not solve properly!!")
             break
@@ -359,6 +360,7 @@ def main(args):
         debug_data["pred_ee_pose"].append(pred_ee_T)
         debug_data["ref_ee_pose"].append(ref_ee_T)
         debug_data["iter_count"].append(iter_count)
+        debug_data["sqp_iter_count"].append(sqp_iter_count)
         time_data["total"].append(compute_time["total"])
         time_data["set_env"].append(compute_time["set_env"])
         time_data["set_qp"].append(compute_time["set_qp"])

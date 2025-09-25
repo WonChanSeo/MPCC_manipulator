@@ -214,6 +214,7 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     auto start_mpc = std::chrono::high_resolution_clock::now();
     double last_s = x0.s;
     int iter_count = 0;
+    int sqp_iter_count = 0;
 
     // 1. 현재 상태(x0) 보정 (EE pose로 경로 투영)
     Eigen::Matrix4d ee_pose = robot_->getEETransformation(stateToJointVector(x0));
@@ -257,7 +258,7 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     // 7. QP 풀이
     Status sqp_status;
     ComputeTime time_nmpc;
-    solver_interface_->solveOCP(initial_guess_, &sqp_status, &time_nmpc, iter_count);
+    solver_interface_->solveOCP(initial_guess_, &sqp_status, &time_nmpc, iter_count, sqp_iter_count);
    
     if(sqp_status == SOLVED)
     {
@@ -305,6 +306,7 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     mpc_return.compute_time.total   = std::chrono::duration_cast<std::chrono::duration<double>>(end_mpc - start_mpc).count();
     mpc_return.compute_time.set_env = std::chrono::duration_cast<std::chrono::duration<double>>(end_env - start_env).count();
     mpc_return.iter_count = iter_count;
+    mpc_return.sqp_iter_count = sqp_iter_count;
 
     if(sqp_status == SOLVED || 
        ((sqp_status == MAX_ITER_EXCEEDED || sqp_status == QP_MaxIterReached) && num_valid_guess_failed_ < 5))
