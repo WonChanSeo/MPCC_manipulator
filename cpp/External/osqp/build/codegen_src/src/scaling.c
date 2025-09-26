@@ -47,7 +47,7 @@
 // }
 
 // /* 2^{-k} as float */
-// static inline OSQPFloat pow2_neg_k_int(int k) { 
+// static inline OSQPFloat pow2_k_int(int k) { 
 //   // printf("2^(%d) = %e\n", k, scalbnf(1.0f, -k));
 //   return scalbnf(1.0f, k); }
 
@@ -65,8 +65,32 @@
 //     e_col_tmp = osqp_float_unbiased_exp_abs(mc[j]) > EXP_MAX ? EXP_MAX :
 //                osqp_float_unbiased_exp_abs(mc[j]) < EXP_MIN ? 0 :
 //                osqp_float_unbiased_exp_abs(mc[j]);
-//     VEC_PTR(Mcol_inf)[j] = pow2_neg_k_int(e_col_tmp); // 2^{-k
+//     VEC_PTR(Mcol_inf)[j] = pow2_k_int(e_col_tmp); // 2^{-k
 //   }
+// }
+
+// static inline OSQPFloat OSQPMatrix_col_norm_inf_avg_by_exponent(const OSQPMatrix* M) {
+  
+//   OSQPVectorf* Mcol_inf = OSQPVectorf_malloc(179);
+//   if (!Mcol_inf) { /* OOM 처리 */ }
+
+//   /* 필요하면 0으로 초기화 */
+//   OSQPVectorf_set_scalar(Mcol_inf, (OSQPFloat)0.0);
+  
+//   OSQPMatrix_col_norm_inf(M, Mcol_inf);
+
+//   const OSQPInt n = VEC_LEN(Mcol_inf);
+//   const OSQPFloat* mc = VEC_PTR(Mcol_inf);   // ★ data
+  
+//   int e_col_tmp = 0;
+
+//   for (OSQPInt j = 0; j < n; ++j) {
+//     e_col_tmp += osqp_float_unbiased_exp_abs(mc[j]);
+//   }
+
+//   OSQPVectorf_free(Mcol_inf);
+
+//   return pow2_k_int(e_col_tmp >> 9); // 2^{-k
 // }
 
 // static void OSQPMatrix_col_norm_inf_by_exponent_half(const OSQPMatrix* M,
@@ -82,8 +106,8 @@
 //                osqp_float_unbiased_exp_abs(mc[j]) < EXP_MIN ? 0 :
 //                osqp_float_unbiased_exp_abs(mc[j]);
 //     // printf("Column %d: norm_inf = %e, exp = %d, half exp = %d, scaling = %e\n",
-//     //        j, mc[j], e_col_tmp, e_col_tmp >> 1, pow2_neg_k_int(e_col_tmp >> 1));
-//     VEC_PTR(Mcol_inf)[j] = pow2_neg_k_int(e_col_tmp >> 1); // 2^{-k
+//     //        j, mc[j], e_col_tmp, e_col_tmp >> 1, pow2_k_int(e_col_tmp >> 1));
+//     VEC_PTR(Mcol_inf)[j] = pow2_k_int(e_col_tmp >> 1); // 2^{-k
 //   }
 // }
 
@@ -100,7 +124,7 @@
 //     e_row_tmp = osqp_float_unbiased_exp_abs(ar[i]) > EXP_MAX ? EXP_MAX :
 //                osqp_float_unbiased_exp_abs(ar[i]) < EXP_MIN ? 0 :
 //                osqp_float_unbiased_exp_abs(ar[i]);
-//     VEC_PTR(Arow_inf)[i] = pow2_neg_k_int(e_row_tmp >> 1); // 2^{-k
+//     VEC_PTR(Arow_inf)[i] = pow2_k_int(e_row_tmp >> 1); // 2^{-k
 //   }
 // }
 
@@ -130,7 +154,7 @@
 //     e_col_tmp = osqp_float_unbiased_exp_abs(mc[j]) > EXP_MAX ? EXP_MAX :
 //                osqp_float_unbiased_exp_abs(mc[j]) < EXP_MIN ? 0 :
 //                osqp_float_unbiased_exp_abs(mc[j]);
-//     VEC_PTR(Mcol_inf)[j] = pow2_neg_k_int(e_col_tmp >> 1); // 2^{-k}
+//     VEC_PTR(Mcol_inf)[j] = pow2_k_int(e_col_tmp >> 1); // 2^{-k}
 //   }
 // }
 
@@ -146,7 +170,7 @@
 //   inf_norm_v_tmp = osqp_float_unbiased_exp_abs(inf_norm_v_tmp) > EXP_MAX ? EXP_MAX :
 //               osqp_float_unbiased_exp_abs(inf_norm_v_tmp) < EXP_MIN ? 0 :
 //               osqp_float_unbiased_exp_abs(inf_norm_v_tmp);
-//   return pow2_neg_k_int(inf_norm_v_tmp); // 2^{-k
+//   return pow2_k_int(inf_norm_v_tmp); // 2^{-k
 // }
 
 
@@ -170,7 +194,7 @@
 //   OSQPFloat inf_norm_q; // Infinity norm of q
 
 //   // const OSQPInt T = (settings->scaling > 0) ? settings->scaling : 2;
-//   const OSQPInt T = settings->scaling; // ★ 0 허용
+//   const OSQPInt T = 10; // ★ 0 허용
 
 
 //   /* ==================== 여기부터 루프 전체 교체 ==================== */
@@ -219,15 +243,20 @@
 //     //
 
 //     // Compute avg norm of cols of P.
-//     OSQPMatrix_col_norm_inf_by_exponent(work->data->P, work->D_temp);
+//     // OSQPMatrix_col_norm_inf_by_exponent(work->data->P, work->D_temp);
+//     OSQPMatrix_col_norm_inf(work->data->P, work->D_temp); // original
 //     c_temp = OSQPVectorf_norm_1(work->D_temp);
 //     // printf("c_temp (norm of cols of P): %e\n", c_temp);
     
 //     c_temp = c_temp / n;
-//     // printf("c_temp (avg norm of cols of P): %e\n", c_temp);
+//     printf("c_temp (avg norm of cols of P): %e\n", c_temp);
+
+//     // c_temp = OSQPMatrix_col_norm_inf_avg_by_exponent(work->data->P);
 
 //     // Compute inf norm of q
-//     inf_norm_q = col_expmax_KKT_using_norms_vec(work->data->q);
+//     inf_norm_q = OSQPVectorf_norm_inf(work->data->q); // original
+//     // inf_norm_q = col_expmax_KKT_using_norms_vec(work->data->q);
+//     inf_norm_q = limit_scaling_scalar(inf_norm_q);
 
 
 //     // Compute max between avg norm of cols of P and inf norm of q
@@ -429,35 +458,35 @@ OSQPInt scale_data(OSQPSolver* solver) {
     // Cost normalization step
     //
 
-    // Compute avg norm of cols of P.
-    OSQPMatrix_col_norm_inf(work->data->P, work->D_temp);
-    c_temp = OSQPVectorf_norm_1(work->D_temp);
-    c_temp = c_temp / n;
+    // // Compute avg norm of cols of P.
+    // OSQPMatrix_col_norm_inf(work->data->P, work->D_temp);
+    // c_temp = OSQPVectorf_norm_1(work->D_temp);
+    // c_temp = c_temp / n;
 
-    // Compute inf norm of q
-    inf_norm_q = OSQPVectorf_norm_inf(work->data->q);
+    // // Compute inf norm of q
+    // inf_norm_q = OSQPVectorf_norm_inf(work->data->q);
 
-    // If norm_q == 0, set it to 1 (ignore it in the scaling)
-    // NB: Using the same function as with vectors here
-    inf_norm_q = limit_scaling_scalar(inf_norm_q);
+    // // If norm_q == 0, set it to 1 (ignore it in the scaling)
+    // // NB: Using the same function as with vectors here
+    // inf_norm_q = limit_scaling_scalar(inf_norm_q);
 
-    // Compute max between avg norm of cols of P and inf norm of q
-    c_temp = c_max(c_temp, inf_norm_q);
+    // // Compute max between avg norm of cols of P and inf norm of q
+    // c_temp = c_max(c_temp, inf_norm_q);
 
-    // Limit scaling (use same function as with vectors)
-    c_temp = limit_scaling_scalar(c_temp);
+    // // Limit scaling (use same function as with vectors)
+    // c_temp = limit_scaling_scalar(c_temp);
 
-    // Invert scaling c = 1 / cost_measure
-    c_temp = 1. / c_temp;
+    // // Invert scaling c = 1 / cost_measure
+    // c_temp = 1. / c_temp;
 
-    // Scale P
-    OSQPMatrix_mult_scalar(work->data->P,c_temp);
+    // // Scale P
+    // OSQPMatrix_mult_scalar(work->data->P,c_temp);
 
-    // Scale q
-    OSQPVectorf_mult_scalar(work->data->q, c_temp);
+    // // Scale q
+    // OSQPVectorf_mult_scalar(work->data->q, c_temp);
 
-    // Update cost scaling
-    work->scaling->c *= c_temp;
+    // // Update cost scaling
+    // work->scaling->c *= c_temp;
   }
 
 
