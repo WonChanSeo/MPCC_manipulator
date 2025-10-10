@@ -17,9 +17,9 @@ namespace mpcc
         struct MLP
         {
             ~MLP() { std::cout << "MLP terminate" << std::endl; }
-            // --- 신경망 파라미터 ---
-            std::vector<Eigen::MatrixXd> weight;
-            std::vector<Eigen::VectorXd> bias;
+            // --- 신경망 파라미터 (bfloat16 precision - using float) ---
+            std::vector<Eigen::MatrixXf> weight;
+            std::vector<Eigen::VectorXf> bias;
             std::vector<std::string> w_path;
             std::vector<std::string> b_path;
             std::vector<std::ifstream> weight_files;
@@ -31,22 +31,22 @@ namespace mpcc
             Eigen::VectorXd n_hidden;
             int n_layer;
 
-            // --- 단일 추론(Single Inference)용 변수 ---
-            std::vector<Eigen::VectorXd> hidden;
-            std::vector<Eigen::MatrixXd> hidden_derivative;
-            Eigen::VectorXd input;
-            Eigen::VectorXd output;
-            Eigen::MatrixXd output_derivative;
+            // --- 단일 추론(Single Inference)용 변수 (bfloat16 precision - using float) ---
+            std::vector<Eigen::VectorXf> hidden;
+            std::vector<Eigen::MatrixXf> hidden_derivative;
+            Eigen::VectorXf input;
+            Eigen::VectorXf output;
+            Eigen::MatrixXf output_derivative;
 
             // --- NeRF 관련 ---
             bool is_nerf;
-            Eigen::VectorXd input_nerf;
+            Eigen::VectorXf input_nerf;
 
-            // --- 배치 추론(Batch Inference)용 변수 (추가) ---
-            std::vector<Eigen::MatrixXd> batch_hidden;
-            Eigen::MatrixXd batch_input;
-            Eigen::MatrixXd batch_input_nerf;
-            Eigen::MatrixXd batch_output;
+            // --- 배치 추론(Batch Inference)용 변수 (bfloat16 precision - using float) ---
+            std::vector<Eigen::MatrixXf> batch_hidden;
+            Eigen::MatrixXf batch_input;
+            Eigen::MatrixXf batch_input_nerf;
+            Eigen::MatrixXf batch_output;
 
             // ▼▼▼▼▼ 여기에 시간 저장을 위한 변수를 추가합니다. ▼▼▼▼▼
             std::vector<double> inference_times_ms;
@@ -87,14 +87,14 @@ namespace mpcc
             void loadNetwork();
             void initializeNetwork(int n_input, int n_output, Eigen::VectorXd n_hidden, bool is_nerf);
 
-            // ReLU는 private 멤버로 유지
-            double ReLU(double input)
+            // ReLU는 private 멤버로 유지 (bfloat16 precision - using float)
+            float ReLU(float input)
             {
-                return std::max(0.0, input);
+                return std::max(0.0f, input);
             }
-            double ReLU_derivative(double input)
+            float ReLU_derivative(float input)
             {
-                return (input > 0)? 1.0 : 0.0;
+                return (input > 0)? 1.0f : 0.0f;
             }
     };
 }
