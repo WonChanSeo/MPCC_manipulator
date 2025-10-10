@@ -27,7 +27,9 @@ namespace mpcc
         {
             for (int j = 0; j < mlp_.weight[weight_num].cols(); j++)
             {
-                mlp_.weight_files[weight_num] >> mlp_.weight[weight_num](i, j);
+                float temp_value;
+                mlp_.weight_files[weight_num] >> temp_value;
+                mlp_.weight[weight_num](i, j) = Eigen::bfloat16(temp_value);
             }
         }
         mlp_.weight_files[weight_num].close();
@@ -47,7 +49,9 @@ namespace mpcc
         }
         for (int i = 0; i < mlp_.bias[bias_num].rows(); i++)
         {
-            mlp_.bias_files[bias_num] >> mlp_.bias[bias_num](i);
+            float temp_value;
+            mlp_.bias_files[bias_num] >> temp_value;
+            mlp_.bias[bias_num](i) = Eigen::bfloat16(temp_value);
         }
         mlp_.bias_files[bias_num].close();
 
@@ -151,7 +155,7 @@ namespace mpcc
         mlp_.weight_files.resize(mlp_.n_layer);
         mlp_.bias_files.resize(mlp_.n_layer);
 
-        // parameters resize (bfloat16 precision - using float)
+        // parameters resize (bfloat16 precision)
         for (int i = 0; i < mlp_.n_layer; i++)
         {
             if (i == 0)
@@ -182,7 +186,7 @@ namespace mpcc
                 mlp_.hidden_derivative[i].setZero(mlp_.n_hidden(i), mlp_.n_hidden(i - 1));
             }
         }
-        // input output resize (bfloat16 precision - using float)
+        // input output resize (bfloat16 precision)
         mlp_.input.resize(mlp_.n_input);
         mlp_.input_nerf.resize(3 * mlp_.n_input);
         mlp_.output.resize(mlp_.n_output);
@@ -197,13 +201,13 @@ namespace mpcc
 
     std::pair<Eigen::VectorXd, Eigen::MatrixXd> EnvCollNNmodel::calculateMlpOutput(Eigen::VectorXd input, bool time_verbose)
     {
-        // Convert input from double to float for bfloat16 precision inference
-        mlp_.input = input.cast<float>();
+        // Convert input from double to bfloat16 for inference
+        mlp_.input = input.cast<Eigen::bfloat16>();
         if (mlp_.is_nerf)
         {
             printf("mlp is nerf\n");
-            Eigen::VectorXf sinInput = input.array().sin().cast<float>();
-            Eigen::VectorXf cosInput = input.array().cos().cast<float>();
+            VectorXbf16 sinInput = input.array().sin().cast<Eigen::bfloat16>();
+            VectorXbf16 cosInput = input.array().cos().cast<Eigen::bfloat16>();
 
             mlp_.input_nerf.segment(0 * mlp_.n_input, mlp_.n_input) = mlp_.input;
             mlp_.input_nerf.segment(1 * mlp_.n_input, mlp_.n_input) = sinInput;
@@ -216,7 +220,7 @@ namespace mpcc
         finish.resize(3*mlp_.n_layer);
 
         start[3*mlp_.n_layer - 1] = clock(); // Total
-        Eigen::MatrixXf temp_derivative;
+        MatrixXbf16 temp_derivative;
         for (int layer = 0; layer < mlp_.n_layer; layer++)
         {
             if (layer == 0) // input layer
@@ -236,11 +240,11 @@ namespace mpcc
 
                 if (mlp_.is_nerf)
                 {
-                    Eigen::MatrixXf nerf_jac;
+                    MatrixXbf16 nerf_jac;
                     nerf_jac.setZero(3 * mlp_.n_input, mlp_.n_input);
-                    nerf_jac.block(0 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input) = Eigen::MatrixXf::Identity(mlp_.n_input, mlp_.n_input);
-                    nerf_jac.block(1 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).diagonal() <<   mlp_.input.array().cos();
-                    nerf_jac.block(2 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).diagonal() << - mlp_.input.array().sin();
+                    nerf_jac.block(0 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).setIdentity();
+                    nerf_jac.block(1 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).diagonal() = mlp_.input.array().cos();
+                    nerf_jac.block(2 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).diagonal() = -mlp_.input.array().sin();
 
                     start[2] = clock(); // Multip
                     temp_derivative = mlp_.hidden_derivative[0] * nerf_jac;
@@ -304,7 +308,7 @@ namespace mpcc
         //     std::cout<<"------------------------------------------------"<<std::endl;
         // }
 
-        // Convert output from float to double for interface compatibility
+        // Convert output from bfloat16 to double for interface compatibility
         return std::make_pair(mlp_.output.cast<double>(), mlp_.output_derivative.cast<double>());
         // std::cout<< "OUTPUT DATA:"<< std::endl <<mlp_.output.transpose() << std::endl;
         // std::cout<< "OUTPUT DATA:"<< std::endl <<mlp_.output_derivative << std::endl;
@@ -314,14 +318,14 @@ namespace mpcc
     // =========== 여기에 새로운 배치 추론 함수를 추가합니다 ============
     // =================================================================
     
-    // 행렬 전체에 ReLU를 적용하는 헬퍼 함수 (bfloat16 precision - using float)
-    Eigen::MatrixXf batch_ReLU(const Eigen::MatrixXf& x) {
-        return (x.array() > 0).select(x, Eigen::MatrixXf::Zero(x.rows(), x.cols()));
+    // 행렬 전체에 ReLU를 적용하는 헬퍼 함수 (bfloat16 precision)
+    MatrixXbf16 batch_ReLU(const MatrixXbf16& x) {
+        return (x.array() > Eigen::bfloat16(0)).select(x, MatrixXbf16::Zero(x.rows(), x.cols()));
     }
 
-    // 행렬 전체에 ReLU의 미분을 적용하는 헬퍼 함수 (bfloat16 precision - using float)
-    Eigen::MatrixXf batch_ReLU_derivative(const Eigen::MatrixXf& x) {
-        return (x.array() > 0).select(Eigen::MatrixXf::Ones(x.rows(), x.cols()), Eigen::MatrixXf::Zero(x.rows(), x.cols()));
+    // 행렬 전체에 ReLU의 미분을 적용하는 헬퍼 함수 (bfloat16 precision)
+    MatrixXbf16 batch_ReLU_derivative(const MatrixXbf16& x) {
+        return (x.array() > Eigen::bfloat16(0)).select(MatrixXbf16::Ones(x.rows(), x.cols()), MatrixXbf16::Zero(x.rows(), x.cols()));
     }
 
     // in EnvCollisionModel.cpp
@@ -338,10 +342,10 @@ namespace mpcc
         }
 
         // ===== 1. 모든 결과와 자코비안을 계산 (효율성을 위해 배치 연산 유지) =====
-        // Convert input from double to float for bfloat16 precision inference
-        mlp_.batch_input = inputs.cast<float>();
+        // Convert input from double to bfloat16 for inference
+        mlp_.batch_input = inputs.cast<Eigen::bfloat16>();
 
-        const Eigen::MatrixXf* current_input_ptr;
+        const MatrixXbf16* current_input_ptr;
         if (mlp_.is_nerf) {
             mlp_.batch_input_nerf.resize(3 * mlp_.n_input, batch_size);
             mlp_.batch_input_nerf.topRows(mlp_.n_input) = mlp_.batch_input;
@@ -352,7 +356,7 @@ namespace mpcc
             current_input_ptr = &mlp_.batch_input;
         }
 
-        std::vector<Eigen::MatrixXf> pre_activations(mlp_.n_layer - 1);
+        std::vector<MatrixXbf16> pre_activations(mlp_.n_layer - 1);
 
         for (int layer = 0; layer < mlp_.n_layer; ++layer) {
             if (layer == 0) {
@@ -368,26 +372,26 @@ namespace mpcc
             }
         }
 
-        std::vector<Eigen::MatrixXf> batch_jacobian(batch_size);
+        std::vector<MatrixXbf16> batch_jacobian(batch_size);
 
         #pragma omp parallel for
         for (int i = 0; i < batch_size; ++i) {
-            Eigen::MatrixXf temp_derivative;
+            MatrixXbf16 temp_derivative;
             if (mlp_.is_nerf) {
-                Eigen::MatrixXf nerf_jac(3 * mlp_.n_input, mlp_.n_input);
+                MatrixXbf16 nerf_jac(3 * mlp_.n_input, mlp_.n_input);
                 nerf_jac.setZero();
-                nerf_jac.topRows(mlp_.n_input) = Eigen::MatrixXf::Identity(mlp_.n_input, mlp_.n_input);
-                nerf_jac.middleRows(mlp_.n_input, mlp_.n_input).diagonal() = inputs.col(i).array().cos().cast<float>();
-                nerf_jac.bottomRows(mlp_.n_input).diagonal() = (-inputs.col(i).array().sin()).cast<float>();
-                Eigen::MatrixXf relu_deriv_0 = batch_ReLU_derivative(pre_activations[0].col(i));
+                nerf_jac.topRows(mlp_.n_input).setIdentity();
+                nerf_jac.middleRows(mlp_.n_input, mlp_.n_input).diagonal() = inputs.col(i).array().cos().cast<Eigen::bfloat16>();
+                nerf_jac.bottomRows(mlp_.n_input).diagonal() = (-inputs.col(i).array().sin()).cast<Eigen::bfloat16>();
+                MatrixXbf16 relu_deriv_0 = batch_ReLU_derivative(pre_activations[0].col(i));
                 temp_derivative = (relu_deriv_0.asDiagonal() * mlp_.weight[0]) * nerf_jac;
             } else {
-                Eigen::MatrixXf relu_deriv_0 = batch_ReLU_derivative(pre_activations[0].col(i));
+                MatrixXbf16 relu_deriv_0 = batch_ReLU_derivative(pre_activations[0].col(i));
                 temp_derivative = relu_deriv_0.asDiagonal() * mlp_.weight[0];
             }
 
             for (int layer = 1; layer < mlp_.n_layer - 1; ++layer) {
-                Eigen::MatrixXf relu_deriv = batch_ReLU_derivative(pre_activations[layer].col(i));
+                MatrixXbf16 relu_deriv = batch_ReLU_derivative(pre_activations[layer].col(i));
                 temp_derivative = (relu_deriv.asDiagonal() * mlp_.weight[layer]) * temp_derivative;
             }
             batch_jacobian[i] = mlp_.weight.back() * temp_derivative;
@@ -399,8 +403,8 @@ namespace mpcc
         const int n_input_total = inputs.rows(); // 예: 7(dof) + 3(obs) = 10
 
         // 1. 최종 결과를 담을 새로운 벡터와 자코비안 행렬을 초기화합니다.
-        Eigen::VectorXf final_min_output(n_output);
-        Eigen::MatrixXf final_min_jacobian(n_output, n_input_total);
+        VectorXbf16 final_min_output(n_output);
+        MatrixXbf16 final_min_jacobian(n_output, n_input_total);
 
         // 2. 각 행(각 링크)을 순회하는 루프를 실행합니다.
         for (int i = 0; i < n_output; ++i)
@@ -427,7 +431,7 @@ namespace mpcc
         // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
         // 재구성된 최종 결과 벡터와 자코비안 행렬을 반환합니다.
-        // Convert output from float to double for interface compatibility
+        // Convert output from bfloat16 to double for interface compatibility
         return std::make_pair(final_min_output.cast<double>(), final_min_jacobian.cast<double>());
     }
 
