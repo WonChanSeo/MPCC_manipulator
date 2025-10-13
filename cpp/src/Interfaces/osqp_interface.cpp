@@ -790,6 +790,7 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     OsqpEigen::Solver solver_;
     // settings
     solver_.settings()->setWarmStart(false); //fasle
+    // solver_.settings()->getSettings()->adaptive_rho = 0;  // Disable adaptive rho update
     solver_.settings()->getSettings()->eps_abs = 1e-3; // MODI 1e-4
     solver_.settings()->getSettings()->eps_rel = 1e-4; // MODI 1e-5
     // time limit
