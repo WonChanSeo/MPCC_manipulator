@@ -59,6 +59,7 @@ OSQPFloat compute_rho_estimate(const OSQPSolver* solver) {
 
   OSQPFloat prim_res, dual_res;           // Primal and dual residuals
   OSQPFloat prim_res_norm, dual_res_norm; // Normalization for the residuals
+  OSQPFloat temp_res_norm;                // Temporary residual norm
   OSQPFloat rho_estimate;                 // Rho estimate value
 
   OSQPSettings*  settings = solver->settings;
@@ -68,45 +69,50 @@ OSQPFloat compute_rho_estimate(const OSQPSolver* solver) {
   prim_res = work->scaled_prim_res;
   dual_res = work->scaled_dual_res;
 
-  // ===== Use exponent-based norm estimation instead of norm_inf =====
+  // ===== Step 1: Compute actual norm_inf (needed for accurate ratio) =====
 
-  // Normalize primal residual using max exponent
-  int exp_z  = OSQPVectorf_max_exponent(work->z);        // max exp of ||z||
-  int exp_Ax = OSQPVectorf_max_exponent(work->Ax);       // max exp of ||Ax||
-  int exp_prim = (exp_z > exp_Ax) ? exp_z : exp_Ax;     // max(exp_z, exp_Ax)
-
-  // Clamp exponent to valid range
-  exp_prim = (exp_prim > EXP_MAX) ? EXP_MAX :
-             (exp_prim < EXP_MIN) ? 0 : exp_prim;
-
-  prim_res_norm = pow2_k(exp_prim);                      // 2^exp_prim
+  // Normalize primal residual
+  prim_res_norm = OSQPVectorf_norm_inf(work->z);        // ||z||
+  temp_res_norm = OSQPVectorf_norm_inf(work->Ax);       // ||Ax||
+  prim_res_norm = c_max(prim_res_norm, temp_res_norm);  // max (||z||,||Ax||)
   prim_res     /= (prim_res_norm + OSQP_DIVISION_TOL);
 
-  // Normalize dual residual using max exponent
-  int exp_q   = OSQPVectorf_max_exponent(work->data->q); // max exp of ||q||
-  int exp_Aty = OSQPVectorf_max_exponent(work->Aty);     // max exp of ||A'y||
-  int exp_Px  = OSQPVectorf_max_exponent(work->Px);      // max exp of ||Px||
-
-  int exp_dual = exp_q;
-  exp_dual = (exp_Aty > exp_dual) ? exp_Aty : exp_dual;
-  exp_dual = (exp_Px > exp_dual) ? exp_Px : exp_dual;   // max(exp_q, exp_Aty, exp_Px)
-
-  // Clamp exponent to valid range
-  exp_dual = (exp_dual > EXP_MAX) ? EXP_MAX :
-             (exp_dual < EXP_MIN) ? 0 : exp_dual;
-
-  dual_res_norm = pow2_k(exp_dual);                      // 2^exp_dual
+  // Normalize dual residual
+  dual_res_norm = OSQPVectorf_norm_inf(work->data->q);  // ||q||
+  temp_res_norm = OSQPVectorf_norm_inf(work->Aty);      // ||A' y||
+  dual_res_norm = c_max(dual_res_norm, temp_res_norm);
+  temp_res_norm = OSQPVectorf_norm_inf(work->Px);       //  ||P x||
+  dual_res_norm = c_max(dual_res_norm, temp_res_norm);  // max(||q||,||A' y||,||P x||)
   dual_res     /= (dual_res_norm + OSQP_DIVISION_TOL);
 
-  // ===== Replace sqrt with exponent halving (bit shift) =====
-  // Instead of: rho_estimate = settings->rho * sqrt(prim_res / dual_res)
-  // We compute: rho_estimate = settings->rho * 2^((exp_prim - exp_dual) / 2)
+  // ===== Step 2: Replace sqrt with exponent-based approximation =====
+  // Instead of: rho_estimate = rho * sqrt(prim_res / dual_res)
+  // We use: rho_estimate = rho * 2^(floor(log2(prim_res / dual_res) / 2))
 
-  int exp_ratio = exp_prim - exp_dual;
-  int exp_sqrt_ratio = exp_ratio >> 1;  // Divide by 2 using bit shift (halve exponent)
+  // Compute ratio
+  OSQPFloat ratio = prim_res / (dual_res + OSQP_DIVISION_TOL);
 
-  OSQPFloat ratio_scale = pow2_k(exp_sqrt_ratio);
-  rho_estimate = settings->rho * ratio_scale;
+  // Extract exponent of ratio
+  int exp_ratio = osqp_float_unbiased_exp_abs(ratio);
+
+  // Handle special cases
+  if (exp_ratio == INT_MIN || exp_ratio == INT_MAX) {
+    // Ratio is 0, inf, or NaN - fall back to original rho
+    return settings->rho;
+  }
+
+  // Halve the exponent (equivalent to sqrt in exponential space)
+  int exp_sqrt_ratio = exp_ratio >> 1;
+
+  // Clamp to reasonable range to avoid extreme values
+  exp_sqrt_ratio = (exp_sqrt_ratio > EXP_MAX) ? EXP_MAX :
+                   (exp_sqrt_ratio < -EXP_MAX) ? -EXP_MAX : exp_sqrt_ratio;
+
+  // Compute 2^(exp_sqrt_ratio) as approximation of sqrt(ratio)
+  OSQPFloat sqrt_approx = pow2_k(exp_sqrt_ratio);
+
+  // Compute new rho estimate
+  rho_estimate = settings->rho * sqrt_approx;
 
   // Clamp to valid rho range
   rho_estimate = c_min(c_max(rho_estimate, OSQP_RHO_MIN), OSQP_RHO_MAX);
