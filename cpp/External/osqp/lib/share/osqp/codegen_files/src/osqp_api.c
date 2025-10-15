@@ -384,7 +384,7 @@ void osqp_print_settings(const OSQPSettings* s) {
 
   // ADMM parameters
   printf("alpha: %-24.2e rho: %.2e\n", s->alpha, s->rho);
-  printf("sigma: %-24.2e\n", s->sigma);
+  printf("rho_is_vec: %-21s sigma: %.2e\n", s->rho_is_vec ? "On" : "Off", s->sigma);
   printf("\n");
 
   // Termination parameters
@@ -406,7 +406,7 @@ void osqp_print_settings(const OSQPSettings* s) {
 
   // Indirect solver specific settings (only if applicable)
   if (s->linsys_solver == OSQP_INDIRECT_SOLVER) {
-      printf("CUDA device: %-18d\n", (int)s->device);
+      printf("--- Indirect Solver (CG) Settings ---\n");
       printf("cg_max_iter: %-18d cg_tol_reduction: %d\n", (int)s->cg_max_iter, (int)s->cg_tol_reduction);
       printf("cg_tol_fraction: %-14.2e cg_precond: %s\n", s->cg_tol_fraction, cg_precond_to_string(s->cg_precond));
       printf("\n");

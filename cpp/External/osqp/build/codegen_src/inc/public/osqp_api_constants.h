@@ -99,7 +99,7 @@ extern const char * OSQP_ERROR_MESSAGE[];
 # define OSQP_POLISHING             (0) // 0
 
 // ADMM parameters
-# define OSQP_RHO                   (0.1)
+# define OSQP_RHO                   (0.125) // 0.1
 # define OSQP_SIGMA                 (1E-06)
 # define OSQP_ALPHA                 (1.6)
 
@@ -132,12 +132,12 @@ extern const char * OSQP_ERROR_MESSAGE[];
 
 #define OSQP_ADAPTIVE_RHO_UPDATE_DEFAULT (OSQP_ADAPTIVE_RHO_UPDATE_ITERATIONS)
 
-#define OSQP_ADAPTIVE_RHO_INTERVAL  (50)       ///< Default interval for iteration-based rho update
+#define OSQP_ADAPTIVE_RHO_INTERVAL  (128)       ///< Default interval for iteration-based rho update
 
 #ifdef OSQP_ALGEBRA_CUDA
 #  define OSQP_ADAPTIVE_RHO_TOLERANCE (2.0)
 #else
-#  define OSQP_ADAPTIVE_RHO_TOLERANCE (5.0)          ///< tolerance for adopting new rho; minimum ratio between new rho and the current one
+#  define OSQP_ADAPTIVE_RHO_TOLERANCE (4.0) // 5.0       ///< tolerance for adopting new rho; minimum ratio between new rho and the current one
 #endif
 
 # define OSQP_ADAPTIVE_RHO_FRACTION (0.4)           ///< fraction of setup time after which we update rho
