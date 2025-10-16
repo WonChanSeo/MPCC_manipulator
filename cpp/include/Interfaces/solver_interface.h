@@ -53,7 +53,7 @@ class SolverInterface {
         virtual void setEnvData(const Eigen::MatrixX3d &obs_positions, const double &obs_radius) = 0;
         virtual void setInitialGuess(const std::vector<OptVariables> &initial_guess) = 0;
         virtual void setCurrentInput(const Input &cutrent_input) = 0;
-        virtual bool solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count, int &sqp_iter_count) = 0;
+        virtual bool solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count, int &sqp_iter_count, int &total_iter_count) = 0;
 
         // ▼▼▼▼▼▼▼▼▼▼▼ 여기에 새로운 순수 가상 함수를 추가하세요 ▼▼▼▼▼▼▼▼▼▼▼
         virtual const std::unique_ptr<EnvCollNNmodel>& getEnvColNN() const = 0;

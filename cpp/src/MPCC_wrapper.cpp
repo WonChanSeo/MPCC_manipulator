@@ -417,6 +417,12 @@ BOOST_PYTHON_MODULE(MPCC_WRAPPER)
     class_<std::vector<OptVariables>>("std::vector<OptVariables>")
         .def(vector_indexing_suite<std::vector<OptVariables>>());
 
+    class_<std::vector<int>>("std::vector<int>")
+        .def(vector_indexing_suite<std::vector<int>>());
+
+    class_<std::vector<std::vector<int>>>("std::vector<std::vector<int>>")
+        .def(vector_indexing_suite<std::vector<std::vector<int>>>());
+
     // MPCReturn binding
     class_<MPCReturn>("MPCReturn")
         .def_readwrite("u0", &MPCReturn::u0)
@@ -424,6 +430,10 @@ BOOST_PYTHON_MODULE(MPCC_WRAPPER)
         .def_readwrite("compute_time", &MPCReturn::compute_time)
         .def_readwrite("iter_count", &MPCReturn::iter_count)
         .def_readwrite("sqp_iter_count", &MPCReturn::sqp_iter_count)
+        .def_readwrite("total_iter_count", &MPCReturn::total_iter_count)
+        .def_readwrite("solve_count", &MPCReturn::solve_count)
+        .def_readwrite("top3_total_iter_counts", &MPCReturn::top3_total_iter_counts)
+        .def_readwrite("top3_solve_nums", &MPCReturn::top3_solve_nums)
         .def("setZero", &MPCReturn::setZero)
     ;
 }

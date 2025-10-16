@@ -56,8 +56,46 @@ def print_stats(data_dict, name):
     name: 'debug_data' 또는 'time_data' 등의 식별 문자열
     """
     print(f"\n=== Statistics for {name} ===")
+
+    # Keys that should only show final value (cumulative/tracking variables)
+    final_value_keys = ['solve_count']
+
     for key, arr in data_dict.items():
+        # Skip non-array types
         if not isinstance(arr, np.ndarray):
+            continue
+
+        # Special handling for top3 data - show nicely formatted
+        if key == 'top3_total_iter_counts':
+            if len(arr) > 0:
+                top3_counts = arr[-1]
+                print(f"{key:15s} | Top 3 values: {top3_counts}")
+            else:
+                print(f"{key:15s} | [empty]")
+            continue
+
+        if key == 'top3_solve_nums':
+            if len(arr) > 0:
+                top3_nums = arr[-1]
+                print(f"{key:15s} | Top 3 solve numbers:")
+                for i, nums in enumerate(top3_nums):
+                    print(f"                  Rank {i+1}: {nums}")
+            else:
+                print(f"{key:15s} | [empty]")
+            continue
+
+        # Special handling for cumulative/tracking variables - only show final value
+        if key in final_value_keys:
+            if len(arr) > 0:
+                last_value = arr[-1]
+                print(f"{key:15s} | final value: {last_value}")
+            else:
+                print(f"{key:15s} | [empty]")
+            continue
+
+        # Special handling for object arrays (like nested lists)
+        if arr.dtype == object:
+            print(f"{key:15s} | [object array - skipped]")
             continue
 
         flat = arr.flatten()
@@ -233,6 +271,10 @@ def main(args):
     debug_data["ref_ee_pose"] = []          # predicted reference path pose (N+1, 4, 4)
     debug_data["iter_count"] = []             # Iteration count
     debug_data["sqp_iter_count"] = []         # SQP Iteration count
+    debug_data["total_iter_count"] = []       # Total QP Iteration count across SQP iterations
+    debug_data["solve_count"] = []            # Which solveOCP call this is
+    debug_data["top3_total_iter_counts"] = []   # Top 3 max total_iter_count values
+    debug_data["top3_solve_nums"] = []  # Solve numbers for each top 3 value
 
     time_data = {}
     time_data["total"] = []
@@ -310,7 +352,7 @@ def main(args):
                 # 각 마커를 루프 안에서 즉시 퍼블리시
                 marker_pub.publish(m)
 
-        status, state, input, mpc_horizon, compute_time, iter_count, sqp_iter_count = mpc.runMPC(state, input, obs_positions, obs_radius) if args.is_obs else mpc.runMPC(state, input)
+        status, state, input, mpc_horizon, compute_time, iter_count, sqp_iter_count, total_iter_count, solve_count, top3_total_iter_counts, top3_solve_nums = mpc.runMPC(state, input, obs_positions, obs_radius) if args.is_obs else mpc.runMPC(state, input)
         if status == False:
             print("MPC did not solve properly!!")
             break
@@ -361,6 +403,10 @@ def main(args):
         debug_data["ref_ee_pose"].append(ref_ee_T)
         debug_data["iter_count"].append(iter_count)
         debug_data["sqp_iter_count"].append(sqp_iter_count)
+        debug_data["total_iter_count"].append(total_iter_count)
+        debug_data["solve_count"].append(solve_count)
+        debug_data["top3_total_iter_counts"].append(top3_total_iter_counts)
+        debug_data["top3_solve_nums"].append(top3_solve_nums)
         time_data["total"].append(compute_time["total"])
         time_data["set_env"].append(compute_time["set_env"])
         time_data["set_qp"].append(compute_time["set_qp"])

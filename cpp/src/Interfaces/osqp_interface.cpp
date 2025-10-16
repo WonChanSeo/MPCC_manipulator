@@ -434,7 +434,7 @@ void OsqpInterface::setQP(const std::vector<OptVariables> &initial_guess,
     setConstraints(initial_guess, jac_constr, constr, l, u);
 }
 
-bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count, int &sqp_iter_count)
+bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count, int &sqp_iter_count, int &total_iter_count)
 {
     auto start_total = std::chrono::high_resolution_clock::now();
 
@@ -457,6 +457,7 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
     filter_data_list_.clear();
 
     mpc_time->setZero();
+    total_iter_count = 0;
 
     std::vector<OptVariables> zero_guess;
     zero_guess.resize(N+1);
@@ -534,6 +535,7 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         // solve QP to get step_ and step_lambda_
         if(!solveQP(Hess_, grad_obj_, jac_constr_, l_-constr_, u_-constr_, step_, step_lambda_, qp_status_, iter_count))
         {
+            total_iter_count += iter_count;  // Accumulate QP iterations
             printf("QP solve FAILED : %d \n", qp_status_);
             switch (qp_status_)
             {
@@ -569,6 +571,9 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
 
             break;
         }
+
+        // Accumulate QP iterations for successful solve
+        total_iter_count += iter_count;
 
         // printf("qp_status_: %d\n", qp_status_);
         // printf("*status: %d\n", (*status));

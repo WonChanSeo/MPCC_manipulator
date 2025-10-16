@@ -144,7 +144,7 @@ def main(args):
         
 
         ## run MPCC
-        status, state, input, mpc_horizon, compute_time = mpc.runMPC(state, input)
+        status, state, input, mpc_horizon, compute_time, iter_count, sqp_iter_count, total_iter_count, solve_count, top3_total_iter_counts, top3_solve_nums = mpc.runMPC(state, input)
         if status == False:
             print("MPC did not solve properly!!")
             break

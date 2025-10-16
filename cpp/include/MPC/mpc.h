@@ -48,12 +48,25 @@ struct MPCReturn {
     ComputeTime compute_time;
     int iter_count;
     int sqp_iter_count;
+    int total_iter_count;  // Total QP iterations across all SQP iterations
+    int solve_count;       // Which solveOCP call this is (cumulative counter)
+
+    // Top 3 max total_iter_count values and their solve numbers
+    std::vector<int> top3_total_iter_counts;  // Top 3 values (sorted descending)
+    std::vector<std::vector<int>> top3_solve_nums;  // Solve numbers for each top 3 value
+
     void setZero()
     {
         u0.setZero();
         mpc_horizon.resize(N+1);
         for(size_t i=0;i<=N;i++) mpc_horizon[i].setZero();
         compute_time.setZero();
+        iter_count = 0;
+        sqp_iter_count = 0;
+        total_iter_count = 0;
+        solve_count = 0;
+        top3_total_iter_counts.clear();
+        top3_solve_nums.clear();
     }
 };
 
@@ -124,6 +137,11 @@ private:
     std::unique_ptr<SolverInterface> solver_interface_;
     PathToJson path_;
     unsigned int num_valid_guess_failed_;
+
+    // Tracking variables for solve count and top 3 total_iter_count
+    int solve_count_;
+    std::vector<int> top3_total_iter_counts_;  // Top 3 values (sorted descending)
+    std::vector<std::vector<int>> top3_solve_nums_;  // Solve numbers for each top 3 value
 
     // vs = dot(xdot, a)/||a||^2  (arc-length면 a는 단위접선)
     double project_vs_workspace(double s,

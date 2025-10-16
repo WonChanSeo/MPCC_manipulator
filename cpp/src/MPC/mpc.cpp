@@ -37,9 +37,12 @@ MPC::MPC(double Ts,const PathToJson &path)
   track_(path),
   param_(path.param_path),
   integrator_(Ts,path),
-  robot_(new RobotModel())
+  robot_(new RobotModel()),
+  solve_count_(0)
 {
     initial_guess_.resize(N+1);
+    top3_total_iter_counts_.clear();
+    top3_solve_nums_.clear();
 }
 
 MPC::MPC(double Ts,const PathToJson &path,const ParamValue &param_value)
@@ -51,9 +54,12 @@ MPC::MPC(double Ts,const PathToJson &path,const ParamValue &param_value)
   track_(path,param_value),
   param_(path.param_path, param_value.param),
   integrator_(Ts,path),
-  robot_(new RobotModel())
+  robot_(new RobotModel()),
+  solve_count_(0)
 {
     initial_guess_.resize(N+1);
+    top3_total_iter_counts_.clear();
+    top3_solve_nums_.clear();
 }
 
 void MPC::updateInitialGuess(const State &x0)
@@ -258,7 +264,8 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     // 7. QP 풀이
     Status sqp_status;
     ComputeTime time_nmpc;
-    solver_interface_->solveOCP(initial_guess_, &sqp_status, &time_nmpc, iter_count, sqp_iter_count);
+    int total_iter_count = 0;
+    solver_interface_->solveOCP(initial_guess_, &sqp_status, &time_nmpc, iter_count, sqp_iter_count, total_iter_count);
    
     if(sqp_status == SOLVED)
     {
@@ -307,6 +314,61 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     mpc_return.compute_time.set_env = std::chrono::duration_cast<std::chrono::duration<double>>(end_env - start_env).count();
     mpc_return.iter_count = iter_count;
     mpc_return.sqp_iter_count = sqp_iter_count;
+    mpc_return.total_iter_count = total_iter_count;
+
+    // Increment solve counter
+    solve_count_++;
+    mpc_return.solve_count = solve_count_;
+
+    // Update top 3 total_iter_count tracking
+    bool found = false;
+    for (size_t i = 0; i < top3_total_iter_counts_.size(); i++) {
+        if (total_iter_count == top3_total_iter_counts_[i]) {
+            // Same value found, add to existing list
+            top3_solve_nums_[i].push_back(solve_count_);
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        // New value, need to insert into top 3
+        if (top3_total_iter_counts_.size() < 3) {
+            // Less than 3 entries, just add
+            top3_total_iter_counts_.push_back(total_iter_count);
+            top3_solve_nums_.push_back(std::vector<int>{solve_count_});
+        } else {
+            // Check if this value belongs in top 3
+            int min_idx = -1;
+            int min_val = top3_total_iter_counts_[0];
+            for (size_t i = 0; i < 3; i++) {
+                if (top3_total_iter_counts_[i] < min_val) {
+                    min_val = top3_total_iter_counts_[i];
+                    min_idx = i;
+                }
+            }
+
+            if (total_iter_count > min_val) {
+                // Replace the minimum
+                top3_total_iter_counts_[min_idx] = total_iter_count;
+                top3_solve_nums_[min_idx].clear();
+                top3_solve_nums_[min_idx].push_back(solve_count_);
+            }
+        }
+
+        // Sort in descending order (bubble sort is fine for 3 elements)
+        for (int i = 0; i < (int)top3_total_iter_counts_.size() - 1; i++) {
+            for (int j = i + 1; j < (int)top3_total_iter_counts_.size(); j++) {
+                if (top3_total_iter_counts_[i] < top3_total_iter_counts_[j]) {
+                    std::swap(top3_total_iter_counts_[i], top3_total_iter_counts_[j]);
+                    std::swap(top3_solve_nums_[i], top3_solve_nums_[j]);
+                }
+            }
+        }
+    }
+
+    mpc_return.top3_total_iter_counts = top3_total_iter_counts_;
+    mpc_return.top3_solve_nums = top3_solve_nums_;
 
     if(sqp_status == SOLVED || 
        ((sqp_status == MAX_ITER_EXCEEDED || sqp_status == QP_MaxIterReached) && num_valid_guess_failed_ < 5))

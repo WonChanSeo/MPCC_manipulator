@@ -132,7 +132,7 @@ extern const char * OSQP_ERROR_MESSAGE[];
 
 #define OSQP_ADAPTIVE_RHO_UPDATE_DEFAULT (OSQP_ADAPTIVE_RHO_UPDATE_ITERATIONS)
 
-#define OSQP_ADAPTIVE_RHO_INTERVAL  (128)       ///< Default interval for iteration-based rho update
+#define OSQP_ADAPTIVE_RHO_INTERVAL  (40)       ///< Default interval for iteration-based rho update
 
 #ifdef OSQP_ALGEBRA_CUDA
 #  define OSQP_ADAPTIVE_RHO_TOLERANCE (2.0)
@@ -156,8 +156,8 @@ extern const char * OSQP_ERROR_MESSAGE[];
 
 // termination parameters
 # define OSQP_MAX_ITER              (256) // MODI 4000
-# define OSQP_EPS_ABS               (1E-3)
-# define OSQP_EPS_REL               (1E-3)
+# define OSQP_EPS_ABS               (0.0009765625f)  // 1/1024 = 2^(-10) for hardware-friendly computation
+# define OSQP_EPS_REL               (0.0009765625f)  // 1/1024 = 2^(-10) for hardware-friendly computation
 # define OSQP_EPS_PRIM_INF          (1E-4)
 # define OSQP_EPS_DUAL_INF          (1E-4)
 # define OSQP_SCALED_TERMINATION    (0) 

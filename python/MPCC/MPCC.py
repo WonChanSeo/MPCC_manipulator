@@ -131,5 +131,9 @@ class MPCC():
         
         iter_count = mpc_sol.iter_count
         sqp_iter_count = mpc_sol.sqp_iter_count
+        total_iter_count = mpc_sol.total_iter_count
+        solve_count = mpc_sol.solve_count
+        top3_total_iter_counts = list(mpc_sol.top3_total_iter_counts)
+        top3_solve_nums = [list(nums) for nums in mpc_sol.top3_solve_nums]
 
-        return mpc_status, updated_state, MPCC_CPP.inputToVector(mpc_sol.u0), mpc_horizon, compute_time, iter_count, sqp_iter_count
+        return mpc_status, updated_state, MPCC_CPP.inputToVector(mpc_sol.u0), mpc_horizon, compute_time, iter_count, sqp_iter_count, total_iter_count, solve_count, top3_total_iter_counts, top3_solve_nums
