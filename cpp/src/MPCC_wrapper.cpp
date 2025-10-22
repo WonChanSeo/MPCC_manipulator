@@ -316,6 +316,11 @@ BOOST_PYTHON_MODULE(MPCC_WRAPPER)
             .def("calculateMlpOutputBatch", &EnvCollNNmodel::calculateMlpOutputBatch)
             // ▼▼▼▼▼ 새로 추가한 getter 함수를 등록합니다. ▼▼▼▼▼
             .def("getInferenceTimes", &EnvCollNNmodel::getInferenceTimes, return_value_policy<copy_const_reference>())
+            .def("getReluDeactivationRatios", &EnvCollNNmodel::getReluDeactivationRatios)
+            .def("getReluTotalUnits", &EnvCollNNmodel::getReluTotalUnits)
+            .def("getReluAvgDeactivatedCounts", &EnvCollNNmodel::getReluAvgDeactivatedCounts)
+            .def("getReluMinDeactivatedCounts", &EnvCollNNmodel::getReluMinDeactivatedCounts)
+            .def("getReluMaxDeactivatedCounts", &EnvCollNNmodel::getReluMaxDeactivatedCounts)
     ;
 
     

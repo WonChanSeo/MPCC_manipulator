@@ -57,6 +57,20 @@ namespace mpcc
 
             // ▼▼▼▼▼ 여기에 이전 인덱스 저장 변수를 추가합니다. ▼▼▼▼▼
             Eigen::Index previous_min_col = -1; // 초기값 -1
+
+            // ▼▼▼▼▼ ReLU deactivation 통계를 저장하는 변수들 ▼▼▼▼▼
+            // 각 레이어별 총 유닛 수를 저장 (n_layer-1 크기, output layer 제외)
+            std::vector<int> total_units_per_layer;
+            // 각 레이어별 deactivated 유닛 수의 합계 (누적)
+            std::vector<int> deactivated_units_per_layer;
+            // 각 레이어별 최소 deactivation 개수
+            std::vector<int> min_deactivated_per_layer;
+            // 각 레이어별 최대 deactivation 개수
+            std::vector<int> max_deactivated_per_layer;
+            // 총 inference 호출 횟수 (통계 계산용)
+            int total_inference_count = 0;
+            // 총 처리된 샘플 수 (batch_size의 합계)
+            int total_sample_count = 0;
             
 
             // --- 기타 설정 ---
@@ -82,6 +96,13 @@ namespace mpcc
             
             // ▼▼▼▼▼ 저장된 시간들을 반환하는 getter 함수를 선언합니다. ▼▼▼▼▼
             const std::vector<double>& getInferenceTimes() const;
+
+            // ▼▼▼▼▼ ReLU deactivation 통계를 반환하는 getter 함수들 ▼▼▼▼▼
+            std::vector<double> getReluDeactivationRatios() const;
+            std::vector<int> getReluTotalUnits() const;
+            std::vector<double> getReluAvgDeactivatedCounts() const;
+            std::vector<int> getReluMinDeactivatedCounts() const;
+            std::vector<int> getReluMaxDeactivatedCounts() const;
         private:
             std::string file_path_;
             MLP mlp_;

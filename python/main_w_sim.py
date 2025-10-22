@@ -448,7 +448,24 @@ def main(args):
 
     node.destroy_node()
     rclpy.shutdown()
-    
+
+    # ▼▼▼▼▼ ReLU deactivation 통계를 가져와서 출력합니다 ▼▼▼▼▼
+    relu_deactivation_ratios = envcolNN.NNmodel.getReluDeactivationRatios()
+    relu_total_units = envcolNN.NNmodel.getReluTotalUnits()
+    relu_avg_deactivated = envcolNN.NNmodel.getReluAvgDeactivatedCounts()
+    relu_min_deactivated = envcolNN.NNmodel.getReluMinDeactivatedCounts()
+    relu_max_deactivated = envcolNN.NNmodel.getReluMaxDeactivatedCounts()
+
+    print("\n" + "="*80)
+    print("=== ReLU Deactivation Statistics ===")
+    print("="*80)
+    print(f"{'Layer':<8} {'Total Units':<15} {'Avg Deact':<15} {'Min Deact':<15} {'Max Deact':<15} {'Deact %':<15}")
+    print("-"*80)
+    for i in range(len(relu_deactivation_ratios)):
+        print(f"{i:<8} {relu_total_units[i]:<15} {relu_avg_deactivated[i]:<15.2f} {relu_min_deactivated[i]:<15} {relu_max_deactivated[i]:<15} {relu_deactivation_ratios[i]*100:<15.2f}")
+    print("="*80)
+    print()
+
     inference_times = envcolNN.NNmodel.getInferenceTimes()
     plt.figure(figsize=(14, 8))
     plt.hist(inference_times, bins=50, alpha=0.75, color='coral', edgecolor='black')
@@ -587,29 +604,42 @@ def main(args):
     if args.name:
         # 1. 기본 출력 폴더 경로를 정의합니다.
         output_folder = os.path.join("../result", args.name)
-        
+
         # 2. 저장할 폴더가 없으면 자동으로 생성합니다.
         os.makedirs(output_folder, exist_ok=True)
-        
+
         # 3. debug_data와 time_data를 합칩니다.
         combined_stats_data = {**debug_data, **time_data}
-        
+
         # 4. 저장될 텍스트 파일의 전체 경로를 만듭니다.
         stats_path = os.path.join(output_folder, f"{args.name}_debug_stats.txt") # 확장자를 .txt로 변경
-        
+
         # 5. 새로 만든 함수를 호출하여 텍스트 파일로 저장합니다.
         save_stats_as_txt(
-            combined_stats_data, 
-            name="Combined Statistics (Debug & Time Data)", 
+            combined_stats_data,
+            name="Combined Statistics (Debug & Time Data)",
             filename=stats_path
         )
-        
+
+        # ▼▼▼▼▼ 6. ReLU deactivation 통계를 텍스트 파일로 저장합니다 ▼▼▼▼▼
+        relu_stats_path = os.path.join(output_folder, f"{args.name}_relu_deactivation_stats.txt")
+        with open(relu_stats_path, 'w', encoding='utf-8') as f:
+            f.write("="*80 + "\n")
+            f.write("=== ReLU Deactivation Statistics ===\n")
+            f.write("="*80 + "\n")
+            f.write(f"{'Layer':<8} {'Total Units':<15} {'Avg Deact':<15} {'Min Deact':<15} {'Max Deact':<15} {'Deact %':<15}\n")
+            f.write("-"*80 + "\n")
+            for i in range(len(relu_deactivation_ratios)):
+                f.write(f"{i:<8} {relu_total_units[i]:<15} {relu_avg_deactivated[i]:<15.2f} {relu_min_deactivated[i]:<15} {relu_max_deactivated[i]:<15} {relu_deactivation_ratios[i]*100:<15.2f}\n")
+            f.write("="*80 + "\n")
+        print(f"ReLU deactivation statistics saved to {relu_stats_path}")
+
         # .mat 파일 저장 등 다른 로직은 그대로 유지할 수 있습니다.
         # 예시:
         # debug_mat_path = os.path.join(output_folder, f"{args.name}_debug_data.mat")
         # scipy.io.savemat(debug_mat_path, debug_data)
         # print(f"Data written to {debug_mat_path}")
-        
+
     ### MODIFIED SECTION END ###
 
     # 기존의 콘솔 출력은 그대로 유지하거나, 필요 없다면 주석 처리/삭제 가능

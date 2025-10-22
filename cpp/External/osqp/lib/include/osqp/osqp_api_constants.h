@@ -132,7 +132,7 @@ extern const char * OSQP_ERROR_MESSAGE[];
 
 #define OSQP_ADAPTIVE_RHO_UPDATE_DEFAULT (OSQP_ADAPTIVE_RHO_UPDATE_ITERATIONS)
 
-#define OSQP_ADAPTIVE_RHO_INTERVAL  (40)       ///< Default interval for iteration-based rho update
+#define OSQP_ADAPTIVE_RHO_INTERVAL  (50)       ///< Default interval for iteration-based rho update
 
 #ifdef OSQP_ALGEBRA_CUDA
 #  define OSQP_ADAPTIVE_RHO_TOLERANCE (2.0)

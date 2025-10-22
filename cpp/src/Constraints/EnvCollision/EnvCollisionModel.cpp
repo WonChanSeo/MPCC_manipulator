@@ -341,6 +341,19 @@ namespace mpcc
             return {Eigen::VectorXd(), Eigen::MatrixXd()};
         }
 
+        // ▼▼▼▼▼ ReLU deactivation 통계 초기화 (첫 호출 시) ▼▼▼▼▼
+        if (mlp_.total_inference_count == 0) {
+            mlp_.total_units_per_layer.resize(mlp_.n_layer - 1);
+            mlp_.deactivated_units_per_layer.resize(mlp_.n_layer - 1, 0);
+            mlp_.min_deactivated_per_layer.resize(mlp_.n_layer - 1, std::numeric_limits<int>::max());
+            mlp_.max_deactivated_per_layer.resize(mlp_.n_layer - 1, 0);
+            for (int i = 0; i < mlp_.n_layer - 1; ++i) {
+                mlp_.total_units_per_layer[i] = mlp_.n_hidden(i);
+            }
+        }
+        mlp_.total_inference_count++;
+        mlp_.total_sample_count += batch_size;
+
         // ===== 1. 모든 결과와 자코비안을 계산 (효율성을 위해 배치 연산 유지) =====
         // Convert input from double to bfloat16 for inference
         mlp_.batch_input = inputs.cast<Eigen::bfloat16>();
@@ -374,6 +387,9 @@ namespace mpcc
 
         std::vector<MatrixXbf16> batch_jacobian(batch_size);
 
+        // ▼▼▼▼▼ ReLU deactivation을 추적하기 위한 임시 변수 (스레드별 집계) ▼▼▼▼▼
+        std::vector<std::vector<int>> thread_deactivated_counts(batch_size, std::vector<int>(mlp_.n_layer - 1, 0));
+
         #pragma omp parallel for
         for (int i = 0; i < batch_size; ++i) {
             MatrixXbf16 temp_derivative;
@@ -384,17 +400,48 @@ namespace mpcc
                 nerf_jac.middleRows(mlp_.n_input, mlp_.n_input).diagonal() = inputs.col(i).array().cos().cast<Eigen::bfloat16>();
                 nerf_jac.bottomRows(mlp_.n_input).diagonal() = (-inputs.col(i).array().sin()).cast<Eigen::bfloat16>();
                 MatrixXbf16 relu_deriv_0 = batch_ReLU_derivative(pre_activations[0].col(i));
+
+                // ▼▼▼▼▼ Layer 0의 deactivation 카운트 ▼▼▼▼▼
+                int deactivated_count_0 = (relu_deriv_0.array() == Eigen::bfloat16(0)).count();
+                thread_deactivated_counts[i][0] = deactivated_count_0;
+
                 temp_derivative = (relu_deriv_0.asDiagonal() * mlp_.weight[0]) * nerf_jac;
             } else {
                 MatrixXbf16 relu_deriv_0 = batch_ReLU_derivative(pre_activations[0].col(i));
+
+                // ▼▼▼▼▼ Layer 0의 deactivation 카운트 ▼▼▼▼▼
+                int deactivated_count_0 = (relu_deriv_0.array() == Eigen::bfloat16(0)).count();
+                thread_deactivated_counts[i][0] = deactivated_count_0;
+
                 temp_derivative = relu_deriv_0.asDiagonal() * mlp_.weight[0];
             }
 
             for (int layer = 1; layer < mlp_.n_layer - 1; ++layer) {
                 MatrixXbf16 relu_deriv = batch_ReLU_derivative(pre_activations[layer].col(i));
+
+                // ▼▼▼▼▼ 각 hidden layer의 deactivation 카운트 ▼▼▼▼▼
+                int deactivated_count = (relu_deriv.array() == Eigen::bfloat16(0)).count();
+                thread_deactivated_counts[i][layer] = deactivated_count;
+
                 temp_derivative = (relu_deriv.asDiagonal() * mlp_.weight[layer]) * temp_derivative;
             }
             batch_jacobian[i] = mlp_.weight.back() * temp_derivative;
+        }
+
+        // ▼▼▼▼▼ 모든 배치 샘플의 deactivation 수를 누적하고 min/max 업데이트 ▼▼▼▼▼
+        for (int i = 0; i < batch_size; ++i) {
+            for (int layer = 0; layer < mlp_.n_layer - 1; ++layer) {
+                int deactivated_count = thread_deactivated_counts[i][layer];
+                mlp_.deactivated_units_per_layer[layer] += deactivated_count;
+
+                // min/max 업데이트
+                if (deactivated_count < mlp_.min_deactivated_per_layer[layer]) {
+                    mlp_.min_deactivated_per_layer[layer] = deactivated_count;
+                }
+                if (deactivated_count > mlp_.max_deactivated_per_layer[layer]) {
+                    mlp_.max_deactivated_per_layer[layer] = deactivated_count;
+                }
+            }
         }
 
         // ===== 2. 각 행(링크)별 최소값 탐색 및 결과 재구성 =====
@@ -439,6 +486,57 @@ namespace mpcc
     const std::vector<double>& EnvCollNNmodel::getInferenceTimes() const
     {
         return mlp_.inference_times_ms;
+    }
+
+    // ▼▼▼▼▼ ReLU deactivation ratio를 계산하여 반환하는 함수 ▼▼▼▼▼
+    std::vector<double> EnvCollNNmodel::getReluDeactivationRatios() const
+    {
+        std::vector<double> ratios;
+        if (mlp_.total_sample_count == 0) {
+            return ratios; // 아직 inference가 호출되지 않았으면 빈 벡터 반환
+        }
+
+        ratios.resize(mlp_.n_layer - 1);
+        for (int i = 0; i < mlp_.n_layer - 1; ++i) {
+            // 평균 deactivation 개수를 구한 후 비율로 변환
+            double avg_deactivated = static_cast<double>(mlp_.deactivated_units_per_layer[i]) / mlp_.total_sample_count;
+            double total_units = static_cast<double>(mlp_.total_units_per_layer[i]);
+            ratios[i] = avg_deactivated / total_units;
+        }
+        return ratios;
+    }
+
+    // ▼▼▼▼▼ 각 레이어의 총 유닛 수를 반환하는 함수 ▼▼▼▼▼
+    std::vector<int> EnvCollNNmodel::getReluTotalUnits() const
+    {
+        return mlp_.total_units_per_layer;
+    }
+
+    // ▼▼▼▼▼ 각 레이어의 평균 deactivated 유닛 수를 반환하는 함수 ▼▼▼▼▼
+    std::vector<double> EnvCollNNmodel::getReluAvgDeactivatedCounts() const
+    {
+        std::vector<double> avg_counts;
+        if (mlp_.total_sample_count == 0) {
+            return avg_counts;
+        }
+
+        avg_counts.resize(mlp_.n_layer - 1);
+        for (int i = 0; i < mlp_.n_layer - 1; ++i) {
+            avg_counts[i] = static_cast<double>(mlp_.deactivated_units_per_layer[i]) / mlp_.total_sample_count;
+        }
+        return avg_counts;
+    }
+
+    // ▼▼▼▼▼ 각 레이어의 최소 deactivated 유닛 수를 반환하는 함수 ▼▼▼▼▼
+    std::vector<int> EnvCollNNmodel::getReluMinDeactivatedCounts() const
+    {
+        return mlp_.min_deactivated_per_layer;
+    }
+
+    // ▼▼▼▼▼ 각 레이어의 최대 deactivated 유닛 수를 반환하는 함수 ▼▼▼▼▼
+    std::vector<int> EnvCollNNmodel::getReluMaxDeactivatedCounts() const
+    {
+        return mlp_.max_deactivated_per_layer;
     }
 }
 
