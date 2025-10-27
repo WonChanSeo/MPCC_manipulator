@@ -60,5 +60,11 @@ CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o: \
  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/flexfloat_wrapper.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/algebra_impl.h \
- /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/../_common/csc_math.h
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/../_common/csc_math.h \
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/flexfloat_wrapper.h

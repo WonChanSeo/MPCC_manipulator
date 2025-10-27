@@ -59,6 +59,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.o: ../algebra/_common/csc_math
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/public/osqp.h \
   ../include/public/osqp_api_constants.h \
   ../include/public/osqp_api_types.h \
@@ -143,7 +149,13 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.o: ../algebra/_common/csc_uti
   /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
-  /usr/include/x86_64-linux-gnu/bits/mathcalls.h
+  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.o: ../algebra/_common/kkt.c \
   /usr/include/stdc-predef.h \
@@ -210,7 +222,13 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.o: ../algebra/_common/kkt.c \
   /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
-  /usr/include/x86_64-linux-gnu/bits/mathcalls.h
+  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c \
   /usr/include/stdc-predef.h \
@@ -270,6 +288,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -356,6 +380,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.o: ../algeb
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -443,6 +473,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.o: ../algeb
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -530,6 +566,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.o: ../alg
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -617,6 +659,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.o: ..
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -704,6 +752,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.o: .
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -791,6 +845,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.o: ../al
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -878,6 +938,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.o: ../a
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -965,6 +1031,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.o: 
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -1052,6 +1124,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.o: 
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -1139,6 +1217,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.o:
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -1226,6 +1310,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.o: ../a
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   /usr/include/stdio.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
@@ -1312,6 +1402,12 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o: ../alg
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../algebra/builtin/algebra_impl.h \
   ../algebra/_common/csc_math.h \
   ../include/public/osqp_api_types.h \
@@ -1363,11 +1459,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o: ../alg
   ../algebra/_common/lin_sys/qdldl/amd/include/SuiteSparse_config.h \
   ../algebra/_common/kkt.h \
   ../algebra/_common/csc_utils.h \
-  /usr/include/inttypes.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
-  /usr/include/stdint.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h
+  /usr/include/inttypes.h
 
 CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o: ../algebra/builtin/algebra_libs.c \
   /usr/include/stdc-predef.h \
@@ -1437,6 +1529,12 @@ CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o: ../algebra/builtin/alge
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/private/algebra_vector.h \
   _deps/qdldl-build/include/qdldl_types.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h \
@@ -1518,6 +1616,12 @@ CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o: ../algebra/builtin/matrix.c \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/private/algebra_matrix.h \
   ../include/private/types.h \
   ../algebra/builtin/algebra_impl.h \
@@ -1608,8 +1712,15 @@ CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o: ../algebra/builtin/vector.c \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../algebra/builtin/algebra_impl.h \
-  ../algebra/_common/csc_math.h
+  ../algebra/_common/csc_math.h \
+  ../include/private/flexfloat_wrapper.h
 
 CMakeFiles/OSQPLIB.dir/src/auxil.c.o: ../src/auxil.c \
   /usr/include/stdc-predef.h \
@@ -1678,6 +1789,12 @@ CMakeFiles/OSQPLIB.dir/src/auxil.c.o: ../src/auxil.c \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/private/algebra_vector.h \
   ../include/private/lin_alg.h \
   ../include/private/scaling.h \
@@ -1702,10 +1819,6 @@ CMakeFiles/OSQPLIB.dir/src/auxil.c.o: ../src/auxil.c \
   /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
   ../include/private/timing.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
-  /usr/include/stdint.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h \
   /usr/include/limits.h \
@@ -1802,6 +1915,12 @@ CMakeFiles/OSQPLIB.dir/src/codegen.c.o: ../src/codegen.c \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/private/algebra_vector.h \
   ../include/private/printing.h \
   /usr/include/string.h \
@@ -1889,6 +2008,12 @@ CMakeFiles/OSQPLIB.dir/src/derivative.c.o: ../src/derivative.c \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/private/algebra_vector.h \
   ../include/private/lin_alg.h \
   ../include/private/error.h \
@@ -1954,6 +2079,12 @@ CMakeFiles/OSQPLIB.dir/src/error.c.o: ../src/error.c \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/private/error.h \
   ../include/public/osqp.h \
   ../include/public/osqp_api_constants.h \
@@ -1979,6 +2110,9 @@ CMakeFiles/OSQPLIB.dir/src/error.c.o: ../src/error.c \
   /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
   ../include/public/osqp_api_constants.h
+
+CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o: ../src/flexfloat_scaling_control.c \
+  /usr/include/stdc-predef.h
 
 CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o: ../src/interrupt_unix.c \
   /usr/include/stdc-predef.h \
@@ -2096,6 +2230,12 @@ CMakeFiles/OSQPLIB.dir/src/polish.c.o: ../src/polish.c \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/private/algebra_vector.h \
   ../include/private/lin_alg.h \
   ../include/public/osqp_api_constants.h \
@@ -2189,6 +2329,12 @@ CMakeFiles/OSQPLIB.dir/src/scaling.c.o: ../src/scaling.c \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/private/algebra_vector.h \
   ../include/private/lin_alg.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h \
@@ -2200,10 +2346,6 @@ CMakeFiles/OSQPLIB.dir/src/scaling.c.o: ../src/scaling.c \
   /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
   /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
   /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
-  /usr/include/stdint.h \
-  /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
   ../include/private/algebra_vector.h
 
 CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o: ../src/timing_linux.c \
@@ -2273,6 +2415,12 @@ CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o: ../src/timing_linux.c \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/private/algebra_vector.h \
   ../include/private/types.h \
   /usr/include/time.h \
@@ -2350,6 +2498,12 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+  ../include/private/flexfloat_wrapper.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
   ../include/private/algebra_vector.h \
   ../include/private/algebra_vector.h \
   ../include/private/version.h \
@@ -2416,6 +2570,8 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
 
 ../include/private/derivative.h:
 
+../src/flexfloat_scaling_control.c:
+
 ../src/derivative.c:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
@@ -2434,6 +2590,8 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
 
 ../algebra/builtin/algebra_libs.c:
 
+../include/private/util.h:
+
 /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
 
 /usr/include/x86_64-linux-gnu/bits/fp-fast.h:
@@ -2447,12 +2605,6 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
 /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
 
 /usr/include/stdc-predef.h:
-
-../include/public/osqp.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
-
-/usr/include/x86_64-linux-gnu/bits/floatn.h:
 
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
@@ -2532,10 +2684,6 @@ include/public/osqp_configure.h:
 
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
 
-../algebra/_common/kkt.c:
-
-/usr/include/stdlib.h:
-
 ../algebra/_common/lin_sys/qdldl/amd/src/amd_info.c:
 
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
@@ -2544,11 +2692,21 @@ include/public/osqp_configure.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_mutex.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
+
+/usr/include/x86_64-linux-gnu/bits/floatn.h:
+
+../include/public/osqp.h:
+
+/usr/include/stdlib.h:
+
+../algebra/_common/kkt.c:
+
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
-
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
 
 /usr/include/x86_64-linux-gnu/bits/signum-generic.h:
 
@@ -2574,15 +2732,25 @@ include/public/osqp_configure.h:
 
 ../include/private/profilers.h:
 
-../include/public/osqp_api_constants.h:
+/usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
-../include/public/osqp_api_types.h:
+../algebra/_common/csc_utils.h:
 
 ../src/auxil.c:
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
+
+../include/public/osqp_api_types.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/float.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigstksz.h:
+
+../algebra/_common/lin_sys/qdldl/amd/include/amd.h:
+
+../include/public/osqp_api_constants.h:
 
 ../include/public/osqp_api_functions.h:
 
@@ -2628,8 +2796,6 @@ _deps/qdldl-build/include/qdldl_types.h:
 
 _deps/qdldl-build/include/qdldl_version.h:
 
-../include/private/util.h:
-
 /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h:
@@ -2637,10 +2803,6 @@ _deps/qdldl-build/include/qdldl_version.h:
 /usr/include/strings.h:
 
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:
-
-/usr/include/x86_64-linux-gnu/bits/byteswap.h:
-
-../algebra/_common/csc_utils.h:
 
 ../algebra/_common/kkt.h:
 
@@ -2698,15 +2860,13 @@ _deps/qdldl-build/include/qdldl_version.h:
 
 ../algebra/_common/lin_sys/qdldl/amd/include/amd_internal.h:
 
-/usr/include/x86_64-linux-gnu/bits/sigstksz.h:
-
-../algebra/_common/lin_sys/qdldl/amd/include/amd.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h:
 
 ../algebra/_common/lin_sys/qdldl/amd/src/amd_control.c:
 
 ../algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c:
+
+../include/private/flexfloat_wrapper.h:
 
 ../algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c:
 

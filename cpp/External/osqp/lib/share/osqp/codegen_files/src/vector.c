@@ -2,6 +2,12 @@
 #include "algebra_vector.h"
 #include "algebra_impl.h"
 
+#ifdef OSQP_USE_FLEXFLOAT
+#include "flexfloat_wrapper.h"
+/* Helper macros for flexfloat quantization */
+#define FF_QUANT(x) flexfloat_to_double(flexfloat_from_double(x))
+#endif
+
 /* VECTOR FUNCTIONS ----------------------------------------------------------*/
 
 #ifndef OSQP_EMBEDDED_MODE
@@ -362,9 +368,19 @@ void OSQPVectorf_mult_scalar(OSQPVectorf* a,
   OSQPInt    length = a->length;
   OSQPFloat* av = a->values;
 
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Apply flexfloat quantization to each multiplication */
+  flexfloat_t ff_sc = flexfloat_from_double(sc);
+  for (i = 0; i < length; i++) {
+    flexfloat_t ff_av = flexfloat_from_double(av[i]);
+    flexfloat_t ff_result = flexfloat_mul(ff_av, ff_sc);
+    av[i] = flexfloat_to_double(ff_result);
+  }
+#else
   for (i = 0; i < length; i++) {
     av[i] *= sc;
   }
+#endif
 }
 
 void OSQPVectorf_plus(OSQPVectorf*      x,
@@ -377,6 +393,25 @@ void OSQPVectorf_plus(OSQPVectorf*      x,
   OSQPFloat* bv = b->values;
   OSQPFloat* xv = x->values;
 
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Apply flexfloat quantization to additions */
+  if (x == a){
+    for (i = 0; i < length; i++) {
+      flexfloat_t ff_xv = flexfloat_from_double(xv[i]);
+      flexfloat_t ff_bv = flexfloat_from_double(bv[i]);
+      flexfloat_t ff_result = flexfloat_add(ff_xv, ff_bv);
+      xv[i] = flexfloat_to_double(ff_result);
+    }
+  }
+  else {
+    for (i = 0; i < length; i++) {
+      flexfloat_t ff_av = flexfloat_from_double(av[i]);
+      flexfloat_t ff_bv = flexfloat_from_double(bv[i]);
+      flexfloat_t ff_result = flexfloat_add(ff_av, ff_bv);
+      xv[i] = flexfloat_to_double(ff_result);
+    }
+  }
+#else
   if (x == a){
     for (i = 0; i < length; i++) {
       xv[i] += bv[i];
@@ -387,6 +422,7 @@ void OSQPVectorf_plus(OSQPVectorf*      x,
       xv[i] = av[i] + bv[i];
     }
   }
+#endif
 }
 
 void OSQPVectorf_minus(OSQPVectorf*       x,
@@ -399,6 +435,25 @@ void OSQPVectorf_minus(OSQPVectorf*       x,
   OSQPFloat* bv = b->values;
   OSQPFloat* xv = x->values;
 
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Apply flexfloat quantization to subtractions */
+  if (x == a) {
+    for (i = 0; i < length; i++) {
+      flexfloat_t ff_xv = flexfloat_from_double(xv[i]);
+      flexfloat_t ff_bv = flexfloat_from_double(bv[i]);
+      flexfloat_t ff_result = flexfloat_sub(ff_xv, ff_bv);
+      xv[i] = flexfloat_to_double(ff_result);
+    }
+  }
+  else {
+    for (i = 0; i < length; i++) {
+      flexfloat_t ff_av = flexfloat_from_double(av[i]);
+      flexfloat_t ff_bv = flexfloat_from_double(bv[i]);
+      flexfloat_t ff_result = flexfloat_sub(ff_av, ff_bv);
+      xv[i] = flexfloat_to_double(ff_result);
+    }
+  }
+#else
   if (x == a) {
     for (i = 0; i < length; i++) {
       xv[i] -= bv[i];
@@ -409,6 +464,7 @@ void OSQPVectorf_minus(OSQPVectorf*       x,
       xv[i] = av[i] - bv[i];
     }
   }
+#endif
 }
 
 void OSQPVectorf_add_scaled(OSQPVectorf*       x,
@@ -423,6 +479,31 @@ void OSQPVectorf_add_scaled(OSQPVectorf*       x,
   OSQPFloat* bv = b->values;
   OSQPFloat* xv = x->values;
 
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Apply flexfloat quantization: x = sca*a + scb*b */
+  flexfloat_t ff_sca = flexfloat_from_double(sca);
+  flexfloat_t ff_scb = flexfloat_from_double(scb);
+
+  if (x == a && sca == 1.){
+    for (i = 0; i < length; i++) {
+      flexfloat_t ff_xv = flexfloat_from_double(xv[i]);
+      flexfloat_t ff_bv = flexfloat_from_double(bv[i]);
+      flexfloat_t ff_term = flexfloat_mul(ff_scb, ff_bv);
+      flexfloat_t ff_result = flexfloat_add(ff_xv, ff_term);
+      xv[i] = flexfloat_to_double(ff_result);
+    }
+  }
+  else {
+    for (i = 0; i < length; i++) {
+      flexfloat_t ff_av = flexfloat_from_double(av[i]);
+      flexfloat_t ff_bv = flexfloat_from_double(bv[i]);
+      flexfloat_t ff_term1 = flexfloat_mul(ff_sca, ff_av);
+      flexfloat_t ff_term2 = flexfloat_mul(ff_scb, ff_bv);
+      flexfloat_t ff_result = flexfloat_add(ff_term1, ff_term2);
+      xv[i] = flexfloat_to_double(ff_result);
+    }
+  }
+#else
   /* shorter version when incrementing */
   if (x == a && sca == 1.){
     for (i = 0; i < length; i++) {
@@ -434,6 +515,7 @@ void OSQPVectorf_add_scaled(OSQPVectorf*       x,
       xv[i] = sca * av[i] + scb * bv[i];
     }
   }
+#endif
 }
 
 void OSQPVectorf_add_scaled3(OSQPVectorf*       x,
@@ -451,6 +533,38 @@ void OSQPVectorf_add_scaled3(OSQPVectorf*       x,
   OSQPFloat* cv = c->values;
   OSQPFloat* xv = x->values;
 
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Apply flexfloat quantization: x = sca*a + scb*b + scc*c */
+  flexfloat_t ff_sca = flexfloat_from_double(sca);
+  flexfloat_t ff_scb = flexfloat_from_double(scb);
+  flexfloat_t ff_scc = flexfloat_from_double(scc);
+
+  if (x == a && sca == 1.){
+    for (i = 0; i < length; i++) {
+      flexfloat_t ff_xv = flexfloat_from_double(xv[i]);
+      flexfloat_t ff_bv = flexfloat_from_double(bv[i]);
+      flexfloat_t ff_cv = flexfloat_from_double(cv[i]);
+      flexfloat_t ff_term1 = flexfloat_mul(ff_scb, ff_bv);
+      flexfloat_t ff_term2 = flexfloat_mul(ff_scc, ff_cv);
+      flexfloat_t ff_sum = flexfloat_add(ff_term1, ff_term2);
+      flexfloat_t ff_result = flexfloat_add(ff_xv, ff_sum);
+      xv[i] = flexfloat_to_double(ff_result);
+    }
+  }
+  else {
+    for (i = 0; i < length; i++) {
+      flexfloat_t ff_av = flexfloat_from_double(av[i]);
+      flexfloat_t ff_bv = flexfloat_from_double(bv[i]);
+      flexfloat_t ff_cv = flexfloat_from_double(cv[i]);
+      flexfloat_t ff_term1 = flexfloat_mul(ff_sca, ff_av);
+      flexfloat_t ff_term2 = flexfloat_mul(ff_scb, ff_bv);
+      flexfloat_t ff_term3 = flexfloat_mul(ff_scc, ff_cv);
+      flexfloat_t ff_sum12 = flexfloat_add(ff_term1, ff_term2);
+      flexfloat_t ff_result = flexfloat_add(ff_sum12, ff_term3);
+      xv[i] = flexfloat_to_double(ff_result);
+    }
+  }
+#else
   /* shorter version when incrementing */
   if (x == a && sca == 1.){
     for (i = 0; i < length; i++) {
@@ -462,6 +576,7 @@ void OSQPVectorf_add_scaled3(OSQPVectorf*       x,
       xv[i] =  sca * av[i] + scb * bv[i] + scc * cv[i];
     }
   }
+#endif
 }
 
 

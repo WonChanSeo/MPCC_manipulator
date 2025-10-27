@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.18)
 project(osqp)
 
 option(OSQP_USE_HALF "Build OSQP and QDLDL in half‐precision (_Float16)" OFF)
+option(OSQP_USE_FLEXFLOAT "Build OSQP with FlexFloat (14-bit mantissa, 8-bit exponent)" OFF)
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)
@@ -349,6 +350,12 @@ if(OSQP_USE_HALF)
   else()
     target_compile_options(OSQPLIB PRIVATE -std=c2x)
   endif()
+endif()
+
+if(OSQP_USE_FLEXFLOAT)
+  # Enable flexfloat flag
+  target_compile_definitions(OSQPLIB PUBLIC OSQP_USE_FLEXFLOAT)
+  message(STATUS "FlexFloat enabled: 14-bit mantissa, 8-bit exponent")
 endif()
 
 # 이하 add_subdirectory(include) 등 기존 코드…

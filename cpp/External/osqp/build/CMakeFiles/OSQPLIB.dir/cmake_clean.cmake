@@ -45,6 +45,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/OSQPLIB.dir/src/derivative.c.o.d"
   "CMakeFiles/OSQPLIB.dir/src/error.c.o"
   "CMakeFiles/OSQPLIB.dir/src/error.c.o.d"
+  "CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o"
+  "CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o.d"
   "CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o"
   "CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o.d"
   "CMakeFiles/OSQPLIB.dir/src/polish.c.o"

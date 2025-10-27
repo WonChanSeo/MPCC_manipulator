@@ -62,6 +62,11 @@ CMakeFiles/OSQPLIB.dir/src/scaling.c.o: \
  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/flexfloat_wrapper.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/algebra_vector.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/lin_alg.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h \
@@ -72,7 +77,4 @@ CMakeFiles/OSQPLIB.dir/src/scaling.c.o: \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
- /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/algebra_vector.h

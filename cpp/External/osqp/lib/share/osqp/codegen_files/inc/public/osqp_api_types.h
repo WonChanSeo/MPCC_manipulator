@@ -17,10 +17,15 @@ typedef int OSQPInt;       /* for indices */
 
 
 
-#if defined(OSQP_USE_HALF)
+#if defined(OSQP_USE_FLEXFLOAT)
+  /* FlexFloat: Custom floating-point with 14-bit mantissa, 8-bit exponent */
+  /* Note: FlexFloat is implemented as double but with quantization applied at each operation */
+  typedef double OSQPFloat;
+
+#elif defined(OSQP_USE_HALF)
   /* if you have a compiler‐builtin half: */
   typedef __fp16  OSQPFloat;
-/* or, if you want to use Eigen’s software‐emulated half,
+/* or, if you want to use Eigen's software‐emulated half,
    #include <unsupported/Eigen/CXX11/Half.h>
    typedef Eigen::half OSQPFloat;
 */

@@ -125,10 +125,24 @@ CMakeFiles/OSQPLIB.dir/src/util.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/OSQPLIB.dir/src/util.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/src/util.c -o CMakeFiles/OSQPLIB.dir/src/util.c.s
 
+CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o: CMakeFiles/OSQPLIB.dir/flags.make
+CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o: ../src/flexfloat_scaling_control.c
+CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o -MF CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o.d -o CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/src/flexfloat_scaling_control.c
+
+CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/src/flexfloat_scaling_control.c > CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.i
+
+CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/src/flexfloat_scaling_control.c -o CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.s
+
 CMakeFiles/OSQPLIB.dir/src/polish.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/src/polish.c.o: ../src/polish.c
 CMakeFiles/OSQPLIB.dir/src/polish.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/OSQPLIB.dir/src/polish.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/OSQPLIB.dir/src/polish.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/src/polish.c.o -MF CMakeFiles/OSQPLIB.dir/src/polish.c.o.d -o CMakeFiles/OSQPLIB.dir/src/polish.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/src/polish.c
 
 CMakeFiles/OSQPLIB.dir/src/polish.c.i: cmake_force
@@ -142,7 +156,7 @@ CMakeFiles/OSQPLIB.dir/src/polish.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/src/derivative.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/src/derivative.c.o: ../src/derivative.c
 CMakeFiles/OSQPLIB.dir/src/derivative.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/OSQPLIB.dir/src/derivative.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/OSQPLIB.dir/src/derivative.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/src/derivative.c.o -MF CMakeFiles/OSQPLIB.dir/src/derivative.c.o.d -o CMakeFiles/OSQPLIB.dir/src/derivative.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/src/derivative.c
 
 CMakeFiles/OSQPLIB.dir/src/derivative.c.i: cmake_force
@@ -156,7 +170,7 @@ CMakeFiles/OSQPLIB.dir/src/derivative.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o: ../src/interrupt_unix.c
 CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o -MF CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o.d -o CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/src/interrupt_unix.c
 
 CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.i: cmake_force
@@ -170,7 +184,7 @@ CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o: ../src/timing_linux.c
 CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o -MF CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o.d -o CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/src/timing_linux.c
 
 CMakeFiles/OSQPLIB.dir/src/timing_linux.c.i: cmake_force
@@ -184,7 +198,7 @@ CMakeFiles/OSQPLIB.dir/src/timing_linux.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/src/codegen.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/src/codegen.c.o: ../src/codegen.c
 CMakeFiles/OSQPLIB.dir/src/codegen.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/OSQPLIB.dir/src/codegen.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/OSQPLIB.dir/src/codegen.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/src/codegen.c.o -MF CMakeFiles/OSQPLIB.dir/src/codegen.c.o.d -o CMakeFiles/OSQPLIB.dir/src/codegen.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/src/codegen.c
 
 CMakeFiles/OSQPLIB.dir/src/codegen.c.i: cmake_force
@@ -198,7 +212,7 @@ CMakeFiles/OSQPLIB.dir/src/codegen.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.o: ../algebra/_common/csc_math.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/csc_math.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.i: cmake_force
@@ -212,7 +226,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/csc_math.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.o: ../algebra/_common/csc_utils.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/csc_utils.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.i: cmake_force
@@ -226,7 +240,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/csc_utils.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o: ../algebra/builtin/algebra_libs.c
 CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/algebra_libs.c
 
 CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.i: cmake_force
@@ -240,7 +254,7 @@ CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o: ../algebra/builtin/vector.c
 CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/vector.c
 
 CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.i: cmake_force
@@ -254,7 +268,7 @@ CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o: ../algebra/builtin/matrix.c
 CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/matrix.c
 
 CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.i: cmake_force
@@ -268,7 +282,7 @@ CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.c.i: cmake_force
@@ -282,7 +296,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/SuiteSparse_config.
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_1.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.i: cmake_force
@@ -296,7 +310,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_1.c.s: cmake_fo
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_2.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.i: cmake_force
@@ -310,7 +324,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_2.c.s: cmake_fo
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.i: cmake_force
@@ -324,7 +338,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_aat.c.s: cmake_
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_control.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.i: cmake_force
@@ -338,7 +352,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_control.c.s: cm
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.i: cmake_force
@@ -352,7 +366,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_defaults.c.s: c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_info.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.i: cmake_force
@@ -366,7 +380,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_info.c.s: cmake
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_order.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.i: cmake_force
@@ -380,7 +394,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_order.c.s: cmak
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.i: cmake_force
@@ -394,7 +408,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_post_tree.c.s: 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.i: cmake_force
@@ -408,7 +422,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_postorder.c.s: 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.i: cmake_force
@@ -422,7 +436,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_preprocess.c.s:
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.o: ../algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.i: cmake_force
@@ -436,7 +450,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c.s: cmak
 CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.o: ../algebra/_common/kkt.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/kkt.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.i: cmake_force
@@ -450,7 +464,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/kkt.c.s: cmake_force
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o: CMakeFiles/OSQPLIB.dir/flags.make
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o: ../algebra/_common/lin_sys/qdldl/qdldl_interface.c
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o: CMakeFiles/OSQPLIB.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Building C object CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o -MF CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o.d -o CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/lin_sys/qdldl/qdldl_interface.c
 
 CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.i: cmake_force
@@ -465,6 +479,7 @@ OSQPLIB: CMakeFiles/OSQPLIB.dir/src/auxil.c.o
 OSQPLIB: CMakeFiles/OSQPLIB.dir/src/error.c.o
 OSQPLIB: CMakeFiles/OSQPLIB.dir/src/scaling.c.o
 OSQPLIB: CMakeFiles/OSQPLIB.dir/src/util.c.o
+OSQPLIB: CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o
 OSQPLIB: CMakeFiles/OSQPLIB.dir/src/polish.c.o
 OSQPLIB: CMakeFiles/OSQPLIB.dir/src/derivative.c.o
 OSQPLIB: CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o

@@ -32,6 +32,71 @@
 #define QDLDL_USED (1)
 #define QDLDL_UNUSED (0)
 
+// FlexFloat helper functions
+#ifdef QDLDL_USE_FLEXFLOAT
+
+static inline void qdldl_ff_init(QDLDL_flexfloat *ff, double value) {
+    flexfloat_desc_t desc = QDLDL_FF_DESC;
+    ff->desc = desc;
+    ff->value = value;
+#ifdef FLEXFLOAT_TRACKING
+    ff->exact_value = value;
+    ff->tracking_fn = NULL;
+    ff->tracking_arg = NULL;
+#endif
+    flexfloat_sanitize(ff);
+}
+
+static inline double qdldl_ff_get(const QDLDL_flexfloat *ff) {
+    return ff->value;
+}
+
+static inline QDLDL_flexfloat qdldl_ff_from(double value) {
+    QDLDL_flexfloat result;
+    qdldl_ff_init(&result, value);
+    return result;
+}
+
+static inline QDLDL_flexfloat qdldl_ff_add(const QDLDL_flexfloat *a, const QDLDL_flexfloat *b) {
+    QDLDL_flexfloat result;
+    result.desc = QDLDL_FF_DESC;
+    ff_add(&result, a, b);
+    return result;
+}
+
+static inline QDLDL_flexfloat qdldl_ff_sub(const QDLDL_flexfloat *a, const QDLDL_flexfloat *b) {
+    QDLDL_flexfloat result;
+    result.desc = QDLDL_FF_DESC;
+    ff_sub(&result, a, b);
+    return result;
+}
+
+static inline QDLDL_flexfloat qdldl_ff_mul(const QDLDL_flexfloat *a, const QDLDL_flexfloat *b) {
+    QDLDL_flexfloat result;
+    result.desc = QDLDL_FF_DESC;
+    ff_mul(&result, a, b);
+    return result;
+}
+
+static inline QDLDL_flexfloat qdldl_ff_fma(const QDLDL_flexfloat *a, const QDLDL_flexfloat *b, const QDLDL_flexfloat *c) {
+    QDLDL_flexfloat temp, result;
+    temp.desc = QDLDL_FF_DESC;
+    result.desc = QDLDL_FF_DESC;
+    ff_mul(&temp, a, b);
+    ff_add(&result, &temp, c);
+    return result;
+}
+
+static inline int qdldl_ff_eq(const QDLDL_flexfloat *a, const QDLDL_flexfloat *b) {
+    return ff_eq(a, b);
+}
+
+static inline int qdldl_ff_gt(const QDLDL_flexfloat *a, const QDLDL_flexfloat *b) {
+    return ff_gt(a, b);
+}
+
+#endif // QDLDL_USE_FLEXFLOAT
+
 static inline float init_reciprocal(float d) {
     union { uint32_t i; float f; } u = { .f = d };
     u.i = 0x7EEEEBB3U - u.i;
@@ -39,6 +104,33 @@ static inline float init_reciprocal(float d) {
 }
 
 float reciprocal_nr_fma(float d) {
+#ifdef QDLDL_USE_FLEXFLOAT
+    // Use FlexFloat for internal computation
+    QDLDL_flexfloat d_ff = qdldl_ff_from((double)d);
+    QDLDL_flexfloat x_ff = qdldl_ff_from((double)init_reciprocal(d));
+    QDLDL_flexfloat two_ff = qdldl_ff_from(2.0);
+    QDLDL_flexfloat zero_ff = qdldl_ff_from(0.0);
+
+    // Create negative d for FMA
+    double neg_d_val = -(double)d;
+    QDLDL_flexfloat neg_d_ff = qdldl_ff_from(neg_d_val);
+
+    // Iteration 1: t = fma(-d, x, 2.0) = -d*x + 2.0
+    QDLDL_flexfloat t_ff = qdldl_ff_fma(&neg_d_ff, &x_ff, &two_ff);
+    // x = fma(x, t, 0) = x*t + 0
+    x_ff = qdldl_ff_fma(&x_ff, &t_ff, &zero_ff);
+
+    // Iteration 2
+    t_ff = qdldl_ff_fma(&neg_d_ff, &x_ff, &two_ff);
+    x_ff = qdldl_ff_fma(&x_ff, &t_ff, &zero_ff);
+
+    // Iteration 3
+    t_ff = qdldl_ff_fma(&neg_d_ff, &x_ff, &two_ff);
+    x_ff = qdldl_ff_fma(&x_ff, &t_ff, &zero_ff);
+
+    return (float)qdldl_ff_get(&x_ff);
+#else
+    // Original float32 implementation
     float x = init_reciprocal(d);
 
     float t = fmaf(-d, x, 2.0f);
@@ -51,6 +143,7 @@ float reciprocal_nr_fma(float d) {
     x = fmaf(x, t, 0.0f);
 
     return x;
+#endif
 }
 
 /* one-hex-word-per-line, MSB-first, width matches the C type */
@@ -307,6 +400,35 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
             tmpIdx = LNextSpaceInCol[cidx];
             yVals_cidx = yVals[cidx];
 
+#ifdef QDLDL_USE_FLEXFLOAT
+            // Use FlexFloat for critical arithmetic operations
+            for(j = Lp[cidx]; j < tmpIdx; j++) {
+                QDLDL_flexfloat lx_ff = qdldl_ff_from((double)Lx[j]);
+                QDLDL_flexfloat yVals_cidx_ff = qdldl_ff_from((double)yVals_cidx);
+                QDLDL_flexfloat product_ff = qdldl_ff_mul(&lx_ff, &yVals_cidx_ff);
+
+                QDLDL_flexfloat yVals_li_ff = qdldl_ff_from((double)yVals[Li[j]]);
+                QDLDL_flexfloat result_ff = qdldl_ff_sub(&yVals_li_ff, &product_ff);
+                yVals[Li[j]] = (QDLDL_float)qdldl_ff_get(&result_ff);
+            }
+
+            // Now I have the cidx^th element of y = L\b.
+            // so compute the corresponding element of
+            // this row of L and put it into the right place
+            Li[tmpIdx] = k;
+
+            QDLDL_flexfloat yVals_cidx_ff = qdldl_ff_from((double)yVals_cidx);
+            QDLDL_flexfloat Dinv_cidx_ff = qdldl_ff_from((double)Dinv[cidx]);
+            QDLDL_flexfloat Lx_result_ff = qdldl_ff_mul(&yVals_cidx_ff, &Dinv_cidx_ff);
+            Lx[tmpIdx] = (QDLDL_float)qdldl_ff_get(&Lx_result_ff);
+
+            // D[k] -= yVals[cidx]*yVals[cidx]*Dinv[cidx];
+            QDLDL_flexfloat D_k_ff = qdldl_ff_from((double)D[k]);
+            QDLDL_flexfloat product2_ff = qdldl_ff_mul(&yVals_cidx_ff, &Lx_result_ff);
+            QDLDL_flexfloat D_result_ff = qdldl_ff_sub(&D_k_ff, &product2_ff);
+            D[k] = (QDLDL_float)qdldl_ff_get(&D_result_ff);
+#else
+            // Original float32 implementation
             for(j = Lp[cidx]; j < tmpIdx; j++) {
                 yVals[Li[j]] -= Lx[j] * yVals_cidx;
             }
@@ -319,6 +441,7 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
 
             // D[k] -= yVals[cidx]*yVals[cidx]*Dinv[cidx];
             D[k] -= yVals_cidx * Lx[tmpIdx];
+#endif
             LNextSpaceInCol[cidx]++;
 
             // Reset the yvalues and indices back to zero and QDLDL_UNUSED

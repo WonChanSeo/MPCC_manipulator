@@ -3,6 +3,10 @@
 #include <stdint.h>
 #include "algebra_vector.h"
 
+#ifdef OSQP_USE_FLEXFLOAT
+extern int g_disable_flexfloat_for_scaling;
+#endif
+
 // ===== 통일된 벡터 읽기 접근자 =====
 // ---- 통일된 벡터 읽기 접근자 ----
 // (builtin 백엔드 기준: 함수 이름은 algebra_vector.h에 선언돼 있음)
@@ -183,6 +187,11 @@ OSQPInt scale_data(OSQPSolver* solver) {
   const OSQPInt n = work->data->n;
   const OSQPInt m = work->data->m;
 
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Disable FlexFloat during scaling to preserve precision of small bounds values */
+  g_disable_flexfloat_for_scaling = 1;
+#endif
+
   /* 0) 누적 스케일 초기화 */
   work->scaling->c = (OSQPFloat)1.0;
   OSQPVectorf_set_scalar(work->scaling->D,    1.0);
@@ -290,6 +299,11 @@ OSQPInt scale_data(OSQPSolver* solver) {
   OSQPVectorf_ew_prod(work->data->l, work->data->l, work->scaling->E);
   OSQPVectorf_ew_prod(work->data->u, work->data->u, work->scaling->E);
 
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Re-enable FlexFloat for ADMM iterations */
+  g_disable_flexfloat_for_scaling = 0;
+#endif
+
   return 0;
 }
 
@@ -299,6 +313,11 @@ OSQPInt scale_data(OSQPSolver* solver) {
 OSQPInt unscale_data(OSQPSolver* solver) {
 
   OSQPWorkspace* work     = solver->work;
+
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Disable FlexFloat during unscaling to preserve precision */
+  g_disable_flexfloat_for_scaling = 1;
+#endif
 
   // Unscale cost
   OSQPMatrix_mult_scalar(work->data->P, work->scaling->cinv);
@@ -318,6 +337,11 @@ OSQPInt unscale_data(OSQPSolver* solver) {
                       work->data->u,
                       work->scaling->Einv);
 
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Re-enable FlexFloat after unscaling */
+  g_disable_flexfloat_for_scaling = 0;
+#endif
+
   return 0;
 }
 
@@ -327,6 +351,11 @@ OSQPInt unscale_solution(OSQPVectorf*       usolx,
                          const OSQPVectorf* soly,
                          OSQPWorkspace*     work) {
 
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Disable FlexFloat during solution unscaling to preserve precision */
+  g_disable_flexfloat_for_scaling = 1;
+#endif
+
   // primal
   OSQPVectorf_ew_prod(usolx,solx,work->scaling->D);
 
@@ -334,6 +363,12 @@ OSQPInt unscale_solution(OSQPVectorf*       usolx,
   OSQPVectorf_ew_prod(usoly,soly,work->scaling->E);
 
   OSQPVectorf_mult_scalar(usoly,work->scaling->cinv);
+
+#ifdef OSQP_USE_FLEXFLOAT
+  /* Re-enable FlexFloat after solution unscaling */
+  g_disable_flexfloat_for_scaling = 0;
+#endif
+
   return 0;
 }
 

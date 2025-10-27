@@ -802,6 +802,12 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
   // If not warm start -> set x, z, y to zero
   if (!settings->warm_starting) osqp_cold_start(solver);
 
+#ifdef OSQP_USE_FLEXFLOAT
+  // FlexFloat quantization will be applied in ADMM vector operations
+  // QDLDL linear system solver uses standard double precision
+  printf("[OSQP] Starting ADMM iterations with FlexFloat-quantized vector operations\n");
+#endif
+
   // Main ADMM algorithm
 
   max_iter = settings->max_iter;
@@ -1012,7 +1018,6 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     }
 #endif /* ifdef OSQP_ENABLE_PRINTING */
   }        // End of ADMM for loop
-
 
   // Update information and check termination condition if it hasn't been done
   // during last iteration (max_iter reached or check_termination disabled)

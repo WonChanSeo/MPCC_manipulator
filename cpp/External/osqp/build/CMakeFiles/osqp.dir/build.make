@@ -93,6 +93,7 @@ osqp_EXTERNAL_OBJECTS = \
 "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles/OSQPLIB.dir/src/error.c.o" \
 "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles/OSQPLIB.dir/src/scaling.c.o" \
 "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles/OSQPLIB.dir/src/util.c.o" \
+"/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o" \
 "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles/OSQPLIB.dir/src/polish.c.o" \
 "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles/OSQPLIB.dir/src/derivative.c.o" \
 "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o" \
@@ -124,6 +125,7 @@ out/libosqp.so: CMakeFiles/OSQPLIB.dir/src/auxil.c.o
 out/libosqp.so: CMakeFiles/OSQPLIB.dir/src/error.c.o
 out/libosqp.so: CMakeFiles/OSQPLIB.dir/src/scaling.c.o
 out/libosqp.so: CMakeFiles/OSQPLIB.dir/src/util.c.o
+out/libosqp.so: CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o
 out/libosqp.so: CMakeFiles/OSQPLIB.dir/src/polish.c.o
 out/libosqp.so: CMakeFiles/OSQPLIB.dir/src/derivative.c.o
 out/libosqp.so: CMakeFiles/OSQPLIB.dir/src/interrupt_unix.c.o

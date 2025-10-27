@@ -1123,6 +1123,30 @@ src/error.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/OSQPLIB.dir/build.make CMakeFiles/OSQPLIB.dir/src/error.c.s
 .PHONY : src/error.c.s
 
+src/flexfloat_scaling_control.o: src/flexfloat_scaling_control.c.o
+.PHONY : src/flexfloat_scaling_control.o
+
+# target to build an object file
+src/flexfloat_scaling_control.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/OSQPLIB.dir/build.make CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.o
+.PHONY : src/flexfloat_scaling_control.c.o
+
+src/flexfloat_scaling_control.i: src/flexfloat_scaling_control.c.i
+.PHONY : src/flexfloat_scaling_control.i
+
+# target to preprocess a source file
+src/flexfloat_scaling_control.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/OSQPLIB.dir/build.make CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.i
+.PHONY : src/flexfloat_scaling_control.c.i
+
+src/flexfloat_scaling_control.s: src/flexfloat_scaling_control.c.s
+.PHONY : src/flexfloat_scaling_control.s
+
+# target to generate assembly for a file
+src/flexfloat_scaling_control.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/OSQPLIB.dir/build.make CMakeFiles/OSQPLIB.dir/src/flexfloat_scaling_control.c.s
+.PHONY : src/flexfloat_scaling_control.c.s
+
 src/interrupt_unix.o: src/interrupt_unix.c.o
 .PHONY : src/interrupt_unix.o
 
@@ -1394,6 +1418,9 @@ help:
 	@echo "... src/error.o"
 	@echo "... src/error.i"
 	@echo "... src/error.s"
+	@echo "... src/flexfloat_scaling_control.o"
+	@echo "... src/flexfloat_scaling_control.i"
+	@echo "... src/flexfloat_scaling_control.s"
 	@echo "... src/interrupt_unix.o"
 	@echo "... src/interrupt_unix.i"
 	@echo "... src/interrupt_unix.s"

@@ -5,6 +5,11 @@ target_sources(OSQPLIB PUBLIC
                "${CMAKE_CURRENT_SOURCE_DIR}/scaling.c"
                "${CMAKE_CURRENT_SOURCE_DIR}/util.c")
 
+# Add FlexFloat scaling control file if FlexFloat is enabled
+if(OSQP_USE_FLEXFLOAT)
+  target_sources(OSQPLIB PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/flexfloat_scaling_control.c")
+endif()
+
 # Source files that are needed for embedded code generation
 list( APPEND EMBEDDED_SRCS
       "${CMAKE_CURRENT_SOURCE_DIR}/auxil.c"

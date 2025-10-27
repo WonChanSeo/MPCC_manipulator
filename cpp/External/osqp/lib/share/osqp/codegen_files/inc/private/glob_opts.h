@@ -55,13 +55,38 @@ extern "C" {
 # if OSQP_EMBEDDED_MODE != 1
 
 #  include <math.h>
-#  ifndef OSQP_USE_FLOAT // Doubles
+
+#  ifdef OSQP_USE_FLEXFLOAT
+   /* FlexFloat: Apply quantization to all math operations */
+#   include "flexfloat_wrapper.h"
+
+   /* Math functions with flexfloat quantization */
+   static inline double flexfloat_sqrt_wrapper(double x) {
+     flexfloat_t ff_x = flexfloat_from_double(x);
+     flexfloat_t ff_result = flexfloat_sqrt(ff_x);
+     return flexfloat_to_double(ff_result);
+   }
+
+   static inline double flexfloat_fmod_wrapper(double x, double y) {
+     flexfloat_t ff_x = flexfloat_from_double(x);
+     flexfloat_t ff_y = flexfloat_from_double(y);
+     double x_d = flexfloat_to_double(ff_x);
+     double y_d = flexfloat_to_double(ff_y);
+     double result = fmod(x_d, y_d);
+     flexfloat_t ff_result = flexfloat_from_double(result);
+     return flexfloat_to_double(ff_result);
+   }
+
+#   define c_sqrt flexfloat_sqrt_wrapper
+#   define c_fmod flexfloat_fmod_wrapper
+
+#  elif !defined(OSQP_USE_FLOAT) // Doubles
 #   define c_sqrt sqrt
 #   define c_fmod fmod
 #  else          // Floats
 #   define c_sqrt sqrtf
 #   define c_fmod fmodf
-#  endif /* ifndef OSQP_USE_FLOAT */
+#  endif /* ifdef OSQP_USE_FLEXFLOAT */
 
 # endif // end OSQP_EMBEDDED_MODE
 

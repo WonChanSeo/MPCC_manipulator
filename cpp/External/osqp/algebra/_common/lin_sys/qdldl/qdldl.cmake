@@ -48,6 +48,30 @@ if(OSQP_USE_HALF)
     target_compile_options(qdldlobject PRIVATE -std=c2x)
   endif()
 endif()
+
+# ────────────────────────────────────────────────────────────────
+# QDLDL 객체 라이브러리에 FlexFloat 옵션 적용
+# IMPORTANT: FlexFloat is DISABLED in QDLDL to ensure setup/factorization uses full precision
+# FlexFloat is only applied in ADMM iterations via vector.c operations
+#
+# if(OSQP_USE_FLEXFLOAT)
+#   # QDLDL_USE_FLEXFLOAT 플래그 활성화 - qdldl.c의 flexfloat 코드 경로 사용
+#   target_compile_definitions(qdldlobject PUBLIC QDLDL_USE_FLEXFLOAT)
+#
+#   # FlexFloat 설정: 23-bit mantissa, 8-bit exponent (flexfloat_wrapper.h와 동일 - float32 precision)
+#   target_compile_definitions(qdldlobject PUBLIC QDLDL_FF_FRAC_BITS=23)
+#   target_compile_definitions(qdldlobject PUBLIC QDLDL_FF_EXP_BITS=8)
+#
+#   # OSQP의 flexfloat_wrapper.h 경로를 QDLDL에 추가
+#   # QDLDL이 #include "flexfloat.h"를 찾을 수 있도록 flexfloat.h 심볼릭 링크 생성 필요
+#   target_include_directories(qdldlobject PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../../../include/private)
+#
+#   message(STATUS "QDLDL FlexFloat enabled: 23-bit mantissa, 8-bit exponent (float32 precision)")
+# endif()
+
+if(OSQP_USE_FLEXFLOAT)
+  message(STATUS "QDLDL will use standard double precision (FlexFloat disabled in QDLDL)")
+endif()
 # ────────────────────────────────────────────────────────────────
 
 list(POP_BACK CMAKE_MESSAGE_INDENT)
