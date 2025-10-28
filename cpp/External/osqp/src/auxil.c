@@ -228,22 +228,41 @@ static void compute_rhs(OSQPSolver* solver) {
   OSQPSettings*  settings = solver->settings;
 
   //part related to x variables
-  OSQPVectorf_add_scaled(work->xtilde_view,
-                         settings->sigma,work->x_prev,
-                         -1., work->data->q);
+  #ifdef OSQP_USE_FLEXFLOAT
+    OSQPVectorf_add_scaled_FF(work->xtilde_view,
+                          settings->sigma,work->x_prev,
+                          -1., work->data->q);
 
-  //part related to dual variable in the equality constrained QP (nu)
-  if (settings->rho_is_vec) {
-    OSQPVectorf_ew_prod(work->ztilde_view, work->rho_inv_vec, work->y);
-    OSQPVectorf_add_scaled(work->ztilde_view,
-                           -1.0, work->ztilde_view,
-                           1.0, work->z_prev);
-  }
-  else {
-    OSQPVectorf_add_scaled(work->ztilde_view,
-                           1.0, work->z_prev,
-                           -work->rho_inv, work->y);
-  }
+    //part related to dual variable in the equality constrained QP (nu)
+    if (settings->rho_is_vec) {
+      OSQPVectorf_ew_prod_FF(work->ztilde_view, work->rho_inv_vec, work->y);
+      OSQPVectorf_add_scaled_FF(work->ztilde_view,
+                            -1.0, work->ztilde_view,
+                            1.0, work->z_prev);
+    }
+    else {
+      OSQPVectorf_add_scaled_FF(work->ztilde_view,
+                            1.0, work->z_prev,
+                            -work->rho_inv, work->y);
+    }
+  #else
+    OSQPVectorf_add_scaled(work->xtilde_view,
+                          settings->sigma,work->x_prev,
+                          -1., work->data->q);
+
+    //part related to dual variable in the equality constrained QP (nu)
+    if (settings->rho_is_vec) {
+      OSQPVectorf_ew_prod(work->ztilde_view, work->rho_inv_vec, work->y);
+      OSQPVectorf_add_scaled(work->ztilde_view,
+                            -1.0, work->ztilde_view,
+                            1.0, work->z_prev);
+    }
+    else {
+      OSQPVectorf_add_scaled(work->ztilde_view,
+                            1.0, work->z_prev,
+                            -work->rho_inv, work->y);
+    }
+  #endif
 }
 
 void update_xz_tilde(OSQPSolver* solver,
@@ -264,12 +283,21 @@ void update_x(OSQPSolver* solver) {
   OSQPWorkspace* work     = solver->work;
 
   // update x
-  OSQPVectorf_add_scaled(work->x,
+  #ifdef OSQP_USE_FLEXFLOAT
+    OSQPVectorf_add_scaled_FF(work->x,
                          settings->alpha,work->xtilde_view,
                          (1.0 - settings->alpha),work->x_prev);
 
-  // update delta_x
-  OSQPVectorf_minus(work->delta_x,work->x,work->x_prev);
+    // update delta_x
+    OSQPVectorf_minus_FF(work->delta_x,work->x,work->x_prev);
+  #else
+    OSQPVectorf_add_scaled(work->x,
+                          settings->alpha,work->xtilde_view,
+                          (1.0 - settings->alpha),work->x_prev);
+
+    // update delta_x
+    OSQPVectorf_minus(work->delta_x,work->x,work->x_prev);
+  #endif
 }
 
 void update_z(OSQPSolver* solver) {
@@ -277,23 +305,44 @@ void update_z(OSQPSolver* solver) {
   OSQPSettings*  settings = solver->settings;
   OSQPWorkspace* work     = solver->work;
 
-  // update z
-  if (settings->rho_is_vec) {
-    OSQPVectorf_ew_prod(work->z, work->rho_inv_vec,work->y);
-    OSQPVectorf_add_scaled3(work->z,
-                            1., work->z,
-                            settings->alpha, work->ztilde_view,
-                            (1.0 - settings->alpha), work->z_prev);
-  }
-  else {
-    OSQPVectorf_add_scaled3(work->z,
-                            settings->alpha, work->ztilde_view,
-                            (1.0 - settings->alpha), work->z_prev,
-                            work->rho_inv, work->y);
-  }
+  #ifdef OSQP_USE_FLEXFLOAT
+    // update z
+    if (settings->rho_is_vec) {
+      OSQPVectorf_ew_prod_FF(work->z, work->rho_inv_vec,work->y);
+      OSQPVectorf_add_scaled3_FF(work->z,
+                              1., work->z,
+                              settings->alpha, work->ztilde_view,
+                              (1.0 - settings->alpha), work->z_prev);
+    }
+    else {
+      OSQPVectorf_add_scaled3_FF(work->z,
+                              settings->alpha, work->ztilde_view,
+                              (1.0 - settings->alpha), work->z_prev,
+                              work->rho_inv, work->y);
+    }
 
-  // project z onto C = [l,u]
-  OSQPVectorf_ew_bound_vec(work->z, work->z, work->data->l, work->data->u);
+    // project z onto C = [l,u]
+    OSQPVectorf_ew_bound_vec_FF(work->z, work->z, work->data->l, work->data->u);
+  #else
+
+    // update z
+    if (settings->rho_is_vec) {
+      OSQPVectorf_ew_prod(work->z, work->rho_inv_vec,work->y);
+      OSQPVectorf_add_scaled3(work->z,
+                              1., work->z,
+                              settings->alpha, work->ztilde_view,
+                              (1.0 - settings->alpha), work->z_prev);
+    }
+    else {
+      OSQPVectorf_add_scaled3(work->z,
+                              settings->alpha, work->ztilde_view,
+                              (1.0 - settings->alpha), work->z_prev,
+                              work->rho_inv, work->y);
+    }
+
+    // project z onto C = [l,u]
+    OSQPVectorf_ew_bound_vec(work->z, work->z, work->data->l, work->data->u);
+  #endif
 }
 
 void update_y(OSQPSolver* solver) {
@@ -301,19 +350,37 @@ void update_y(OSQPSolver* solver) {
   OSQPSettings*  settings = solver->settings;
   OSQPWorkspace* work     = solver->work;
 
-  OSQPVectorf_add_scaled3(work->delta_y,
+  #ifdef OSQP_USE_FLEXFLOAT
+    // update y
+    OSQPVectorf_add_scaled3_FF(work->delta_y,
                           settings->alpha, work->ztilde_view,
                           (1.0 - settings->alpha), work->z_prev,
                           -1.0, work->z);
 
-  if (settings->rho_is_vec) {
-    OSQPVectorf_ew_prod(work->delta_y, work->delta_y, work->rho_vec);
-  }
-  else {
-    OSQPVectorf_mult_scalar(work->delta_y, settings->rho);
-  }
+    if (settings->rho_is_vec) {
+      OSQPVectorf_ew_prod_FF(work->delta_y, work->delta_y, work->rho_vec);
+    }
+    else {
+      OSQPVectorf_mult_scalar_FF(work->delta_y, settings->rho);
+    }
 
-  OSQPVectorf_plus(work->y, work->y, work->delta_y);
+    OSQPVectorf_plus_FF(work->y, work->y, work->delta_y);
+  #else
+    // update y
+    OSQPVectorf_add_scaled3(work->delta_y,
+                            settings->alpha, work->ztilde_view,
+                            (1.0 - settings->alpha), work->z_prev,
+                            -1.0, work->z);
+
+    if (settings->rho_is_vec) {
+      OSQPVectorf_ew_prod(work->delta_y, work->delta_y, work->rho_vec);
+    }
+    else {
+      OSQPVectorf_mult_scalar(work->delta_y, settings->rho);
+    }
+
+    OSQPVectorf_plus(work->y, work->y, work->delta_y);
+  #endif
 
 }
 
@@ -405,18 +472,35 @@ static OSQPFloat compute_prim_res(OSQPSolver*        solver,
   OSQPWorkspace* work     = solver->work;
   OSQPFloat prim_res;
 
-  OSQPMatrix_Axpy(work->data->A,x,work->Ax, 1.0, 0.0); //Ax = A*x
-  OSQPVectorf_minus(work->z_prev, work->Ax, z);
+  #ifdef OSQP_USE_FLEXFLOAT
+    OSQPMatrix_Axpy_FF(work->data->A,x,work->Ax, 1.0, 0.0); //Ax = A*x
+    OSQPVectorf_minus_FF(work->z_prev, work->Ax, z);
 
-  work->scaled_prim_res = OSQPVectorf_norm_inf(work->z_prev);
+    work->scaled_prim_res = OSQPVectorf_norm_inf_FF(work->z_prev);
 
-  // If scaling active -> rescale residual
-  if (settings->scaling && !settings->scaled_termination) {
-    prim_res =  OSQPVectorf_scaled_norm_inf(work->scaling->Einv, work->z_prev);
-  }
-  else{
-    prim_res  = work->scaled_prim_res;
-  }
+    // If scaling active -> rescale residual
+    if (settings->scaling && !settings->scaled_termination) {
+      prim_res =  OSQPVectorf_scaled_norm_inf_FF(work->scaling->Einv, work->z_prev);
+    }
+    else{
+      prim_res  = work->scaled_prim_res;
+    }
+    
+  #else
+    OSQPMatrix_Axpy(work->data->A,x,work->Ax, 1.0, 0.0); //Ax = A*x
+    OSQPVectorf_minus(work->z_prev, work->Ax, z);
+
+    work->scaled_prim_res = OSQPVectorf_norm_inf(work->z_prev);
+
+    // If scaling active -> rescale residual
+    if (settings->scaling && !settings->scaled_termination) {
+      prim_res =  OSQPVectorf_scaled_norm_inf(work->scaling->Einv, work->z_prev);
+    }
+    else{
+      prim_res  = work->scaled_prim_res;
+    }
+  #endif
+
   return prim_res;
 }
 
@@ -472,28 +556,55 @@ static OSQPFloat compute_dual_res(OSQPSolver*        solver,
   // dr = q
   OSQPVectorf_copy(work->x_prev, work->data->q);
 
-  // Px = P * x
-  OSQPMatrix_Axpy(work->data->P, x, work->Px, 1.0, 0.0);
+  #ifdef OSQP_USE_FLEXFLOAT
+    // Px = P * x
+    OSQPMatrix_Axpy_FF(work->data->P, x, work->Px, 1.0, 0.0);
 
-  // dr += Px
-  OSQPVectorf_plus(work->x_prev, work->x_prev, work->Px);
+    // dr += Px
+    OSQPVectorf_plus_FF(work->x_prev, work->x_prev, work->Px);
 
-  // dr += A' * y
-  if (work->data->m) {
-    OSQPMatrix_Atxpy(work->data->A, y, work->Aty, 1.0, 0.0);
-    OSQPVectorf_plus(work->x_prev, work->x_prev, work->Aty);
-  }
+    // dr += A' * y
+    if (work->data->m) {
+      OSQPMatrix_Atxpy_FF(work->data->A, y, work->Aty, 1.0, 0.0);
+      OSQPVectorf_plus_FF(work->x_prev, work->x_prev, work->Aty);
+    }
 
-  work->scaled_dual_res = OSQPVectorf_norm_inf(work->x_prev);
+    work->scaled_dual_res = OSQPVectorf_norm_inf_FF(work->x_prev);
 
-  // If scaling active -> rescale residual
-  if (settings->scaling && !settings->scaled_termination) {
-    dual_res =  work->scaling->cinv * OSQPVectorf_scaled_norm_inf(work->scaling->Dinv,
-                                                                  work->x_prev);
-  }
-  else {
-    dual_res = work->scaled_dual_res;
-  }
+    // If scaling active -> rescale residual
+    if (settings->scaling && !settings->scaled_termination) {
+      // dual_res =  work->scaling->cinv * OSQPVectorf_scaled_norm_inf_FF(work->scaling->Dinv,
+      //                                                                   work->x_prev);
+      dual_res = OSQPVectorf_e_prod_FF(work->scaling->cinv, OSQPVectorf_scaled_norm_inf_FF(work->scaling->Dinv, work->x_prev));
+    }
+    else {
+      dual_res = work->scaled_dual_res;
+    }
+  #else
+
+    // Px = P * x
+    OSQPMatrix_Axpy(work->data->P, x, work->Px, 1.0, 0.0);
+
+    // dr += Px
+    OSQPVectorf_plus(work->x_prev, work->x_prev, work->Px);
+
+    // dr += A' * y
+    if (work->data->m) {
+      OSQPMatrix_Atxpy(work->data->A, y, work->Aty, 1.0, 0.0);
+      OSQPVectorf_plus(work->x_prev, work->x_prev, work->Aty);
+    }
+
+    work->scaled_dual_res = OSQPVectorf_norm_inf(work->x_prev);
+
+    // If scaling active -> rescale residual
+    if (settings->scaling && !settings->scaled_termination) {
+      dual_res =  work->scaling->cinv * OSQPVectorf_scaled_norm_inf(work->scaling->Dinv,
+                                                                    work->x_prev);
+    }
+    else {
+      dual_res = work->scaled_dual_res;
+    }
+  #endif
 
   return dual_res;
 }

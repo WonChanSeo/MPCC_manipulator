@@ -1,6 +1,7 @@
 #include "osqp.h"
 #include "algebra_vector.h"
 #include "algebra_impl.h"
+#include "flexfloat.h"
 
 /* VECTOR FUNCTIONS ----------------------------------------------------------*/
 
@@ -412,6 +413,31 @@ void OSQPVectorf_minus(OSQPVectorf*       x,
 }
 
 void OSQPVectorf_add_scaled(OSQPVectorf*       x,
+                            OSQPFloat          sca,
+                            const OSQPVectorf* a,
+                            OSQPFloat          scb,
+                            const OSQPVectorf* b) {
+  OSQPInt i;
+  OSQPInt length = x->length;
+
+  OSQPFloat* av = a->values;
+  OSQPFloat* bv = b->values;
+  OSQPFloat* xv = x->values;
+
+  /* shorter version when incrementing */
+  if (x == a && sca == 1.){
+    for (i = 0; i < length; i++) {
+      xv[i] += scb * bv[i];
+    }
+  }
+  else {
+    for (i = 0; i < length; i++) {
+      xv[i] = sca * av[i] + scb * bv[i];
+    }
+  }
+}
+
+void OSQPVectorf_add_scaled_FF(OSQPVectorf*       x,
                             OSQPFloat          sca,
                             const OSQPVectorf* a,
                             OSQPFloat          scb,

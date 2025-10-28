@@ -6,6 +6,11 @@
 
 #include "blas_helpers.h"
 
+#include "flexfloat.h"
+
+#define FF_mantissa_bits 23;
+#define FF_exponent_bits 8;
+
 /* VECTOR FUNCTIONS ----------------------------------------------------------*/
 
 OSQPInt OSQPVectorf_is_eq(const OSQPVectorf* A,
@@ -261,6 +266,24 @@ void OSQPVectorf_mult_scalar(OSQPVectorf *a,
   blas_scale(a->length, sc, a->values, 1);
 }
 
+// Scaling a vector by a constant
+void OSQPVectorf_mult_scalar_FF(OSQPVectorf *a,
+                             OSQPFloat    sc) {
+  OSQPInt i;
+  OSQPInt length = a->length;
+  OSQPFloat* av = a->values;
+
+  flexfloat_t ff_av, ff_sc;
+
+  ff_init_float(&ff_sc, sc, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+  for (i = 0; i < length; i++) {
+    ff_init_float(&ff_av, av[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_mul(&ff_av, &ff_sc, &ff_av);
+    av[i] = ff_get_float(&ff_av);
+  }
+}
+
 void OSQPVectorf_plus(OSQPVectorf*      x,
                      const OSQPVectorf* a,
                      const OSQPVectorf* b) {
@@ -270,6 +293,25 @@ void OSQPVectorf_plus(OSQPVectorf*      x,
   vml_add(a->length, a->values, b->values, x->values);
 }
 
+void OSQPVectorf_plus_FF(OSQPVectorf*      x,
+                     const OSQPVectorf* a,
+                     const OSQPVectorf* b) {
+
+  // Compute x = a + b. If x == a, compute x += b.
+  OSQPInt i;
+
+  flexfloat_t ff_a, ff_b, ff_x;
+
+  for (i = 0; i < a->length; i++) {
+    ff_init_float(&ff_a, a->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_b, b->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_x, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+    ff_add(&ff_x, &ff_a, &ff_b);
+    x->values[i] = ff_get_float(&ff_x);
+  }
+}
+
 void OSQPVectorf_minus(OSQPVectorf*       x,
                        const OSQPVectorf* a,
                        const OSQPVectorf* b) {
@@ -277,6 +319,25 @@ void OSQPVectorf_minus(OSQPVectorf*       x,
   // Compute x = a - b. If x == a, compute x -= b.
   // VML can support in-place operations, so it is valid to do this when x == a to accumulate.
   vml_sub(a->length, a->values, b->values, x->values);
+}
+
+void OSQPVectorf_minus_FF(OSQPVectorf*       x,
+                       const OSQPVectorf* a,
+                       const OSQPVectorf* b) {
+
+  // Compute x = a - b. If x == a, compute x -= b.
+  OSQPInt i;
+
+  flexfloat_t ff_a, ff_b, ff_x;
+
+  for (i = 0; i < a->length; i++) {
+    ff_init_float(&ff_a, a->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_b, b->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_x, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+    ff_sub(&ff_x, &ff_a, &ff_b);
+    x->values[i] = ff_get_float(&ff_x);
+  }
 }
 
 void OSQPVectorf_add_scaled(OSQPVectorf*       x,
@@ -299,6 +360,45 @@ void OSQPVectorf_add_scaled(OSQPVectorf*       x,
 
     for (i = 0; i < length; i++) {
       xv[i] = sca * av[i] + scb * bv[i];
+    }
+  }
+
+}
+
+void OSQPVectorf_add_scaled_FF(OSQPVectorf*       x,
+                            OSQPFloat          sca,
+                            const OSQPVectorf* a,
+                            OSQPFloat          scb,
+                            const OSQPVectorf* b) {
+
+  /* shorter version when incrementing */
+  if (x == a && sca == 1.){
+    blas_axpy(x->length, scb, b->values, 1, x->values, 1);
+  }
+  else {
+    OSQPInt i;
+    OSQPInt length = x->length;
+
+    flexfloat_t ff_av, ff_bv, ff_xv, ff_sca, ff_scb, ff_tmp1, ff_tmp2;
+
+    ff_init_float(&ff_sca, sca, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_scb, scb, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+    OSQPFloat*  av = a->values;
+    OSQPFloat*  bv = b->values;
+    OSQPFloat*  xv = x->values;
+
+    for (i = 0; i < length; i++) {
+      ff_init_float(&ff_av, av[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+      ff_init_float(&ff_bv, bv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+      // xv[i] = sca * av[i] + scb * bv[i];
+      
+      ff_mul(&ff_tmp1, &ff_sca, &ff_av);
+      ff_mul(&ff_tmp2, &ff_scb, &ff_bv);
+      ff_add(&ff_xv, &ff_tmp1, &ff_tmp2);
+
+      xv[i] = ff_get_float(&ff_xv);
     }
   }
 
@@ -332,6 +432,64 @@ void OSQPVectorf_add_scaled3(OSQPVectorf*       x,
   }
 }
 
+void OSQPVectorf_add_scaled3_FF(OSQPVectorf*       x,
+                             OSQPFloat          sca,
+                             const OSQPVectorf* a,
+                             OSQPFloat          scb,
+                             const OSQPVectorf* b,
+                             OSQPFloat          scc,
+                             const OSQPVectorf* c) {
+  OSQPInt i;
+  OSQPInt length = x->length;
+
+  OSQPFloat*  av = a->values;
+  OSQPFloat*  bv = b->values;
+  OSQPFloat*  cv = c->values;
+  OSQPFloat*  xv = x->values;
+
+  flexfloat_t ff_av, ff_bv, ff_cv, ff_xv;
+  flexfloat_t ff_sca, ff_scb, ff_scc;
+  flexfloat_t ff_tmp1, ff_tmp2, ff_tmp3;
+
+  ff_init_float(&ff_sca, sca, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_scb, scb, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_scc, scc, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+  /* shorter version when incrementing */
+  if (x == a && sca == 1.){
+    for (i = 0; i < length; i++) {
+      ff_init_float(&ff_bv, bv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+      ff_init_float(&ff_cv, cv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+      ff_init_float(&ff_xv, xv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+      
+      // xv[i] += scb * bv[i] + scc * cv[i];
+      ff_mul(&ff_tmp1, &ff_scb, &ff_bv);
+      ff_mul(&ff_tmp2, &ff_scc, &ff_cv);
+      ff_add(&ff_tmp3, &ff_tmp1, &ff_tmp2);
+      ff_add(&ff_xv, &ff_xv, &ff_tmp3);
+
+      xv[i] = ff_get_float(&ff_xv);
+    }
+  }
+  else {
+    for (i = 0; i < length; i++) {
+      ff_init_float(&ff_av, av[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+      ff_init_float(&ff_bv, bv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+      ff_init_float(&ff_cv, cv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+      ff_init_float(&ff_xv, xv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+      // xv[i] =  sca * av[i] + scb * bv[i] + scc * cv[i];
+      ff_mul(&ff_tmp1, &ff_sca, &ff_av);
+      ff_mul(&ff_tmp2, &ff_scb, &ff_bv);
+      ff_mul(&ff_tmp3, &ff_scc, &ff_cv);
+      ff_add(&ff_tmp1, &ff_tmp1, &ff_tmp2);
+      ff_add(&ff_xv, &ff_tmp1, &ff_tmp3);
+      
+      xv[i] = ff_get_float(&ff_xv);
+    }
+  }
+}
+
 
 OSQPFloat OSQPVectorf_norm_inf(const OSQPVectorf* v) {
 
@@ -343,6 +501,33 @@ OSQPFloat OSQPVectorf_norm_inf(const OSQPVectorf* v) {
   }
 
   return val;
+}
+
+OSQPFloat OSQPVectorf_norm_inf_FF(const OSQPVectorf* v) {
+
+  OSQPFloat val = 0.0;
+  OSQPInt i;
+
+  flexfloat_t ff_val, ff_absval;
+
+  if (v->length){
+    // Find the maximum absolute value
+    for (i = 0; i < v->length; i++) {
+      OSQPFloat abs_val = c_absval(v->values[i]);
+
+      ff_init_float(&ff_absval, abs_val, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+      ff_init_float(&ff_val, val, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+      // if (abs_val > val) {
+      //   val = abs_val;
+      // }
+
+      if (ff_gt(&ff_absval, &ff_val)) {
+        ff_val = ff_absval;
+      }
+    }
+  }
+
+  return ff_get_float(&ff_val);
 }
 
 // OSQPFloat OSQPVectorf_norm_1(const OSQPVectorf *v){
@@ -374,6 +559,42 @@ OSQPFloat OSQPVectorf_scaled_norm_inf(const OSQPVectorf* S,
     if (absval > normval) normval = absval;
   }
   return normval;
+}
+
+OSQPFloat OSQPVectorf_scaled_norm_inf_FF(const OSQPVectorf* S,
+                                      const OSQPVectorf* v) {
+
+  OSQPInt i;
+  OSQPInt length  = v->length;
+
+  OSQPFloat* vv  = v->values;
+  OSQPFloat* Sv  = S->values;
+  OSQPFloat  absval;
+  OSQPFloat  normval = 0.0;
+
+  flexfloat_t ff_absval, ff_normval, ff_tmp, ff_Svi, ff_vvi;
+
+  ff_init_float(&ff_normval, 0.0, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_tmp, 0.0, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  // for (i = 0; i < length; i++) {
+  //   absval = c_absval(Sv[i] * vv[i]);
+  //   if (absval > normval) normval = absval;
+  // }
+  // return normval;
+  
+  for (i = 0; i < length; i++) {
+    ff_init_float(&ff_Svi, Sv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_vvi, vv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_mul(&ff_tmp, &ff_Svi, &ff_vvi);
+
+    absval = c_absval(ff_get_float(&ff_tmp));
+    ff_init_float(&ff_absval, absval, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+    if (ff_gt(&ff_absval, &ff_normval)) {
+      ff_normval = ff_absval;
+    }
+  }
+  return ff_get_float(&ff_normval);
 }
 
 // OSQPFloat OSQPVectorf_scaled_norm_1(const OSQPVectorf *S,
@@ -477,6 +698,40 @@ void OSQPVectorf_ew_prod(OSQPVectorf*       c,
   vml_mul(a->length, a->values, b->values, c->values );
 }
 
+void OSQPVectorf_ew_prod_FF(OSQPVectorf*       c,
+                         const OSQPVectorf* a,
+                         const OSQPVectorf* b) {
+  OSQPInt i;
+
+  flexfloat_t ff_av, ff_bv, ff_cv;
+
+  for (i = 0; i < a->length; i++) {
+    ff_init_float(&ff_av, a->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_bv, b->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_cv, c->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    
+    ff_mul(&ff_cv, &ff_av, &ff_bv);
+
+    c->values[i] = ff_get_float(&ff_cv);
+  }
+}
+
+OSQPFloat OSQPVectorf_e_prod_FF(
+                         const OSQPFloat* a,
+                         const OSQPFloat* b) {
+  OSQPInt i;
+
+  flexfloat_t ff_a, ff_b, ff_c;
+
+  ff_init_float(&ff_a, a, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_b, b, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_c, c, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+  ff_mul(&ff_c, &ff_a, &ff_b);
+
+  return ff_get_float(&ff_c);
+}
+
 OSQPInt OSQPVectorf_all_leq(const OSQPVectorf* l,
                             const OSQPVectorf* u) {
 
@@ -507,6 +762,35 @@ void OSQPVectorf_ew_bound_vec(OSQPVectorf*       x,
 
   for (i = 0; i < length; i++) {
     xv[i] = c_min(c_max(zv[i], lv[i]), uv[i]);
+  }
+}
+
+void OSQPVectorf_ew_bound_vec_FF(OSQPVectorf*       x,
+                              const OSQPVectorf* z,
+                              const OSQPVectorf* l,
+                              const OSQPVectorf* u) {
+
+  OSQPInt i;
+  OSQPInt length = x->length;
+
+  OSQPFloat* xv = x->values;
+  OSQPFloat* zv = z->values;
+  OSQPFloat* lv = l->values;
+  OSQPFloat* uv = u->values;
+
+  flexfloat_t ff_zv, ff_lv, ff_uv, ff_xv, ff_tmp;
+
+  for (i = 0; i < length; i++) {
+    ff_init_float(&ff_zv, zv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_lv, lv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_uv, uv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_init_float(&ff_xv, xv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+    // xv[i] = c_min(c_max(zv[i], lv[i]), uv[i]);
+    ff_min(&ff_tmp, &ff_zv, &ff_lv);
+    ff_max(&ff_xv, &ff_tmp, &ff_uv);
+
+    xv[i] = ff_get_float(&ff_xv);
   }
 }
 
