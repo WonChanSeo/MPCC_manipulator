@@ -395,44 +395,91 @@ void compute_obj_val_dual_gap(const OSQPSolver*  solver,
   OSQPFloat sup_term  = 0.0;
   OSQPWorkspace* work = solver->work;
 
-  /* NB: The function is always called after dual_res is computed */
-  quad_term = OSQPVectorf_dot_prod(work->Px, x);
-  lin_term  = OSQPVectorf_dot_prod(work->data->q, x);
+  #ifdef OSQP_USE_FLEXFLOAT
+    /* NB: The function is always called after dual_res is computed */
+    quad_term = OSQPVectorf_dot_prod_FF(work->Px, x);
+    lin_term  = OSQPVectorf_dot_prod_FF(work->data->q, x);
 
-  /* Compute the support function of the constraints, SC(y) = u'*max(y, 0) + l'*min(y, 0)
-     by projecting y onto the polar of the recession cone of C=[l,u], then doing the dot products */
-  OSQPVectorf_copy(work->z_prev, y);
-  OSQPVectorf_project_polar_reccone(work->z_prev,
-                                    work->data->l,
-                                    work->data->u,
-                                    OSQP_INFTY * OSQP_MIN_SCALING);
+    /* Compute the support function of the constraints, SC(y) = u'*max(y, 0) + l'*min(y, 0)
+      by projecting y onto the polar of the recession cone of C=[l,u], then doing the dot products */
+    OSQPVectorf_copy(work->z_prev, y);
+    OSQPVectorf_project_polar_reccone_FF(work->z_prev,
+                                      work->data->l,
+                                      work->data->u,
+                                      OSQP_INFTY * OSQP_MIN_SCALING);
 
-  // Round anything in the range [-OSQP_ZERO_DEADZONE, OSQP_ZERO_DEADZONE] to 0 to
-  // prevent very small (i.e., 1e-20) values from blowing up the numerics.
-  OSQPVectorf_round_to_zero(work->z_prev, OSQP_ZERO_DEADZONE);
+    // Round anything in the range [-OSQP_ZERO_DEADZONE, OSQP_ZERO_DEADZONE] to 0 to
+    // prevent very small (i.e., 1e-20) values from blowing up the numerics.
+    OSQPVectorf_round_to_zero_FF(work->z_prev, OSQP_ZERO_DEADZONE);
 
-  sup_term  = OSQPVectorf_dot_prod_signed(work->data->u, work->z_prev, +1);
-  sup_term += OSQPVectorf_dot_prod_signed(work->data->l, work->z_prev, -1);
+    sup_term  = OSQPScalarf_add_FF(OSQPVectorf_dot_prod_signed_FF(work->data->u, work->z_prev, +1), OSQPVectorf_dot_prod_signed_FF(work->data->l, work->z_prev, -1));
 
-  /* Primal objective value is 0.5*x^T P x + q^T x */
-  *prim_obj_val = 0.5 * quad_term + lin_term;
+    /* Primal objective value is 0.5*x^T P x + q^T x */
+    // *prim_obj_val = 0.5 * quad_term + lin_term;
+    *prim_obj_val = OSQPScalarf_add_FF(OSQPScalarf_mul_FF(0.5f, quad_term), lin_term);
 
-  /* Dual objective value is -0.5*x^T P x - SC(y)*/
-  *dual_obj_val = -0.5 * quad_term - sup_term;
+    /* Dual objective value is -0.5*x^T P x - SC(y)*/
+    // *dual_obj_val = -0.5 * quad_term - sup_term;
+    *dual_obj_val = OSQPScalarf_minus_FF(OSQPScalarf_mul_FF(-0.5f, quad_term), sup_term);
 
-  /* Duality gap is x^T P x + q^T x + SC(y) */
-  work->scaled_dual_gap = quad_term + lin_term + sup_term;
+    /* Duality gap is x^T P x + q^T x + SC(y) */
+    // work->scaled_dual_gap = quad_term + lin_term + sup_term;
+    work->scaled_dual_gap = OSQPScalarf_add_FF(OSQPScalarf_add_FF(quad_term, lin_term), sup_term);
 
-  if (solver->settings->scaling) {
-    *prim_obj_val *= work->scaling->cinv;
-    *dual_obj_val *= work->scaling->cinv;
+    if (solver->settings->scaling) {
+      // *prim_obj_val *= work->scaling->cinv;
+      // *dual_obj_val *= work->scaling->cinv;
+      *prim_obj_val = OSQPScalarf_mul_FF(work->scaling->cinv, *prim_obj_val);
+      *dual_obj_val = OSQPScalarf_mul_FF(work->scaling->cinv, *dual_obj_val);
 
-    // We always store the duality gap in the info as unscaled (since it is for the user),
-    // but we keep the scaled version to use as a termination check when requested.
-    *duality_gap = work->scaling->cinv * work->scaled_dual_gap;
-  } else {
-    *duality_gap = work->scaled_dual_gap;
-  }
+      // We always store the duality gap in the info as unscaled (since it is for the user),
+      // but we keep the scaled version to use as a termination check when requested.
+      // *duality_gap = work->scaling->cinv * work->scaled_dual_gap;
+      *duality_gap = OSQPScalarf_mul_FF(work->scaling->cinv, work->scaled_dual_gap);
+    } else {
+      *duality_gap = work->scaled_dual_gap;
+    }
+  #else
+
+    /* NB: The function is always called after dual_res is computed */
+    quad_term = OSQPVectorf_dot_prod(work->Px, x);
+    lin_term  = OSQPVectorf_dot_prod(work->data->q, x);
+
+    /* Compute the support function of the constraints, SC(y) = u'*max(y, 0) + l'*min(y, 0)
+      by projecting y onto the polar of the recession cone of C=[l,u], then doing the dot products */
+    OSQPVectorf_copy(work->z_prev, y);
+    OSQPVectorf_project_polar_reccone(work->z_prev,
+                                      work->data->l,
+                                      work->data->u,
+                                      OSQP_INFTY * OSQP_MIN_SCALING);
+
+    // Round anything in the range [-OSQP_ZERO_DEADZONE, OSQP_ZERO_DEADZONE] to 0 to
+    // prevent very small (i.e., 1e-20) values from blowing up the numerics.
+    OSQPVectorf_round_to_zero(work->z_prev, OSQP_ZERO_DEADZONE);
+
+    sup_term  = OSQPVectorf_dot_prod_signed(work->data->u, work->z_prev, +1);
+    sup_term += OSQPVectorf_dot_prod_signed(work->data->l, work->z_prev, -1);
+
+    /* Primal objective value is 0.5*x^T P x + q^T x */
+    *prim_obj_val = 0.5 * quad_term + lin_term;
+
+    /* Dual objective value is -0.5*x^T P x - SC(y)*/
+    *dual_obj_val = -0.5 * quad_term - sup_term;
+
+    /* Duality gap is x^T P x + q^T x + SC(y) */
+    work->scaled_dual_gap = quad_term + lin_term + sup_term;
+
+    if (solver->settings->scaling) {
+      *prim_obj_val *= work->scaling->cinv;
+      *dual_obj_val *= work->scaling->cinv;
+
+      // We always store the duality gap in the info as unscaled (since it is for the user),
+      // but we keep the scaled version to use as a termination check when requested.
+      *duality_gap = work->scaling->cinv * work->scaled_dual_gap;
+    } else {
+      *duality_gap = work->scaled_dual_gap;
+    }
+  #endif
 
   /* Save cost values for later use in termination tolerance computation */
   work->xtPx = quad_term;
@@ -512,33 +559,65 @@ static OSQPFloat compute_prim_tol(const OSQPSolver* solver,
   OSQPSettings*  settings = solver->settings;
   OSQPWorkspace* work     = solver->work;
 
-  // max_rel_eps = max(||z||, ||A x||)
-  if (settings->scaling && !settings->scaled_termination) {
-    // ||Einv * z||
-    max_rel_eps =
-    OSQPVectorf_scaled_norm_inf(work->scaling->Einv, work->z);
+  #ifdef OSQP_USE_FLEXFLOAT
+    // max_rel_eps = max(||z||, ||A x||)
+    if (settings->scaling && !settings->scaled_termination) {
+      // ||Einv * z||
+      max_rel_eps =
+      OSQPVectorf_scaled_norm_inf_FF(work->scaling->Einv, work->z);
 
-    // ||Einv * A * x||
-    temp_rel_eps =
-    OSQPVectorf_scaled_norm_inf(work->scaling->Einv, work->Ax);
+      // ||Einv * A * x||
+      temp_rel_eps =
+      OSQPVectorf_scaled_norm_inf_FF(work->scaling->Einv, work->Ax);
 
-    // Choose maximum
-    max_rel_eps = c_max(max_rel_eps, temp_rel_eps);
-  }
+      // Choose maximum
+      max_rel_eps = OSQPScalarf_max_FF(max_rel_eps, temp_rel_eps);
+    }
 
-  else { // No unscaling required
-    // ||z||
-    max_rel_eps = OSQPVectorf_norm_inf(work->z);
+    else { // No unscaling required
+      // ||z||
+      max_rel_eps = OSQPVectorf_norm_inf_FF(work->z);
 
-    // ||A * x||
-    temp_rel_eps = OSQPVectorf_norm_inf(work->Ax);
+      // ||A * x||
+      temp_rel_eps = OSQPVectorf_norm_inf_FF(work->Ax);
 
-    // Choose maximum
-    max_rel_eps = c_max(max_rel_eps, temp_rel_eps);
-  }
+      // Choose maximum
+      max_rel_eps = OSQPScalarf_max_FF(max_rel_eps, temp_rel_eps);
+    }
 
-  // eps_prim
-  return eps_abs + eps_rel * max_rel_eps;
+    // eps_prim
+    // return eps_abs + eps_rel * max_rel_eps;
+    return OSQPScalarf_add_FF(eps_abs, OSQPScalarf_mul_FF(eps_rel, max_rel_eps));
+  
+  #else
+    // max_rel_eps = max(||z||, ||A x||)
+    if (settings->scaling && !settings->scaled_termination) {
+      // ||Einv * z||
+      max_rel_eps =
+      OSQPVectorf_scaled_norm_inf(work->scaling->Einv, work->z);
+
+      // ||Einv * A * x||
+      temp_rel_eps =
+      OSQPVectorf_scaled_norm_inf(work->scaling->Einv, work->Ax);
+
+      // Choose maximum
+      max_rel_eps = c_max(max_rel_eps, temp_rel_eps);
+    }
+
+    else { // No unscaling required
+      // ||z||
+      max_rel_eps = OSQPVectorf_norm_inf(work->z);
+
+      // ||A * x||
+      temp_rel_eps = OSQPVectorf_norm_inf(work->Ax);
+
+      // Choose maximum
+      max_rel_eps = c_max(max_rel_eps, temp_rel_eps);
+    }
+
+    // eps_prim
+    return eps_abs + eps_rel * max_rel_eps;
+  #endif
 }
 
 static OSQPFloat compute_dual_res(OSQPSolver*        solver,
@@ -575,7 +654,7 @@ static OSQPFloat compute_dual_res(OSQPSolver*        solver,
     if (settings->scaling && !settings->scaled_termination) {
       // dual_res =  work->scaling->cinv * OSQPVectorf_scaled_norm_inf_FF(work->scaling->Dinv,
       //                                                                   work->x_prev);
-      dual_res = OSQPVectorf_e_prod_FF(work->scaling->cinv, OSQPVectorf_scaled_norm_inf_FF(work->scaling->Dinv, work->x_prev));
+      dual_res = OSQPScalarf_prod_FF(work->scaling->cinv, OSQPVectorf_scaled_norm_inf_FF(work->scaling->Dinv, work->x_prev));
     }
     else {
       dual_res = work->scaled_dual_res;
@@ -670,42 +749,83 @@ OSQPInt is_primal_infeasible(OSQPSolver* solver,
   OSQPSettings*  settings = solver->settings;
   OSQPWorkspace* work     = solver->work;
 
-  // Project delta_y onto the polar of the recession cone of C=[l,u]
-  OSQPVectorf_project_polar_reccone(work->delta_y,
-                                    work->data->l,
-                                    work->data->u,
-                                    OSQP_INFTY * OSQP_MIN_SCALING);
+  #ifdef OSQP_USE_FLEXFLOAT
+    // Project delta_y onto the polar of the recession cone of C=[l,u]
+    OSQPVectorf_project_polar_reccone_FF(work->delta_y,
+                                      work->data->l,
+                                      work->data->u,
+                                      OSQP_INFTY * OSQP_MIN_SCALING);
 
-  // Compute infinity norm of delta_y (unscale if necessary)
-  if (settings->scaling && !settings->scaled_termination) {
-    // Use work->Adelta_x as temporary vector
-    OSQPVectorf_ew_prod(work->Adelta_x,
-                        work->scaling->E,
-                        work->delta_y);
-    norm_delta_y = OSQPVectorf_norm_inf(work->Adelta_x);
-  }
-  else
-    norm_delta_y = OSQPVectorf_norm_inf(work->delta_y);
-
-  if (norm_delta_y > OSQP_DIVISION_TOL) {
-
-    ineq_lhs  = OSQPVectorf_dot_prod_signed(work->data->u, work->delta_y, +1);
-    ineq_lhs += OSQPVectorf_dot_prod_signed(work->data->l, work->delta_y, -1);
-
-    /* Check if the condition is satisfied */
-    if (ineq_lhs < 0.0) {
-      OSQPMatrix_Atxpy(work->data->A, work->delta_y, work->Atdelta_y, 1.0, 0.0);
-
-      // Unscale if necessary
-      if (settings->scaling && !settings->scaled_termination) {
-        OSQPVectorf_ew_prod(work->Atdelta_y,
-                            work->Atdelta_y,
-                            work->scaling->Dinv);
-      }
-
-      return OSQPVectorf_norm_inf(work->Atdelta_y) < eps_prim_inf * norm_delta_y;
+    // Compute infinity norm of delta_y (unscale if necessary)
+    if (settings->scaling && !settings->scaled_termination) {
+      // Use work->Adelta_x as temporary vector
+      OSQPVectorf_ew_prod_FF(work->Adelta_x,
+                          work->scaling->E,
+                          work->delta_y);
+      norm_delta_y = OSQPVectorf_norm_inf_FF(work->Adelta_x);
     }
-  }
+    else
+      norm_delta_y = OSQPVectorf_norm_inf_FF(work->delta_y);
+
+    if (norm_delta_y > OSQP_DIVISION_TOL) {
+
+      // ineq_lhs  = OSQPVectorf_dot_prod_signed_FF(work->data->u, work->delta_y, +1);
+      // ineq_lhs += OSQPVectorf_dot_prod_signed_FF(work->data->l, work->delta_y, -1);
+      ineq_lhs  = OSQPScalarf_add_FF(OSQPVectorf_dot_prod_signed_FF(work->data->u, work->delta_y, +1),
+                                    OSQPVectorf_dot_prod_signed_FF(work->data->l, work->delta_y, -1));
+      
+                                    /* Check if the condition is satisfied */
+      if (ineq_lhs < 0.0) {
+        OSQPMatrix_Atxpy_FF(work->data->A, work->delta_y, work->Atdelta_y, 1.0, 0.0);
+
+        // Unscale if necessary
+        if (settings->scaling && !settings->scaled_termination) {
+          OSQPVectorf_ew_prod_FF(work->Atdelta_y,
+                              work->Atdelta_y,
+                              work->scaling->Dinv);
+        }
+
+        return OSQPVectorf_norm_inf_FF(work->Atdelta_y) < eps_prim_inf * norm_delta_y;
+      }
+    }
+  #else
+    // Project delta_y onto the polar of the recession cone of C=[l,u]
+    OSQPVectorf_project_polar_reccone(work->delta_y,
+                                      work->data->l,
+                                      work->data->u,
+                                      OSQP_INFTY * OSQP_MIN_SCALING);
+
+    // Compute infinity norm of delta_y (unscale if necessary)
+    if (settings->scaling && !settings->scaled_termination) {
+      // Use work->Adelta_x as temporary vector
+      OSQPVectorf_ew_prod(work->Adelta_x,
+                          work->scaling->E,
+                          work->delta_y);
+      norm_delta_y = OSQPVectorf_norm_inf(work->Adelta_x);
+    }
+    else
+      norm_delta_y = OSQPVectorf_norm_inf(work->delta_y);
+
+    if (norm_delta_y > OSQP_DIVISION_TOL) {
+
+      ineq_lhs  = OSQPVectorf_dot_prod_signed(work->data->u, work->delta_y, +1);
+      ineq_lhs += OSQPVectorf_dot_prod_signed(work->data->l, work->delta_y, -1);
+
+      /* Check if the condition is satisfied */
+      if (ineq_lhs < 0.0) {
+        OSQPMatrix_Atxpy(work->data->A, work->delta_y, work->Atdelta_y, 1.0, 0.0);
+
+        // Unscale if necessary
+        if (settings->scaling && !settings->scaled_termination) {
+          OSQPVectorf_ew_prod(work->Atdelta_y,
+                              work->Atdelta_y,
+                              work->scaling->Dinv);
+        }
+
+        return OSQPVectorf_norm_inf(work->Atdelta_y) < eps_prim_inf * norm_delta_y;
+      }
+    }
+  #endif
 
   // Conditions not satisfied -> not primal infeasible
   return 0;
