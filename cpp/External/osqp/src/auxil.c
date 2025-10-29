@@ -767,7 +767,7 @@ OSQPInt is_primal_infeasible(OSQPSolver* solver,
     else
       norm_delta_y = OSQPVectorf_norm_inf_FF(work->delta_y);
 
-    if (norm_delta_y > OSQP_DIVISION_TOL) {
+    if (OSQPScalarf_gt_FF(&norm_delta_y, &OSQP_DIVISION_TOL)) {
 
       // ineq_lhs  = OSQPVectorf_dot_prod_signed_FF(work->data->u, work->delta_y, +1);
       // ineq_lhs += OSQPVectorf_dot_prod_signed_FF(work->data->l, work->delta_y, -1);
