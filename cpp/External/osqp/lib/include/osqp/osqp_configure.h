@@ -45,6 +45,9 @@
 /* OSQP_USE_HALF */
 /* #undef OSQP_USE_HALF */
 
+/* OSQP_USE_FLEXFLOAT */
+#define OSQP_USE_FLEXFLOAT
+
 /* OSQP_USE_FLOAT */
 #define OSQP_USE_FLOAT
 

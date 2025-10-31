@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.18)
 project(osqp)
 
 option(OSQP_USE_HALF "Build OSQP and QDLDL in half‐precision (_Float16)" OFF)
+option(OSQP_USE_FLEXFLOAT "Enable FlexFloat precision control" OFF)
+
+if(OSQP_USE_FLEXFLOAT)
+  message(STATUS "FlexFloat precision control: ON")
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../flexfloat/include)
+endif()
 
 include(GNUInstallDirs)
 include(CMakeDependentOption)

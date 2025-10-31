@@ -6,7 +6,7 @@ rm -rf build
 rm -rf lib
 mkdir -p build lib
 cd build
-cmake .. -DOSQP_USE_FLOAT=ON -DCMAKE_INSTALL_PREFIX=$(realpath ../lib)
+cmake .. -DOSQP_USE_FLOAT=ON -DOSQP_USE_FLEXFLOAT=ON -DCMAKE_INSTALL_PREFIX=$(realpath ../lib)
 make
 make install
 EXPORT_LINE="export LD_LIBRARY_PATH=\"$(realpath ../lib/lib)\":\$LD_LIBRARY_PATH"

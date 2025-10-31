@@ -137,6 +137,12 @@ void OSQPMatrix_free(OSQPMatrix* M);
 OSQPMatrix* OSQPMatrix_submatrix_byrows(const OSQPMatrix*  A,
                                         const OSQPVectori* rows);
 
+#ifdef OSQP_USE_FLEXFLOAT
+/* FlexFloat matrix operations */
+void OSQPMatrix_Axpy_FF(const OSQPMatrix* A, const OSQPVectorf* x, OSQPVectorf* y, OSQPFloat alpha, OSQPFloat beta);
+void OSQPMatrix_Atxpy_FF(const OSQPMatrix* A, const OSQPVectorf* x, OSQPVectorf* y, OSQPFloat alpha, OSQPFloat beta);
+#endif /* OSQP_USE_FLEXFLOAT */
+
 #endif /* ifndef OSQP_EMBEDDED_MODE */
 
 #ifdef __cplusplus

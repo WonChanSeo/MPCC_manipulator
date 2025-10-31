@@ -19,6 +19,8 @@
 #include <algorithm>  // std::clamp
 #include <cmath>      // std::abs, std::fabs
 #include <Eigen/Core>
+#include <cstdlib>    // std::getenv
+#include "osqp_api_functions.h"
 
 namespace mpcc {
 
@@ -43,6 +45,12 @@ MPC::MPC(double Ts,const PathToJson &path)
     initial_guess_.resize(N+1);
     top3_total_iter_counts_.clear();
     top3_solve_nums_.clear();
+
+    // Set OSQP log filepath from environment variable if available
+    const char* osqp_log_path = std::getenv("OSQP_LOG_PATH");
+    if (osqp_log_path) {
+        osqp_set_log_filepath(osqp_log_path);
+    }
 }
 
 MPC::MPC(double Ts,const PathToJson &path,const ParamValue &param_value)
@@ -60,6 +68,12 @@ MPC::MPC(double Ts,const PathToJson &path,const ParamValue &param_value)
     initial_guess_.resize(N+1);
     top3_total_iter_counts_.clear();
     top3_solve_nums_.clear();
+
+    // Set OSQP log filepath from environment variable if available
+    const char* osqp_log_path = std::getenv("OSQP_LOG_PATH");
+    if (osqp_log_path) {
+        osqp_set_log_filepath(osqp_log_path);
+    }
 }
 
 void MPC::updateInitialGuess(const State &x0)
@@ -265,7 +279,7 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     Status sqp_status;
     ComputeTime time_nmpc;
     int total_iter_count = 0;
-    solver_interface_->solveOCP(initial_guess_, &sqp_status, &time_nmpc, iter_count, sqp_iter_count, total_iter_count);
+    solver_interface_->solveOCP(initial_guess_, &sqp_status, &time_nmpc, iter_count, sqp_iter_count, total_iter_count, solve_count_ + 1);
    
     if(sqp_status == SOLVED)
     {

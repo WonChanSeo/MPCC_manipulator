@@ -10,7 +10,7 @@
 
 #include "flexfloat.h"
 
-#define FF_mantissa_bits 23;
+#define FF_mantissa_bits 20;
 #define FF_exponent_bits 8;
 
 /* VECTOR FUNCTIONS ----------------------------------------------------------*/
@@ -1146,6 +1146,22 @@ OSQPFloat OSQPScalarf_prod_FF(
   return ff_get_float(&ff_c);
 }
 
+OSQPFloat OSQPScalarf_div_FF(
+                         const OSQPFloat* a,
+                         const OSQPFloat* b) {
+  OSQPInt i;
+
+  flexfloat_t ff_a, ff_b, ff_c;
+
+  ff_init_float(&ff_a, a, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_b, b, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_c, 0.0, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+  ff_div(&ff_c, &ff_a, &ff_b);
+
+  return ff_get_float(&ff_c);
+}
+
 
 OSQPFloat OSQPScalarf_add_FF(
                          const OSQPFloat* a,
@@ -1224,6 +1240,19 @@ bool OSQPScalarf_gt_FF(
   return ff_gt(&ff_a, &ff_b);
 }
 
+bool OSQPScalarf_ge_FF(
+                         const OSQPFloat* a,
+                         const OSQPFloat* b) {
+  OSQPInt i;
+
+  flexfloat_t ff_a, ff_b;
+
+  ff_init_float(&ff_a, a, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_b, b, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+  return ff_ge(&ff_a, &ff_b);
+}
+
 bool OSQPScalarf_lt_FF(
                          const OSQPFloat* a,
                          const OSQPFloat* b) {
@@ -1235,4 +1264,30 @@ bool OSQPScalarf_lt_FF(
   ff_init_float(&ff_b, b, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
 
   return ff_lt(&ff_a, &ff_b);
+}
+
+bool OSQPScalarf_le_FF(
+                         const OSQPFloat* a,
+                         const OSQPFloat* b) {
+  OSQPInt i;
+
+  flexfloat_t ff_a, ff_b;
+
+  ff_init_float(&ff_a, a, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_b, b, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+  return ff_le(&ff_a, &ff_b);
+}
+
+bool OSQPScalarf_eq_FF(
+                         const OSQPFloat* a,
+                         const OSQPFloat* b) {
+  OSQPInt i;
+
+  flexfloat_t ff_a, ff_b;
+
+  ff_init_float(&ff_a, a, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_b, b, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+  return ff_eq(&ff_a, &ff_b);
 }

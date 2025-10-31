@@ -6,6 +6,11 @@ if(NOT OSQP_EMBEDDED_MODE)
        ${LIN_SYS_QDLDL_NON_EMBEDDED_SRC_FILES} )
 endif()
 
+if(OSQP_USE_FLEXFLOAT)
+  set( FLEXFLOAT_SRC_FILES
+       ${CMAKE_CURRENT_SOURCE_DIR}/../../../flexfloat/src/flexfloat.c )
+endif()
+
 target_sources(
   OSQPLIB
   PRIVATE ../_common/csc_math.h
@@ -18,6 +23,7 @@ target_sources(
           matrix.c
           ${NON_EMBEDDED_SRC_FILES}
           ${LIN_SYS_QDLDL_EMBEDDED_SRC_FILES}
+          ${FLEXFLOAT_SRC_FILES}
           $<TARGET_OBJECTS:qdldlobject> )
 
 target_include_directories(

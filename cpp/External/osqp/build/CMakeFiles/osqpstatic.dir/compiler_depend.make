@@ -70,6 +70,7 @@ CMakeFiles/osqpstatic.dir/src/osqp_api.c.o: ../src/osqp_api.c \
   ../include/public/osqp_api_types.h \
   ../include/private/glob_opts.h \
   ../include/private/algebra_vector.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
   ../include/public/osqp_api_constants.h \
   ../include/public/osqp_api_functions.h \
   ../include/private/util.h \
@@ -98,6 +99,28 @@ CMakeFiles/osqpstatic.dir/src/osqp_api.c.o: ../src/osqp_api.c \
   /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
   ../include/private/timing.h \
   ../include/private/profilers.h \
+  ../include/private/algebra_vector.h \
+  /usr/include/signal.h \
+  /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
+  /usr/include/x86_64-linux-gnu/bits/signum-arch.h \
+  /usr/include/x86_64-linux-gnu/bits/types/sig_atomic_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h \
+  /usr/include/x86_64-linux-gnu/bits/siginfo-arch.h \
+  /usr/include/x86_64-linux-gnu/bits/siginfo-consts.h \
+  /usr/include/x86_64-linux-gnu/bits/types/sigval_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h \
+  /usr/include/x86_64-linux-gnu/bits/sigevent-consts.h \
+  /usr/include/x86_64-linux-gnu/bits/sigaction.h \
+  /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
+  /usr/include/x86_64-linux-gnu/bits/types/stack_t.h \
+  /usr/include/x86_64-linux-gnu/sys/ucontext.h \
+  /usr/include/x86_64-linux-gnu/bits/sigstack.h \
+  /usr/include/x86_64-linux-gnu/bits/sigstksz.h \
+  /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h \
+  /usr/include/x86_64-linux-gnu/bits/sigthread.h \
+  /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
   ../include/private/codegen.h \
   ../include/private/polish.h \
   ../include/private/derivative.h \
@@ -108,11 +131,37 @@ CMakeFiles/osqpstatic.dir/src/osqp_api.c.o: ../src/osqp_api.c \
 
 ../include/private/codegen.h:
 
+/usr/include/x86_64-linux-gnu/bits/sigstksz.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigstack.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigaction.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/sigval_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/siginfo-consts.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/sig_atomic_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:
+
+/usr/include/x86_64-linux-gnu/bits/signum-generic.h:
+
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:
+
+/usr/include/x86_64-linux-gnu/bits/siginfo-arch.h:
 
 /usr/include/strings.h:
 
+/usr/include/x86_64-linux-gnu/bits/ss_flags.h:
+
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/stack_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
 
@@ -132,17 +181,27 @@ CMakeFiles/osqpstatic.dir/src/osqp_api.c.o: ../src/osqp_api.c \
 
 /usr/include/stdio.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h:
+
 /usr/include/x86_64-linux-gnu/bits/strings_fortified.h:
 
 ../include/private/printing.h:
 
 ../include/private/version.h:
 
+/usr/include/x86_64-linux-gnu/bits/sigthread.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigevent-consts.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
 ../include/private/util.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h:
+
 ../include/private/algebra_vector.h:
+
+/usr/include/x86_64-linux-gnu/bits/signal_ext.h:
 
 ../include/private/algebra_matrix.h:
 
@@ -165,6 +224,8 @@ CMakeFiles/osqpstatic.dir/src/osqp_api.c.o: ../src/osqp_api.c \
 /usr/include/x86_64-linux-gnu/bits/typesizes.h:
 
 /usr/include/x86_64-linux-gnu/bits/endianness.h:
+
+/usr/include/x86_64-linux-gnu/sys/ucontext.h:
 
 /usr/include/math.h:
 
@@ -228,6 +289,8 @@ include/public/osqp_configure.h:
 
 /usr/include/x86_64-linux-gnu/bits/endian.h:
 
+/usr/include/signal.h:
+
 /usr/include/x86_64-linux-gnu/sys/select.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
@@ -253,6 +316,8 @@ include/public/osqp_configure.h:
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/select2.h:
 
@@ -285,6 +350,8 @@ include/public/osqp_configure.h:
 /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
 
 /usr/include/x86_64-linux-gnu/bits/math-vector.h:
+
+/usr/include/x86_64-linux-gnu/bits/signum-arch.h:
 
 /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
 

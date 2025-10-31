@@ -15,6 +15,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "Interfaces/osqp_interface.h"
+#include "osqp_api_functions.h"
 #include <chrono>
 
 namespace mpcc{
@@ -434,9 +435,12 @@ void OsqpInterface::setQP(const std::vector<OptVariables> &initial_guess,
     setConstraints(initial_guess, jac_constr, constr, l, u);
 }
 
-bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count, int &sqp_iter_count, int &total_iter_count)
+bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count, int &sqp_iter_count, int &total_iter_count, int solve_count)
 {
     auto start_total = std::chrono::high_resolution_clock::now();
+
+    // Store solve_count for use in solveQP
+    current_solve_count_ = solve_count;
 
     // Initialize
     lambda_.setZero(N_constr);
@@ -826,7 +830,9 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     // printf("  polish_refine_iter : %d\n", solver_.settings()->getSettings()->polish_refine_iter);
 
 
- 
+    // Set iteration context for OSQP logging
+    osqp_set_iteration_context(current_solve_count_, sqp_iter_);
+
     // solve the QP problem
     if (solver_.solveProblem() != OsqpEigen::ErrorExitFlag::NoError) return false;
     // printf("After solveProblem : %d\n", solver_.getStatus());

@@ -5,6 +5,10 @@
 
 #include "glob_opts.h"
 
+#ifdef OSQP_USE_FLEXFLOAT
+#include <stdbool.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -288,6 +292,37 @@ void OSQPVectorf_set_scalar_if_gt(OSQPVectorf*       x,
                                   const OSQPVectorf* z,
                                   OSQPFloat          testval,
                                   OSQPFloat          newval);
+
+#ifdef OSQP_USE_FLEXFLOAT
+/* FlexFloat precision control functions */
+void OSQPVectorf_round_to_zero_FF(OSQPVectorf* a, OSQPFloat tol);
+void OSQPVectorf_mult_scalar_FF(OSQPVectorf* a, OSQPFloat sc);
+void OSQPVectorf_plus_FF(OSQPVectorf* x, const OSQPVectorf* a, const OSQPVectorf* b);
+void OSQPVectorf_minus_FF(OSQPVectorf* x, const OSQPVectorf* a, const OSQPVectorf* b);
+void OSQPVectorf_add_scaled_FF(OSQPVectorf* x, OSQPFloat sca, const OSQPVectorf* a, OSQPFloat scb, const OSQPVectorf* b);
+void OSQPVectorf_add_scaled3_FF(OSQPVectorf* x, OSQPFloat sca, const OSQPVectorf* a, OSQPFloat scb, const OSQPVectorf* b, OSQPFloat scc, const OSQPVectorf* c);
+OSQPFloat OSQPVectorf_norm_inf_FF(const OSQPVectorf* v);
+OSQPFloat OSQPVectorf_scaled_norm_inf_FF(const OSQPVectorf* S, const OSQPVectorf* v);
+OSQPFloat OSQPVectorf_dot_prod_FF(const OSQPVectorf* a, const OSQPVectorf* b);
+OSQPFloat OSQPVectorf_dot_prod_signed_FF(const OSQPVectorf* a, const OSQPVectorf* b, OSQPInt sign);
+void OSQPVectorf_ew_prod_FF(OSQPVectorf* c, const OSQPVectorf* a, const OSQPVectorf* b);
+void OSQPVectorf_ew_bound_vec_FF(OSQPVectorf* x, const OSQPVectorf* z, const OSQPVectorf* l, const OSQPVectorf* u);
+void OSQPVectorf_project_polar_reccone_FF(OSQPVectorf* y, const OSQPVectorf* l, const OSQPVectorf* u, OSQPFloat infval);
+
+/* FlexFloat scalar operations */
+OSQPFloat OSQPScalarf_prod_FF(OSQPFloat a, OSQPFloat b);
+OSQPFloat OSQPScalarf_div_FF(OSQPFloat a, OSQPFloat b);
+OSQPFloat OSQPScalarf_add_FF(OSQPFloat a, OSQPFloat b);
+OSQPFloat OSQPScalarf_minus_FF(OSQPFloat a, OSQPFloat b);
+OSQPFloat OSQPScalarf_max_FF(OSQPFloat a, OSQPFloat b);
+OSQPFloat OSQPScalarf_min_FF(OSQPFloat a, OSQPFloat b);
+bool OSQPScalarf_gt_FF(OSQPFloat a, OSQPFloat b);
+bool OSQPScalarf_ge_FF(OSQPFloat a, OSQPFloat b);
+bool OSQPScalarf_lt_FF(OSQPFloat a, OSQPFloat b);
+bool OSQPScalarf_le_FF(OSQPFloat a, OSQPFloat b);
+bool OSQPScalarf_eq_FF(OSQPFloat a, OSQPFloat b);
+OSQPInt OSQPVectorf_in_reccone_FF(const OSQPVectorf* y, const OSQPVectorf* l, const OSQPVectorf* u, OSQPFloat infval, OSQPFloat tol);
+#endif /* OSQP_USE_FLEXFLOAT */
 
 # endif /* if OSQP_EMBEDDED_MODE != 1 */
 

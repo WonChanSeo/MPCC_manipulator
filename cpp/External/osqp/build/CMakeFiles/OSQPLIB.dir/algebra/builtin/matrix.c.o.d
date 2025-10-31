@@ -61,6 +61,7 @@ CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o: \
  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/algebra_matrix.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/types.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/algebra_impl.h \
@@ -82,4 +83,10 @@ CMakeFiles/OSQPLIB.dir/algebra/builtin/matrix.c.o: \
  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
- /usr/include/x86_64-linux-gnu/bits/string_fortified.h
+ /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/../flexfloat/include/flexfloat.h \
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/../flexfloat/include/flexfloat_config.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h /usr/include/fenv.h \
+ /usr/include/x86_64-linux-gnu/bits/fenv.h

@@ -4,7 +4,7 @@
 # compile C with /usr/bin/cc
 C_DEFINES = 
 
-C_INCLUDES = -I/home/mms-wonchan/osqp/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/_deps/qdldl-build/include
+C_INCLUDES = -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/../flexfloat/include -I/home/mms-wonchan/osqp/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/_deps/qdldl-build/include
 
 C_FLAGS =  -O3 -O3 -fPIC
 

@@ -14,6 +14,10 @@ mkdir -p "$out_dir"
 log="$out_dir/log_${ts}.txt"
 echo ">> log: $log"
 
+# Set OSQP log path
+export OSQP_LOG_PATH="$out_dir/osqp_admm_iterations_${ts}.txt"
+echo ">> OSQP log: $OSQP_LOG_PATH"
+
 # python에 추가 인자 전달: "${@:2}"
 python3 "$script_dir/main_w_sim.py" --name "$name" "${@:2}" |& tee "$log"
 status=${PIPESTATUS[0]}   # tee 파이프에서도 python 종료코드 보존

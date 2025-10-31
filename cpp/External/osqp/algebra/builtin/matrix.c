@@ -5,6 +5,12 @@
 #include "csc_utils.h"
 #include "printing.h"
 
+#ifdef OSQP_USE_FLEXFLOAT
+#include "flexfloat.h"
+#define FF_mantissa_bits 20
+#define FF_exponent_bits 8
+#endif
+
 
 #ifndef OSQP_EMBEDDED_MODE
 
@@ -242,4 +248,194 @@ OSQPMatrix* OSQPMatrix_submatrix_byrows(const OSQPMatrix*  A,
 
 }
 
-#endif /* if OSQP_EMBEDDED_MODE != 1 */
+
+
+#ifdef OSQP_USE_FLEXFLOAT
+void OSQPMatrix_Axpy_FF(const OSQPMatrix*  A,
+                     const OSQPVectorf* x,
+                           OSQPVectorf* y,
+                           OSQPFloat    alpha,
+                           OSQPFloat    beta) {
+
+  // y = alpha*A*x + beta*y
+  OSQPInt i, j, k;
+  OSQPCscMatrix* csc = A->csc;
+  OSQPInt m = csc->m;
+  OSQPInt n = csc->n;
+  OSQPFloat* Ax = csc->x;
+  OSQPInt* Ai = csc->i;
+  OSQPInt* Ap = csc->p;
+
+  flexfloat_t ff_yvi, ff_yvj, ff_Axk, ff_xvi, ff_xvj;
+
+  flexfloat_t ff_alpha, ff_beta;
+  ff_init_float(&ff_alpha, alpha, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_beta, beta, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+  // First, scale existing y by beta
+  for (i = 0; i < m; i++) {
+    ff_init_float(&ff_yvi, y->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_mul(&ff_yvi, &ff_beta, &ff_yvi);
+    // y->values[i] = beta * y->values[i];
+    y->values[i] = ff_get_float(&ff_yvi);
+  }
+
+  // Compute y += alpha * A * x
+  if (A->symmetry == NONE) {
+    // General (non-symmetric) matrix
+    for (j = 0; j < n; j++) {
+      for (k = Ap[j]; k < Ap[j + 1]; k++) {
+        i = Ai[k];
+        // y->values[i] += alpha * Ax[k] * x->values[j];
+        ff_init_float(&ff_yvi, y->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+        ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+        ff_init_float(&ff_xvj, x->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+        ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
+        ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
+        ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+
+        y->values[i] = ff_get_float(&ff_yvi);
+      }
+    }
+  }
+  else {
+    // Symmetric matrix (stored as upper triangular)
+    for (j = 0; j < n; j++) {
+      for (k = Ap[j]; k < Ap[j + 1]; k++) {
+        i = Ai[k];
+        if (i == j) {
+          // Diagonal element
+          ff_init_float(&ff_yvi, y->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_xvj, x->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+ 
+          // y->values[i] += alpha * Ax[k] * x->values[j];
+          ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
+          ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
+          ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+
+          y->values[i] = ff_get_float(&ff_yvi);
+        }
+        else if (i < j) {
+          // Upper triangular element (use symmetry)
+          ff_init_float(&ff_yvi, y->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_xvj, x->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          // y->values[i] += alpha * Ax[k] * x->values[j];
+          // y->values[j] += alpha * Ax[k] * x->values[i];
+
+          ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
+          ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
+          ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+          y->values[i] = ff_get_float(&ff_yvi);
+
+          // Now update y->values[j]
+          ff_init_float(&ff_yvj, y->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_xvi, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);  // Use ff_xvi, not ff_xvj!
+          ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
+          ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+          y->values[j] = ff_get_float(&ff_yvj);
+        }
+      }
+    }
+  }
+}
+
+void OSQPMatrix_Atxpy_FF(const OSQPMatrix*  A,
+                      const OSQPVectorf* x,
+                            OSQPVectorf* y,
+                            OSQPFloat    alpha,
+                            OSQPFloat    beta) {
+
+  // y = alpha*A^T*x + beta*y
+  OSQPInt i, j, k;
+  OSQPCscMatrix* csc = A->csc;
+  OSQPInt m = csc->m;
+  OSQPInt n = csc->n;
+  OSQPFloat* Ax = csc->x;
+  OSQPInt* Ai = csc->i;
+  OSQPInt* Ap = csc->p;
+
+  flexfloat_t ff_yvi, ff_yvj, ff_Axk, ff_xvi, ff_xvj;
+  flexfloat_t ff_alpha, ff_beta;
+  ff_init_float(&ff_alpha, alpha, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_beta, beta, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+  // First, scale existing y by beta
+  for (j = 0; j < n; j++) {
+    // y->values[j] = beta * y->values[j];
+    ff_init_float(&ff_yvj, y->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+    ff_mul(&ff_yvj, &ff_beta, &ff_yvj);
+    y->values[j] = ff_get_float(&ff_yvj);
+  }
+
+  // Compute y += alpha * A^T * x
+  if (A->symmetry == NONE) {
+    // General (non-symmetric) matrix
+    // For A^T*x: column j of A becomes row j of A^T
+    for (j = 0; j < n; j++) {
+      for (k = Ap[j]; k < Ap[j + 1]; k++) {
+        i = Ai[k];
+        // y->values[j] += alpha * Ax[k] * x->values[i];
+        ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+        ff_init_float(&ff_xvi, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+        ff_init_float(&ff_yvj, y->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+        ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);
+        ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
+        ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+        y->values[j] = ff_get_float(&ff_yvj);  // Store the result!
+      }
+    }
+  }
+  else {
+    // Symmetric matrix: A^T = A, so same as Axpy
+    for (j = 0; j < n; j++) {
+      for (k = Ap[j]; k < Ap[j + 1]; k++) {
+        i = Ai[k];
+        if (i == j) {
+          // Diagonal element
+          // y->values[j] += alpha * Ax[k] * x->values[i];
+
+          ff_init_float(&ff_yvj, y->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_xvi, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+          ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);
+          ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
+          ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+          y->values[j] = ff_get_float(&ff_yvj);  // Store the result!
+        }
+        else if (i < j) {
+          // Upper triangular element (use symmetry)
+          // y->values[j] += alpha * Ax[k] * x->values[i];
+          // y->values[i] += alpha * Ax[k] * x->values[j];
+
+          // First update y->values[j]
+          ff_init_float(&ff_yvj, y->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_xvi, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);
+          ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
+          ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+          y->values[j] = ff_get_float(&ff_yvj);
+
+          // Now update y->values[i]
+          ff_init_float(&ff_yvi, y->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_init_float(&ff_xvj, x->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+          ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
+          ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
+          ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+          y->values[i] = ff_get_float(&ff_yvi);
+        }
+      }
+    }
+  }
+}
+
+#endif /* OSQP_USE_FLEXFLOAT */
+
+#endif /* OSQP_EMBEDDED_MODE != 1 */

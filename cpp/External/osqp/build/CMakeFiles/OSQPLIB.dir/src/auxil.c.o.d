@@ -63,6 +63,7 @@ CMakeFiles/OSQPLIB.dir/src/auxil.c.o: \
  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/algebra_vector.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/lin_alg.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/scaling.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/lin_alg.h \
@@ -84,6 +85,7 @@ CMakeFiles/OSQPLIB.dir/src/auxil.c.o: \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
  /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/timing.h \
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/public/osqp_api_functions.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \

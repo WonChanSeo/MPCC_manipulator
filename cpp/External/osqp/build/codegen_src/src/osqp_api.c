@@ -12,7 +12,165 @@
 #include "printing.h"
 #include "timing.h"
 #include "profilers.h"
+#include "algebra_vector.h"
 
+// ADMM iteration logging
+#include <stdio.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <string.h>
+
+static FILE* g_admm_log_file = NULL;
+static OSQPInt g_solve_count = 0;
+static OSQPInt g_sqp_iter_count = 0;
+static int g_logging_signal_installed = 0;
+static char g_log_filepath[512] = {0};
+
+static void logging_signal_handler(int sig) {
+  fprintf(stderr, "\nSignal %d received, closing log file...\n", sig);
+  if (g_admm_log_file) {
+    fflush(g_admm_log_file);
+    fclose(g_admm_log_file);
+    g_admm_log_file = NULL;
+  }
+  // Re-raise the signal to allow default handler to take over
+  signal(sig, SIG_DFL);
+  raise(sig);
+}
+
+static void install_logging_signal_handler(void) {
+  if (!g_logging_signal_installed) {
+    signal(SIGINT, logging_signal_handler);
+    signal(SIGTERM, logging_signal_handler);
+    g_logging_signal_installed = 1;
+  }
+}
+
+static void set_iteration_context(OSQPInt solve_count, OSQPInt sqp_iter_count) {
+  g_solve_count = solve_count;
+  g_sqp_iter_count = sqp_iter_count;
+}
+
+static void set_log_filepath(const char* filepath) {
+  if (filepath && strlen(filepath) < sizeof(g_log_filepath)) {
+    // Add _FF suffix before file extension if FlexFloat is enabled
+#ifdef OSQP_USE_FLEXFLOAT
+    // Find the last dot in the filepath for extension
+    const char* dot = strrchr(filepath, '.');
+    if (dot && dot > filepath) {
+      // Copy path up to extension
+      size_t base_len = dot - filepath;
+      if (base_len + 7 < sizeof(g_log_filepath)) {  // +7 for "_FF" + ".txt" + null
+        strncpy(g_log_filepath, filepath, base_len);
+        g_log_filepath[base_len] = '\0';
+        strcat(g_log_filepath, "_FF");
+        strcat(g_log_filepath, dot);
+      } else {
+        strncpy(g_log_filepath, filepath, sizeof(g_log_filepath) - 1);
+        g_log_filepath[sizeof(g_log_filepath) - 1] = '\0';
+      }
+    } else {
+      // No extension found, just append _FF
+      snprintf(g_log_filepath, sizeof(g_log_filepath), "%s_FF", filepath);
+    }
+#else
+    strncpy(g_log_filepath, filepath, sizeof(g_log_filepath) - 1);
+    g_log_filepath[sizeof(g_log_filepath) - 1] = '\0';
+#endif
+
+    // Create the log file immediately with header
+    if (!g_admm_log_file) {
+      install_logging_signal_handler();
+
+      g_admm_log_file = fopen(g_log_filepath, "w");
+      if (g_admm_log_file) {
+        fprintf(g_admm_log_file, "# ADMM Iteration Log\n");
+        fprintf(g_admm_log_file, "# Log file: %s\n", g_log_filepath);
+#ifdef OSQP_USE_FLEXFLOAT
+        fprintf(g_admm_log_file, "# FlexFloat enabled (mantissa bits: 23, exponent bits: 8)\n");
+#else
+        fprintf(g_admm_log_file, "# Native float precision\n");
+#endif
+        fprintf(g_admm_log_file, "# Format: solve_count sqp_iter iter x[0] x[1] ... z[0] z[1] ... y[0] y[1] ...\n");
+        fflush(g_admm_log_file);
+      }
+    }
+  }
+}
+
+static void log_rho_update(OSQPInt iter, OSQPFloat rho_old, OSQPFloat rho_new) {
+  if (!g_admm_log_file) return;
+
+  fprintf(g_admm_log_file, "RHO_UPDATE solve=%ld sqp=%ld iter=%ld rho_old=%.17e rho_new=%.17e\n",
+          (long)g_solve_count, (long)g_sqp_iter_count, (long)iter, rho_old, rho_new);
+  fflush(g_admm_log_file);
+}
+
+static void log_rho_debug(OSQPInt iter, const char* event, OSQPInt can_adapt, OSQPFloat rel_kkt_error,
+                          OSQPFloat last_rel_kkt, OSQPFloat rho_estimate, OSQPFloat rho_current) {
+  if (!g_admm_log_file) return;
+
+  fprintf(g_admm_log_file, "RHO_DEBUG solve=%ld sqp=%ld iter=%ld event=\"%s\" can_adapt=%ld rel_kkt=%.17e last_rel_kkt=%.17e rho_est=%.17e rho_cur=%.17e\n",
+          (long)g_solve_count, (long)g_sqp_iter_count, (long)iter, event, (long)can_adapt,
+          rel_kkt_error, last_rel_kkt, rho_estimate, rho_current);
+  fflush(g_admm_log_file);
+}
+
+static void log_residuals(OSQPInt iter, OSQPFloat prim_res, OSQPFloat dual_res, OSQPFloat dual_gap) {
+  if (!g_admm_log_file) return;
+
+  fprintf(g_admm_log_file, "RESIDUALS solve=%ld sqp=%ld iter=%ld prim_res=%.17e dual_res=%.17e dual_gap=%.17e\n",
+          (long)g_solve_count, (long)g_sqp_iter_count, (long)iter, prim_res, dual_res, dual_gap);
+  fflush(g_admm_log_file);
+}
+
+static void log_admm_iteration(OSQPInt iter, const OSQPWorkspace* work) {
+  // File should already be opened by set_log_filepath()
+  if (!g_admm_log_file) return;
+
+  OSQPInt i;
+  OSQPInt n = OSQPVectorf_length(work->x);
+  OSQPInt m = OSQPVectorf_length(work->z);
+  OSQPFloat* x_data = OSQPVectorf_data(work->x);
+  OSQPFloat* z_data = OSQPVectorf_data(work->z);
+  OSQPFloat* y_data = OSQPVectorf_data(work->y);
+
+  fprintf(g_admm_log_file, "solve=%ld sqp=%ld iter=%ld ",
+          (long)g_solve_count, (long)g_sqp_iter_count, (long)iter);
+
+  // Log x values
+  fprintf(g_admm_log_file, "x=[");
+  for (i = 0; i < n; i++) {
+    fprintf(g_admm_log_file, "%.17e", x_data[i]);
+    if (i < n - 1) fprintf(g_admm_log_file, ",");
+  }
+  fprintf(g_admm_log_file, "] ");
+
+  // Log z values
+  fprintf(g_admm_log_file, "z=[");
+  for (i = 0; i < m; i++) {
+    fprintf(g_admm_log_file, "%.17e", z_data[i]);
+    if (i < m - 1) fprintf(g_admm_log_file, ",");
+  }
+  fprintf(g_admm_log_file, "] ");
+
+  // Log y values
+  fprintf(g_admm_log_file, "y=[");
+  for (i = 0; i < m; i++) {
+    fprintf(g_admm_log_file, "%.17e", y_data[i]);
+    if (i < m - 1) fprintf(g_admm_log_file, ",");
+  }
+  fprintf(g_admm_log_file, "]\n");
+
+  fflush(g_admm_log_file);
+}
+
+static void close_admm_log(void) {
+  if (g_admm_log_file) {
+    fclose(g_admm_log_file);
+    g_admm_log_file = NULL;
+  }
+}
 
 #ifdef OSQP_CODEGEN
   #include "codegen.h"
@@ -831,6 +989,9 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     /* Compute y^{k+1} */
     update_y(solver);
 
+    /* Log iteration values */
+    log_admm_iteration(iter, work);
+
     /* End of ADMM Steps */
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_ADMM_UPDATE);
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_ADMM_ITER);
@@ -979,13 +1140,39 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
 #if OSQP_EMBEDDED_MODE != 1 // ON
     // Further processing to determine if the KKT error has decresed
     // This requires values computed in update_info, so must be done here.
-    if(can_adapt_rho && (settings->adaptive_rho == OSQP_ADAPTIVE_RHO_UPDATE_KKT_ERROR)) {
-      if(solver->info->rel_kkt_error <= ( settings->adaptive_rho_fraction * work->last_rel_kkt) ) {
-        can_adapt_rho = 1;
+    #ifdef OSQP_USE_FLEXFLOAT
+      if(can_adapt_rho && (settings->adaptive_rho == OSQP_ADAPTIVE_RHO_UPDATE_KKT_ERROR)) {
+        OSQPFloat threshold = OSQPScalarf_prod_FF(settings->adaptive_rho_fraction, work->last_rel_kkt);
+        OSQPInt kkt_check = OSQPScalarf_le_FF(solver->info->rel_kkt_error, threshold);
+        log_rho_debug(iter, "KKT_CHECK_FF", kkt_check, solver->info->rel_kkt_error, work->last_rel_kkt,
+                      solver->info->rho_estimate, settings->rho);
+        if(kkt_check) {
+          can_adapt_rho = 1;
+        }
+        else {
+          can_adapt_rho = 0;
+        }
       }
-      else {
-        can_adapt_rho = 0;
+
+    #else
+      if(can_adapt_rho && (settings->adaptive_rho == OSQP_ADAPTIVE_RHO_UPDATE_KKT_ERROR)) {
+        OSQPFloat threshold = settings->adaptive_rho_fraction * work->last_rel_kkt;
+        OSQPInt kkt_check = (solver->info->rel_kkt_error <= threshold);
+        log_rho_debug(iter, "KKT_CHECK", kkt_check, solver->info->rel_kkt_error, work->last_rel_kkt,
+                      solver->info->rho_estimate, settings->rho);
+        if(kkt_check) {
+          can_adapt_rho = 1;
+        }
+        else {
+          can_adapt_rho = 0;
+        }
       }
+    #endif
+
+    // Log before attempting rho update
+    if(can_adapt_rho) {
+      log_rho_debug(iter, "BEFORE_ADAPT", can_adapt_rho, solver->info->rel_kkt_error, work->last_rel_kkt,
+                    solver->info->rho_estimate, settings->rho);
     }
 
     // Actually update rho if requested
@@ -1138,6 +1325,9 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
 exit:
 #endif /* if defined(OSQP_ENABLE_PROFILING) || defined(OSQP_ENABLE_INTERRUPT) || OSQP_EMBEDDED_MODE != 1 */
 
+  // Close ADMM iteration log file
+  close_admm_log();
+
 #ifdef OSQP_ENABLE_INTERRUPT // ON
   // Restore previous signal handler
   osqp_end_interrupt_listener();
@@ -1150,6 +1340,27 @@ exit:
   return exitflag;
 }
 
+
+void osqp_set_iteration_context(OSQPInt solve_count, OSQPInt sqp_iter_count) {
+  set_iteration_context(solve_count, sqp_iter_count);
+}
+
+void osqp_set_log_filepath(const char* filepath) {
+  set_log_filepath(filepath);
+}
+
+void osqp_log_rho_update(OSQPInt iter, OSQPFloat rho_old, OSQPFloat rho_new) {
+  log_rho_update(iter, rho_old, rho_new);
+}
+
+void osqp_log_rho_debug(OSQPInt iter, const char* event, OSQPInt can_adapt, OSQPFloat rel_kkt_error,
+                        OSQPFloat last_rel_kkt, OSQPFloat rho_estimate, OSQPFloat rho_current) {
+  log_rho_debug(iter, event, can_adapt, rel_kkt_error, last_rel_kkt, rho_estimate, rho_current);
+}
+
+void osqp_log_residuals(OSQPInt iter, OSQPFloat prim_res, OSQPFloat dual_res, OSQPFloat dual_gap) {
+  log_residuals(iter, prim_res, dual_res, dual_gap);
+}
 
 OSQPInt osqp_get_iterations(OSQPSolver* solver) {
   if (!solver || !solver->work || !solver->settings || !solver->info) {

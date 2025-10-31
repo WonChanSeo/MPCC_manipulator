@@ -1027,6 +1027,30 @@ examples/problems/qptest.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/osqp_demo.dir/build.make CMakeFiles/osqp_demo.dir/examples/problems/qptest.c.s
 .PHONY : examples/problems/qptest.c.s
 
+home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.o: home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.o
+.PHONY : home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.o
+
+# target to build an object file
+home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/OSQPLIB.dir/build.make CMakeFiles/OSQPLIB.dir/home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.o
+.PHONY : home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.o
+
+home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.i: home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.i
+.PHONY : home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.i
+
+# target to preprocess a source file
+home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/OSQPLIB.dir/build.make CMakeFiles/OSQPLIB.dir/home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.i
+.PHONY : home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.i
+
+home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.s: home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.s
+.PHONY : home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.s
+
+# target to generate assembly for a file
+home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/OSQPLIB.dir/build.make CMakeFiles/OSQPLIB.dir/home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.s
+.PHONY : home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.s
+
 src/auxil.o: src/auxil.c.o
 .PHONY : src/auxil.o
 
@@ -1382,6 +1406,9 @@ help:
 	@echo "... examples/problems/qptest.o"
 	@echo "... examples/problems/qptest.i"
 	@echo "... examples/problems/qptest.s"
+	@echo "... home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.o"
+	@echo "... home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.i"
+	@echo "... home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.s"
 	@echo "... src/auxil.o"
 	@echo "... src/auxil.i"
 	@echo "... src/auxil.s"

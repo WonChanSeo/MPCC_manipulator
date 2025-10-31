@@ -296,6 +296,54 @@ OSQP_API OSQPInt osqp_solve(OSQPSolver* solver);
 OSQP_API OSQPInt osqp_get_iterations(OSQPSolver* solver);
 
 /**
+ * Set iteration context for logging (solve_count, sqp_iter_count)
+ *
+ * @param  solve_count      Current solve count
+ * @param  sqp_iter_count   Current SQP iteration count
+ */
+OSQP_API void osqp_set_iteration_context(OSQPInt solve_count, OSQPInt sqp_iter_count);
+
+/**
+ * Set log file path for ADMM iteration logging
+ *
+ * @param  filepath         Path to log file (e.g., "/path/to/result/osqp_log.txt")
+ */
+OSQP_API void osqp_set_log_filepath(const char* filepath);
+
+/**
+ * Log rho update event
+ *
+ * @param  iter             Current ADMM iteration
+ * @param  rho_old          Old rho value
+ * @param  rho_new          New rho value
+ */
+OSQP_API void osqp_log_rho_update(OSQPInt iter, OSQPFloat rho_old, OSQPFloat rho_new);
+
+/**
+ * Log rho debug information
+ *
+ * @param  iter             Current ADMM iteration
+ * @param  event            Event description
+ * @param  can_adapt        Can adapt rho flag
+ * @param  rel_kkt_error    Relative KKT error
+ * @param  last_rel_kkt     Last relative KKT error
+ * @param  rho_estimate     Estimated rho value
+ * @param  rho_current      Current rho value
+ */
+OSQP_API void osqp_log_rho_debug(OSQPInt iter, const char* event, OSQPInt can_adapt, OSQPFloat rel_kkt_error,
+                                  OSQPFloat last_rel_kkt, OSQPFloat rho_estimate, OSQPFloat rho_current);
+
+/**
+ * Log residuals information
+ *
+ * @param  iter             Current ADMM iteration
+ * @param  prim_res         Primal residual
+ * @param  dual_res         Dual residual
+ * @param  dual_gap         Duality gap
+ */
+OSQP_API void osqp_log_residuals(OSQPInt iter, OSQPFloat prim_res, OSQPFloat dual_res, OSQPFloat dual_gap);
+
+/**
  * Store the optimization problem result from solver \a solver into the solution
  * \a solution. Note that \a solution must already be allocated with the component
  * vectors the correct lengths.

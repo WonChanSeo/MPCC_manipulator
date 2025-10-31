@@ -337,6 +337,9 @@ OSQP_PACK_SETTINGS:BOOL=OFF
 //Enable profiler annotations (NVTX for CUDA backend, ITT otherwise)
 OSQP_PROFILER_ANNOTATIONS:STRING=OFF
 
+//Enable FlexFloat precision control
+OSQP_USE_FLEXFLOAT:BOOL=ON
+
 //Use floats instead of doubles
 OSQP_USE_FLOAT:BOOL=ON
 
@@ -369,6 +372,10 @@ QDLDL_FLOAT:BOOL=ON
 
 //Use long integers (64bit) for indexing
 QDLDL_LONG:BOOL=ON
+
+//Use FlexFloat for custom precision arithmetic (14-bit mantissa,
+// 8-bit exponent)
+QDLDL_USE_FLEXFLOAT:BOOL=OFF
 
 //Value Computed by CMake
 osqp_BINARY_DIR:STATIC=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build

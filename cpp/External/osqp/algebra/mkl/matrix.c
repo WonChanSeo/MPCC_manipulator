@@ -9,7 +9,7 @@
 
 #include "flexfloat.h"
 
-#define FF_mantissa_bits 23;
+#define FF_mantissa_bits 20;
 #define FF_exponent_bits 8;
 /*  logical test functions ----------------------------------------------------*/
 

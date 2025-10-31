@@ -88,7 +88,7 @@ public:
     void setEnvData(const Eigen::MatrixX3d &obs_positions, const double &obs_radius);
     void setCurrentInput(const Input &cutrent_input);
     void setInitialGuess(const std::vector<OptVariables> &initial_guess);
-    bool solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count, int &sqp_iter_count, int &total_iter_count);
+    bool solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count, int &sqp_iter_count, int &total_iter_count, int solve_count = 0);
     // ▼▼▼▼▼▼▼▼▼▼▼ 여기에 getter 함수를 추가하세요 ▼▼▼▼▼▼▼▼▼▼▼
     const std::unique_ptr<EnvCollNNmodel>& getEnvColNN() const { return envcolNN_; }
 
@@ -142,8 +142,9 @@ private:
     std::vector<FilterData> filter_data_list_;
 
     // OsqpEigen::Solver solver_;
-    
+
     unsigned int sqp_iter_;
+    int current_solve_count_;
 
     bool is_solved_ = false;
     OsqpEigen::Status qp_status_;
