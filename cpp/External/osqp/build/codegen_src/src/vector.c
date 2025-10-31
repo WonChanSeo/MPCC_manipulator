@@ -4,7 +4,7 @@
 
 #ifdef OSQP_USE_FLEXFLOAT
 #include "flexfloat.h"
-#define FF_mantissa_bits 20
+#define FF_mantissa_bits 16
 #define FF_exponent_bits 8
 #endif
 
@@ -974,13 +974,8 @@ void OSQPVectorf_round_to_zero_FF(OSQPVectorf* a,
     ff_init_float(&ff_avi, av[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
     ff_init_float(&ff_tol, tol, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
 
-    // Take absolute value using FlexFloat comparison: abs_val = (avi < 0) ? -avi : avi
-    if (ff_lt(&ff_avi, &ff_zero)) {
-      // Negate by subtracting from zero: -avi = 0 - avi
-      ff_sub(&ff_avi_abs, &ff_zero, &ff_avi);
-    } else {
-      ff_avi_abs = ff_avi;
-    }
+    // Take absolute value using FlexFloat
+    ff_abs(&ff_avi_abs, &ff_avi);
 
     if(ff_lt(&ff_avi_abs, &ff_tol)) {
       av[i] = ff_get_float(&ff_zero);
@@ -1058,8 +1053,9 @@ void OSQPVectorf_add_scaled_FF(OSQPVectorf*       x,
     for (i = 0; i < x->length; i++) {
       ff_init_float(&ff_bv, b->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
       ff_init_float(&ff_xv, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
-      ff_mul(&ff_tmp, &ff_scb, &ff_bv);
-      ff_add(&ff_xv, &ff_xv, &ff_tmp);
+      // ff_mul(&ff_tmp, &ff_scb, &ff_bv);
+      // ff_add(&ff_xv, &ff_xv, &ff_tmp);
+      ff_fma(&ff_xv, &ff_scb, &ff_bv, &ff_xv);  // ff_xv += ff_scb * ff_bv
       x->values[i] = ff_get_float(&ff_xv);
     }
   }
@@ -1086,8 +1082,9 @@ void OSQPVectorf_add_scaled_FF(OSQPVectorf*       x,
       // xv[i] = sca * av[i] + scb * bv[i];
 
       ff_mul(&ff_tmp1, &ff_sca, &ff_av);
-      ff_mul(&ff_tmp2, &ff_scb, &ff_bv);
-      ff_add(&ff_xv, &ff_tmp1, &ff_tmp2);
+      // ff_mul(&ff_tmp2, &ff_scb, &ff_bv);
+      // ff_add(&ff_xv, &ff_tmp1, &ff_tmp2);
+      ff_fma(&ff_xv, &ff_scb, &ff_bv, &ff_tmp1);  // ff_xv = ff_tmp1 + ff_scb * ff_bv
 
       xv[i] = ff_get_float(&ff_xv);
     }
@@ -1130,8 +1127,9 @@ void OSQPVectorf_add_scaled3_FF(OSQPVectorf*       x,
       
       // xv[i] += scb * bv[i] + scc * cv[i];
       ff_mul(&ff_tmp1, &ff_scb, &ff_bv);
-      ff_mul(&ff_tmp2, &ff_scc, &ff_cv);
-      ff_add(&ff_tmp3, &ff_tmp1, &ff_tmp2);
+      // ff_mul(&ff_tmp2, &ff_scc, &ff_cv);
+      // ff_add(&ff_tmp3, &ff_tmp1, &ff_tmp2);
+      ff_fma(&ff_tmp3, &ff_scc, &ff_cv, &ff_tmp1);  // ff_tmp3 = ff_tmp1 + ff_scc * ff_cv
       ff_add(&ff_xv, &ff_xv, &ff_tmp3);
 
       xv[i] = ff_get_float(&ff_xv);
@@ -1146,10 +1144,13 @@ void OSQPVectorf_add_scaled3_FF(OSQPVectorf*       x,
 
       // xv[i] =  sca * av[i] + scb * bv[i] + scc * cv[i];
       ff_mul(&ff_tmp1, &ff_sca, &ff_av);
-      ff_mul(&ff_tmp2, &ff_scb, &ff_bv);
-      ff_mul(&ff_tmp3, &ff_scc, &ff_cv);
-      ff_add(&ff_tmp1, &ff_tmp1, &ff_tmp2);
-      ff_add(&ff_xv, &ff_tmp1, &ff_tmp3);
+      // ff_mul(&ff_tmp2, &ff_scb, &ff_bv);
+      // ff_add(&ff_tmp1, &ff_tmp1, &ff_tmp2);
+      ff_fma(&ff_tmp1, &ff_scb, &ff_bv, &ff_tmp1);  // ff_tmp1 = ff_tmp1 + ff_scb * ff_bv
+
+      // ff_mul(&ff_tmp3, &ff_scc, &ff_cv);
+      // ff_add(&ff_xv, &ff_tmp1, &ff_tmp3);
+      ff_fma(&ff_xv, &ff_scc, &ff_cv, &ff_tmp1);  // ff_xv = ff_tmp1 + ff_scc * ff_cv
       
       xv[i] = ff_get_float(&ff_xv);
     }
@@ -1174,13 +1175,8 @@ OSQPFloat OSQPVectorf_norm_inf_FF(const OSQPVectorf* v) {
       // Convert v->values[i] to FlexFloat first
       ff_init_float(&ff_vi, v->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
 
-      // Take absolute value using FlexFloat comparison: abs_val = (vi < 0) ? -vi : vi
-      if (ff_lt(&ff_vi, &ff_zero)) {
-        // Negate by subtracting from zero: -vi = 0 - vi
-        ff_sub(&ff_absval, &ff_zero, &ff_vi);
-      } else {
-        ff_absval = ff_vi;
-      }
+      // Take absolute value using FlexFloat
+      ff_abs(&ff_absval, &ff_vi);
 
       // Update max if abs_val > val
       if (ff_gt(&ff_absval, &ff_val)) {
@@ -1220,13 +1216,8 @@ OSQPFloat OSQPVectorf_scaled_norm_inf_FF(const OSQPVectorf* S,
     ff_init_float(&ff_vvi, vv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
     ff_mul(&ff_tmp, &ff_Svi, &ff_vvi);
 
-    // Take absolute value using FlexFloat comparison: abs_val = (tmp < 0) ? -tmp : tmp
-    if (ff_lt(&ff_tmp, &ff_zero)) {
-      // Negate by subtracting from zero: -tmp = 0 - tmp
-      ff_sub(&ff_absval, &ff_zero, &ff_tmp);
-    } else {
-      ff_absval = ff_tmp;
-    }
+    // Take absolute value using FlexFloat
+    ff_abs(&ff_absval, &ff_tmp);
 
     if (ff_gt(&ff_absval, &ff_normval)) {
       ff_normval = ff_absval;
@@ -1249,8 +1240,9 @@ OSQPFloat OSQPVectorf_dot_prod_FF(const OSQPVectorf* a,
     ff_init_float(&ff_a, a->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
     ff_init_float(&ff_b, b->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
     ff_init_float(&ff_tmp, 0.0, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
-    ff_mul(&ff_tmp, &ff_a, &ff_b);
-    ff_add(&ff_dotprod, &ff_dotprod, &ff_tmp);
+    // ff_mul(&ff_tmp, &ff_a, &ff_b);
+    // ff_add(&ff_dotprod, &ff_dotprod, &ff_tmp);
+    ff_fma(&ff_dotprod, &ff_a, &ff_b, &ff_dotprod); // fused multiply-add
   }
 
   return ff_get_float(&ff_dotprod);
@@ -1278,8 +1270,9 @@ OSQPFloat OSQPVectorf_dot_prod_signed_FF(const OSQPVectorf* a,
       ff_init_float(&ff_bvi, bv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
       // dotprod += av[i] * c_max(bv[i], 0.);
       ff_max(&ff_bvi, &ff_bvi, &ff_zero);
-      ff_mul(&ff_tmp, &ff_avi, &ff_bvi);
-      ff_add(&ff_dotprod, &ff_dotprod, &ff_tmp);
+      // ff_mul(&ff_tmp, &ff_avi, &ff_bvi);
+      // ff_add(&ff_dotprod, &ff_dotprod, &ff_tmp);
+      ff_fma(&ff_dotprod, &ff_avi, &ff_bvi, &ff_dotprod);
       dotprod = ff_get_float(&ff_dotprod);
     }
   }
@@ -1289,8 +1282,9 @@ OSQPFloat OSQPVectorf_dot_prod_signed_FF(const OSQPVectorf* a,
       ff_init_float(&ff_bvi, bv[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
       // dotprod += av[i] * c_min(bv[i],0.);
       ff_min(&ff_bvi, &ff_bvi, &ff_zero);
-      ff_mul(&ff_tmp, &ff_avi, &ff_bvi);
-      ff_add(&ff_dotprod, &ff_dotprod, &ff_tmp);
+      // ff_mul(&ff_tmp, &ff_avi, &ff_bvi);
+      // ff_add(&ff_dotprod, &ff_dotprod, &ff_tmp);
+      ff_fma(&ff_dotprod, &ff_avi, &ff_bvi, &ff_dotprod);
       dotprod = ff_get_float(&ff_dotprod);
     }
   }
@@ -1395,7 +1389,24 @@ void OSQPVectorf_project_polar_reccone_FF(OSQPVectorf*       y,
   }
 }
 
-OSQPFloat OSQPScalarf_prod_FF(
+OSQPFloat OSQPScalarf_fma_FF(
+                         OSQPFloat a,
+                         OSQPFloat b,
+                         OSQPFloat c) {
+
+  flexfloat_t ff_a, ff_b, ff_c, ff_result;
+
+  ff_init_float(&ff_a, a, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_b, b, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_c, c, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+  ff_init_float(&ff_result, 0.0, (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
+
+  ff_fma(&ff_result, &ff_a, &ff_b, &ff_c);
+
+  return ff_get_float(&ff_result);
+}
+
+OSQPFloat OSQPScalarf_mul_FF(
                          OSQPFloat a,
                          OSQPFloat b) {
 

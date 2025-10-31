@@ -129,7 +129,7 @@ OSQPFloat compute_rho_estimate(const OSQPSolver* solver) {
 
   // Update rho estimate
   #ifdef OSQP_USE_FLEXFLOAT
-    OSQPFloat rho_estimate = OSQPScalarf_prod_FF(settings->rho, sqrt_approx);
+    OSQPFloat rho_estimate = OSQPScalarf_mul_FF(settings->rho, sqrt_approx);
 
     // Clamp to valid rho range
     rho_estimate = OSQPScalarf_min_FF(OSQPScalarf_max_FF(rho_estimate, OSQP_RHO_MIN), OSQP_RHO_MAX);
@@ -163,7 +163,7 @@ OSQPInt adapt_rho(OSQPSolver* solver) {
 
   // Check if the new rho is large or small enough and update it in case
   #ifdef OSQP_USE_FLEXFLOAT
-    OSQPFloat upper_threshold = OSQPScalarf_prod_FF(settings->rho, settings->adaptive_rho_tolerance);
+    OSQPFloat upper_threshold = OSQPScalarf_mul_FF(settings->rho, settings->adaptive_rho_tolerance);
     OSQPFloat lower_threshold = OSQPScalarf_div_FF(settings->rho, settings->adaptive_rho_tolerance);
     OSQPInt should_update = OSQPScalarf_gt_FF(rho_new, upper_threshold) || OSQPScalarf_lt_FF(rho_new, lower_threshold);
 
@@ -455,11 +455,11 @@ void compute_obj_val_dual_gap(const OSQPSolver*  solver,
 
     /* Primal objective value is 0.5*x^T P x + q^T x */
     // *prim_obj_val = 0.5 * quad_term + lin_term;
-    *prim_obj_val = OSQPScalarf_add_FF(OSQPScalarf_prod_FF(0.5f, quad_term), lin_term);
+    *prim_obj_val = OSQPScalarf_add_FF(OSQPScalarf_mul_FF(0.5f, quad_term), lin_term);
 
     /* Dual objective value is -0.5*x^T P x - SC(y)*/
     // *dual_obj_val = -0.5 * quad_term - sup_term;
-    *dual_obj_val = OSQPScalarf_minus_FF(OSQPScalarf_prod_FF(-0.5f, quad_term), sup_term);
+    *dual_obj_val = OSQPScalarf_minus_FF(OSQPScalarf_mul_FF(-0.5f, quad_term), sup_term);
 
     /* Duality gap is x^T P x + q^T x + SC(y) */
     // work->scaled_dual_gap = quad_term + lin_term + sup_term;
@@ -468,13 +468,13 @@ void compute_obj_val_dual_gap(const OSQPSolver*  solver,
     if (solver->settings->scaling) {
       // *prim_obj_val *= work->scaling->cinv;
       // *dual_obj_val *= work->scaling->cinv;
-      *prim_obj_val = OSQPScalarf_prod_FF(work->scaling->cinv, *prim_obj_val);
-      *dual_obj_val = OSQPScalarf_prod_FF(work->scaling->cinv, *dual_obj_val);
+      *prim_obj_val = OSQPScalarf_mul_FF(work->scaling->cinv, *prim_obj_val);
+      *dual_obj_val = OSQPScalarf_mul_FF(work->scaling->cinv, *dual_obj_val);
 
       // We always store the duality gap in the info as unscaled (since it is for the user),
       // but we keep the scaled version to use as a termination check when requested.
       // *duality_gap = work->scaling->cinv * work->scaled_dual_gap;
-      *duality_gap = OSQPScalarf_prod_FF(work->scaling->cinv, work->scaled_dual_gap);
+      *duality_gap = OSQPScalarf_mul_FF(work->scaling->cinv, work->scaled_dual_gap);
     } else {
       *duality_gap = work->scaled_dual_gap;
     }
@@ -541,11 +541,11 @@ static OSQPFloat compute_duality_gap_tol(const OSQPSolver* solver,
 
     /* Unscale the termination tolerance if required*/
     if (settings->scaling && !settings->scaled_termination) {
-      max_rel_eps = OSQPScalarf_prod_FF(work->scaling->cinv, max_rel_eps);
+      max_rel_eps = OSQPScalarf_mul_FF(work->scaling->cinv, max_rel_eps);
     }
 
     // eps_duality_gap
-    return OSQPScalarf_add_FF(eps_abs, OSQPScalarf_prod_FF(eps_rel, max_rel_eps));
+    return OSQPScalarf_add_FF(eps_abs, OSQPScalarf_mul_FF(eps_rel, max_rel_eps));
   #else
 
     /* Compute max{ |x'*P*x|, |q'*x|, |SC(y)|} */
@@ -642,7 +642,7 @@ static OSQPFloat compute_prim_tol(const OSQPSolver* solver,
 
     // eps_prim
     // return eps_abs + eps_rel * max_rel_eps;
-    return OSQPScalarf_add_FF(eps_abs, OSQPScalarf_prod_FF(eps_rel, max_rel_eps));
+    return OSQPScalarf_add_FF(eps_abs, OSQPScalarf_mul_FF(eps_rel, max_rel_eps));
   
   #else
     // max_rel_eps = max(||z||, ||A x||)
@@ -709,7 +709,7 @@ static OSQPFloat compute_dual_res(OSQPSolver*        solver,
     if (settings->scaling && !settings->scaled_termination) {
       // dual_res =  work->scaling->cinv * OSQPVectorf_scaled_norm_inf_FF(work->scaling->Dinv,
       //                                                                   work->x_prev);
-      dual_res = OSQPScalarf_prod_FF(work->scaling->cinv, OSQPVectorf_scaled_norm_inf_FF(work->scaling->Dinv, work->x_prev));
+      dual_res = OSQPScalarf_mul_FF(work->scaling->cinv, OSQPVectorf_scaled_norm_inf_FF(work->scaling->Dinv, work->x_prev));
     }
     else {
       dual_res = work->scaled_dual_res;
@@ -791,7 +791,7 @@ static OSQPFloat compute_dual_tol(const OSQPSolver* solver,
 
     // eps_dual
     // return eps_abs + eps_rel * max_rel_eps;
-    return OSQPScalarf_add_FF(eps_abs, OSQPScalarf_prod_FF(eps_rel, max_rel_eps));
+    return OSQPScalarf_add_FF(eps_abs, OSQPScalarf_mul_FF(eps_rel, max_rel_eps));
 
   #else
 
@@ -980,7 +980,7 @@ OSQPInt is_dual_infeasible(OSQPSolver* solver,
         }
 
         // Check if || P * delta_x || = 0
-        if (OSQPScalarf_lt_FF(OSQPVectorf_norm_inf_FF(work->Pdelta_x), OSQPScalarf_prod_FF(cost_scaling, OSQPScalarf_prod_FF(eps_dual_inf, norm_delta_x)))) {
+        if (OSQPScalarf_lt_FF(OSQPVectorf_norm_inf_FF(work->Pdelta_x), OSQPScalarf_mul_FF(cost_scaling, OSQPScalarf_mul_FF(eps_dual_inf, norm_delta_x)))) {
           // Compute A * delta_x
           OSQPMatrix_Axpy_FF(work->data->A, work->delta_x, work->Adelta_x,1.0,0.0);
 

@@ -310,7 +310,7 @@ void OSQPVectorf_ew_bound_vec_FF(OSQPVectorf* x, const OSQPVectorf* z, const OSQ
 void OSQPVectorf_project_polar_reccone_FF(OSQPVectorf* y, const OSQPVectorf* l, const OSQPVectorf* u, OSQPFloat infval);
 
 /* FlexFloat scalar operations */
-OSQPFloat OSQPScalarf_prod_FF(OSQPFloat a, OSQPFloat b);
+OSQPFloat OSQPScalarf_mul_FF(OSQPFloat a, OSQPFloat b);
 OSQPFloat OSQPScalarf_div_FF(OSQPFloat a, OSQPFloat b);
 OSQPFloat OSQPScalarf_add_FF(OSQPFloat a, OSQPFloat b);
 OSQPFloat OSQPScalarf_minus_FF(OSQPFloat a, OSQPFloat b);

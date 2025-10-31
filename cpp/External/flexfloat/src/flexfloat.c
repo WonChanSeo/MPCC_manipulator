@@ -692,6 +692,19 @@ INLINE void ff_max(flexfloat_t *dest, const flexfloat_t *a, const flexfloat_t *b
     #endif
 }
 
+INLINE void ff_abs(flexfloat_t *dest, const flexfloat_t *a) {
+    assert((dest->desc.exp_bits == a->desc.exp_bits) && (dest->desc.frac_bits == a->desc.frac_bits));
+    dest->value = fabs(a->value);
+    #ifdef FLEXFLOAT_TRACKING
+    dest->exact_value = fabs(a->exact_value);
+    if(dest->tracking_fn) (dest->tracking_fn)(dest, dest->tracking_arg);
+    #endif
+    flexfloat_sanitize(dest);
+    #ifdef FLEXFLOAT_STATS
+    if(StatsEnabled) getOpStats(dest->desc)->abs += 1;
+    #endif
+}
+
 INLINE void ff_fma(flexfloat_t *dest, const flexfloat_t *a, const flexfloat_t *b, const flexfloat_t *c) {
     assert((dest->desc.exp_bits == a->desc.exp_bits) && (dest->desc.frac_bits == a->desc.frac_bits) &&
            (a->desc.exp_bits == b->desc.exp_bits) && (a->desc.frac_bits == b->desc.frac_bits) &&

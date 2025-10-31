@@ -7,7 +7,7 @@
 
 #ifdef OSQP_USE_FLEXFLOAT
 #include "flexfloat.h"
-#define FF_mantissa_bits 20
+#define FF_mantissa_bits 16
 #define FF_exponent_bits 8
 #endif
 
@@ -290,9 +290,11 @@ void OSQPMatrix_Axpy_FF(const OSQPMatrix*  A,
         ff_init_float(&ff_yvi, y->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
         ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
         ff_init_float(&ff_xvj, x->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
-        ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
+
         ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
-        ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+        // ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
+        // ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+        ff_fma(&ff_yvi, &ff_xvj, &ff_Axk, &ff_yvi);  // ff_yvi += ff_Axk * ff_xvj
 
         y->values[i] = ff_get_float(&ff_yvi);
       }
@@ -310,9 +312,10 @@ void OSQPMatrix_Axpy_FF(const OSQPMatrix*  A,
           ff_init_float(&ff_xvj, x->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
  
           // y->values[i] += alpha * Ax[k] * x->values[j];
-          ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
           ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
-          ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+          // ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
+          // ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+          ff_fma(&ff_yvi, &ff_xvj, &ff_Axk, &ff_yvi);  // ff_yvi += ff_Axk * ff_xvj
 
           y->values[i] = ff_get_float(&ff_yvi);
         }
@@ -323,19 +326,20 @@ void OSQPMatrix_Axpy_FF(const OSQPMatrix*  A,
           ff_init_float(&ff_xvj, x->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
           // y->values[i] += alpha * Ax[k] * x->values[j];
           // y->values[j] += alpha * Ax[k] * x->values[i];
-
-          ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
           ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
-          ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+          // ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
+          // ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+          ff_fma(&ff_yvi, &ff_xvj, &ff_Axk, &ff_yvi);  // ff_yvi += ff_Axk * ff_xvj
           y->values[i] = ff_get_float(&ff_yvi);
 
           // Now update y->values[j]
           ff_init_float(&ff_yvj, y->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
           ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
           ff_init_float(&ff_xvi, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
-          ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);  // Use ff_xvi, not ff_xvj!
-          ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
-          ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+          ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);          
+          // ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);  // Use ff_xvi, not ff_xvj!
+          // ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+          ff_fma(&ff_yvj, &ff_xvi, &ff_Axk, &ff_yvj);  // ff_yvj += ff_Axk * ff_xvi
           y->values[j] = ff_get_float(&ff_yvj);
         }
       }
@@ -382,10 +386,10 @@ void OSQPMatrix_Atxpy_FF(const OSQPMatrix*  A,
         ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
         ff_init_float(&ff_xvi, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
         ff_init_float(&ff_yvj, y->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
-
-        ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);
         ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
-        ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+        // ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);
+        // ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+        ff_fma(&ff_yvj, &ff_xvi, &ff_Axk, &ff_yvj);  // ff_yvj += ff_Axk * ff_xvi
         y->values[j] = ff_get_float(&ff_yvj);  // Store the result!
       }
     }
@@ -403,9 +407,10 @@ void OSQPMatrix_Atxpy_FF(const OSQPMatrix*  A,
           ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
           ff_init_float(&ff_xvi, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
 
-          ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);
           ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
-          ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+          // ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);
+          // ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+          ff_fma(&ff_yvj, &ff_xvi, &ff_Axk, &ff_yvj);  // ff_yvj += ff_Axk * ff_xvi
           y->values[j] = ff_get_float(&ff_yvj);  // Store the result!
         }
         else if (i < j) {
@@ -417,18 +422,20 @@ void OSQPMatrix_Atxpy_FF(const OSQPMatrix*  A,
           ff_init_float(&ff_yvj, y->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
           ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
           ff_init_float(&ff_xvi, x->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
-          ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);
           ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
-          ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+          // ff_mul(&ff_Axk, &ff_xvi, &ff_Axk);
+          // ff_add(&ff_yvj, &ff_Axk, &ff_yvj);
+          ff_fma(&ff_yvj, &ff_xvi, &ff_Axk, &ff_yvj);  // ff_yvj += ff_Axk * ff_xvi
           y->values[j] = ff_get_float(&ff_yvj);
 
           // Now update y->values[i]
           ff_init_float(&ff_yvi, y->values[i], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
           ff_init_float(&ff_Axk, Ax[k], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
           ff_init_float(&ff_xvj, x->values[j], (flexfloat_desc_t) {FF_exponent_bits, FF_mantissa_bits});
-          ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
           ff_mul(&ff_Axk, &ff_alpha, &ff_Axk);
-          ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+          // ff_mul(&ff_Axk, &ff_xvj, &ff_Axk);
+          // ff_add(&ff_yvi, &ff_Axk, &ff_yvi);
+          ff_fma(&ff_yvi, &ff_xvj, &ff_Axk, &ff_yvi);  // ff_yvi += ff_Axk * ff_xvj
           y->values[i] = ff_get_float(&ff_yvi);
         }
       }

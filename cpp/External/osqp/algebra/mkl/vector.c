@@ -10,7 +10,7 @@
 
 #include "flexfloat.h"
 
-#define FF_mantissa_bits 20;
+#define FF_mantissa_bits 16;
 #define FF_exponent_bits 8;
 
 /* VECTOR FUNCTIONS ----------------------------------------------------------*/
@@ -1130,7 +1130,7 @@ void OSQPVectorf_set_scalar_if_gt(OSQPVectorf*       x,
 }
 
 
-OSQPFloat OSQPScalarf_prod_FF(
+OSQPFloat OSQPScalarf_mul_FF(
                          const OSQPFloat* a,
                          const OSQPFloat* b) {
   OSQPInt i;

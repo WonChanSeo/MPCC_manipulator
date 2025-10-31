@@ -1142,7 +1142,7 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     // This requires values computed in update_info, so must be done here.
     #ifdef OSQP_USE_FLEXFLOAT
       if(can_adapt_rho && (settings->adaptive_rho == OSQP_ADAPTIVE_RHO_UPDATE_KKT_ERROR)) {
-        OSQPFloat threshold = OSQPScalarf_prod_FF(settings->adaptive_rho_fraction, work->last_rel_kkt);
+        OSQPFloat threshold = OSQPScalarf_mul_FF(settings->adaptive_rho_fraction, work->last_rel_kkt);
         OSQPInt kkt_check = OSQPScalarf_le_FF(solver->info->rel_kkt_error, threshold);
         log_rho_debug(iter, "KKT_CHECK_FF", kkt_check, solver->info->rel_kkt_error, work->last_rel_kkt,
                       solver->info->rho_estimate, settings->rho);
