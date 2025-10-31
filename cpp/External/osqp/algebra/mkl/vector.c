@@ -10,7 +10,7 @@
 
 #include "flexfloat.h"
 
-#define FF_mantissa_bits 16;
+#define FF_mantissa_bits 17;
 #define FF_exponent_bits 8;
 
 /* VECTOR FUNCTIONS ----------------------------------------------------------*/
