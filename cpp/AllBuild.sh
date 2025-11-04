@@ -1,12 +1,43 @@
 set -e
 
+# ========================================
+# FlexFloat Configuration
+# ========================================
+# Set USE_FLEXFLOAT=ON to enable FlexFloat precision testing
+# Set USE_FLEXFLOAT=OFF to use standard float precision
+USE_FLEXFLOAT=${USE_FLEXFLOAT:-OFF}
+
+# Set QDLDL_USE_FLEXFLOAT=OFF to disable FlexFloat only in QDLDL
+# (defaults to same as USE_FLEXFLOAT if not specified)
+QDLDL_USE_FLEXFLOAT=${QDLDL_USE_FLEXFLOAT:-$USE_FLEXFLOAT}
+
+# FlexFloat precision configuration (only used when USE_FLEXFLOAT=ON)
+FF_EXPONENT_BITS=${FF_EXPONENT_BITS:-8}
+FF_MANTISSA_BITS=${FF_MANTISSA_BITS:-23}
+
+echo "========================================="
+echo "Build Configuration:"
+echo "  USE_FLEXFLOAT:        $USE_FLEXFLOAT"
+echo "  QDLDL_USE_FLEXFLOAT:  $QDLDL_USE_FLEXFLOAT"
+if [ "$USE_FLEXFLOAT" = "ON" ]; then
+    echo "  FF_EXPONENT_BITS:     $FF_EXPONENT_BITS"
+    echo "  FF_MANTISSA_BITS:     $FF_MANTISSA_BITS"
+fi
+echo "========================================="
+
 cd External
 cd osqp
 rm -rf build
 rm -rf lib
 mkdir -p build lib
 cd build
-cmake .. -DOSQP_USE_FLOAT=ON -DOSQP_USE_FLEXFLOAT=ON -DCMAKE_INSTALL_PREFIX=$(realpath ../lib)
+cmake .. \
+    -DOSQP_USE_FLOAT=ON \
+    -DOSQP_USE_FLEXFLOAT=$USE_FLEXFLOAT \
+    -DQDLDL_USE_FLEXFLOAT=$QDLDL_USE_FLEXFLOAT \
+    -DFF_EXPONENT_BITS=$FF_EXPONENT_BITS \
+    -DFF_MANTISSA_BITS=$FF_MANTISSA_BITS \
+    -DCMAKE_INSTALL_PREFIX=$(realpath ../lib)
 make
 make install
 EXPORT_LINE="export LD_LIBRARY_PATH=\"$(realpath ../lib/lib)\":\$LD_LIBRARY_PATH"

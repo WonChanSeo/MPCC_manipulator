@@ -28,21 +28,6 @@
 #include "qdldl_types.h"
 #include "qdldl_version.h"
 
-// FlexFloat support
-#ifdef QDLDL_USE_FLEXFLOAT
-#ifndef FLEXFLOAT_ON_SINGLE
-#define FLEXFLOAT_ON_SINGLE
-#endif
-#include "flexfloat.h"
-
-// FlexFloat precision: mantissa 14 bits, exponent 8 bits
-#define QDLDL_FF_EXP_BITS 8
-#define QDLDL_FF_FRAC_BITS 14
-#define QDLDL_FF_DESC ((flexfloat_desc_t){QDLDL_FF_EXP_BITS, QDLDL_FF_FRAC_BITS})
-
-typedef flexfloat_t QDLDL_flexfloat;
-#endif
-
 // Define the function attributes that are needed to mark functions as being
 // visible for linking in the shared library version of QDLDL
 #if defined(_WIN32)

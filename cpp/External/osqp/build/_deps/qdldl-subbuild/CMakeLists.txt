@@ -14,7 +14,7 @@ project(qdldl-populate NONE)
 include(ExternalProject)
 ExternalProject_Add(qdldl-populate
                      "UPDATE_DISCONNECTED" "False"
-                    SOURCE_DIR          "/home/mms-wonchan/osqp/qdldl"
+                    SOURCE_DIR          "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/../qdldl"
                     BINARY_DIR          "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/_deps/qdldl-build"
                     CONFIGURE_COMMAND   ""
                     BUILD_COMMAND       ""

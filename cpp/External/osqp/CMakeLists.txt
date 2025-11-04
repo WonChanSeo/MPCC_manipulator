@@ -4,9 +4,19 @@ project(osqp)
 option(OSQP_USE_HALF "Build OSQP and QDLDL in half‐precision (_Float16)" OFF)
 option(OSQP_USE_FLEXFLOAT "Enable FlexFloat precision control" OFF)
 
+# FlexFloat precision configuration
+set(FF_EXPONENT_BITS "8" CACHE STRING "FlexFloat exponent bits")
+set(FF_MANTISSA_BITS "23" CACHE STRING "FlexFloat mantissa bits")
+
 if(OSQP_USE_FLEXFLOAT)
   message(STATUS "FlexFloat precision control: ON")
+  message(STATUS "  FF_EXPONENT_BITS: ${FF_EXPONENT_BITS}")
+  message(STATUS "  FF_MANTISSA_BITS: ${FF_MANTISSA_BITS}")
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../flexfloat/include)
+
+  # Pass FlexFloat configuration to all targets
+  add_definitions(-DFF_exponent_bits=${FF_EXPONENT_BITS})
+  add_definitions(-DFF_mantissa_bits=${FF_MANTISSA_BITS})
 endif()
 
 include(GNUInstallDirs)
@@ -363,6 +373,12 @@ endif()
 add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(algebra)
+
+# Add FlexFloat includes if either OSQP or QDLDL needs FlexFloat
+# This must be done after add_subdirectory(algebra) where QDLDL_USE_FLEXFLOAT is set
+if(OSQP_USE_FLEXFLOAT OR QDLDL_USE_FLEXFLOAT)
+  target_include_directories(OSQPLIB PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../flexfloat/include)
+endif()
 
 get_property(
   osqplib_includes

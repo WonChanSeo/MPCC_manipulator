@@ -6,7 +6,8 @@ if(NOT OSQP_EMBEDDED_MODE)
        ${LIN_SYS_QDLDL_NON_EMBEDDED_SRC_FILES} )
 endif()
 
-if(OSQP_USE_FLEXFLOAT)
+# Compile flexfloat.c if either OSQP or QDLDL needs FlexFloat
+if(OSQP_USE_FLEXFLOAT OR QDLDL_USE_FLEXFLOAT)
   set( FLEXFLOAT_SRC_FILES
        ${CMAKE_CURRENT_SOURCE_DIR}/../../../flexfloat/src/flexfloat.c )
 endif()

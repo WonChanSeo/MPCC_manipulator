@@ -1,5 +1,18 @@
 #include "Constraints/EnvCollision/EnvCollisionModel.h"
 #include <chrono>
+
+#ifdef MLP_USE_FLEXFLOAT
+#include <flexfloat.h>
+#endif
+
+#ifndef MLP_FF_exponent_bits
+#define MLP_FF_exponent_bits 8
+#endif
+#ifndef MLP_FF_mantissa_bits
+#define MLP_FF_mantissa_bits 23
+#endif
+#define MLP_FF_DESC ((flexfloat_desc_t){MLP_FF_exponent_bits, MLP_FF_mantissa_bits})
+
 namespace mpcc
 {
     EnvCollNNmodel::EnvCollNNmodel()

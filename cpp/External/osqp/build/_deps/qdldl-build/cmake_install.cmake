@@ -1,4 +1,4 @@
-# Install script for directory: /home/mms-wonchan/osqp/qdldl
+# Install script for directory: /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -44,7 +44,7 @@ endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/qdldl" TYPE FILE FILES
-    "/home/mms-wonchan/osqp/qdldl/include/qdldl.h"
+    "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include/qdldl.h"
     "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/_deps/qdldl-build/include/qdldl_types.h"
     "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/_deps/qdldl-build/include/qdldl_version.h"
     )

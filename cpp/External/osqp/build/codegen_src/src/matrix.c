@@ -7,8 +7,14 @@
 
 #ifdef OSQP_USE_FLEXFLOAT
 #include "flexfloat.h"
-#define FF_mantissa_bits 17
+// FlexFloat precision bits are defined via compile-time flags:
+// -DFF_exponent_bits and -DFF_mantissa_bits
+#ifndef FF_exponent_bits
 #define FF_exponent_bits 8
+#endif
+#ifndef FF_mantissa_bits
+#define FF_mantissa_bits 23
+#endif
 #endif
 
 

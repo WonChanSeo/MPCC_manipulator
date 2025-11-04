@@ -292,6 +292,15 @@ FETCHCONTENT_UPDATES_DISCONNECTED:BOOL=OFF
 //Enables UPDATE_DISCONNECTED behavior just for population of qdldl
 FETCHCONTENT_UPDATES_DISCONNECTED_QDLDL:BOOL=OFF
 
+//FlexFloat exponent bits
+FF_EXPONENT_BITS:STRING=8
+
+//FlexFloat mantissa bits
+FF_MANTISSA_BITS:STRING=19
+
+//Path to FlexFloat library
+FLEXFLOAT_DIR:PATH=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/../flexfloat
+
 //The Algebra to use (builtin/mkl/cuda)
 OSQP_ALGEBRA_BACKEND:STRING=builtin
 
@@ -373,9 +382,8 @@ QDLDL_FLOAT:BOOL=ON
 //Use long integers (64bit) for indexing
 QDLDL_LONG:BOOL=ON
 
-//Use FlexFloat for custom precision arithmetic (14-bit mantissa,
-// 8-bit exponent)
-QDLDL_USE_FLEXFLOAT:BOOL=OFF
+//Use FlexFloat for custom precision arithmetic
+QDLDL_USE_FLEXFLOAT:BOOL=ON
 
 //Value Computed by CMake
 osqp_BINARY_DIR:STATIC=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build
@@ -393,7 +401,7 @@ qdldl_BINARY_DIR:STATIC=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp
 qdldl_IS_TOP_LEVEL:STATIC=OFF
 
 //Value Computed by CMake
-qdldl_SOURCE_DIR:STATIC=/home/mms-wonchan/osqp/qdldl
+qdldl_SOURCE_DIR:STATIC=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl
 
 
 ########################

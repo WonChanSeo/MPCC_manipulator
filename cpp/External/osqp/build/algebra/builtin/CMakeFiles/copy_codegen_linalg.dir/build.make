@@ -99,9 +99,9 @@ codegen_src/inc/private/kkt.h: ../algebra/_common/kkt.h
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Copying kkt.h"
 	cd /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/algebra/builtin && /usr/bin/cmake -E copy /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/_common/kkt.h /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/codegen_src/inc/private/kkt.h
 
-codegen_src/inc/private/qdldl.h: /home/mms-wonchan/osqp/qdldl/include/qdldl.h
+codegen_src/inc/private/qdldl.h: /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include/qdldl.h
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Copying qdldl.h"
-	cd /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/algebra/builtin && /usr/bin/cmake -E copy /home/mms-wonchan/osqp/qdldl/include/qdldl.h /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/codegen_src/inc/private/qdldl.h
+	cd /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/algebra/builtin && /usr/bin/cmake -E copy /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/../qdldl/include/qdldl.h /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/codegen_src/inc/private/qdldl.h
 
 codegen_src/inc/private/qdldl_interface.h: ../algebra/_common/lin_sys/qdldl/qdldl_interface.h
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Copying qdldl_interface.h"
@@ -135,9 +135,9 @@ codegen_src/src/matrix.c: ../algebra/builtin/matrix.c
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Copying matrix.c"
 	cd /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/algebra/builtin && /usr/bin/cmake -E copy /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/matrix.c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/codegen_src/src/matrix.c
 
-codegen_src/src/qdldl.c: /home/mms-wonchan/osqp/qdldl/src/qdldl.c
+codegen_src/src/qdldl.c: /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/src/qdldl.c
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Copying qdldl.c"
-	cd /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/algebra/builtin && /usr/bin/cmake -E copy /home/mms-wonchan/osqp/qdldl/src/qdldl.c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/codegen_src/src/qdldl.c
+	cd /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/algebra/builtin && /usr/bin/cmake -E copy /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/../qdldl/src/qdldl.c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/codegen_src/src/qdldl.c
 
 codegen_src/src/qdldl_interface.c: ../algebra/_common/lin_sys/qdldl/qdldl_interface.c
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Copying qdldl_interface.c"

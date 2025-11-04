@@ -11,12 +11,32 @@ list(APPEND CMAKE_MESSAGE_INDENT "  ")
 
 FetchContent_Declare(
   qdldl
-  SOURCE_DIR "/home/mms-wonchan/osqp/qdldl"  # ← 여기를 로컬 클론 위치로 바꿔주세요
+  SOURCE_DIR "${PROJECT_SOURCE_DIR}/../qdldl"
 )
 
 # Make QDLDL use the same types as OSQP
 set(QDLDL_FLOAT ${OSQP_USE_FLOAT} CACHE BOOL "QDLDL Float type")
 set(QDLDL_LONG ${OSQP_USE_LONG} CACHE BOOL "QDLDL Integer type")
+
+# Pass FlexFloat option to QDLDL
+# By default, use the same setting as OSQP unless explicitly overridden
+if(NOT DEFINED QDLDL_USE_FLEXFLOAT)
+  set(QDLDL_USE_FLEXFLOAT ${OSQP_USE_FLEXFLOAT})
+endif()
+
+# FlexFloat can now be enabled independently in QDLDL
+if(QDLDL_USE_FLEXFLOAT)
+  set(QDLDL_USE_FLEXFLOAT ON CACHE BOOL "QDLDL FlexFloat support" FORCE)
+  # Pass FlexFloat precision configuration to QDLDL
+  set(FF_EXPONENT_BITS ${FF_EXPONENT_BITS} CACHE STRING "FlexFloat exponent bits" FORCE)
+  set(FF_MANTISSA_BITS ${FF_MANTISSA_BITS} CACHE STRING "FlexFloat mantissa bits" FORCE)
+  message(STATUS "  Enabling FlexFloat support in QDLDL")
+  message(STATUS "    FF_EXPONENT_BITS: ${FF_EXPONENT_BITS}")
+  message(STATUS "    FF_MANTISSA_BITS: ${FF_MANTISSA_BITS}")
+else()
+  set(QDLDL_USE_FLEXFLOAT OFF CACHE BOOL "QDLDL FlexFloat support" FORCE)
+  message(STATUS "  FlexFloat support in QDLDL: DISABLED")
+endif()
 
 # We only want the object library, so turn off the other library products
 set(QDLDL_BUILD_STATIC_LIB OFF CACHE BOOL "Build QDLDL static library")
