@@ -1,7 +1,7 @@
 set -e
 
 # ========================================
-# FlexFloat Configuration
+# FlexFloat Configuration for OSQP/QDLDL
 # ========================================
 # Set USE_FLEXFLOAT=ON to enable FlexFloat precision testing
 # Set USE_FLEXFLOAT=OFF to use standard float precision
@@ -15,13 +15,31 @@ QDLDL_USE_FLEXFLOAT=${QDLDL_USE_FLEXFLOAT:-$USE_FLEXFLOAT}
 FF_EXPONENT_BITS=${FF_EXPONENT_BITS:-8}
 FF_MANTISSA_BITS=${FF_MANTISSA_BITS:-23}
 
+# ========================================
+# FlexFloat Configuration for NN Inference
+# ========================================
+# Set NN_USE_FLEXFLOAT=ON to enable FlexFloat for NN inference
+NN_USE_FLEXFLOAT=${NN_USE_FLEXFLOAT:-OFF}
+
+# NN FlexFloat precision configuration (only used when NN_USE_FLEXFLOAT=ON)
+NN_FF_EXPONENT_BITS=${NN_FF_EXPONENT_BITS:-8}
+NN_FF_MANTISSA_BITS=${NN_FF_MANTISSA_BITS:-23}
+
 echo "========================================="
 echo "Build Configuration:"
-echo "  USE_FLEXFLOAT:        $USE_FLEXFLOAT"
-echo "  QDLDL_USE_FLEXFLOAT:  $QDLDL_USE_FLEXFLOAT"
+echo "  OSQP/QDLDL FlexFloat:"
+echo "    USE_FLEXFLOAT:        $USE_FLEXFLOAT"
+echo "    QDLDL_USE_FLEXFLOAT:  $QDLDL_USE_FLEXFLOAT"
 if [ "$USE_FLEXFLOAT" = "ON" ]; then
-    echo "  FF_EXPONENT_BITS:     $FF_EXPONENT_BITS"
-    echo "  FF_MANTISSA_BITS:     $FF_MANTISSA_BITS"
+    echo "    FF_EXPONENT_BITS:     $FF_EXPONENT_BITS"
+    echo "    FF_MANTISSA_BITS:     $FF_MANTISSA_BITS"
+fi
+echo ""
+echo "  NN Inference FlexFloat:"
+echo "    NN_USE_FLEXFLOAT:     $NN_USE_FLEXFLOAT"
+if [ "$NN_USE_FLEXFLOAT" = "ON" ]; then
+    echo "    NN_FF_EXPONENT_BITS:  $NN_FF_EXPONENT_BITS"
+    echo "    NN_FF_MANTISSA_BITS:  $NN_FF_MANTISSA_BITS"
 fi
 echo "========================================="
 
@@ -79,8 +97,11 @@ rm -rf build
 mkdir build
 cd build
 
-# cmake로 빌드 설정 및 make 실행
-cmake ..
+# cmake로 빌드 설정 및 make 실행 (NN FlexFloat 옵션 포함)
+cmake .. \
+    -DNN_USE_FLEXFLOAT=$NN_USE_FLEXFLOAT \
+    -DNN_FF_EXPONENT_BITS=$NN_FF_EXPONENT_BITS \
+    -DNN_FF_MANTISSA_BITS=$NN_FF_MANTISSA_BITS
 make -j8
 
 # 빌드 디렉토리에서 상위 디렉토리로 이동

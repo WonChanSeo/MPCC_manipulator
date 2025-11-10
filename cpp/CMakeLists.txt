@@ -6,6 +6,21 @@ set(CMAKE_CXX_FLAGS "-O2")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+# FlexFloat option for NN inference precision testing
+option(NN_USE_FLEXFLOAT "Enable FlexFloat precision control for NN inference" OFF)
+set(NN_FF_EXPONENT_BITS "8" CACHE STRING "FlexFloat exponent bits for NN")
+set(NN_FF_MANTISSA_BITS "23" CACHE STRING "FlexFloat mantissa bits for NN")
+
+if(NN_USE_FLEXFLOAT)
+  message(STATUS "NN FlexFloat precision control: ON")
+  message(STATUS "  NN_FF_EXPONENT_BITS: ${NN_FF_EXPONENT_BITS}")
+  message(STATUS "  NN_FF_MANTISSA_BITS: ${NN_FF_MANTISSA_BITS}")
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/flexfloat/include)
+  add_definitions(-DNN_USE_FLEXFLOAT)
+  add_definitions(-DNN_FF_exponent_bits=${NN_FF_EXPONENT_BITS})
+  add_definitions(-DNN_FF_mantissa_bits=${NN_FF_MANTISSA_BITS})
+endif()
+
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/External/Eigen/cmake")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/External/osqp_eigen/lib")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/External/osqp/lib")
@@ -44,6 +59,10 @@ include_directories(
 )
 
 
+if(NN_USE_FLEXFLOAT)
+  set(FLEXFLOAT_NN_SRC ${CMAKE_CURRENT_SOURCE_DIR}/External/flexfloat/src/flexfloat.c)
+endif()
+
 add_library(MPCC_LIB SHARED
         src/types.cpp
         src/Model/robot_model.cpp
@@ -64,10 +83,11 @@ add_library(MPCC_LIB SHARED
         src/Params/track.cpp
         include/config.h
         include/Model/robot_model.h
+        ${FLEXFLOAT_NN_SRC}
         )
 target_link_libraries(MPCC_LIB PUBLIC
-        ${RBDL_LIBRARY} 
-        OsqpEigen::OsqpEigen 
+        ${RBDL_LIBRARY}
+        OsqpEigen::OsqpEigen
 )
 
 if(OpenMP_CXX_FOUND)

@@ -36,4 +36,21 @@ class RobotModel():
     def getEEManipulability(self, joint_angle: np.array) -> np.array:
         assert joint_angle.size == self.num_q, f"Joint angle size {joint_angle.size} does not match expected size {self.num_q}"
         return self.robot.getManipulability(joint_angle)
+
+    def getLinkPosition(self, joint_angle: np.array, link_id: int) -> np.array:
+        """
+        Get position of a specific link given joint angles
+
+        Args:
+            joint_angle: joint angles [7,]
+            link_id: link index (1-9)
+
+        Returns:
+            position: 3D position [3,]
+        """
+        assert joint_angle.size == self.num_q, f"Joint angle size {joint_angle.size} does not match expected size {self.num_q}"
+        # First update kinematics with given joint angles
+        self.robot.getUpdateKinematics(joint_angle, np.zeros(self.num_q))
+        # Then get the position of the specified link
+        return self.robot.getPosition(link_id).copy()
     

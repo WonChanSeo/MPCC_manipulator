@@ -1,17 +1,17 @@
 #include "Constraints/EnvCollision/EnvCollisionModel.h"
 #include <chrono>
 
-#ifdef MLP_USE_FLEXFLOAT
+#ifdef NN_USE_FLEXFLOAT
 #include <flexfloat.h>
 #endif
 
-#ifndef MLP_FF_exponent_bits
-#define MLP_FF_exponent_bits 8
+#ifndef NN_FF_exponent_bits
+#define NN_FF_exponent_bits 8
 #endif
-#ifndef MLP_FF_mantissa_bits
-#define MLP_FF_mantissa_bits 23
+#ifndef NN_FF_mantissa_bits
+#define NN_FF_mantissa_bits 7
 #endif
-#define MLP_FF_DESC ((flexfloat_desc_t){MLP_FF_exponent_bits, MLP_FF_mantissa_bits})
+#define NN_FF_DESC ((flexfloat_desc_t){NN_FF_exponent_bits, NN_FF_mantissa_bits})
 
 namespace mpcc
 {
@@ -330,10 +330,28 @@ namespace mpcc
     // =================================================================
     // =========== 여기에 새로운 배치 추론 함수를 추가합니다 ============
     // =================================================================
-    
+
     // 행렬 전체에 ReLU를 적용하는 헬퍼 함수 (bfloat16 precision)
     MatrixXbf16 batch_ReLU(const MatrixXbf16& x) {
+#ifdef NN_USE_FLEXFLOAT
+        // FlexFloat 기반 ReLU
+        MatrixXbf16 result = x;
+        for (int i = 0; i < x.rows(); ++i) {
+            for (int j = 0; j < x.cols(); ++j) {
+                flexfloat_t ff_val;
+                ff_init_float(&ff_val, (float)x(i, j), NN_FF_DESC);
+                // ReLU: max(0, x)
+                if (ff_get_float(&ff_val) < 0.0f) {
+                    result(i, j) = Eigen::bfloat16(0.0f);
+                } else {
+                    result(i, j) = Eigen::bfloat16(ff_get_float(&ff_val));
+                }
+            }
+        }
+        return result;
+#else
         return (x.array() > Eigen::bfloat16(0)).select(x, MatrixXbf16::Zero(x.rows(), x.cols()));
+#endif
     }
 
     // 행렬 전체에 ReLU의 미분을 적용하는 헬퍼 함수 (bfloat16 precision)
@@ -386,14 +404,101 @@ namespace mpcc
 
         for (int layer = 0; layer < mlp_.n_layer; ++layer) {
             if (layer == 0) {
+#ifdef NN_USE_FLEXFLOAT
+                // FlexFloat matrix multiplication: W * x + b
+                const int m = mlp_.weight[0].rows();
+                const int n = mlp_.weight[0].cols();
+                const int batch = current_input_ptr->cols();
+                pre_activations[0].resize(m, batch);
+
+                for (int i = 0; i < m; ++i) {
+                    for (int j = 0; j < batch; ++j) {
+                        flexfloat_t ff_sum, ff_w, ff_x, ff_prod, ff_zero, ff_one;
+                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
+                        ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                        ff_init_float(&ff_sum, (float)mlp_.bias[0](i), NN_FF_DESC);
+
+                        for (int k = 0; k < n; ++k) {
+                            ff_init_float(&ff_w, (float)mlp_.weight[0](i, k), NN_FF_DESC);
+                            ff_init_float(&ff_x, (float)(*current_input_ptr)(k, j), NN_FF_DESC);
+                            ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
+
+                            // prod = w * x + 0
+                            ff_fma(&ff_prod, &ff_w, &ff_x, &ff_zero);
+                            // sum = prod * 1 + sum
+                            ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                        }
+                        pre_activations[0](i, j) = Eigen::bfloat16(ff_get_float(&ff_sum));
+                    }
+                }
+#else
                 pre_activations[0] = (mlp_.weight[0] * (*current_input_ptr)).colwise() + mlp_.bias[0];
+#endif
                 mlp_.batch_hidden[0] = batch_ReLU(pre_activations[0]);
             }
             else if (layer == mlp_.n_layer - 1) {
+#ifdef NN_USE_FLEXFLOAT
+                // FlexFloat matrix multiplication: W * x + b
+                const int m = mlp_.weight[layer].rows();
+                const int n = mlp_.weight[layer].cols();
+                const int batch = mlp_.batch_hidden[layer - 1].cols();
+                mlp_.batch_output.resize(m, batch);
+
+                for (int i = 0; i < m; ++i) {
+                    for (int j = 0; j < batch; ++j) {
+                        flexfloat_t ff_sum, ff_w, ff_x, ff_prod, ff_zero, ff_one;
+                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
+                        ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                        ff_init_float(&ff_sum, (float)mlp_.bias[layer](i), NN_FF_DESC);
+
+                        for (int k = 0; k < n; ++k) {
+                            ff_init_float(&ff_w, (float)mlp_.weight[layer](i, k), NN_FF_DESC);
+                            ff_init_float(&ff_x, (float)mlp_.batch_hidden[layer - 1](k, j), NN_FF_DESC);
+                            ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
+
+                            // prod = w * x + 0
+                            ff_fma(&ff_prod, &ff_w, &ff_x, &ff_zero);
+                            // sum = prod * 1 + sum
+                            ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                        }
+                        mlp_.batch_output(i, j) = Eigen::bfloat16(ff_get_float(&ff_sum));
+                    }
+                }
+#else
                 mlp_.batch_output = (mlp_.weight[layer] * mlp_.batch_hidden[layer - 1]).colwise() + mlp_.bias[layer];
+#endif
             }
             else {
+#ifdef NN_USE_FLEXFLOAT
+                // FlexFloat matrix multiplication: W * x + b
+                const int m = mlp_.weight[layer].rows();
+                const int n = mlp_.weight[layer].cols();
+                const int batch = mlp_.batch_hidden[layer - 1].cols();
+                pre_activations[layer].resize(m, batch);
+
+                for (int i = 0; i < m; ++i) {
+                    for (int j = 0; j < batch; ++j) {
+                        flexfloat_t ff_sum, ff_w, ff_x, ff_prod, ff_zero, ff_one;
+                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
+                        ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                        ff_init_float(&ff_sum, (float)mlp_.bias[layer](i), NN_FF_DESC);
+
+                        for (int k = 0; k < n; ++k) {
+                            ff_init_float(&ff_w, (float)mlp_.weight[layer](i, k), NN_FF_DESC);
+                            ff_init_float(&ff_x, (float)mlp_.batch_hidden[layer - 1](k, j), NN_FF_DESC);
+                            ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
+
+                            // prod = w * x + 0
+                            ff_fma(&ff_prod, &ff_w, &ff_x, &ff_zero);
+                            // sum = prod * 1 + sum
+                            ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                        }
+                        pre_activations[layer](i, j) = Eigen::bfloat16(ff_get_float(&ff_sum));
+                    }
+                }
+#else
                 pre_activations[layer] = (mlp_.weight[layer] * mlp_.batch_hidden[layer - 1]).colwise() + mlp_.bias[layer];
+#endif
                 mlp_.batch_hidden[layer] = batch_ReLU(pre_activations[layer]);
             }
         }
@@ -418,7 +523,42 @@ namespace mpcc
                 int deactivated_count_0 = (relu_deriv_0.array() == Eigen::bfloat16(0)).count();
                 thread_deactivated_counts[i][0] = deactivated_count_0;
 
+#ifdef NN_USE_FLEXFLOAT
+                // FlexFloat: (relu_deriv_0.asDiagonal() * mlp_.weight[0]) * nerf_jac
+                // First: D * W where D is diagonal
+                MatrixXbf16 DW(relu_deriv_0.rows(), mlp_.weight[0].cols());
+                for (int r = 0; r < DW.rows(); ++r) {
+                    for (int c = 0; c < DW.cols(); ++c) {
+                        flexfloat_t ff_result, ff_diag, ff_w, ff_zero;
+                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
+                        ff_init_float(&ff_diag, (float)relu_deriv_0(r), NN_FF_DESC);
+                        ff_init_float(&ff_w, (float)mlp_.weight[0](r, c), NN_FF_DESC);
+                        ff_init_float(&ff_result, 0.0f, NN_FF_DESC);
+                        ff_fma(&ff_result, &ff_diag, &ff_w, &ff_zero);
+                        DW(r, c) = Eigen::bfloat16(ff_get_float(&ff_result));
+                    }
+                }
+                // Second: DW * nerf_jac
+                temp_derivative.resize(DW.rows(), nerf_jac.cols());
+                for (int r = 0; r < temp_derivative.rows(); ++r) {
+                    for (int c = 0; c < temp_derivative.cols(); ++c) {
+                        flexfloat_t ff_sum, ff_a, ff_b, ff_prod, ff_zero, ff_one;
+                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
+                        ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                        ff_init_float(&ff_sum, 0.0f, NN_FF_DESC);
+                        for (int k = 0; k < DW.cols(); ++k) {
+                            ff_init_float(&ff_a, (float)DW(r, k), NN_FF_DESC);
+                            ff_init_float(&ff_b, (float)nerf_jac(k, c), NN_FF_DESC);
+                            ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
+                            ff_fma(&ff_prod, &ff_a, &ff_b, &ff_zero);
+                            ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                        }
+                        temp_derivative(r, c) = Eigen::bfloat16(ff_get_float(&ff_sum));
+                    }
+                }
+#else
                 temp_derivative = (relu_deriv_0.asDiagonal() * mlp_.weight[0]) * nerf_jac;
+#endif
             } else {
                 MatrixXbf16 relu_deriv_0 = batch_ReLU_derivative(pre_activations[0].col(i));
 
@@ -426,7 +566,23 @@ namespace mpcc
                 int deactivated_count_0 = (relu_deriv_0.array() == Eigen::bfloat16(0)).count();
                 thread_deactivated_counts[i][0] = deactivated_count_0;
 
+#ifdef NN_USE_FLEXFLOAT
+                // FlexFloat: relu_deriv_0.asDiagonal() * mlp_.weight[0]
+                temp_derivative.resize(relu_deriv_0.rows(), mlp_.weight[0].cols());
+                for (int r = 0; r < temp_derivative.rows(); ++r) {
+                    for (int c = 0; c < temp_derivative.cols(); ++c) {
+                        flexfloat_t ff_result, ff_diag, ff_w, ff_zero;
+                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
+                        ff_init_float(&ff_diag, (float)relu_deriv_0(r), NN_FF_DESC);
+                        ff_init_float(&ff_w, (float)mlp_.weight[0](r, c), NN_FF_DESC);
+                        ff_init_float(&ff_result, 0.0f, NN_FF_DESC);
+                        ff_fma(&ff_result, &ff_diag, &ff_w, &ff_zero);
+                        temp_derivative(r, c) = Eigen::bfloat16(ff_get_float(&ff_result));
+                    }
+                }
+#else
                 temp_derivative = relu_deriv_0.asDiagonal() * mlp_.weight[0];
+#endif
             }
 
             for (int layer = 1; layer < mlp_.n_layer - 1; ++layer) {
@@ -436,9 +592,67 @@ namespace mpcc
                 int deactivated_count = (relu_deriv.array() == Eigen::bfloat16(0)).count();
                 thread_deactivated_counts[i][layer] = deactivated_count;
 
+#ifdef NN_USE_FLEXFLOAT
+                // FlexFloat: (relu_deriv.asDiagonal() * mlp_.weight[layer]) * temp_derivative
+                // First: D * W where D is diagonal
+                MatrixXbf16 DW(relu_deriv.rows(), mlp_.weight[layer].cols());
+                for (int r = 0; r < DW.rows(); ++r) {
+                    for (int c = 0; c < DW.cols(); ++c) {
+                        flexfloat_t ff_result, ff_diag, ff_w, ff_zero;
+                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
+                        ff_init_float(&ff_diag, (float)relu_deriv(r), NN_FF_DESC);
+                        ff_init_float(&ff_w, (float)mlp_.weight[layer](r, c), NN_FF_DESC);
+                        ff_init_float(&ff_result, 0.0f, NN_FF_DESC);
+                        ff_fma(&ff_result, &ff_diag, &ff_w, &ff_zero);
+                        DW(r, c) = Eigen::bfloat16(ff_get_float(&ff_result));
+                    }
+                }
+                // Second: DW * temp_derivative
+                MatrixXbf16 new_derivative(DW.rows(), temp_derivative.cols());
+                for (int r = 0; r < new_derivative.rows(); ++r) {
+                    for (int c = 0; c < new_derivative.cols(); ++c) {
+                        flexfloat_t ff_sum, ff_a, ff_b, ff_prod, ff_zero, ff_one;
+                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
+                        ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                        ff_init_float(&ff_sum, 0.0f, NN_FF_DESC);
+                        for (int k = 0; k < DW.cols(); ++k) {
+                            ff_init_float(&ff_a, (float)DW(r, k), NN_FF_DESC);
+                            ff_init_float(&ff_b, (float)temp_derivative(k, c), NN_FF_DESC);
+                            ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
+                            ff_fma(&ff_prod, &ff_a, &ff_b, &ff_zero);
+                            ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                        }
+                        new_derivative(r, c) = Eigen::bfloat16(ff_get_float(&ff_sum));
+                    }
+                }
+                temp_derivative = new_derivative;
+#else
                 temp_derivative = (relu_deriv.asDiagonal() * mlp_.weight[layer]) * temp_derivative;
+#endif
             }
+
+#ifdef NN_USE_FLEXFLOAT
+            // FlexFloat: mlp_.weight.back() * temp_derivative
+            batch_jacobian[i].resize(mlp_.weight.back().rows(), temp_derivative.cols());
+            for (int r = 0; r < batch_jacobian[i].rows(); ++r) {
+                for (int c = 0; c < batch_jacobian[i].cols(); ++c) {
+                    flexfloat_t ff_sum, ff_a, ff_b, ff_prod, ff_zero, ff_one;
+                    ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
+                    ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                    ff_init_float(&ff_sum, 0.0f, NN_FF_DESC);
+                    for (int k = 0; k < mlp_.weight.back().cols(); ++k) {
+                        ff_init_float(&ff_a, (float)mlp_.weight.back()(r, k), NN_FF_DESC);
+                        ff_init_float(&ff_b, (float)temp_derivative(k, c), NN_FF_DESC);
+                        ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
+                        ff_fma(&ff_prod, &ff_a, &ff_b, &ff_zero);
+                        ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                    }
+                    batch_jacobian[i](r, c) = Eigen::bfloat16(ff_get_float(&ff_sum));
+                }
+            }
+#else
             batch_jacobian[i] = mlp_.weight.back() * temp_derivative;
+#endif
         }
 
         // ▼▼▼▼▼ 모든 배치 샘플의 deactivation 수를 누적하고 min/max 업데이트 ▼▼▼▼▼
