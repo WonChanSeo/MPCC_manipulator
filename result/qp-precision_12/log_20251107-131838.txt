@@ -56489,3 +56489,147 @@ Traceback (most recent call last):
   File "/usr/lib/python3.10/tkinter/__init__.py", line 2341, in destroy
     self.tk.call('destroy', self._w)
 _tkinter.TclError: can't invoke "destroy" command: application has been destroyed
+[221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 2233, 2234, 2235, 2236, 2237, 2238, 2239, 2240, 2241, 2242, 2243, 2244, 2245, 2246, 2247, 2248, 2249, 2250, 2251, 2252, 2253, 2254, 2255, 2256, 2257, 2258, 2259, 2260, 2261, 2262, 2263, 2264, 2265, 2266, 2267, 2268, 2269, 2270, 2271, 2272, 2273, 2274, 2275, 2276, 2277, 2278, 2279, 2280, 2281, 2282, 2283, 2284]
+
+--------------------------------------------------------------------------------
+Collision Details:
+
+  Step 221:
+    Link 8 <-> Obstacle 2
+      Distance: -0.0002 m
+      Penetration Depth: 0.0002 m
+
+  Step 222:
+    Link 8 <-> Obstacle 2
+      Distance: -0.0008 m
+      Penetration Depth: 0.0008 m
+
+  Step 223:
+    Link 8 <-> Obstacle 2
+      Distance: -0.0014 m
+      Penetration Depth: 0.0014 m
+
+  Step 224:
+    Link 8 <-> Obstacle 2
+      Distance: -0.0020 m
+      Penetration Depth: 0.0020 m
+
+  Step 225:
+    Link 8 <-> Obstacle 2
+      Distance: -0.0025 m
+      Penetration Depth: 0.0025 m
+
+  Step 226:
+    Link 8 <-> Obstacle 2
+      Distance: -0.0031 m
+      Penetration Depth: 0.0031 m
+
+  Step 227:
+    Link 8 <-> Obstacle 2
+      Distance: -0.0037 m
+      Penetration Depth: 0.0037 m
+
+  Step 228:
+    Link 8 <-> Obstacle 2
+      Distance: -0.0042 m
+      Penetration Depth: 0.0042 m
+
+  Step 229:
+    Link 8 <-> Obstacle 2
+      Distance: -0.0047 m
+      Penetration Depth: 0.0047 m
+
+  Step 230:
+    Link 8 <-> Obstacle 2
+      Distance: -0.0051 m
+      Penetration Depth: 0.0051 m
+
+  ... and 263 more collision(s)
+
+--------------------------------------------------------------------------------
+Most Frequent Collision Pairs:
+  Link 8 <-> Obstacle 2: 221 times (81.0%)
+  Link 8 <-> Obstacle 0: 52 times (19.0%)
+================================================================================
+
+
+================================================================================
+=== ReLU Deactivation Statistics ===
+================================================================================
+Layer    Total Units     Avg Deact       Min Deact       Max Deact       Deact %        
+--------------------------------------------------------------------------------
+0        256             173.16          152             183             67.64          
+1        256             167.77          159             176             65.54          
+2        256             170.38          158             190             66.56          
+3        256             169.54          160             182             66.23          
+================================================================================
+
+Saved figure to ../result/qp-precision_12/qp-precision_12_inference_times.png
+Data written to ../result/qp-precision_12/qp-precision_12_debug_data.mat
+Data written to ../result/qp-precision_12/qp-precision_12_time_data.mat
+mean nmpc time[sec]: 5.872761 
+max nmpc time[sec]: 6.322039 
+Saved figure to ../result/qp-precision_12/qp-precision_12_computation_times.png
+Saved figure to ../result/qp-precision_12/qp-precision_12_performance_metrics.png
+Saved collision analysis figure to ../result/qp-precision_12/qp-precision_12_collision_analysis.png
+Statistics data saved to ../result/qp-precision_12/qp-precision_12_debug_stats.txt
+ReLU deactivation statistics saved to ../result/qp-precision_12/qp-precision_12_relu_deactivation_stats.txt
+Collision statistics saved to ../result/qp-precision_12/qp-precision_12_collision_stats.txt
+
+=== Statistics for debug_data ===
+q               | mean:  -0.039368 | min:  -2.433783 | max:   1.590750 | var:   1.001463 | std:   1.000731 |
+qdot            | mean:   0.000225 | min:  -1.019838 | max:   1.070676 | var:   0.046713 | std:   0.216133 |
+qddot           | mean:   0.000225 | min:  -1.019838 | max:   1.070676 | var:   0.046713 | std:   0.216133 |
+s               | mean:   0.383656 | min:  -0.000018 | max:   0.996419 | var:   0.117421 | std:   0.342667 |
+vs              | mean:   0.042101 | min:  -0.015998 | max:   0.099757 | var:   0.001557 | std:   0.039457 |
+dVs             | mean:   0.000965 | min:  -2.096890 | max:   2.143862 | var:   0.033390 | std:   0.182731 |
+ee_vel          | mean:   0.000088 | min:  -0.269564 | max:   0.209345 | var:   0.004781 | std:   0.069144 |
+ee_speed        | mean:   0.093012 | min:   0.000000 | max:   0.269674 | var:   0.005691 | std:   0.075441 |
+sel_min_dist    | mean:  15.158367 | min:   1.515842 | max:  24.415238 | var:  61.598774 | std:   7.848489 |
+env_min_dist    | mean:  34.388343 | min:   3.375000 | max:  67.000000 | var: 274.301573 | std:  16.562052 |
+mani            | mean:   0.078857 | min:   0.049033 | max:   0.091849 | var:   0.000062 | std:   0.007874 |
+contour_error   | mean:   0.005241 | min:   0.000000 | max:   0.038903 | var:   0.000083 | std:   0.009116 |
+spline_ee_pose  | mean:  -0.008888 | min:  -1.000000 | max:   1.000000 | var:   0.214503 | std:   0.463144 |
+pred_ee_pose    | mean:  -0.004852 | min:  -1.000000 | max:   1.000000 | var:   0.217870 | std:   0.466766 |
+ref_ee_pose     | mean:  -0.004300 | min:  -1.000000 | max:   1.000000 | var:   0.217486 | std:   0.466354 |
+iter_count      | mean: 179.913815 | min:  32.000000 | max: 256.000000 | var: 6308.541791 | std:  79.426329 |
+sqp_iter_count  | mean:   1.085763 | min:   1.000000 | max:   3.000000 | var:   0.083477 | std:   0.288924 |
+total_iter_count | mean: 198.719054 | min:  32.000000 | max: 768.000000 | var: 8459.635053 | std:  91.976274 |
+solve_count     | final value: 2367
+top3_total_iter_counts | Top 3 values: [768, 608, 544]
+top3_solve_nums | Top 3 solve numbers:
+                  Rank 1: [460]
+                  Rank 2: [415]
+                  Rank 3: [388]
+is_collision    | mean:   0.115336 | min:   0.000000 | max:   1.000000 | var:   0.102034 | std:   0.319427 |
+actual_min_dist | mean:   0.105165 | min:  -0.069936 | max:   0.421368 | var:   0.014741 | std:   0.121414 |
+nn_min_dist     | mean:  14.464406 | min:   3.375000 | max:  42.500000 | var: 109.713757 | std:  10.474433 |
+nn_error        | mean:  14.359242 | min:   3.358369 | max:  42.089770 | var: 107.270286 | std:  10.357137 |
+
+
+=== Statistics for time_data ===
+total           | mean:   5.872761 | min:   5.742216 | max:   6.322039 | var:   0.003029 | std:   0.055038 |
+set_env         | mean:   5.740886 | min:   5.678275 | max:   6.040465 | var:   0.000572 | std:   0.023923 |
+set_qp          | mean:   0.000431 | min:   0.000000 | max:   0.004486 | var:   0.000000 | std:   0.000231 |
+solve_qp        | mean:   0.108945 | min:   0.000000 | max:   0.367703 | var:   0.004244 | std:   0.065145 |
+get_alpha       | mean:   0.000177 | min:   0.000000 | max:   0.000750 | var:   0.000000 | std:   0.000098 |
+
+[INFO] [1762735377.719682995] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Stopped publishing maintained planning scene.
+[INFO] [1762735377.719695210] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Stopping planning scene monitor
+primal_step_norm SUCCESS
+SOLVED , sqp_iter_: 0
+AFTER initial_guess_[0].uk: [0.149894, -0.006749, -0.271490, -0.007510, 0.005378, 0.005260, -0.132709, -0.175651]
+Franka Panda Robot Model is removed!
+Deleting Osqp Interface
+NN model terminate
+MLP terminate
+NN model terminate
+MLP terminate
+Franka Panda Robot Model is removed!
+Deleting Solver Interface
+Franka Panda Robot Model is removed!
+Franka Panda Robot Model is removed!
+NN model terminate
+MLP terminate
+NN model terminate
+MLP terminate

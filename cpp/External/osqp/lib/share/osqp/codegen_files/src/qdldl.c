@@ -476,9 +476,24 @@ void QDLDL_Lsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
     for(i = 0; i < n; i++) {
         QDLDL_float val = x[i];
 
+        #ifdef QDLDL_USE_FLEXFLOAT
+
+        for(j = Lp[i]; j < Lp[i + 1]; j++)
+        {
+            flexfloat_t ff_Lx, ff_val, ff_result;
+
+            ff_init_float(&ff_Lx, -Lx[j], QDLDL_FF_DESC);
+            ff_init_float(&ff_val, val, QDLDL_FF_DESC);
+            ff_init_float(&ff_result, x[Li[j]], QDLDL_FF_DESC);
+            ff_fma(&ff_result, &ff_Lx, &ff_val, &ff_result);
+            x[Li[j]] = ff_get_float(&ff_result);
+        }
+        #else
+
         for(j = Lp[i]; j < Lp[i + 1]; j++) {
             x[Li[j]] -= Lx[j] * val;
         }
+        #endif
     }
 }
 
@@ -491,10 +506,28 @@ void QDLDL_Ltsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
     for(i = n - 1; i >= 0; i--) {
         QDLDL_float val = x[i];
 
+        #ifdef QDLDL_USE_FLEXFLOAT
+
+        for(j = Lp[i]; j < Lp[i + 1]; j++)
+        {
+            // val -= Lx[j] * x[Li[j]];
+            flexfloat_t ff_Lx, ff_xLi, ff_result, ff_zero;
+            
+            ff_init_float(&ff_Lx, -Lx[j], QDLDL_FF_DESC);
+            ff_init_float(&ff_xLi, x[Li[j]], QDLDL_FF_DESC);
+            ff_init_float(&ff_zero, 0.0f, QDLDL_FF_DESC);
+            ff_init_float(&ff_result, val, QDLDL_FF_DESC);
+            ff_fma(&ff_result, &ff_Lx, &ff_xLi, &ff_result);
+            val = ff_get_float(&ff_result);
+        }
+        x[i] = val;
+        #else
+
         for(j = Lp[i]; j < Lp[i + 1]; j++) {
             val -= Lx[j] * x[Li[j]];
         }
         x[i] = val;
+        #endif
     }
 }
 
@@ -509,9 +542,23 @@ void QDLDL_solve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li, co
 
     // printf("After Lsolve\n");
 
+    #ifdef QDLDL_USE_FLEXFLOAT
+
+    for(i = 0; i < n; i++) {
+        flexfloat_t xi, ff_Dinv, ff_result, ff_zero;
+        ff_init_float(&xi, x[i], QDLDL_FF_DESC);
+        ff_init_float(&ff_Dinv, Dinv[i], QDLDL_FF_DESC);
+        ff_init_float(&ff_zero, 0.0f, QDLDL_FF_DESC);
+        ff_init_float(&ff_result, 0.0f, QDLDL_FF_DESC);
+        ff_fma(&ff_result, &xi, &ff_Dinv, &ff_zero);
+        x[i] = ff_get_float(&ff_result);
+    }
+    #else
+
     for(i = 0; i < n; i++) {
         x[i] *= Dinv[i];
     }
+    #endif
 
     QDLDL_Ltsolve(n, Lp, Li, Lx, x);
 

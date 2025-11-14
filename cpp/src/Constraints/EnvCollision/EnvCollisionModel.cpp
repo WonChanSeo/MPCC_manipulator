@@ -413,20 +413,15 @@ namespace mpcc
 
                 for (int i = 0; i < m; ++i) {
                     for (int j = 0; j < batch; ++j) {
-                        flexfloat_t ff_sum, ff_w, ff_x, ff_prod, ff_zero, ff_one;
-                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
-                        ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                        flexfloat_t ff_sum, ff_w, ff_x;
                         ff_init_float(&ff_sum, (float)mlp_.bias[0](i), NN_FF_DESC);
 
                         for (int k = 0; k < n; ++k) {
                             ff_init_float(&ff_w, (float)mlp_.weight[0](i, k), NN_FF_DESC);
                             ff_init_float(&ff_x, (float)(*current_input_ptr)(k, j), NN_FF_DESC);
-                            ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
 
-                            // prod = w * x + 0
-                            ff_fma(&ff_prod, &ff_w, &ff_x, &ff_zero);
                             // sum = prod * 1 + sum
-                            ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                            ff_fma(&ff_sum, &ff_w, &ff_x, &ff_sum);
                         }
                         pre_activations[0](i, j) = Eigen::bfloat16(ff_get_float(&ff_sum));
                     }
@@ -446,20 +441,15 @@ namespace mpcc
 
                 for (int i = 0; i < m; ++i) {
                     for (int j = 0; j < batch; ++j) {
-                        flexfloat_t ff_sum, ff_w, ff_x, ff_prod, ff_zero, ff_one;
-                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
-                        ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                        flexfloat_t ff_sum, ff_w, ff_x;
                         ff_init_float(&ff_sum, (float)mlp_.bias[layer](i), NN_FF_DESC);
 
                         for (int k = 0; k < n; ++k) {
                             ff_init_float(&ff_w, (float)mlp_.weight[layer](i, k), NN_FF_DESC);
                             ff_init_float(&ff_x, (float)mlp_.batch_hidden[layer - 1](k, j), NN_FF_DESC);
-                            ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
 
                             // prod = w * x + 0
-                            ff_fma(&ff_prod, &ff_w, &ff_x, &ff_zero);
-                            // sum = prod * 1 + sum
-                            ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                            ff_fma(&ff_sum, &ff_w, &ff_x, &ff_sum);
                         }
                         mlp_.batch_output(i, j) = Eigen::bfloat16(ff_get_float(&ff_sum));
                     }
@@ -478,20 +468,14 @@ namespace mpcc
 
                 for (int i = 0; i < m; ++i) {
                     for (int j = 0; j < batch; ++j) {
-                        flexfloat_t ff_sum, ff_w, ff_x, ff_prod, ff_zero, ff_one;
-                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
-                        ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                        flexfloat_t ff_sum, ff_w, ff_x;
                         ff_init_float(&ff_sum, (float)mlp_.bias[layer](i), NN_FF_DESC);
 
                         for (int k = 0; k < n; ++k) {
                             ff_init_float(&ff_w, (float)mlp_.weight[layer](i, k), NN_FF_DESC);
                             ff_init_float(&ff_x, (float)mlp_.batch_hidden[layer - 1](k, j), NN_FF_DESC);
-                            ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
 
-                            // prod = w * x + 0
-                            ff_fma(&ff_prod, &ff_w, &ff_x, &ff_zero);
-                            // sum = prod * 1 + sum
-                            ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                            ff_fma(&ff_sum, &ff_w, &ff_x, &ff_sum);
                         }
                         pre_activations[layer](i, j) = Eigen::bfloat16(ff_get_float(&ff_sum));
                     }
@@ -542,16 +526,13 @@ namespace mpcc
                 temp_derivative.resize(DW.rows(), nerf_jac.cols());
                 for (int r = 0; r < temp_derivative.rows(); ++r) {
                     for (int c = 0; c < temp_derivative.cols(); ++c) {
-                        flexfloat_t ff_sum, ff_a, ff_b, ff_prod, ff_zero, ff_one;
-                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
-                        ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                        flexfloat_t ff_sum, ff_a, ff_b;
+
                         ff_init_float(&ff_sum, 0.0f, NN_FF_DESC);
                         for (int k = 0; k < DW.cols(); ++k) {
                             ff_init_float(&ff_a, (float)DW(r, k), NN_FF_DESC);
                             ff_init_float(&ff_b, (float)nerf_jac(k, c), NN_FF_DESC);
-                            ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
-                            ff_fma(&ff_prod, &ff_a, &ff_b, &ff_zero);
-                            ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                            ff_fma(&ff_sum, &ff_a, &ff_b, &ff_sum);
                         }
                         temp_derivative(r, c) = Eigen::bfloat16(ff_get_float(&ff_sum));
                     }
@@ -611,16 +592,12 @@ namespace mpcc
                 MatrixXbf16 new_derivative(DW.rows(), temp_derivative.cols());
                 for (int r = 0; r < new_derivative.rows(); ++r) {
                     for (int c = 0; c < new_derivative.cols(); ++c) {
-                        flexfloat_t ff_sum, ff_a, ff_b, ff_prod, ff_zero, ff_one;
-                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
-                        ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                        flexfloat_t ff_sum, ff_a, ff_b;
                         ff_init_float(&ff_sum, 0.0f, NN_FF_DESC);
                         for (int k = 0; k < DW.cols(); ++k) {
                             ff_init_float(&ff_a, (float)DW(r, k), NN_FF_DESC);
                             ff_init_float(&ff_b, (float)temp_derivative(k, c), NN_FF_DESC);
-                            ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
-                            ff_fma(&ff_prod, &ff_a, &ff_b, &ff_zero);
-                            ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                            ff_fma(&ff_sum, &ff_a, &ff_b, &ff_sum);
                         }
                         new_derivative(r, c) = Eigen::bfloat16(ff_get_float(&ff_sum));
                     }
@@ -636,16 +613,12 @@ namespace mpcc
             batch_jacobian[i].resize(mlp_.weight.back().rows(), temp_derivative.cols());
             for (int r = 0; r < batch_jacobian[i].rows(); ++r) {
                 for (int c = 0; c < batch_jacobian[i].cols(); ++c) {
-                    flexfloat_t ff_sum, ff_a, ff_b, ff_prod, ff_zero, ff_one;
-                    ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
-                    ff_init_float(&ff_one, 1.0f, NN_FF_DESC);
+                    flexfloat_t ff_sum, ff_a, ff_b;
                     ff_init_float(&ff_sum, 0.0f, NN_FF_DESC);
                     for (int k = 0; k < mlp_.weight.back().cols(); ++k) {
                         ff_init_float(&ff_a, (float)mlp_.weight.back()(r, k), NN_FF_DESC);
                         ff_init_float(&ff_b, (float)temp_derivative(k, c), NN_FF_DESC);
-                        ff_init_float(&ff_prod, 0.0f, NN_FF_DESC);
-                        ff_fma(&ff_prod, &ff_a, &ff_b, &ff_zero);
-                        ff_fma(&ff_sum, &ff_prod, &ff_one, &ff_sum);
+                        ff_fma(&ff_sum, &ff_a, &ff_b, &ff_sum);
                     }
                     batch_jacobian[i](r, c) = Eigen::bfloat16(ff_get_float(&ff_sum));
                 }
