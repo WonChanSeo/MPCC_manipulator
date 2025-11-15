@@ -5,6 +5,31 @@
 #include <flexfloat.h>
 #endif
 
+#ifdef USE_CUDA
+#include <cublas_v2.h>
+#include <cuda_runtime.h>
+
+// CUDA error checking macro
+#define CUDA_CHECK(call) \
+    do { \
+        cudaError_t err = call; \
+        if (err != cudaSuccess) { \
+            std::cerr << "CUDA error in " << __FILE__ << ":" << __LINE__ << ": " \
+                      << cudaGetErrorString(err) << std::endl; \
+            exit(EXIT_FAILURE); \
+        } \
+    } while(0)
+
+#define CUBLAS_CHECK(call) \
+    do { \
+        cublasStatus_t status = call; \
+        if (status != CUBLAS_STATUS_SUCCESS) { \
+            std::cerr << "cuBLAS error in " << __FILE__ << ":" << __LINE__ << std::endl; \
+            exit(EXIT_FAILURE); \
+        } \
+    } while(0)
+#endif
+
 #ifndef NN_FF_exponent_bits
 #define NN_FF_exponent_bits 8
 #endif
@@ -27,6 +52,9 @@ namespace mpcc
 
     EnvCollNNmodel::~EnvCollNNmodel()
     {
+#ifdef USE_CUDA
+        cleanupGPU();
+#endif
         std::cout<<"NN model terminate" <<std::endl;
     }
 
@@ -210,6 +238,10 @@ namespace mpcc
     {
         initializeNetwork(n_input, n_output, n_hidden, is_nerf);
         loadNetwork();
+
+#ifdef USE_CUDA
+        transferWeightsToGPU();
+#endif
     }
 
     std::pair<Eigen::VectorXd, Eigen::MatrixXd> EnvCollNNmodel::calculateMlpOutput(Eigen::VectorXd input, bool time_verbose)
@@ -333,25 +365,7 @@ namespace mpcc
 
     // 행렬 전체에 ReLU를 적용하는 헬퍼 함수 (bfloat16 precision)
     MatrixXbf16 batch_ReLU(const MatrixXbf16& x) {
-#ifdef NN_USE_FLEXFLOAT
-        // FlexFloat 기반 ReLU
-        MatrixXbf16 result = x;
-        for (int i = 0; i < x.rows(); ++i) {
-            for (int j = 0; j < x.cols(); ++j) {
-                flexfloat_t ff_val;
-                ff_init_float(&ff_val, (float)x(i, j), NN_FF_DESC);
-                // ReLU: max(0, x)
-                if (ff_get_float(&ff_val) < 0.0f) {
-                    result(i, j) = Eigen::bfloat16(0.0f);
-                } else {
-                    result(i, j) = Eigen::bfloat16(ff_get_float(&ff_val));
-                }
-            }
-        }
-        return result;
-#else
         return (x.array() > Eigen::bfloat16(0)).select(x, MatrixXbf16::Zero(x.rows(), x.cols()));
-#endif
     }
 
     // 행렬 전체에 ReLU의 미분을 적용하는 헬퍼 함수 (bfloat16 precision)
@@ -402,97 +416,179 @@ namespace mpcc
 
         std::vector<MatrixXbf16> pre_activations(mlp_.n_layer - 1);
 
+#ifdef USE_CUDA
+        // ===== CUDA GPU Acceleration =====
+        // GPU 초기화 및 가중치 전송 (첫 호출 시)
+        if (!mlp_.gpu_initialized) {
+            initializeGPU();
+            transferWeightsToGPU();
+
+            // Batch hidden layers 메모리 할당
+            mlp_.d_batch_hidden.resize(mlp_.n_layer - 1);
+        }
+
+        const int batch = batch_size;
+        const int input_dim = current_input_ptr->rows();
+        const int batch_input_size = input_dim * batch;
+
+        // GPU 메모리 할당/재할당 - 크기가 변경되면 재할당
+        static int prev_batch_input_size = 0;
+        if (mlp_.d_batch_input == nullptr || batch_input_size != prev_batch_input_size) {
+            if (mlp_.d_batch_input != nullptr) {
+                CUDA_CHECK(cudaFree(mlp_.d_batch_input));
+            }
+            CUDA_CHECK(cudaMalloc(&mlp_.d_batch_input, batch_input_size * sizeof(float)));
+            prev_batch_input_size = batch_input_size;
+        }
+
+        // Convert input from bfloat16 to float and upload to GPU
+        std::vector<float> input_float(batch_input_size);
+        for (int i = 0; i < batch_input_size; ++i) {
+            input_float[i] = static_cast<float>(current_input_ptr->data()[i]);
+        }
+        CUDA_CHECK(cudaMemcpyAsync(mlp_.d_batch_input, input_float.data(),
+                                   batch_input_size * sizeof(float),
+                                   cudaMemcpyHostToDevice, mlp_.stream));
+
+        // Forward pass through all layers
         for (int layer = 0; layer < mlp_.n_layer; ++layer) {
+            const int out_dim = mlp_.weight[layer].rows();
+            const int in_dim = mlp_.weight[layer].cols();
+
+            float* d_input_current;
+            float* d_output_current;
+
+            // Determine input pointer
             if (layer == 0) {
-#ifdef NN_USE_FLEXFLOAT
-                // FlexFloat matrix multiplication: W * x + b
-                const int m = mlp_.weight[0].rows();
-                const int n = mlp_.weight[0].cols();
-                const int batch = current_input_ptr->cols();
-                pre_activations[0].resize(m, batch);
-
-                for (int i = 0; i < m; ++i) {
-                    for (int j = 0; j < batch; ++j) {
-                        flexfloat_t ff_sum, ff_w, ff_x;
-                        ff_init_float(&ff_sum, (float)mlp_.bias[0](i), NN_FF_DESC);
-
-                        for (int k = 0; k < n; ++k) {
-                            ff_init_float(&ff_w, (float)mlp_.weight[0](i, k), NN_FF_DESC);
-                            ff_init_float(&ff_x, (float)(*current_input_ptr)(k, j), NN_FF_DESC);
-
-                            // sum = prod * 1 + sum
-                            ff_fma(&ff_sum, &ff_w, &ff_x, &ff_sum);
-                        }
-                        pre_activations[0](i, j) = Eigen::bfloat16(ff_get_float(&ff_sum));
-                    }
-                }
-#else
-                pre_activations[0] = (mlp_.weight[0] * (*current_input_ptr)).colwise() + mlp_.bias[0];
-#endif
-                mlp_.batch_hidden[0] = batch_ReLU(pre_activations[0]);
+                d_input_current = mlp_.d_batch_input;
+            } else {
+                d_input_current = mlp_.d_batch_hidden[layer - 1];
             }
-            else if (layer == mlp_.n_layer - 1) {
-#ifdef NN_USE_FLEXFLOAT
-                // FlexFloat matrix multiplication: W * x + b
-                const int m = mlp_.weight[layer].rows();
-                const int n = mlp_.weight[layer].cols();
-                const int batch = mlp_.batch_hidden[layer - 1].cols();
-                mlp_.batch_output.resize(m, batch);
 
-                for (int i = 0; i < m; ++i) {
-                    for (int j = 0; j < batch; ++j) {
-                        flexfloat_t ff_sum, ff_w, ff_x;
-                        ff_init_float(&ff_sum, (float)mlp_.bias[layer](i), NN_FF_DESC);
-
-                        for (int k = 0; k < n; ++k) {
-                            ff_init_float(&ff_w, (float)mlp_.weight[layer](i, k), NN_FF_DESC);
-                            ff_init_float(&ff_x, (float)mlp_.batch_hidden[layer - 1](k, j), NN_FF_DESC);
-
-                            // prod = w * x + 0
-                            ff_fma(&ff_sum, &ff_w, &ff_x, &ff_sum);
-                        }
-                        mlp_.batch_output(i, j) = Eigen::bfloat16(ff_get_float(&ff_sum));
+            // Determine output pointer and allocate/reallocate if needed
+            if (layer == mlp_.n_layer - 1) {
+                // Last layer - output layer
+                const int output_size = out_dim * batch;
+                static int prev_output_size = 0;
+                if (mlp_.d_batch_output == nullptr || output_size != prev_output_size) {
+                    if (mlp_.d_batch_output != nullptr) {
+                        CUDA_CHECK(cudaFree(mlp_.d_batch_output));
                     }
+                    CUDA_CHECK(cudaMalloc(&mlp_.d_batch_output, output_size * sizeof(float)));
+                    prev_output_size = output_size;
                 }
-#else
-                mlp_.batch_output = (mlp_.weight[layer] * mlp_.batch_hidden[layer - 1]).colwise() + mlp_.bias[layer];
-#endif
+                d_output_current = mlp_.d_batch_output;
+            } else {
+                // Hidden layer
+                const int hidden_size = out_dim * batch;
+                static std::vector<int> prev_hidden_sizes(mlp_.n_layer - 1, 0);
+                if (mlp_.d_batch_hidden[layer] == nullptr || hidden_size != prev_hidden_sizes[layer]) {
+                    if (mlp_.d_batch_hidden[layer] != nullptr) {
+                        CUDA_CHECK(cudaFree(mlp_.d_batch_hidden[layer]));
+                    }
+                    CUDA_CHECK(cudaMalloc(&mlp_.d_batch_hidden[layer], hidden_size * sizeof(float)));
+                    prev_hidden_sizes[layer] = hidden_size;
+                }
+                d_output_current = mlp_.d_batch_hidden[layer];
             }
-            else {
-#ifdef NN_USE_FLEXFLOAT
-                // FlexFloat matrix multiplication: W * x + b
-                const int m = mlp_.weight[layer].rows();
-                const int n = mlp_.weight[layer].cols();
-                const int batch = mlp_.batch_hidden[layer - 1].cols();
-                pre_activations[layer].resize(m, batch);
 
-                for (int i = 0; i < m; ++i) {
-                    for (int j = 0; j < batch; ++j) {
-                        flexfloat_t ff_sum, ff_w, ff_x;
-                        ff_init_float(&ff_sum, (float)mlp_.bias[layer](i), NN_FF_DESC);
+            // Temporary buffer for pre-activation (before ReLU)
+            float* d_temp_output = nullptr;
+            if (layer < mlp_.n_layer - 1) {
+                CUDA_CHECK(cudaMalloc(&d_temp_output, out_dim * batch * sizeof(float)));
+            }
 
-                        for (int k = 0; k < n; ++k) {
-                            ff_init_float(&ff_w, (float)mlp_.weight[layer](i, k), NN_FF_DESC);
-                            ff_init_float(&ff_x, (float)mlp_.batch_hidden[layer - 1](k, j), NN_FF_DESC);
+            // Launch matrix multiplication kernel with custom precision FMA
+            launch_matmul_fma(
+                mlp_.d_weight[layer],      // weight[out_dim x in_dim]
+                d_input_current,            // input[in_dim x batch]
+                mlp_.d_bias[layer],        // bias[out_dim]
+                (layer < mlp_.n_layer - 1) ? d_temp_output : d_output_current,  // output[out_dim x batch]
+                out_dim,
+                in_dim,
+                batch,
+                mlp_.cuda_exp_bits,
+                mlp_.cuda_mant_bits,
+                mlp_.stream
+            );
 
-                            ff_fma(&ff_sum, &ff_w, &ff_x, &ff_sum);
-                        }
-                        pre_activations[layer](i, j) = Eigen::bfloat16(ff_get_float(&ff_sum));
-                    }
+            // Apply ReLU for hidden layers (not output layer)
+            if (layer < mlp_.n_layer - 1) {
+                pre_activations[layer].resize(out_dim, batch);
+
+                // Launch ReLU kernel
+                launch_relu(
+                    d_temp_output,
+                    d_output_current,
+                    out_dim * batch,
+                    mlp_.cuda_exp_bits,
+                    mlp_.cuda_mant_bits,
+                    mlp_.stream
+                );
+
+                // Download pre-activation for statistics (optional, can be removed for performance)
+                std::vector<float> pre_act_float(out_dim * batch);
+                CUDA_CHECK(cudaMemcpyAsync(pre_act_float.data(), d_temp_output,
+                                          out_dim * batch * sizeof(float),
+                                          cudaMemcpyDeviceToHost, mlp_.stream));
+                CUDA_CHECK(cudaStreamSynchronize(mlp_.stream));
+
+                for (int i = 0; i < out_dim * batch; ++i) {
+                    pre_activations[layer].data()[i] = Eigen::bfloat16(pre_act_float[i]);
                 }
-#else
-                pre_activations[layer] = (mlp_.weight[layer] * mlp_.batch_hidden[layer - 1]).colwise() + mlp_.bias[layer];
-#endif
-                mlp_.batch_hidden[layer] = batch_ReLU(pre_activations[layer]);
+
+                // Download hidden activation for later use
+                mlp_.batch_hidden[layer].resize(out_dim, batch);
+                std::vector<float> hidden_float(out_dim * batch);
+                CUDA_CHECK(cudaMemcpyAsync(hidden_float.data(), d_output_current,
+                                          out_dim * batch * sizeof(float),
+                                          cudaMemcpyDeviceToHost, mlp_.stream));
+                CUDA_CHECK(cudaStreamSynchronize(mlp_.stream));
+
+                for (int i = 0; i < out_dim * batch; ++i) {
+                    mlp_.batch_hidden[layer].data()[i] = Eigen::bfloat16(hidden_float[i]);
+                }
+
+                CUDA_CHECK(cudaFree(d_temp_output));
             }
         }
 
+        // Download final output from GPU
+        const int output_size = mlp_.weight[mlp_.n_layer - 1].rows() * batch;
+        mlp_.batch_output.resize(mlp_.weight[mlp_.n_layer - 1].rows(), batch);
+        std::vector<float> output_float(output_size);
+        CUDA_CHECK(cudaMemcpyAsync(output_float.data(), mlp_.d_batch_output,
+                                   output_size * sizeof(float),
+                                   cudaMemcpyDeviceToHost, mlp_.stream));
+        CUDA_CHECK(cudaStreamSynchronize(mlp_.stream));
+
+        for (int i = 0; i < output_size; ++i) {
+            mlp_.batch_output.data()[i] = Eigen::bfloat16(output_float[i]);
+        }
+
+#else
+        // ===== CPU Fallback (no OpenMP, just Eigen) =====
+        for (int layer = 0; layer < mlp_.n_layer; ++layer) {
+            if (layer == 0) {
+                pre_activations[0] = (mlp_.weight[0] * (*current_input_ptr)).colwise() + mlp_.bias[0];
+                mlp_.batch_hidden[0] = batch_ReLU(pre_activations[0]);
+            }
+            else if (layer == mlp_.n_layer - 1) {
+                mlp_.batch_output = (mlp_.weight[layer] * mlp_.batch_hidden[layer - 1]).colwise() + mlp_.bias[layer];
+            }
+            else {
+                pre_activations[layer] = (mlp_.weight[layer] * mlp_.batch_hidden[layer - 1]).colwise() + mlp_.bias[layer];
+                mlp_.batch_hidden[layer] = batch_ReLU(pre_activations[layer]);
+            }
+        }
+#endif
+
         std::vector<MatrixXbf16> batch_jacobian(batch_size);
 
-        // ▼▼▼▼▼ ReLU deactivation을 추적하기 위한 임시 변수 (스레드별 집계) ▼▼▼▼▼
+        // ▼▼▼▼▼ ReLU deactivation을 추적하기 위한 임시 변수 ▼▼▼▼▼
         std::vector<std::vector<int>> thread_deactivated_counts(batch_size, std::vector<int>(mlp_.n_layer - 1, 0));
 
-        #pragma omp parallel for
+        // Calculate Jacobian for each batch sample (CPU computation, no OpenMP)
         for (int i = 0; i < batch_size; ++i) {
             MatrixXbf16 temp_derivative;
             if (mlp_.is_nerf) {
@@ -507,39 +603,7 @@ namespace mpcc
                 int deactivated_count_0 = (relu_deriv_0.array() == Eigen::bfloat16(0)).count();
                 thread_deactivated_counts[i][0] = deactivated_count_0;
 
-#ifdef NN_USE_FLEXFLOAT
-                // FlexFloat: (relu_deriv_0.asDiagonal() * mlp_.weight[0]) * nerf_jac
-                // First: D * W where D is diagonal
-                MatrixXbf16 DW(relu_deriv_0.rows(), mlp_.weight[0].cols());
-                for (int r = 0; r < DW.rows(); ++r) {
-                    for (int c = 0; c < DW.cols(); ++c) {
-                        flexfloat_t ff_result, ff_diag, ff_w, ff_zero;
-                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
-                        ff_init_float(&ff_diag, (float)relu_deriv_0(r), NN_FF_DESC);
-                        ff_init_float(&ff_w, (float)mlp_.weight[0](r, c), NN_FF_DESC);
-                        ff_init_float(&ff_result, 0.0f, NN_FF_DESC);
-                        ff_fma(&ff_result, &ff_diag, &ff_w, &ff_zero);
-                        DW(r, c) = Eigen::bfloat16(ff_get_float(&ff_result));
-                    }
-                }
-                // Second: DW * nerf_jac
-                temp_derivative.resize(DW.rows(), nerf_jac.cols());
-                for (int r = 0; r < temp_derivative.rows(); ++r) {
-                    for (int c = 0; c < temp_derivative.cols(); ++c) {
-                        flexfloat_t ff_sum, ff_a, ff_b;
-
-                        ff_init_float(&ff_sum, 0.0f, NN_FF_DESC);
-                        for (int k = 0; k < DW.cols(); ++k) {
-                            ff_init_float(&ff_a, (float)DW(r, k), NN_FF_DESC);
-                            ff_init_float(&ff_b, (float)nerf_jac(k, c), NN_FF_DESC);
-                            ff_fma(&ff_sum, &ff_a, &ff_b, &ff_sum);
-                        }
-                        temp_derivative(r, c) = Eigen::bfloat16(ff_get_float(&ff_sum));
-                    }
-                }
-#else
                 temp_derivative = (relu_deriv_0.asDiagonal() * mlp_.weight[0]) * nerf_jac;
-#endif
             } else {
                 MatrixXbf16 relu_deriv_0 = batch_ReLU_derivative(pre_activations[0].col(i));
 
@@ -547,23 +611,7 @@ namespace mpcc
                 int deactivated_count_0 = (relu_deriv_0.array() == Eigen::bfloat16(0)).count();
                 thread_deactivated_counts[i][0] = deactivated_count_0;
 
-#ifdef NN_USE_FLEXFLOAT
-                // FlexFloat: relu_deriv_0.asDiagonal() * mlp_.weight[0]
-                temp_derivative.resize(relu_deriv_0.rows(), mlp_.weight[0].cols());
-                for (int r = 0; r < temp_derivative.rows(); ++r) {
-                    for (int c = 0; c < temp_derivative.cols(); ++c) {
-                        flexfloat_t ff_result, ff_diag, ff_w, ff_zero;
-                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
-                        ff_init_float(&ff_diag, (float)relu_deriv_0(r), NN_FF_DESC);
-                        ff_init_float(&ff_w, (float)mlp_.weight[0](r, c), NN_FF_DESC);
-                        ff_init_float(&ff_result, 0.0f, NN_FF_DESC);
-                        ff_fma(&ff_result, &ff_diag, &ff_w, &ff_zero);
-                        temp_derivative(r, c) = Eigen::bfloat16(ff_get_float(&ff_result));
-                    }
-                }
-#else
                 temp_derivative = relu_deriv_0.asDiagonal() * mlp_.weight[0];
-#endif
             }
 
             for (int layer = 1; layer < mlp_.n_layer - 1; ++layer) {
@@ -573,59 +621,10 @@ namespace mpcc
                 int deactivated_count = (relu_deriv.array() == Eigen::bfloat16(0)).count();
                 thread_deactivated_counts[i][layer] = deactivated_count;
 
-#ifdef NN_USE_FLEXFLOAT
-                // FlexFloat: (relu_deriv.asDiagonal() * mlp_.weight[layer]) * temp_derivative
-                // First: D * W where D is diagonal
-                MatrixXbf16 DW(relu_deriv.rows(), mlp_.weight[layer].cols());
-                for (int r = 0; r < DW.rows(); ++r) {
-                    for (int c = 0; c < DW.cols(); ++c) {
-                        flexfloat_t ff_result, ff_diag, ff_w, ff_zero;
-                        ff_init_float(&ff_zero, 0.0f, NN_FF_DESC);
-                        ff_init_float(&ff_diag, (float)relu_deriv(r), NN_FF_DESC);
-                        ff_init_float(&ff_w, (float)mlp_.weight[layer](r, c), NN_FF_DESC);
-                        ff_init_float(&ff_result, 0.0f, NN_FF_DESC);
-                        ff_fma(&ff_result, &ff_diag, &ff_w, &ff_zero);
-                        DW(r, c) = Eigen::bfloat16(ff_get_float(&ff_result));
-                    }
-                }
-                // Second: DW * temp_derivative
-                MatrixXbf16 new_derivative(DW.rows(), temp_derivative.cols());
-                for (int r = 0; r < new_derivative.rows(); ++r) {
-                    for (int c = 0; c < new_derivative.cols(); ++c) {
-                        flexfloat_t ff_sum, ff_a, ff_b;
-                        ff_init_float(&ff_sum, 0.0f, NN_FF_DESC);
-                        for (int k = 0; k < DW.cols(); ++k) {
-                            ff_init_float(&ff_a, (float)DW(r, k), NN_FF_DESC);
-                            ff_init_float(&ff_b, (float)temp_derivative(k, c), NN_FF_DESC);
-                            ff_fma(&ff_sum, &ff_a, &ff_b, &ff_sum);
-                        }
-                        new_derivative(r, c) = Eigen::bfloat16(ff_get_float(&ff_sum));
-                    }
-                }
-                temp_derivative = new_derivative;
-#else
                 temp_derivative = (relu_deriv.asDiagonal() * mlp_.weight[layer]) * temp_derivative;
-#endif
             }
 
-#ifdef NN_USE_FLEXFLOAT
-            // FlexFloat: mlp_.weight.back() * temp_derivative
-            batch_jacobian[i].resize(mlp_.weight.back().rows(), temp_derivative.cols());
-            for (int r = 0; r < batch_jacobian[i].rows(); ++r) {
-                for (int c = 0; c < batch_jacobian[i].cols(); ++c) {
-                    flexfloat_t ff_sum, ff_a, ff_b;
-                    ff_init_float(&ff_sum, 0.0f, NN_FF_DESC);
-                    for (int k = 0; k < mlp_.weight.back().cols(); ++k) {
-                        ff_init_float(&ff_a, (float)mlp_.weight.back()(r, k), NN_FF_DESC);
-                        ff_init_float(&ff_b, (float)temp_derivative(k, c), NN_FF_DESC);
-                        ff_fma(&ff_sum, &ff_a, &ff_b, &ff_sum);
-                    }
-                    batch_jacobian[i](r, c) = Eigen::bfloat16(ff_get_float(&ff_sum));
-                }
-            }
-#else
             batch_jacobian[i] = mlp_.weight.back() * temp_derivative;
-#endif
         }
 
         // ▼▼▼▼▼ 모든 배치 샘플의 deactivation 수를 누적하고 min/max 업데이트 ▼▼▼▼▼
@@ -738,6 +737,129 @@ namespace mpcc
     {
         return mlp_.max_deactivated_per_layer;
     }
+
+#ifdef USE_CUDA
+    // =================================================================
+    // ===================== GPU 관련 함수 구현 =========================
+    // =================================================================
+
+    void EnvCollNNmodel::initializeGPU()
+    {
+        if (mlp_.gpu_initialized) return;
+
+        std::cout << "[GPU] Initializing CUDA and cuBLAS..." << std::endl;
+
+        // cuBLAS 핸들 생성
+        CUBLAS_CHECK(cublasCreate(&mlp_.cublas_handle));
+
+        // CUDA stream 생성
+        CUDA_CHECK(cudaStreamCreate(&mlp_.stream));
+
+        // Precision parameters 설정 (from compile-time defines)
+        mlp_.cuda_exp_bits = NN_FF_exponent_bits;
+        mlp_.cuda_mant_bits = NN_FF_mantissa_bits;
+
+        mlp_.gpu_initialized = true;
+        std::cout << "[GPU] Initialization complete!" << std::endl;
+        std::cout << "[GPU] Precision: " << mlp_.cuda_exp_bits << " exp bits, "
+                  << mlp_.cuda_mant_bits << " mantissa bits" << std::endl;
+    }
+
+    void EnvCollNNmodel::cleanupGPU()
+    {
+        if (!mlp_.gpu_initialized) return;
+
+        std::cout << "[GPU] Cleaning up GPU resources..." << std::endl;
+
+        // Weight 메모리 해제
+        for (auto ptr : mlp_.d_weight) {
+            if (ptr) CUDA_CHECK(cudaFree(ptr));
+        }
+        mlp_.d_weight.clear();
+
+        // Bias 메모리 해제
+        for (auto ptr : mlp_.d_bias) {
+            if (ptr) CUDA_CHECK(cudaFree(ptr));
+        }
+        mlp_.d_bias.clear();
+
+        // Hidden 메모리 해제
+        for (auto ptr : mlp_.d_hidden) {
+            if (ptr) CUDA_CHECK(cudaFree(ptr));
+        }
+        mlp_.d_hidden.clear();
+
+        // Batch hidden 메모리 해제
+        for (auto ptr : mlp_.d_batch_hidden) {
+            if (ptr) CUDA_CHECK(cudaFree(ptr));
+        }
+        mlp_.d_batch_hidden.clear();
+
+        // 기타 메모리 해제
+        if (mlp_.d_input) CUDA_CHECK(cudaFree(mlp_.d_input));
+        if (mlp_.d_output) CUDA_CHECK(cudaFree(mlp_.d_output));
+        if (mlp_.d_batch_input) CUDA_CHECK(cudaFree(mlp_.d_batch_input));
+        if (mlp_.d_batch_output) CUDA_CHECK(cudaFree(mlp_.d_batch_output));
+
+        // CUDA stream 해제
+        if (mlp_.stream) {
+            CUDA_CHECK(cudaStreamDestroy(mlp_.stream));
+            mlp_.stream = nullptr;
+        }
+
+        // cuBLAS 핸들 해제
+        if (mlp_.cublas_handle) {
+            CUBLAS_CHECK(cublasDestroy(mlp_.cublas_handle));
+            mlp_.cublas_handle = nullptr;
+        }
+
+        mlp_.gpu_initialized = false;
+        std::cout << "[GPU] Cleanup complete!" << std::endl;
+    }
+
+    void EnvCollNNmodel::transferWeightsToGPU()
+    {
+        if (!mlp_.gpu_initialized) {
+            initializeGPU();
+        }
+
+        std::cout << "[GPU] Transferring weights and biases to GPU..." << std::endl;
+
+        // GPU 메모리 벡터 크기 조정
+        mlp_.d_weight.resize(mlp_.n_layer);
+        mlp_.d_bias.resize(mlp_.n_layer);
+
+        for (int i = 0; i < mlp_.n_layer; ++i) {
+            // Weight 메모리 할당 및 전송
+            const int weight_size = mlp_.weight[i].rows() * mlp_.weight[i].cols();
+            CUDA_CHECK(cudaMalloc(&mlp_.d_weight[i], weight_size * sizeof(float)));
+
+            // bfloat16 -> float32 변환 후 전송
+            std::vector<float> weight_float(weight_size);
+            for (int j = 0; j < weight_size; ++j) {
+                weight_float[j] = static_cast<float>(mlp_.weight[i].data()[j]);
+            }
+            CUDA_CHECK(cudaMemcpy(mlp_.d_weight[i], weight_float.data(),
+                                 weight_size * sizeof(float), cudaMemcpyHostToDevice));
+
+            // Bias 메모리 할당 및 전송
+            const int bias_size = mlp_.bias[i].size();
+            CUDA_CHECK(cudaMalloc(&mlp_.d_bias[i], bias_size * sizeof(float)));
+
+            std::vector<float> bias_float(bias_size);
+            for (int j = 0; j < bias_size; ++j) {
+                bias_float[j] = static_cast<float>(mlp_.bias[i](j));
+            }
+            CUDA_CHECK(cudaMemcpy(mlp_.d_bias[i], bias_float.data(),
+                                 bias_size * sizeof(float), cudaMemcpyHostToDevice));
+
+            std::cout << "[GPU] Layer " << i << ": Weight(" << mlp_.weight[i].rows()
+                      << "x" << mlp_.weight[i].cols() << "), Bias(" << bias_size << ")" << std::endl;
+        }
+
+        std::cout << "[GPU] Transfer complete!" << std::endl;
+    }
+#endif
 }
 
 

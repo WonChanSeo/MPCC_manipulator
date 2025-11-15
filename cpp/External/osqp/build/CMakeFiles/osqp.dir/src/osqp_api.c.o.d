@@ -64,7 +64,6 @@ CMakeFiles/osqp.dir/src/osqp_api.c.o: \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/public/osqp_api_types.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/glob_opts.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/algebra_vector.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/public/osqp_api_constants.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/public/osqp_api_functions.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/util.h \

@@ -78,7 +78,6 @@ CMakeFiles/OSQPLIB.dir/src/codegen.c.o: \
  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/algebra_vector.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/printing.h \
  /usr/include/string.h /usr/include/strings.h \
  /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \

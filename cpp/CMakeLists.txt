@@ -1,10 +1,29 @@
 cmake_minimum_required(VERSION 3.10)
-project(MPCC)
+project(MPCC LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-O2")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+# CUDA support option
+option(USE_CUDA "Enable CUDA GPU acceleration for NN inference" OFF)
+
+if(USE_CUDA)
+  enable_language(CUDA)
+  find_package(CUDAToolkit REQUIRED)
+  message(STATUS "CUDA GPU acceleration: ON")
+  message(STATUS "  CUDA Version: ${CUDAToolkit_VERSION}")
+  add_definitions(-DUSE_CUDA)
+  set(CMAKE_CUDA_STANDARD 17)
+  set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+
+  # Set CUDA architecture
+  set(CMAKE_CUDA_ARCHITECTURES 86)  # RTX 3090 compute capability (sm_86)
+
+  # Set CUDA compiler flags
+  set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --expt-relaxed-constexpr")
+endif()
 
 # FlexFloat option for NN inference precision testing
 option(NN_USE_FLEXFLOAT "Enable FlexFloat precision control for NN inference" OFF)
@@ -63,6 +82,11 @@ if(NN_USE_FLEXFLOAT)
   set(FLEXFLOAT_NN_SRC ${CMAKE_CURRENT_SOURCE_DIR}/External/flexfloat/src/flexfloat.c)
 endif()
 
+# CUDA kernel sources
+if(USE_CUDA)
+  set(CUDA_KERNEL_SRC src/Constraints/EnvCollision/cuda_nn_kernels.cu)
+endif()
+
 add_library(MPCC_LIB SHARED
         src/types.cpp
         src/Model/robot_model.cpp
@@ -84,7 +108,15 @@ add_library(MPCC_LIB SHARED
         include/config.h
         include/Model/robot_model.h
         ${FLEXFLOAT_NN_SRC}
+        ${CUDA_KERNEL_SRC}
         )
+
+# Set CUDA source file properties
+if(USE_CUDA)
+  set_source_files_properties(src/Constraints/EnvCollision/cuda_nn_kernels.cu
+    PROPERTIES LANGUAGE CUDA)
+endif()
+
 target_link_libraries(MPCC_LIB PUBLIC
         ${RBDL_LIBRARY}
         OsqpEigen::OsqpEigen
@@ -92,6 +124,10 @@ target_link_libraries(MPCC_LIB PUBLIC
 
 if(OpenMP_CXX_FOUND)
     target_link_libraries(MPCC_LIB PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
+if(USE_CUDA)
+    target_link_libraries(MPCC_LIB PUBLIC CUDA::cublas CUDA::cudart)
 endif()
 
 add_executable(MPCC_EXE src/main.cpp)

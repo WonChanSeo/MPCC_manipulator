@@ -11,6 +11,12 @@
 #include <Eigen/Dense>
 #include <Eigen/src/Core/arch/Default/BFloat16.h>
 
+#ifdef USE_CUDA
+#include <cublas_v2.h>
+#include <cuda_runtime.h>
+#include "Constraints/EnvCollision/cuda_nn_kernels.cuh"
+#endif
+
 namespace mpcc
 {
     // Type aliases for bfloat16 matrices and vectors
@@ -76,6 +82,31 @@ namespace mpcc
             // --- 기타 설정 ---
             bool loadweightfile_verbose = false;
             bool loadbiasfile_verbose = false;
+
+#ifdef USE_CUDA
+            // --- GPU 관련 멤버 ---
+            cublasHandle_t cublas_handle = nullptr;
+            bool gpu_initialized = false;
+
+            // Custom precision parameters
+            int cuda_exp_bits = 8;      // Default: float32 exponent bits
+            int cuda_mant_bits = 23;    // Default: float32 mantissa bits
+
+            // GPU 메모리 포인터들 (각 레이어별)
+            std::vector<float*> d_weight;  // Device weight matrices
+            std::vector<float*> d_bias;    // Device bias vectors
+            std::vector<float*> d_hidden;  // Device hidden activations
+            float* d_input = nullptr;       // Device input
+            float* d_output = nullptr;      // Device output
+
+            // 배치 처리용 GPU 메모리
+            float* d_batch_input = nullptr;
+            float* d_batch_output = nullptr;
+            std::vector<float*> d_batch_hidden;
+
+            // CUDA streams for async operations
+            cudaStream_t stream = nullptr;
+#endif
         };
         
         public:
@@ -111,6 +142,12 @@ namespace mpcc
             void readBiasFile(int bias_num);
             void loadNetwork();
             void initializeNetwork(int n_input, int n_output, Eigen::VectorXd n_hidden, bool is_nerf);
+
+#ifdef USE_CUDA
+            void initializeGPU();
+            void cleanupGPU();
+            void transferWeightsToGPU();
+#endif
 
             // ReLU는 private 멤버로 유지 (bfloat16 precision)
             Eigen::bfloat16 ReLU(Eigen::bfloat16 input)

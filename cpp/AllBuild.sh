@@ -25,6 +25,24 @@ NN_USE_FLEXFLOAT=${NN_USE_FLEXFLOAT:-OFF}
 NN_FF_EXPONENT_BITS=${NN_FF_EXPONENT_BITS:-8}
 NN_FF_MANTISSA_BITS=${NN_FF_MANTISSA_BITS:-23}
 
+# ========================================
+# OpenMP Configuration
+# ========================================
+# Set number of OpenMP threads (defaults to all available cores)
+OMP_NUM_THREADS=${OMP_NUM_THREADS:-$(nproc)}
+export OMP_NUM_THREADS
+
+# ========================================
+# CUDA GPU Acceleration Configuration
+# ========================================
+# Set USE_CUDA=ON to enable GPU acceleration for NN inference
+USE_CUDA=${USE_CUDA:-OFF}
+
+# Set CUDA compiler path (required for CUDA builds)
+if [ "$USE_CUDA" = "ON" ]; then
+    export CUDACXX=/usr/local/cuda-12.6/bin/nvcc
+fi
+
 echo "========================================="
 echo "Build Configuration:"
 echo "  OSQP/QDLDL FlexFloat:"
@@ -41,6 +59,12 @@ if [ "$NN_USE_FLEXFLOAT" = "ON" ]; then
     echo "    NN_FF_EXPONENT_BITS:  $NN_FF_EXPONENT_BITS"
     echo "    NN_FF_MANTISSA_BITS:  $NN_FF_MANTISSA_BITS"
 fi
+echo ""
+echo "  OpenMP Configuration:"
+echo "    OMP_NUM_THREADS:      $OMP_NUM_THREADS"
+echo ""
+echo "  CUDA GPU Acceleration:"
+echo "    USE_CUDA:             $USE_CUDA"
 echo "========================================="
 
 cd External
@@ -97,11 +121,12 @@ rm -rf build
 mkdir build
 cd build
 
-# cmake로 빌드 설정 및 make 실행 (NN FlexFloat 옵션 포함)
+# cmake로 빌드 설정 및 make 실행 (NN FlexFloat 및 CUDA 옵션 포함)
 cmake .. \
     -DNN_USE_FLEXFLOAT=$NN_USE_FLEXFLOAT \
     -DNN_FF_EXPONENT_BITS=$NN_FF_EXPONENT_BITS \
-    -DNN_FF_MANTISSA_BITS=$NN_FF_MANTISSA_BITS
+    -DNN_FF_MANTISSA_BITS=$NN_FF_MANTISSA_BITS \
+    -DUSE_CUDA=$USE_CUDA
 make -j8
 
 # 빌드 디렉토리에서 상위 디렉토리로 이동
