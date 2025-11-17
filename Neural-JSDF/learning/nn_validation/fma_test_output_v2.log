@@ -1,0 +1,194 @@
+================================================================================
+NEURAL-JSDF FMA-LEVEL QUANTIZATION TEST
+Each FMA (Fused Multiply-Add) is immediately quantized
+Output-stationary dataflow simulation
+Testing 5 configurations with 100 samples each
+WARNING: This will be VERY slow due to Python loops!
+================================================================================
+
+================================================================================
+TESTING FMA-LEVEL QUANTIZATION: E8M23
+(Every FMA is quantized in output-stationary fashion)
+================================================================================
+Initializing with FMA-level quantization: fma-quant (E8M23)
+Output-stationary dataflow with per-FMA quantization
+Weight file: sdf_256x5_mesh_50000.pt
+Normalization parameters loaded
+Extracted 5 linear layers
+Model loaded with FMA quantization
+Generating 100 test samples...
+Quantizing input to E8M23...
+Running FMA-level quantized inference...
+WARNING: This will be VERY slow due to Python loops
+  Layer 0: torch.Size([100, 10]) -> torch.Size([100, 256])
+  Layer 1: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 2: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 3: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 4: torch.Size([100, 256]) -> torch.Size([100, 9])
+Calculating ground truth...
+
+--------------------------------------------------------------------------------
+NN inference time: 79.70 s (1.3 samples/s)
+
+Error Statistics (cm):
+  Mean:      32.49
+  Std:       20.48
+  Median:    29.40
+  Max:      107.60
+  95th:      72.07
+  99th:      93.18
+--------------------------------------------------------------------------------
+✓ Saved to: data_fma_E8M23.npz
+
+================================================================================
+TESTING FMA-LEVEL QUANTIZATION: E8M7
+(Every FMA is quantized in output-stationary fashion)
+================================================================================
+Initializing with FMA-level quantization: fma-quant (E8M7)
+Output-stationary dataflow with per-FMA quantization
+Weight file: sdf_256x5_mesh_50000.pt
+Normalization parameters loaded
+Extracted 5 linear layers
+Model loaded with FMA quantization
+Generating 100 test samples...
+Quantizing input to E8M7...
+Running FMA-level quantized inference...
+WARNING: This will be VERY slow due to Python loops
+  Layer 0: torch.Size([100, 10]) -> torch.Size([100, 256])
+  Layer 1: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 2: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 3: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 4: torch.Size([100, 256]) -> torch.Size([100, 9])
+Calculating ground truth...
+
+--------------------------------------------------------------------------------
+NN inference time: 284.12 s (0.4 samples/s)
+
+Error Statistics (cm):
+  Mean:      53.85
+  Std:       26.46
+  Median:    53.12
+  Max:      133.35
+  95th:     100.21
+  99th:     117.89
+--------------------------------------------------------------------------------
+✓ Saved to: data_fma_E8M7.npz
+
+================================================================================
+TESTING FMA-LEVEL QUANTIZATION: E8M6
+(Every FMA is quantized in output-stationary fashion)
+================================================================================
+Initializing with FMA-level quantization: fma-quant (E8M6)
+Output-stationary dataflow with per-FMA quantization
+Weight file: sdf_256x5_mesh_50000.pt
+Normalization parameters loaded
+Extracted 5 linear layers
+Model loaded with FMA quantization
+Generating 100 test samples...
+Quantizing input to E8M6...
+Running FMA-level quantized inference...
+WARNING: This will be VERY slow due to Python loops
+  Layer 0: torch.Size([100, 10]) -> torch.Size([100, 256])
+  Layer 1: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 2: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 3: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 4: torch.Size([100, 256]) -> torch.Size([100, 9])
+Calculating ground truth...
+
+--------------------------------------------------------------------------------
+NN inference time: 283.21 s (0.4 samples/s)
+
+Error Statistics (cm):
+  Mean:      69.76
+  Std:       29.61
+  Median:    68.90
+  Max:      167.82
+  95th:     121.63
+  99th:     147.05
+--------------------------------------------------------------------------------
+✓ Saved to: data_fma_E8M6.npz
+
+================================================================================
+TESTING FMA-LEVEL QUANTIZATION: E8M5
+(Every FMA is quantized in output-stationary fashion)
+================================================================================
+Initializing with FMA-level quantization: fma-quant (E8M5)
+Output-stationary dataflow with per-FMA quantization
+Weight file: sdf_256x5_mesh_50000.pt
+Normalization parameters loaded
+Extracted 5 linear layers
+Model loaded with FMA quantization
+Generating 100 test samples...
+Quantizing input to E8M5...
+Running FMA-level quantized inference...
+WARNING: This will be VERY slow due to Python loops
+  Layer 0: torch.Size([100, 10]) -> torch.Size([100, 256])
+  Layer 1: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 2: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 3: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 4: torch.Size([100, 256]) -> torch.Size([100, 9])
+Calculating ground truth...
+
+--------------------------------------------------------------------------------
+NN inference time: 283.59 s (0.4 samples/s)
+
+Error Statistics (cm):
+  Mean:      77.90
+  Std:       31.05
+  Median:    76.82
+  Max:      183.43
+  95th:     134.10
+  99th:     147.78
+--------------------------------------------------------------------------------
+✓ Saved to: data_fma_E8M5.npz
+
+================================================================================
+TESTING FMA-LEVEL QUANTIZATION: E8M4
+(Every FMA is quantized in output-stationary fashion)
+================================================================================
+Initializing with FMA-level quantization: fma-quant (E8M4)
+Output-stationary dataflow with per-FMA quantization
+Weight file: sdf_256x5_mesh_50000.pt
+Normalization parameters loaded
+Extracted 5 linear layers
+Model loaded with FMA quantization
+Generating 100 test samples...
+Quantizing input to E8M4...
+Running FMA-level quantized inference...
+WARNING: This will be VERY slow due to Python loops
+  Layer 0: torch.Size([100, 10]) -> torch.Size([100, 256])
+  Layer 1: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 2: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 3: torch.Size([100, 256]) -> torch.Size([100, 256])
+  Layer 4: torch.Size([100, 256]) -> torch.Size([100, 9])
+Calculating ground truth...
+
+--------------------------------------------------------------------------------
+NN inference time: 283.05 s (0.4 samples/s)
+
+Error Statistics (cm):
+  Mean:      82.57
+  Std:       32.32
+  Median:    82.45
+  Max:      186.98
+  95th:     136.58
+  99th:     157.79
+--------------------------------------------------------------------------------
+✓ Saved to: data_fma_E8M4.npz
+
+✓ Summary saved to: fma_quant_summary.npz
+
+================================================================================
+COMPARISON TABLE
+================================================================================
+Config     Exp   Mant  Mean       Max        Time (s)  
+--------------------------------------------------------------------------------
+FP32       8     23    32.49      107.60     79.7      
+BF16       8     7     53.85      133.35     284.1     
+E8M6       8     6     69.76      167.82     283.2     
+E8M5       8     5     77.90      183.43     283.6     
+E8M4       8     4     82.57      186.98     283.0     
+================================================================================
+
+To run with full 5000 samples, edit n_samples in the script.
+Expected time for 5000 samples: ~10-30 minutes per configuration
