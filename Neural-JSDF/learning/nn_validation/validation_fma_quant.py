@@ -26,6 +26,17 @@ from fk_num import *
 import time
 
 
+def fma_float(a, b, c):
+    """
+    Fused multiply-add using float64 for extended precision intermediate.
+    Equivalent to C's fma() function.
+    result = a * b + c (with extended precision for a*b)
+    """
+    # Use float64 for extended precision intermediate
+    result = np.float64(a) * np.float64(b) + np.float64(c)
+    return float(result)
+
+
 def quantize_float(tensor, exponent_bits, mantissa_bits):
     """
     Quantize tensor to specified exponent and mantissa bits
@@ -117,24 +128,30 @@ def fma_matmul_output_stationary(x, weight, bias, exponent_bits, mantissa_bits):
     for b in range(batch_size):
         for o in range(out_features):
             # Initialize accumulator for this output element
-            acc = torch.tensor(0.0, device=x.device)
+            acc = 0.0
 
             # FMA loop: accumulate input_i * weight_{o,i}
             for i in range(in_features):
-                # Multiply
-                mul_result = x_q[b, i] * weight_q[o, i]
+                # Use math.fma for hardware-accurate FMA (extended precision intermediate)
+                w_val = float(weight_q[o, i].item())
+                x_val = float(x_q[b, i].item())
 
-                # Add (FMA)
-                acc = acc + mul_result
+                # FMA: acc = w * x + acc (with extended precision intermediate)
+                acc = fma_float(w_val, x_val, acc)
 
                 # Quantize accumulator after each FMA
-                acc = quantize_float(acc, exponent_bits, mantissa_bits)
+                acc_tensor = torch.tensor(acc, device=x.device)
+                acc_tensor = quantize_float(acc_tensor, exponent_bits, mantissa_bits)
+                acc = float(acc_tensor.item())
 
             # Add bias
             if bias is not None:
                 bias_q = quantize_float(bias[o], exponent_bits, mantissa_bits)
-                acc = acc + bias_q
-                acc = quantize_float(acc, exponent_bits, mantissa_bits)
+                # Use fma for bias addition: acc = bias * 1.0 + acc
+                acc = fma_float(float(bias_q.item()), 1.0, acc)
+                acc_tensor = torch.tensor(acc, device=x.device)
+                acc_tensor = quantize_float(acc_tensor, exponent_bits, mantissa_bits)
+                acc = float(acc_tensor.item())
 
             output[b, o] = acc
 

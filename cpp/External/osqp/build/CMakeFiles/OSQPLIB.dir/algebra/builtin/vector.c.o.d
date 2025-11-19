@@ -60,22 +60,5 @@ CMakeFiles/OSQPLIB.dir/algebra/builtin/vector.c.o: \
  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
  /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/algebra_impl.h \
- /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/../_common/csc_math.h \
- /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/../flexfloat/include/flexfloat.h \
- /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/../flexfloat/include/flexfloat_config.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
- /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h /usr/include/stdio.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
- /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
- /usr/include/x86_64-linux-gnu/bits/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/stdio2.h /usr/include/fenv.h \
- /usr/include/x86_64-linux-gnu/bits/fenv.h
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/../_common/csc_math.h

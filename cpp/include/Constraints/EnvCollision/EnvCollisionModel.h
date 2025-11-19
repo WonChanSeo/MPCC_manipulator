@@ -9,21 +9,20 @@
 #include <fstream>
 #include <iomanip>
 #include <Eigen/Dense>
-#include <Eigen/src/Core/arch/Default/BFloat16.h>
 
 namespace mpcc
 {
-    // Type aliases for bfloat16 matrices and vectors
-    using MatrixXbf16 = Eigen::Matrix<Eigen::bfloat16, Eigen::Dynamic, Eigen::Dynamic>;
-    using VectorXbf16 = Eigen::Matrix<Eigen::bfloat16, Eigen::Dynamic, 1>;
+    // Type aliases for float matrices and vectors (FP32)
+    using MatrixXf32 = Eigen::MatrixXf;
+    using VectorXf32 = Eigen::VectorXf;
     class EnvCollNNmodel
     {
         struct MLP
         {
             ~MLP() { std::cout << "MLP terminate" << std::endl; }
-            // --- 신경망 파라미터 (bfloat16 precision) ---
-            std::vector<MatrixXbf16> weight;
-            std::vector<VectorXbf16> bias;
+            // --- 신경망 파라미터 (FP32 precision) ---
+            std::vector<MatrixXf32> weight;
+            std::vector<VectorXf32> bias;
             std::vector<std::string> w_path;
             std::vector<std::string> b_path;
             std::vector<std::ifstream> weight_files;
@@ -35,22 +34,24 @@ namespace mpcc
             Eigen::VectorXd n_hidden;
             int n_layer;
 
-            // --- 단일 추론(Single Inference)용 변수 (bfloat16 precision) ---
-            std::vector<VectorXbf16> hidden;
-            std::vector<MatrixXbf16> hidden_derivative;
-            VectorXbf16 input;
-            VectorXbf16 output;
-            MatrixXbf16 output_derivative;
+            // --- 단일 추론(Single Inference)용 변수 (FP32 precision) ---
+            std::vector<VectorXf32> hidden;
+            std::vector<MatrixXf32> hidden_derivative;
+            VectorXf32 input;
+            VectorXf32 output;
+            MatrixXf32 output_derivative;
 
             // --- NeRF 관련 ---
             bool is_nerf;
-            VectorXbf16 input_nerf;
+            VectorXf32 input_nerf;
 
-            // --- 배치 추론(Batch Inference)용 변수 (bfloat16 precision) ---
-            std::vector<MatrixXbf16> batch_hidden;
-            MatrixXbf16 batch_input;
-            MatrixXbf16 batch_input_nerf;
-            MatrixXbf16 batch_output;
+            // --- 배치 추론(Batch Inference)용 변수 (FP32 precision) ---
+            std::vector<MatrixXf32> batch_hidden;
+            MatrixXf32 batch_input;
+            MatrixXf32 batch_input_nerf;
+            MatrixXf32 batch_output;
+            std::vector<MatrixXf32> pre_activations;
+            std::vector<MatrixXf32> batch_jacobian;
 
             // ▼▼▼▼▼ 여기에 시간 저장을 위한 변수를 추가합니다. ▼▼▼▼▼
             std::vector<double> inference_times_ms;
@@ -103,23 +104,30 @@ namespace mpcc
             std::vector<double> getReluAvgDeactivatedCounts() const;
             std::vector<int> getReluMinDeactivatedCounts() const;
             std::vector<int> getReluMaxDeactivatedCounts() const;
+
+            // ▼▼▼▼▼ Input/Output logging functions ▼▼▼▼▼
+            void saveInputOutputLog(const std::string& filename, const Eigen::MatrixXd& inputs, const Eigen::MatrixXd& outputs) const;
+            void enableLogging(bool enable);
+            bool isLoggingEnabled() const;
+            Eigen::MatrixXd getBatchOutput() const;  // Get full batch output (before min selection)
         private:
             std::string file_path_;
             MLP mlp_;
+            bool logging_enabled_ = false;
 
             void readWeightFile(int weight_num);
             void readBiasFile(int bias_num);
             void loadNetwork();
             void initializeNetwork(int n_input, int n_output, Eigen::VectorXd n_hidden, bool is_nerf);
 
-            // ReLU는 private 멤버로 유지 (bfloat16 precision)
-            Eigen::bfloat16 ReLU(Eigen::bfloat16 input)
+            // ReLU는 private 멤버로 유지 (FP32 precision)
+            float ReLU(float input)
             {
-                return (input > Eigen::bfloat16(0)) ? input : Eigen::bfloat16(0);
+                return (input > 0.0f) ? input : 0.0f;
             }
-            Eigen::bfloat16 ReLU_derivative(Eigen::bfloat16 input)
+            float ReLU_derivative(float input)
             {
-                return (input > Eigen::bfloat16(0)) ? Eigen::bfloat16(1) : Eigen::bfloat16(0);
+                return (input > 0.0f) ? 1.0f : 0.0f;
             }
     };
 }

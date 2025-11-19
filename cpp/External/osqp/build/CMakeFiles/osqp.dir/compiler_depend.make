@@ -70,7 +70,6 @@ CMakeFiles/osqp.dir/src/osqp_api.c.o: ../src/osqp_api.c \
   ../include/public/osqp_api_types.h \
   ../include/private/glob_opts.h \
   ../include/private/algebra_vector.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h \
   ../include/public/osqp_api_constants.h \
   ../include/public/osqp_api_functions.h \
   ../include/private/util.h \
@@ -196,8 +195,6 @@ CMakeFiles/osqp.dir/src/osqp_api.c.o: ../src/osqp_api.c \
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
 ../include/private/util.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h:
 
 ../include/private/algebra_vector.h:
 

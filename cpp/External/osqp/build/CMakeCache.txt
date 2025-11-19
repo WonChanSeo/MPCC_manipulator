@@ -296,10 +296,7 @@ FETCHCONTENT_UPDATES_DISCONNECTED_QDLDL:BOOL=OFF
 FF_EXPONENT_BITS:STRING=8
 
 //FlexFloat mantissa bits
-FF_MANTISSA_BITS:STRING=20
-
-//Path to FlexFloat library
-FLEXFLOAT_DIR:PATH=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/../flexfloat
+FF_MANTISSA_BITS:STRING=23
 
 //The Algebra to use (builtin/mkl/cuda)
 OSQP_ALGEBRA_BACKEND:STRING=builtin
@@ -347,7 +344,7 @@ OSQP_PACK_SETTINGS:BOOL=OFF
 OSQP_PROFILER_ANNOTATIONS:STRING=OFF
 
 //Enable FlexFloat precision control
-OSQP_USE_FLEXFLOAT:BOOL=ON
+OSQP_USE_FLEXFLOAT:BOOL=OFF
 
 //Use floats instead of doubles
 OSQP_USE_FLOAT:BOOL=ON
@@ -383,7 +380,7 @@ QDLDL_FLOAT:BOOL=ON
 QDLDL_LONG:BOOL=ON
 
 //Use FlexFloat for custom precision arithmetic
-QDLDL_USE_FLEXFLOAT:BOOL=ON
+QDLDL_USE_FLEXFLOAT:BOOL=OFF
 
 //Value Computed by CMake
 osqp_BINARY_DIR:STATIC=/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build

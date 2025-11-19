@@ -19,6 +19,9 @@ if(NN_USE_FLEXFLOAT)
   add_definitions(-DNN_USE_FLEXFLOAT)
   add_definitions(-DNN_FF_exponent_bits=${NN_FF_EXPONENT_BITS})
   add_definitions(-DNN_FF_mantissa_bits=${NN_FF_MANTISSA_BITS})
+  # Disable rounding to use truncation (match Python behavior)
+  add_definitions(-DFLEXFLOAT_NO_ROUNDING)
+  message(STATUS "  FlexFloat rounding: DISABLED (truncation mode)")
 endif()
 
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/External/Eigen/cmake")
@@ -132,11 +135,35 @@ include_directories(
 )
 
 add_library(MPCC_WRAPPER SHARED src/MPCC_wrapper.cpp)
-target_link_libraries(MPCC_WRAPPER 
-        ${Boost_LIBRARIES} 
-        ${PYTHON_LIBRARIES} 
+target_link_libraries(MPCC_WRAPPER
+        ${Boost_LIBRARIES}
+        ${PYTHON_LIBRARIES}
         eigenpy::eigenpy
-        Eigen3::Eigen 
+        Eigen3::Eigen
         MPCC_LIB
 )
 set_target_properties(MPCC_WRAPPER PROPERTIES PREFIX "")
+
+# Add validation test executable with minimal dependencies
+# Create a minimal library for validation (only EnvCollisionModel)
+add_library(VALIDATION_LIB STATIC
+    src/Constraints/EnvCollision/EnvCollisionModel.cpp
+)
+target_include_directories(VALIDATION_LIB PUBLIC include)
+target_link_libraries(VALIDATION_LIB PUBLIC
+    Eigen3::Eigen
+    OpenMP::OpenMP_CXX
+)
+
+# Link FlexFloat if enabled
+if(NN_USE_FLEXFLOAT)
+    target_sources(VALIDATION_LIB PRIVATE
+        External/flexfloat/src/flexfloat.c
+    )
+endif()
+
+add_executable(test_validation_inference test_validation_inference.cpp)
+target_link_libraries(test_validation_inference PRIVATE VALIDATION_LIB)
+set_target_properties(test_validation_inference PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+)
