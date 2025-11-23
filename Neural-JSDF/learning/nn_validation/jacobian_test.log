@@ -1,0 +1,646 @@
+Output directory: /home/mms-wonchan/git/MPCC_manipulator/Neural-JSDF/learning/nn_validation/jacobian_precision_results
+
+================================================================================
+JACOBIAN PRECISION TEST
+Testing 5 configurations with 9900 samples
+================================================================================
+
+============================================================
+Building with E8M23 precision...
+============================================================
+Build successful!
+
+Testing E8M23 (FP32) with 9900 samples...
+Progress: 1/9900 samples (0.0%) - 3.94 samples/s - ETA: 41.9 min
+Progress: 100/9900 samples (1.0%) - 3.87 samples/s - ETA: 42.3 min
+Progress: 200/9900 samples (2.0%) - 3.86 samples/s - ETA: 41.9 min
+Progress: 300/9900 samples (3.0%) - 3.87 samples/s - ETA: 41.3 min
+Progress: 400/9900 samples (4.0%) - 3.87 samples/s - ETA: 40.9 min
+Progress: 500/9900 samples (5.1%) - 3.87 samples/s - ETA: 40.5 min
+Progress: 600/9900 samples (6.1%) - 3.87 samples/s - ETA: 40.0 min
+Progress: 700/9900 samples (7.1%) - 3.88 samples/s - ETA: 39.5 min
+Progress: 800/9900 samples (8.1%) - 3.89 samples/s - ETA: 39.0 min
+Progress: 900/9900 samples (9.1%) - 3.89 samples/s - ETA: 38.5 min
+Progress: 1000/9900 samples (10.1%) - 3.89 samples/s - ETA: 38.1 min
+Progress: 1100/9900 samples (11.1%) - 3.90 samples/s - ETA: 37.6 min
+Progress: 1200/9900 samples (12.1%) - 3.90 samples/s - ETA: 37.1 min
+Progress: 1300/9900 samples (13.1%) - 3.91 samples/s - ETA: 36.7 min
+Progress: 1400/9900 samples (14.1%) - 3.91 samples/s - ETA: 36.2 min
+Progress: 1500/9900 samples (15.2%) - 3.91 samples/s - ETA: 35.8 min
+Progress: 1600/9900 samples (16.2%) - 3.91 samples/s - ETA: 35.4 min
+Progress: 1700/9900 samples (17.2%) - 3.91 samples/s - ETA: 34.9 min
+Progress: 1800/9900 samples (18.2%) - 3.92 samples/s - ETA: 34.5 min
+Progress: 1900/9900 samples (19.2%) - 3.92 samples/s - ETA: 34.0 min
+Progress: 2000/9900 samples (20.2%) - 3.92 samples/s - ETA: 33.6 min
+Progress: 2100/9900 samples (21.2%) - 3.92 samples/s - ETA: 33.1 min
+Progress: 2200/9900 samples (22.2%) - 3.92 samples/s - ETA: 32.7 min
+Progress: 2300/9900 samples (23.2%) - 3.92 samples/s - ETA: 32.3 min
+Progress: 2400/9900 samples (24.2%) - 3.93 samples/s - ETA: 31.8 min
+Progress: 2500/9900 samples (25.3%) - 3.93 samples/s - ETA: 31.4 min
+Progress: 2600/9900 samples (26.3%) - 3.93 samples/s - ETA: 31.0 min
+Progress: 2700/9900 samples (27.3%) - 3.93 samples/s - ETA: 30.6 min
+Progress: 2800/9900 samples (28.3%) - 3.93 samples/s - ETA: 30.1 min
+Progress: 2900/9900 samples (29.3%) - 3.93 samples/s - ETA: 29.7 min
+Progress: 3000/9900 samples (30.3%) - 3.93 samples/s - ETA: 29.3 min
+Progress: 3100/9900 samples (31.3%) - 3.93 samples/s - ETA: 28.9 min
+Progress: 3200/9900 samples (32.3%) - 3.93 samples/s - ETA: 28.4 min
+Progress: 3300/9900 samples (33.3%) - 3.92 samples/s - ETA: 28.0 min
+Progress: 3400/9900 samples (34.3%) - 3.92 samples/s - ETA: 27.6 min
+Progress: 3500/9900 samples (35.4%) - 3.92 samples/s - ETA: 27.2 min
+Progress: 3600/9900 samples (36.4%) - 3.92 samples/s - ETA: 26.8 min
+Progress: 3700/9900 samples (37.4%) - 3.92 samples/s - ETA: 26.4 min
+Progress: 3800/9900 samples (38.4%) - 3.92 samples/s - ETA: 25.9 min
+Progress: 3900/9900 samples (39.4%) - 3.92 samples/s - ETA: 25.5 min
+Progress: 4000/9900 samples (40.4%) - 3.91 samples/s - ETA: 25.1 min
+Progress: 4100/9900 samples (41.4%) - 3.91 samples/s - ETA: 24.7 min
+Progress: 4200/9900 samples (42.4%) - 3.91 samples/s - ETA: 24.3 min
+Progress: 4300/9900 samples (43.4%) - 3.91 samples/s - ETA: 23.9 min
+Progress: 4400/9900 samples (44.4%) - 3.91 samples/s - ETA: 23.4 min
+Progress: 4500/9900 samples (45.5%) - 3.91 samples/s - ETA: 23.0 min
+Progress: 4600/9900 samples (46.5%) - 3.91 samples/s - ETA: 22.6 min
+Progress: 4700/9900 samples (47.5%) - 3.91 samples/s - ETA: 22.2 min
+Progress: 4800/9900 samples (48.5%) - 3.91 samples/s - ETA: 21.7 min
+Progress: 4900/9900 samples (49.5%) - 3.91 samples/s - ETA: 21.3 min
+Progress: 5000/9900 samples (50.5%) - 3.91 samples/s - ETA: 20.9 min
+Progress: 5100/9900 samples (51.5%) - 3.91 samples/s - ETA: 20.5 min
+Progress: 5200/9900 samples (52.5%) - 3.91 samples/s - ETA: 20.0 min
+Progress: 5300/9900 samples (53.5%) - 3.91 samples/s - ETA: 19.6 min
+Progress: 5400/9900 samples (54.5%) - 3.91 samples/s - ETA: 19.2 min
+Progress: 5500/9900 samples (55.6%) - 3.91 samples/s - ETA: 18.8 min
+Progress: 5600/9900 samples (56.6%) - 3.91 samples/s - ETA: 18.3 min
+Progress: 5700/9900 samples (57.6%) - 3.91 samples/s - ETA: 17.9 min
+Progress: 5800/9900 samples (58.6%) - 3.90 samples/s - ETA: 17.5 min
+Progress: 5900/9900 samples (59.6%) - 3.90 samples/s - ETA: 17.1 min
+Progress: 6000/9900 samples (60.6%) - 3.90 samples/s - ETA: 16.6 min
+Progress: 6100/9900 samples (61.6%) - 3.90 samples/s - ETA: 16.2 min
+Progress: 6200/9900 samples (62.6%) - 3.90 samples/s - ETA: 15.8 min
+Progress: 6300/9900 samples (63.6%) - 3.90 samples/s - ETA: 15.4 min
+Progress: 6400/9900 samples (64.6%) - 3.90 samples/s - ETA: 14.9 min
+Progress: 6500/9900 samples (65.7%) - 3.90 samples/s - ETA: 14.5 min
+Progress: 6600/9900 samples (66.7%) - 3.90 samples/s - ETA: 14.1 min
+Progress: 6700/9900 samples (67.7%) - 3.90 samples/s - ETA: 13.7 min
+Progress: 6800/9900 samples (68.7%) - 3.90 samples/s - ETA: 13.2 min
+Progress: 6900/9900 samples (69.7%) - 3.90 samples/s - ETA: 12.8 min
+Progress: 7000/9900 samples (70.7%) - 3.90 samples/s - ETA: 12.4 min
+Progress: 7100/9900 samples (71.7%) - 3.90 samples/s - ETA: 12.0 min
+Progress: 7200/9900 samples (72.7%) - 3.90 samples/s - ETA: 11.5 min
+Progress: 7300/9900 samples (73.7%) - 3.90 samples/s - ETA: 11.1 min
+Progress: 7400/9900 samples (74.7%) - 3.90 samples/s - ETA: 10.7 min
+Progress: 7500/9900 samples (75.8%) - 3.90 samples/s - ETA: 10.3 min
+Progress: 7600/9900 samples (76.8%) - 3.90 samples/s - ETA: 9.8 min
+Progress: 7700/9900 samples (77.8%) - 3.90 samples/s - ETA: 9.4 min
+Progress: 7800/9900 samples (78.8%) - 3.90 samples/s - ETA: 9.0 min
+Progress: 7900/9900 samples (79.8%) - 3.90 samples/s - ETA: 8.6 min
+Progress: 8000/9900 samples (80.8%) - 3.90 samples/s - ETA: 8.1 min
+Progress: 8100/9900 samples (81.8%) - 3.90 samples/s - ETA: 7.7 min
+Progress: 8200/9900 samples (82.8%) - 3.90 samples/s - ETA: 7.3 min
+Progress: 8300/9900 samples (83.8%) - 3.90 samples/s - ETA: 6.8 min
+Progress: 8400/9900 samples (84.8%) - 3.90 samples/s - ETA: 6.4 min
+Progress: 8500/9900 samples (85.9%) - 3.90 samples/s - ETA: 6.0 min
+Progress: 8600/9900 samples (86.9%) - 3.90 samples/s - ETA: 5.6 min
+Progress: 8700/9900 samples (87.9%) - 3.90 samples/s - ETA: 5.1 min
+Progress: 8800/9900 samples (88.9%) - 3.89 samples/s - ETA: 4.7 min
+Progress: 8900/9900 samples (89.9%) - 3.89 samples/s - ETA: 4.3 min
+Progress: 9000/9900 samples (90.9%) - 3.89 samples/s - ETA: 3.9 min
+Progress: 9100/9900 samples (91.9%) - 3.89 samples/s - ETA: 3.4 min
+Progress: 9200/9900 samples (92.9%) - 3.89 samples/s - ETA: 3.0 min
+Progress: 9300/9900 samples (93.9%) - 3.89 samples/s - ETA: 2.6 min
+Progress: 9400/9900 samples (94.9%) - 3.89 samples/s - ETA: 2.1 min
+Progress: 9500/9900 samples (96.0%) - 3.89 samples/s - ETA: 1.7 min
+Progress: 9600/9900 samples (97.0%) - 3.89 samples/s - ETA: 1.3 min
+Progress: 9700/9900 samples (98.0%) - 3.89 samples/s - ETA: 0.9 min
+Progress: 9800/9900 samples (99.0%) - 3.89 samples/s - ETA: 0.4 min
+Progress: 9900/9900 samples (100.0%) - 3.89 samples/s - ETA: 0.0 min
+Collected 9900 Jacobians
+Jacobian shape: (9900, 9, 10)
+Inference time: 2544.651s
+NN model terminate
+MLP terminate
+  Saved results to: /home/mms-wonchan/git/MPCC_manipulator/Neural-JSDF/learning/nn_validation/jacobian_precision_results/jacobian_E8M23.npz
+
+============================================================
+Building with E8M7 precision...
+============================================================
+Build successful!
+
+Testing E8M7 (BF16) with 9900 samples...
+Progress: 1/9900 samples (0.0%) - 3.82 samples/s - ETA: 43.2 min
+Progress: 100/9900 samples (1.0%) - 3.84 samples/s - ETA: 42.6 min
+Progress: 200/9900 samples (2.0%) - 3.82 samples/s - ETA: 42.4 min
+Progress: 300/9900 samples (3.0%) - 3.81 samples/s - ETA: 42.0 min
+Progress: 400/9900 samples (4.0%) - 3.82 samples/s - ETA: 41.4 min
+Progress: 500/9900 samples (5.1%) - 3.82 samples/s - ETA: 41.0 min
+Progress: 600/9900 samples (6.1%) - 3.83 samples/s - ETA: 40.5 min
+Progress: 700/9900 samples (7.1%) - 3.82 samples/s - ETA: 40.1 min
+Progress: 800/9900 samples (8.1%) - 3.83 samples/s - ETA: 39.6 min
+Progress: 900/9900 samples (9.1%) - 3.83 samples/s - ETA: 39.1 min
+Progress: 1000/9900 samples (10.1%) - 3.84 samples/s - ETA: 38.6 min
+Progress: 1100/9900 samples (11.1%) - 3.84 samples/s - ETA: 38.2 min
+Progress: 1200/9900 samples (12.1%) - 3.84 samples/s - ETA: 37.7 min
+Progress: 1300/9900 samples (13.1%) - 3.85 samples/s - ETA: 37.3 min
+Progress: 1400/9900 samples (14.1%) - 3.85 samples/s - ETA: 36.8 min
+Progress: 1500/9900 samples (15.2%) - 3.85 samples/s - ETA: 36.4 min
+Progress: 1600/9900 samples (16.2%) - 3.85 samples/s - ETA: 36.0 min
+Progress: 1700/9900 samples (17.2%) - 3.85 samples/s - ETA: 35.5 min
+Progress: 1800/9900 samples (18.2%) - 3.85 samples/s - ETA: 35.1 min
+Progress: 1900/9900 samples (19.2%) - 3.85 samples/s - ETA: 34.6 min
+Progress: 2000/9900 samples (20.2%) - 3.85 samples/s - ETA: 34.2 min
+Progress: 2100/9900 samples (21.2%) - 3.85 samples/s - ETA: 33.7 min
+Progress: 2200/9900 samples (22.2%) - 3.86 samples/s - ETA: 33.3 min
+Progress: 2300/9900 samples (23.2%) - 3.86 samples/s - ETA: 32.8 min
+Progress: 2400/9900 samples (24.2%) - 3.86 samples/s - ETA: 32.4 min
+Progress: 2500/9900 samples (25.3%) - 3.86 samples/s - ETA: 31.9 min
+Progress: 2600/9900 samples (26.3%) - 3.87 samples/s - ETA: 31.5 min
+Progress: 2700/9900 samples (27.3%) - 3.87 samples/s - ETA: 31.0 min
+Progress: 2800/9900 samples (28.3%) - 3.87 samples/s - ETA: 30.6 min
+Progress: 2900/9900 samples (29.3%) - 3.87 samples/s - ETA: 30.2 min
+Progress: 3000/9900 samples (30.3%) - 3.87 samples/s - ETA: 29.7 min
+Progress: 3100/9900 samples (31.3%) - 3.87 samples/s - ETA: 29.3 min
+Progress: 3200/9900 samples (32.3%) - 3.87 samples/s - ETA: 28.8 min
+Progress: 3300/9900 samples (33.3%) - 3.88 samples/s - ETA: 28.4 min
+Progress: 3400/9900 samples (34.3%) - 3.88 samples/s - ETA: 28.0 min
+Progress: 3500/9900 samples (35.4%) - 3.88 samples/s - ETA: 27.5 min
+Progress: 3600/9900 samples (36.4%) - 3.88 samples/s - ETA: 27.1 min
+Progress: 3700/9900 samples (37.4%) - 3.88 samples/s - ETA: 26.6 min
+Progress: 3800/9900 samples (38.4%) - 3.88 samples/s - ETA: 26.2 min
+Progress: 3900/9900 samples (39.4%) - 3.88 samples/s - ETA: 25.8 min
+Progress: 4000/9900 samples (40.4%) - 3.88 samples/s - ETA: 25.3 min
+Progress: 4100/9900 samples (41.4%) - 3.88 samples/s - ETA: 24.9 min
+Progress: 4200/9900 samples (42.4%) - 3.88 samples/s - ETA: 24.5 min
+Progress: 4300/9900 samples (43.4%) - 3.88 samples/s - ETA: 24.0 min
+Progress: 4400/9900 samples (44.4%) - 3.88 samples/s - ETA: 23.6 min
+Progress: 4500/9900 samples (45.5%) - 3.88 samples/s - ETA: 23.2 min
+Progress: 4600/9900 samples (46.5%) - 3.89 samples/s - ETA: 22.7 min
+Progress: 4700/9900 samples (47.5%) - 3.89 samples/s - ETA: 22.3 min
+Progress: 4800/9900 samples (48.5%) - 3.89 samples/s - ETA: 21.9 min
+Progress: 4900/9900 samples (49.5%) - 3.89 samples/s - ETA: 21.4 min
+Progress: 5000/9900 samples (50.5%) - 3.89 samples/s - ETA: 21.0 min
+Progress: 5100/9900 samples (51.5%) - 3.89 samples/s - ETA: 20.6 min
+Progress: 5200/9900 samples (52.5%) - 3.89 samples/s - ETA: 20.1 min
+Progress: 5300/9900 samples (53.5%) - 3.89 samples/s - ETA: 19.7 min
+Progress: 5400/9900 samples (54.5%) - 3.89 samples/s - ETA: 19.3 min
+Progress: 5500/9900 samples (55.6%) - 3.89 samples/s - ETA: 18.8 min
+Progress: 5600/9900 samples (56.6%) - 3.89 samples/s - ETA: 18.4 min
+Progress: 5700/9900 samples (57.6%) - 3.89 samples/s - ETA: 18.0 min
+Progress: 5800/9900 samples (58.6%) - 3.89 samples/s - ETA: 17.6 min
+Progress: 5900/9900 samples (59.6%) - 3.89 samples/s - ETA: 17.1 min
+Progress: 6000/9900 samples (60.6%) - 3.89 samples/s - ETA: 16.7 min
+Progress: 6100/9900 samples (61.6%) - 3.89 samples/s - ETA: 16.3 min
+Progress: 6200/9900 samples (62.6%) - 3.89 samples/s - ETA: 15.8 min
+Progress: 6300/9900 samples (63.6%) - 3.89 samples/s - ETA: 15.4 min
+Progress: 6400/9900 samples (64.6%) - 3.89 samples/s - ETA: 15.0 min
+Progress: 6500/9900 samples (65.7%) - 3.89 samples/s - ETA: 14.6 min
+Progress: 6600/9900 samples (66.7%) - 3.89 samples/s - ETA: 14.1 min
+Progress: 6700/9900 samples (67.7%) - 3.89 samples/s - ETA: 13.7 min
+Progress: 6800/9900 samples (68.7%) - 3.89 samples/s - ETA: 13.3 min
+Progress: 6900/9900 samples (69.7%) - 3.90 samples/s - ETA: 12.8 min
+Progress: 7000/9900 samples (70.7%) - 3.90 samples/s - ETA: 12.4 min
+Progress: 7100/9900 samples (71.7%) - 3.90 samples/s - ETA: 12.0 min
+Progress: 7200/9900 samples (72.7%) - 3.90 samples/s - ETA: 11.6 min
+Progress: 7300/9900 samples (73.7%) - 3.90 samples/s - ETA: 11.1 min
+Progress: 7400/9900 samples (74.7%) - 3.89 samples/s - ETA: 10.7 min
+Progress: 7500/9900 samples (75.8%) - 3.90 samples/s - ETA: 10.3 min
+Progress: 7600/9900 samples (76.8%) - 3.90 samples/s - ETA: 9.8 min
+Progress: 7700/9900 samples (77.8%) - 3.90 samples/s - ETA: 9.4 min
+Progress: 7800/9900 samples (78.8%) - 3.90 samples/s - ETA: 9.0 min
+Progress: 7900/9900 samples (79.8%) - 3.90 samples/s - ETA: 8.6 min
+Progress: 8000/9900 samples (80.8%) - 3.90 samples/s - ETA: 8.1 min
+Progress: 8100/9900 samples (81.8%) - 3.90 samples/s - ETA: 7.7 min
+Progress: 8200/9900 samples (82.8%) - 3.90 samples/s - ETA: 7.3 min
+Progress: 8300/9900 samples (83.8%) - 3.90 samples/s - ETA: 6.8 min
+Progress: 8400/9900 samples (84.8%) - 3.90 samples/s - ETA: 6.4 min
+Progress: 8500/9900 samples (85.9%) - 3.90 samples/s - ETA: 6.0 min
+Progress: 8600/9900 samples (86.9%) - 3.90 samples/s - ETA: 5.6 min
+Progress: 8700/9900 samples (87.9%) - 3.90 samples/s - ETA: 5.1 min
+Progress: 8800/9900 samples (88.9%) - 3.90 samples/s - ETA: 4.7 min
+Progress: 8900/9900 samples (89.9%) - 3.90 samples/s - ETA: 4.3 min
+Progress: 9000/9900 samples (90.9%) - 3.90 samples/s - ETA: 3.9 min
+Progress: 9100/9900 samples (91.9%) - 3.89 samples/s - ETA: 3.4 min
+Progress: 9200/9900 samples (92.9%) - 3.89 samples/s - ETA: 3.0 min
+Progress: 9300/9900 samples (93.9%) - 3.89 samples/s - ETA: 2.6 min
+Progress: 9400/9900 samples (94.9%) - 3.89 samples/s - ETA: 2.1 min
+Progress: 9500/9900 samples (96.0%) - 3.89 samples/s - ETA: 1.7 min
+Progress: 9600/9900 samples (97.0%) - 3.89 samples/s - ETA: 1.3 min
+Progress: 9700/9900 samples (98.0%) - 3.89 samples/s - ETA: 0.9 min
+Progress: 9800/9900 samples (99.0%) - 3.89 samples/s - ETA: 0.4 min
+Progress: 9900/9900 samples (100.0%) - 3.89 samples/s - ETA: 0.0 min
+Collected 9900 Jacobians
+Jacobian shape: (9900, 9, 10)
+Inference time: 2544.846s
+NN model terminate
+MLP terminate
+  Saved results to: /home/mms-wonchan/git/MPCC_manipulator/Neural-JSDF/learning/nn_validation/jacobian_precision_results/jacobian_E8M7.npz
+
+============================================================
+Building with E8M6 precision...
+============================================================
+Build successful!
+
+Testing E8M6 (E8M6) with 9900 samples...
+Progress: 1/9900 samples (0.0%) - 3.81 samples/s - ETA: 43.3 min
+Progress: 100/9900 samples (1.0%) - 3.79 samples/s - ETA: 43.1 min
+Progress: 200/9900 samples (2.0%) - 3.80 samples/s - ETA: 42.5 min
+Progress: 300/9900 samples (3.0%) - 3.81 samples/s - ETA: 42.0 min
+Progress: 400/9900 samples (4.0%) - 3.80 samples/s - ETA: 41.6 min
+Progress: 500/9900 samples (5.1%) - 3.80 samples/s - ETA: 41.2 min
+Progress: 600/9900 samples (6.1%) - 3.80 samples/s - ETA: 40.8 min
+Progress: 700/9900 samples (7.1%) - 3.79 samples/s - ETA: 40.4 min
+Progress: 800/9900 samples (8.1%) - 3.80 samples/s - ETA: 40.0 min
+Progress: 900/9900 samples (9.1%) - 3.79 samples/s - ETA: 39.6 min
+Progress: 1000/9900 samples (10.1%) - 3.79 samples/s - ETA: 39.1 min
+Progress: 1100/9900 samples (11.1%) - 3.79 samples/s - ETA: 38.7 min
+Progress: 1200/9900 samples (12.1%) - 3.79 samples/s - ETA: 38.3 min
+Progress: 1300/9900 samples (13.1%) - 3.79 samples/s - ETA: 37.8 min
+Progress: 1400/9900 samples (14.1%) - 3.79 samples/s - ETA: 37.3 min
+Progress: 1500/9900 samples (15.2%) - 3.80 samples/s - ETA: 36.9 min
+Progress: 1600/9900 samples (16.2%) - 3.80 samples/s - ETA: 36.4 min
+Progress: 1700/9900 samples (17.2%) - 3.80 samples/s - ETA: 36.0 min
+Progress: 1800/9900 samples (18.2%) - 3.80 samples/s - ETA: 35.5 min
+Progress: 1900/9900 samples (19.2%) - 3.80 samples/s - ETA: 35.1 min
+Progress: 2000/9900 samples (20.2%) - 3.80 samples/s - ETA: 34.6 min
+Progress: 2100/9900 samples (21.2%) - 3.80 samples/s - ETA: 34.2 min
+Progress: 2200/9900 samples (22.2%) - 3.80 samples/s - ETA: 33.7 min
+Progress: 2300/9900 samples (23.2%) - 3.80 samples/s - ETA: 33.3 min
+Progress: 2400/9900 samples (24.2%) - 3.81 samples/s - ETA: 32.8 min
+Progress: 2500/9900 samples (25.3%) - 3.81 samples/s - ETA: 32.4 min
+Progress: 2600/9900 samples (26.3%) - 3.81 samples/s - ETA: 31.9 min
+Progress: 2700/9900 samples (27.3%) - 3.81 samples/s - ETA: 31.5 min
+Progress: 2800/9900 samples (28.3%) - 3.81 samples/s - ETA: 31.1 min
+Progress: 2900/9900 samples (29.3%) - 3.81 samples/s - ETA: 30.6 min
+Progress: 3000/9900 samples (30.3%) - 3.81 samples/s - ETA: 30.2 min
+Progress: 3100/9900 samples (31.3%) - 3.81 samples/s - ETA: 29.7 min
+Progress: 3200/9900 samples (32.3%) - 3.81 samples/s - ETA: 29.3 min
+Progress: 3300/9900 samples (33.3%) - 3.81 samples/s - ETA: 28.8 min
+Progress: 3400/9900 samples (34.3%) - 3.81 samples/s - ETA: 28.4 min
+Progress: 3500/9900 samples (35.4%) - 3.81 samples/s - ETA: 28.0 min
+Progress: 3600/9900 samples (36.4%) - 3.81 samples/s - ETA: 27.5 min
+Progress: 3700/9900 samples (37.4%) - 3.81 samples/s - ETA: 27.1 min
+Progress: 3800/9900 samples (38.4%) - 3.81 samples/s - ETA: 26.7 min
+Progress: 3900/9900 samples (39.4%) - 3.81 samples/s - ETA: 26.2 min
+Progress: 4000/9900 samples (40.4%) - 3.81 samples/s - ETA: 25.8 min
+Progress: 4100/9900 samples (41.4%) - 3.82 samples/s - ETA: 25.3 min
+Progress: 4200/9900 samples (42.4%) - 3.82 samples/s - ETA: 24.9 min
+Progress: 4300/9900 samples (43.4%) - 3.82 samples/s - ETA: 24.5 min
+Progress: 4400/9900 samples (44.4%) - 3.82 samples/s - ETA: 24.0 min
+Progress: 4500/9900 samples (45.5%) - 3.82 samples/s - ETA: 23.6 min
+Progress: 4600/9900 samples (46.5%) - 3.82 samples/s - ETA: 23.2 min
+Progress: 4700/9900 samples (47.5%) - 3.82 samples/s - ETA: 22.7 min
+Progress: 4800/9900 samples (48.5%) - 3.82 samples/s - ETA: 22.3 min
+Progress: 4900/9900 samples (49.5%) - 3.82 samples/s - ETA: 21.8 min
+Progress: 5000/9900 samples (50.5%) - 3.82 samples/s - ETA: 21.4 min
+Progress: 5100/9900 samples (51.5%) - 3.82 samples/s - ETA: 21.0 min
+Progress: 5200/9900 samples (52.5%) - 3.82 samples/s - ETA: 20.5 min
+Progress: 5300/9900 samples (53.5%) - 3.82 samples/s - ETA: 20.1 min
+Progress: 5400/9900 samples (54.5%) - 3.82 samples/s - ETA: 19.6 min
+Progress: 5500/9900 samples (55.6%) - 3.82 samples/s - ETA: 19.2 min
+Progress: 5600/9900 samples (56.6%) - 3.82 samples/s - ETA: 18.8 min
+Progress: 5700/9900 samples (57.6%) - 3.82 samples/s - ETA: 18.3 min
+Progress: 5800/9900 samples (58.6%) - 3.82 samples/s - ETA: 17.9 min
+Progress: 5900/9900 samples (59.6%) - 3.82 samples/s - ETA: 17.4 min
+Progress: 6000/9900 samples (60.6%) - 3.82 samples/s - ETA: 17.0 min
+Progress: 6100/9900 samples (61.6%) - 3.83 samples/s - ETA: 16.6 min
+Progress: 6200/9900 samples (62.6%) - 3.83 samples/s - ETA: 16.1 min
+Progress: 6300/9900 samples (63.6%) - 3.83 samples/s - ETA: 15.7 min
+Progress: 6400/9900 samples (64.6%) - 3.83 samples/s - ETA: 15.2 min
+Progress: 6500/9900 samples (65.7%) - 3.83 samples/s - ETA: 14.8 min
+Progress: 6600/9900 samples (66.7%) - 3.83 samples/s - ETA: 14.4 min
+Progress: 6700/9900 samples (67.7%) - 3.83 samples/s - ETA: 13.9 min
+Progress: 6800/9900 samples (68.7%) - 3.83 samples/s - ETA: 13.5 min
+Progress: 6900/9900 samples (69.7%) - 3.83 samples/s - ETA: 13.1 min
+Progress: 7000/9900 samples (70.7%) - 3.83 samples/s - ETA: 12.6 min
+Progress: 7100/9900 samples (71.7%) - 3.83 samples/s - ETA: 12.2 min
+Progress: 7200/9900 samples (72.7%) - 3.83 samples/s - ETA: 11.7 min
+Progress: 7300/9900 samples (73.7%) - 3.83 samples/s - ETA: 11.3 min
+Progress: 7400/9900 samples (74.7%) - 3.83 samples/s - ETA: 10.9 min
+Progress: 7500/9900 samples (75.8%) - 3.83 samples/s - ETA: 10.4 min
+Progress: 7600/9900 samples (76.8%) - 3.83 samples/s - ETA: 10.0 min
+Progress: 7700/9900 samples (77.8%) - 3.83 samples/s - ETA: 9.6 min
+Progress: 7800/9900 samples (78.8%) - 3.83 samples/s - ETA: 9.1 min
+Progress: 7900/9900 samples (79.8%) - 3.84 samples/s - ETA: 8.7 min
+Progress: 8000/9900 samples (80.8%) - 3.84 samples/s - ETA: 8.3 min
+Progress: 8100/9900 samples (81.8%) - 3.84 samples/s - ETA: 7.8 min
+Progress: 8200/9900 samples (82.8%) - 3.84 samples/s - ETA: 7.4 min
+Progress: 8300/9900 samples (83.8%) - 3.84 samples/s - ETA: 6.9 min
+Progress: 8400/9900 samples (84.8%) - 3.84 samples/s - ETA: 6.5 min
+Progress: 8500/9900 samples (85.9%) - 3.84 samples/s - ETA: 6.1 min
+Progress: 8600/9900 samples (86.9%) - 3.84 samples/s - ETA: 5.6 min
+Progress: 8700/9900 samples (87.9%) - 3.84 samples/s - ETA: 5.2 min
+Progress: 8800/9900 samples (88.9%) - 3.84 samples/s - ETA: 4.8 min
+Progress: 8900/9900 samples (89.9%) - 3.84 samples/s - ETA: 4.3 min
+Progress: 9000/9900 samples (90.9%) - 3.84 samples/s - ETA: 3.9 min
+Progress: 9100/9900 samples (91.9%) - 3.84 samples/s - ETA: 3.5 min
+Progress: 9200/9900 samples (92.9%) - 3.84 samples/s - ETA: 3.0 min
+Progress: 9300/9900 samples (93.9%) - 3.84 samples/s - ETA: 2.6 min
+Progress: 9400/9900 samples (94.9%) - 3.84 samples/s - ETA: 2.2 min
+Progress: 9500/9900 samples (96.0%) - 3.84 samples/s - ETA: 1.7 min
+Progress: 9600/9900 samples (97.0%) - 3.84 samples/s - ETA: 1.3 min
+Progress: 9700/9900 samples (98.0%) - 3.84 samples/s - ETA: 0.9 min
+Progress: 9800/9900 samples (99.0%) - 3.84 samples/s - ETA: 0.4 min
+Progress: 9900/9900 samples (100.0%) - 3.84 samples/s - ETA: 0.0 min
+Collected 9900 Jacobians
+Jacobian shape: (9900, 9, 10)
+Inference time: 2575.685s
+NN model terminate
+MLP terminate
+  Saved results to: /home/mms-wonchan/git/MPCC_manipulator/Neural-JSDF/learning/nn_validation/jacobian_precision_results/jacobian_E8M6.npz
+
+============================================================
+Building with E8M5 precision...
+============================================================
+Build successful!
+
+Testing E8M5 (E8M5) with 9900 samples...
+Progress: 1/9900 samples (0.0%) - 3.79 samples/s - ETA: 43.5 min
+Progress: 100/9900 samples (1.0%) - 3.86 samples/s - ETA: 42.3 min
+Progress: 200/9900 samples (2.0%) - 3.87 samples/s - ETA: 41.7 min
+Progress: 300/9900 samples (3.0%) - 3.87 samples/s - ETA: 41.3 min
+Progress: 400/9900 samples (4.0%) - 3.87 samples/s - ETA: 41.0 min
+Progress: 500/9900 samples (5.1%) - 3.87 samples/s - ETA: 40.5 min
+Progress: 600/9900 samples (6.1%) - 3.87 samples/s - ETA: 40.1 min
+Progress: 700/9900 samples (7.1%) - 3.87 samples/s - ETA: 39.6 min
+Progress: 800/9900 samples (8.1%) - 3.87 samples/s - ETA: 39.2 min
+Progress: 900/9900 samples (9.1%) - 3.87 samples/s - ETA: 38.8 min
+Progress: 1000/9900 samples (10.1%) - 3.87 samples/s - ETA: 38.3 min
+Progress: 1100/9900 samples (11.1%) - 3.87 samples/s - ETA: 37.9 min
+Progress: 1200/9900 samples (12.1%) - 3.87 samples/s - ETA: 37.5 min
+Progress: 1300/9900 samples (13.1%) - 3.87 samples/s - ETA: 37.0 min
+Progress: 1400/9900 samples (14.1%) - 3.87 samples/s - ETA: 36.6 min
+Progress: 1500/9900 samples (15.2%) - 3.87 samples/s - ETA: 36.2 min
+Progress: 1600/9900 samples (16.2%) - 3.87 samples/s - ETA: 35.7 min
+Progress: 1700/9900 samples (17.2%) - 3.87 samples/s - ETA: 35.3 min
+Progress: 1800/9900 samples (18.2%) - 3.87 samples/s - ETA: 34.9 min
+Progress: 1900/9900 samples (19.2%) - 3.87 samples/s - ETA: 34.5 min
+Progress: 2000/9900 samples (20.2%) - 3.87 samples/s - ETA: 34.0 min
+Progress: 2100/9900 samples (21.2%) - 3.87 samples/s - ETA: 33.6 min
+Progress: 2200/9900 samples (22.2%) - 3.87 samples/s - ETA: 33.2 min
+Progress: 2300/9900 samples (23.2%) - 3.87 samples/s - ETA: 32.7 min
+Progress: 2400/9900 samples (24.2%) - 3.87 samples/s - ETA: 32.3 min
+Progress: 2500/9900 samples (25.3%) - 3.87 samples/s - ETA: 31.9 min
+Progress: 2600/9900 samples (26.3%) - 3.87 samples/s - ETA: 31.4 min
+Progress: 2700/9900 samples (27.3%) - 3.87 samples/s - ETA: 31.0 min
+Progress: 2800/9900 samples (28.3%) - 3.87 samples/s - ETA: 30.6 min
+Progress: 2900/9900 samples (29.3%) - 3.87 samples/s - ETA: 30.2 min
+Progress: 3000/9900 samples (30.3%) - 3.87 samples/s - ETA: 29.7 min
+Progress: 3100/9900 samples (31.3%) - 3.87 samples/s - ETA: 29.3 min
+Progress: 3200/9900 samples (32.3%) - 3.87 samples/s - ETA: 28.9 min
+Progress: 3300/9900 samples (33.3%) - 3.87 samples/s - ETA: 28.4 min
+Progress: 3400/9900 samples (34.3%) - 3.87 samples/s - ETA: 28.0 min
+Progress: 3500/9900 samples (35.4%) - 3.87 samples/s - ETA: 27.6 min
+Progress: 3600/9900 samples (36.4%) - 3.87 samples/s - ETA: 27.2 min
+Progress: 3700/9900 samples (37.4%) - 3.87 samples/s - ETA: 26.7 min
+Progress: 3800/9900 samples (38.4%) - 3.86 samples/s - ETA: 26.3 min
+Progress: 3900/9900 samples (39.4%) - 3.86 samples/s - ETA: 25.9 min
+Progress: 4000/9900 samples (40.4%) - 3.86 samples/s - ETA: 25.5 min
+Progress: 4100/9900 samples (41.4%) - 3.86 samples/s - ETA: 25.0 min
+Progress: 4200/9900 samples (42.4%) - 3.86 samples/s - ETA: 24.6 min
+Progress: 4300/9900 samples (43.4%) - 3.86 samples/s - ETA: 24.2 min
+Progress: 4400/9900 samples (44.4%) - 3.86 samples/s - ETA: 23.7 min
+Progress: 4500/9900 samples (45.5%) - 3.86 samples/s - ETA: 23.3 min
+Progress: 4600/9900 samples (46.5%) - 3.86 samples/s - ETA: 22.9 min
+Progress: 4700/9900 samples (47.5%) - 3.86 samples/s - ETA: 22.5 min
+Progress: 4800/9900 samples (48.5%) - 3.86 samples/s - ETA: 22.0 min
+Progress: 4900/9900 samples (49.5%) - 3.86 samples/s - ETA: 21.6 min
+Progress: 5000/9900 samples (50.5%) - 3.86 samples/s - ETA: 21.2 min
+Progress: 5100/9900 samples (51.5%) - 3.86 samples/s - ETA: 20.7 min
+Progress: 5200/9900 samples (52.5%) - 3.86 samples/s - ETA: 20.3 min
+Progress: 5300/9900 samples (53.5%) - 3.86 samples/s - ETA: 19.9 min
+Progress: 5400/9900 samples (54.5%) - 3.86 samples/s - ETA: 19.4 min
+Progress: 5500/9900 samples (55.6%) - 3.86 samples/s - ETA: 19.0 min
+Progress: 5600/9900 samples (56.6%) - 3.86 samples/s - ETA: 18.6 min
+Progress: 5700/9900 samples (57.6%) - 3.86 samples/s - ETA: 18.2 min
+Progress: 5800/9900 samples (58.6%) - 3.85 samples/s - ETA: 17.7 min
+Progress: 5900/9900 samples (59.6%) - 3.85 samples/s - ETA: 17.3 min
+Progress: 6000/9900 samples (60.6%) - 3.85 samples/s - ETA: 16.9 min
+Progress: 6100/9900 samples (61.6%) - 3.85 samples/s - ETA: 16.4 min
+Progress: 6200/9900 samples (62.6%) - 3.85 samples/s - ETA: 16.0 min
+Progress: 6300/9900 samples (63.6%) - 3.85 samples/s - ETA: 15.6 min
+Progress: 6400/9900 samples (64.6%) - 3.85 samples/s - ETA: 15.1 min
+Progress: 6500/9900 samples (65.7%) - 3.85 samples/s - ETA: 14.7 min
+Progress: 6600/9900 samples (66.7%) - 3.85 samples/s - ETA: 14.3 min
+Progress: 6700/9900 samples (67.7%) - 3.85 samples/s - ETA: 13.8 min
+Progress: 6800/9900 samples (68.7%) - 3.85 samples/s - ETA: 13.4 min
+Progress: 6900/9900 samples (69.7%) - 3.85 samples/s - ETA: 13.0 min
+Progress: 7000/9900 samples (70.7%) - 3.85 samples/s - ETA: 12.5 min
+Progress: 7100/9900 samples (71.7%) - 3.85 samples/s - ETA: 12.1 min
+Progress: 7200/9900 samples (72.7%) - 3.85 samples/s - ETA: 11.7 min
+Progress: 7300/9900 samples (73.7%) - 3.85 samples/s - ETA: 11.3 min
+Progress: 7400/9900 samples (74.7%) - 3.85 samples/s - ETA: 10.8 min
+Progress: 7500/9900 samples (75.8%) - 3.85 samples/s - ETA: 10.4 min
+Progress: 7600/9900 samples (76.8%) - 3.85 samples/s - ETA: 10.0 min
+Progress: 7700/9900 samples (77.8%) - 3.85 samples/s - ETA: 9.5 min
+Progress: 7800/9900 samples (78.8%) - 3.85 samples/s - ETA: 9.1 min
+Progress: 7900/9900 samples (79.8%) - 3.85 samples/s - ETA: 8.7 min
+Progress: 8000/9900 samples (80.8%) - 3.85 samples/s - ETA: 8.2 min
+Progress: 8100/9900 samples (81.8%) - 3.85 samples/s - ETA: 7.8 min
+Progress: 8200/9900 samples (82.8%) - 3.85 samples/s - ETA: 7.4 min
+Progress: 8300/9900 samples (83.8%) - 3.85 samples/s - ETA: 6.9 min
+Progress: 8400/9900 samples (84.8%) - 3.85 samples/s - ETA: 6.5 min
+Progress: 8500/9900 samples (85.9%) - 3.85 samples/s - ETA: 6.1 min
+Progress: 8600/9900 samples (86.9%) - 3.85 samples/s - ETA: 5.6 min
+Progress: 8700/9900 samples (87.9%) - 3.85 samples/s - ETA: 5.2 min
+Progress: 8800/9900 samples (88.9%) - 3.85 samples/s - ETA: 4.8 min
+Progress: 8900/9900 samples (89.9%) - 3.85 samples/s - ETA: 4.3 min
+Progress: 9000/9900 samples (90.9%) - 3.85 samples/s - ETA: 3.9 min
+Progress: 9100/9900 samples (91.9%) - 3.85 samples/s - ETA: 3.5 min
+Progress: 9200/9900 samples (92.9%) - 3.85 samples/s - ETA: 3.0 min
+Progress: 9300/9900 samples (93.9%) - 3.85 samples/s - ETA: 2.6 min
+Progress: 9400/9900 samples (94.9%) - 3.85 samples/s - ETA: 2.2 min
+Progress: 9500/9900 samples (96.0%) - 3.85 samples/s - ETA: 1.7 min
+Progress: 9600/9900 samples (97.0%) - 3.85 samples/s - ETA: 1.3 min
+Progress: 9700/9900 samples (98.0%) - 3.85 samples/s - ETA: 0.9 min
+Progress: 9800/9900 samples (99.0%) - 3.85 samples/s - ETA: 0.4 min
+Progress: 9900/9900 samples (100.0%) - 3.85 samples/s - ETA: 0.0 min
+Collected 9900 Jacobians
+Jacobian shape: (9900, 9, 10)
+Inference time: 2573.000s
+NN model terminate
+MLP terminate
+  Saved results to: /home/mms-wonchan/git/MPCC_manipulator/Neural-JSDF/learning/nn_validation/jacobian_precision_results/jacobian_E8M5.npz
+
+============================================================
+Building with E8M4 precision...
+============================================================
+Build successful!
+
+Testing E8M4 (E8M4) with 9900 samples...
+Progress: 1/9900 samples (0.0%) - 3.78 samples/s - ETA: 43.6 min
+Progress: 100/9900 samples (1.0%) - 3.86 samples/s - ETA: 42.3 min
+Progress: 200/9900 samples (2.0%) - 3.85 samples/s - ETA: 42.0 min
+Progress: 300/9900 samples (3.0%) - 3.86 samples/s - ETA: 41.5 min
+Progress: 400/9900 samples (4.0%) - 3.85 samples/s - ETA: 41.1 min
+Progress: 500/9900 samples (5.1%) - 3.85 samples/s - ETA: 40.7 min
+Progress: 600/9900 samples (6.1%) - 3.85 samples/s - ETA: 40.3 min
+Progress: 700/9900 samples (7.1%) - 3.84 samples/s - ETA: 39.9 min
+Progress: 800/9900 samples (8.1%) - 3.85 samples/s - ETA: 39.4 min
+Progress: 900/9900 samples (9.1%) - 3.85 samples/s - ETA: 39.0 min
+Progress: 1000/9900 samples (10.1%) - 3.85 samples/s - ETA: 38.6 min
+Progress: 1100/9900 samples (11.1%) - 3.85 samples/s - ETA: 38.1 min
+Progress: 1200/9900 samples (12.1%) - 3.85 samples/s - ETA: 37.7 min
+Progress: 1300/9900 samples (13.1%) - 3.85 samples/s - ETA: 37.3 min
+Progress: 1400/9900 samples (14.1%) - 3.85 samples/s - ETA: 36.8 min
+Progress: 1500/9900 samples (15.2%) - 3.85 samples/s - ETA: 36.4 min
+Progress: 1600/9900 samples (16.2%) - 3.85 samples/s - ETA: 36.0 min
+Progress: 1700/9900 samples (17.2%) - 3.85 samples/s - ETA: 35.5 min
+Progress: 1800/9900 samples (18.2%) - 3.85 samples/s - ETA: 35.1 min
+Progress: 1900/9900 samples (19.2%) - 3.85 samples/s - ETA: 34.7 min
+Progress: 2000/9900 samples (20.2%) - 3.85 samples/s - ETA: 34.2 min
+Progress: 2100/9900 samples (21.2%) - 3.85 samples/s - ETA: 33.8 min
+Progress: 2200/9900 samples (22.2%) - 3.85 samples/s - ETA: 33.4 min
+Progress: 2300/9900 samples (23.2%) - 3.85 samples/s - ETA: 32.9 min
+Progress: 2400/9900 samples (24.2%) - 3.85 samples/s - ETA: 32.5 min
+Progress: 2500/9900 samples (25.3%) - 3.85 samples/s - ETA: 32.0 min
+Progress: 2600/9900 samples (26.3%) - 3.85 samples/s - ETA: 31.6 min
+Progress: 2700/9900 samples (27.3%) - 3.85 samples/s - ETA: 31.2 min
+Progress: 2800/9900 samples (28.3%) - 3.85 samples/s - ETA: 30.7 min
+Progress: 2900/9900 samples (29.3%) - 3.85 samples/s - ETA: 30.3 min
+Progress: 3000/9900 samples (30.3%) - 3.85 samples/s - ETA: 29.9 min
+Progress: 3100/9900 samples (31.3%) - 3.85 samples/s - ETA: 29.5 min
+Progress: 3200/9900 samples (32.3%) - 3.85 samples/s - ETA: 29.0 min
+Progress: 3300/9900 samples (33.3%) - 3.85 samples/s - ETA: 28.6 min
+Progress: 3400/9900 samples (34.3%) - 3.85 samples/s - ETA: 28.2 min
+Progress: 3500/9900 samples (35.4%) - 3.85 samples/s - ETA: 27.7 min
+Progress: 3600/9900 samples (36.4%) - 3.85 samples/s - ETA: 27.3 min
+Progress: 3700/9900 samples (37.4%) - 3.85 samples/s - ETA: 26.9 min
+Progress: 3800/9900 samples (38.4%) - 3.85 samples/s - ETA: 26.4 min
+Progress: 3900/9900 samples (39.4%) - 3.85 samples/s - ETA: 26.0 min
+Progress: 4000/9900 samples (40.4%) - 3.85 samples/s - ETA: 25.6 min
+Progress: 4100/9900 samples (41.4%) - 3.85 samples/s - ETA: 25.1 min
+Progress: 4200/9900 samples (42.4%) - 3.85 samples/s - ETA: 24.7 min
+Progress: 4300/9900 samples (43.4%) - 3.85 samples/s - ETA: 24.3 min
+Progress: 4400/9900 samples (44.4%) - 3.85 samples/s - ETA: 23.8 min
+Progress: 4500/9900 samples (45.5%) - 3.85 samples/s - ETA: 23.4 min
+Progress: 4600/9900 samples (46.5%) - 3.85 samples/s - ETA: 23.0 min
+Progress: 4700/9900 samples (47.5%) - 3.85 samples/s - ETA: 22.5 min
+Progress: 4800/9900 samples (48.5%) - 3.85 samples/s - ETA: 22.1 min
+Progress: 4900/9900 samples (49.5%) - 3.85 samples/s - ETA: 21.7 min
+Progress: 5000/9900 samples (50.5%) - 3.85 samples/s - ETA: 21.2 min
+Progress: 5100/9900 samples (51.5%) - 3.85 samples/s - ETA: 20.8 min
+Progress: 5200/9900 samples (52.5%) - 3.85 samples/s - ETA: 20.4 min
+Progress: 5300/9900 samples (53.5%) - 3.85 samples/s - ETA: 19.9 min
+Progress: 5400/9900 samples (54.5%) - 3.85 samples/s - ETA: 19.5 min
+Progress: 5500/9900 samples (55.6%) - 3.85 samples/s - ETA: 19.1 min
+Progress: 5600/9900 samples (56.6%) - 3.85 samples/s - ETA: 18.6 min
+Progress: 5700/9900 samples (57.6%) - 3.85 samples/s - ETA: 18.2 min
+Progress: 5800/9900 samples (58.6%) - 3.85 samples/s - ETA: 17.8 min
+Progress: 5900/9900 samples (59.6%) - 3.85 samples/s - ETA: 17.3 min
+Progress: 6000/9900 samples (60.6%) - 3.85 samples/s - ETA: 16.9 min
+Progress: 6100/9900 samples (61.6%) - 3.85 samples/s - ETA: 16.5 min
+Progress: 6200/9900 samples (62.6%) - 3.85 samples/s - ETA: 16.0 min
+Progress: 6300/9900 samples (63.6%) - 3.85 samples/s - ETA: 15.6 min
+Progress: 6400/9900 samples (64.6%) - 3.85 samples/s - ETA: 15.2 min
+Progress: 6500/9900 samples (65.7%) - 3.85 samples/s - ETA: 14.7 min
+Progress: 6600/9900 samples (66.7%) - 3.85 samples/s - ETA: 14.3 min
+Progress: 6700/9900 samples (67.7%) - 3.85 samples/s - ETA: 13.9 min
+Progress: 6800/9900 samples (68.7%) - 3.85 samples/s - ETA: 13.4 min
+Progress: 6900/9900 samples (69.7%) - 3.85 samples/s - ETA: 13.0 min
+Progress: 7000/9900 samples (70.7%) - 3.85 samples/s - ETA: 12.6 min
+Progress: 7100/9900 samples (71.7%) - 3.85 samples/s - ETA: 12.1 min
+Progress: 7200/9900 samples (72.7%) - 3.85 samples/s - ETA: 11.7 min
+Progress: 7300/9900 samples (73.7%) - 3.85 samples/s - ETA: 11.3 min
+Progress: 7400/9900 samples (74.7%) - 3.85 samples/s - ETA: 10.8 min
+Progress: 7500/9900 samples (75.8%) - 3.85 samples/s - ETA: 10.4 min
+Progress: 7600/9900 samples (76.8%) - 3.85 samples/s - ETA: 10.0 min
+Progress: 7700/9900 samples (77.8%) - 3.85 samples/s - ETA: 9.5 min
+Progress: 7800/9900 samples (78.8%) - 3.85 samples/s - ETA: 9.1 min
+Progress: 7900/9900 samples (79.8%) - 3.85 samples/s - ETA: 8.7 min
+Progress: 8000/9900 samples (80.8%) - 3.85 samples/s - ETA: 8.2 min
+Progress: 8100/9900 samples (81.8%) - 3.85 samples/s - ETA: 7.8 min
+Progress: 8200/9900 samples (82.8%) - 3.85 samples/s - ETA: 7.4 min
+Progress: 8300/9900 samples (83.8%) - 3.85 samples/s - ETA: 6.9 min
+Progress: 8400/9900 samples (84.8%) - 3.85 samples/s - ETA: 6.5 min
+Progress: 8500/9900 samples (85.9%) - 3.85 samples/s - ETA: 6.1 min
+Progress: 8600/9900 samples (86.9%) - 3.85 samples/s - ETA: 5.6 min
+Progress: 8700/9900 samples (87.9%) - 3.85 samples/s - ETA: 5.2 min
+Progress: 8800/9900 samples (88.9%) - 3.85 samples/s - ETA: 4.8 min
+Progress: 8900/9900 samples (89.9%) - 3.85 samples/s - ETA: 4.3 min
+Progress: 9000/9900 samples (90.9%) - 3.85 samples/s - ETA: 3.9 min
+Progress: 9100/9900 samples (91.9%) - 3.85 samples/s - ETA: 3.5 min
+Progress: 9200/9900 samples (92.9%) - 3.85 samples/s - ETA: 3.0 min
+Progress: 9300/9900 samples (93.9%) - 3.85 samples/s - ETA: 2.6 min
+Progress: 9400/9900 samples (94.9%) - 3.85 samples/s - ETA: 2.2 min
+Progress: 9500/9900 samples (96.0%) - 3.85 samples/s - ETA: 1.7 min
+Progress: 9600/9900 samples (97.0%) - 3.85 samples/s - ETA: 1.3 min
+Progress: 9700/9900 samples (98.0%) - 3.85 samples/s - ETA: 0.9 min
+Progress: 9800/9900 samples (99.0%) - 3.85 samples/s - ETA: 0.4 min
+Progress: 9900/9900 samples (100.0%) - 3.85 samples/s - ETA: 0.0 min
+Collected 9900 Jacobians
+Jacobian shape: (9900, 9, 10)
+Inference time: 2574.048s
+NN model terminate
+MLP terminate
+  Saved results to: /home/mms-wonchan/git/MPCC_manipulator/Neural-JSDF/learning/nn_validation/jacobian_precision_results/jacobian_E8M4.npz
+
+================================================================================
+JACOBIAN ERROR ANALYSIS (vs FP32 Baseline)
+================================================================================
+
+BF16 (E8M7):
+  Absolute error:
+    Mean:   7.972912e-01
+    Std:    2.070728e+00
+    Median: 1.416016e-01
+    Max:    9.762500e+01
+    95th percentile: 3.625000e+00
+    99th percentile: 9.500000e+00
+  Relative error (%):
+    Mean:   89.91%
+  Frobenius norm error:
+    Mean:   1.604028e+01
+    Max:    1.205972e+02
+
+E8M6 (E8M6):
+  Absolute error:
+    Mean:   1.364356e+00
+    Std:    2.975219e+00
+    Median: 3.422852e-01
+    Max:    9.687500e+01
+    95th percentile: 6.000000e+00
+    99th percentile: 1.400000e+01
+  Relative error (%):
+    Mean:   141.21%
+  Frobenius norm error:
+    Mean:   2.619381e+01
+    Max:    1.324120e+02
+
+E8M5 (E8M5):
+  Absolute error:
+    Mean:   2.178464e+00
+    Std:    4.242375e+00
+    Median: 5.937500e-01
+    Max:    1.415000e+02
+    95th percentile: 9.500000e+00
+    99th percentile: 2.025000e+01
+  Relative error (%):
+    Mean:   214.12%
+  Frobenius norm error:
+    Mean:   4.024838e+01
+    Max:    1.866697e+02
+
+E8M4 (E8M4):
+  Absolute error:
+    Mean:   3.816430e+00
+    Std:    6.619581e+00
+    Median: 1.085938e+00
+    Max:    2.328750e+02
+    95th percentile: 1.650000e+01
+    99th percentile: 3.100000e+01
+  Relative error (%):
+    Mean:   350.23%
+  Frobenius norm error:
+    Mean:   6.820851e+01
+    Max:    2.619864e+02
+
+Summary saved to: /home/mms-wonchan/git/MPCC_manipulator/Neural-JSDF/learning/nn_validation/jacobian_precision_results/jacobian_error_summary.npz
+
+================================================================================
+COMPARISON TABLE
+================================================================================
+Config   Mean Abs Err    Max Abs Err     Mean Rel Err (%)   Mean Frob Err  
+--------------------------------------------------------------------------------
+BF16     7.972912e-01    9.762500e+01    89.91              1.604028e+01   
+E8M6     1.364356e+00    9.687500e+01    141.21             2.619381e+01   
+E8M5     2.178464e+00    1.415000e+02    214.12             4.024838e+01   
+E8M4     3.816430e+00    2.328750e+02    350.23             6.820851e+01   
+================================================================================
+
+Jacobian precision test completed!

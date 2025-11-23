@@ -1,0 +1,122 @@
+================================================================================
+C++ calculateMlpOutputBatch PRECISION TEST - FINAL REPORT
+================================================================================
+
+Dataset: Neural-JSDF data_mesh_test.mat
+Samples: 9900
+Network: 10 -> 256 -> 256 -> 256 -> 256 -> 9 (4 hidden layers)
+Input: 7 joint angles + 3 query point coordinates
+Output: 9 link SDF distances (cm)
+
+================================================================================
+DETAILED RESULTS
+================================================================================
+
+FP32 (E8M23):
+  Mean error:      0.6488 cm
+  Std error:       0.6358 cm
+  Median error:    0.4660 cm
+  Max error:       7.5810 cm
+  95th percentile: 1.9007 cm
+  99th percentile: 3.0335 cm
+  Inference time:  2597.19 s (9900 samples)
+  Throughput:      3.81 samples/s
+
+BF16 (E8M7):
+  Mean error:      0.7924 cm
+  Std error:       0.7413 cm
+  Median error:    0.5920 cm
+  Max error:       10.2060 cm
+  95th percentile: 2.2251 cm
+  99th percentile: 3.4948 cm
+  Inference time:  2500.58 s (9900 samples)
+  Throughput:      3.96 samples/s
+
+E8M6 (E8M6):
+  Mean error:      1.2143 cm
+  Std error:       1.1707 cm
+  Median error:    0.8878 cm
+  Max error:       13.3599 cm
+  95th percentile: 3.5148 cm
+  99th percentile: 5.5930 cm
+  Inference time:  2551.63 s (9900 samples)
+  Throughput:      3.88 samples/s
+
+E8M5 (E8M5):
+  Mean error:      2.5790 cm
+  Std error:       2.6109 cm
+  Median error:    1.7392 cm
+  Max error:       27.7932 cm
+  95th percentile: 8.0681 cm
+  99th percentile: 12.1948 cm
+  Inference time:  2547.77 s (9900 samples)
+  Throughput:      3.89 samples/s
+
+E8M4 (E8M4):
+  Mean error:      6.7454 cm
+  Std error:       6.6199 cm
+  Median error:    4.5042 cm
+  Max error:       52.5513 cm
+  95th percentile: 20.9838 cm
+  99th percentile: 29.6113 cm
+  Inference time:  2571.02 s (9900 samples)
+  Throughput:      3.85 samples/s
+
+================================================================================
+COMPARISON TABLE
+================================================================================
+Config   Exp  Mant  Mean         Std          Max          95th %      
+--------------------------------------------------------------------------------
+FP32     8    23    0.6488       0.6358       7.5810       1.9007      
+BF16     8    7     0.7924       0.7413       10.2060      2.2251      
+E8M6     8    6     1.2143       1.1707       13.3599      3.5148      
+E8M5     8    5     2.5790       2.6109       27.7932      8.0681      
+E8M4     8    4     6.7454       6.6199       52.5513      20.9838     
+
+================================================================================
+ERROR DEGRADATION vs FP32
+================================================================================
+BF16: +22.1% (0.7924 cm vs 0.6488 cm)
+E8M6: +87.2% (1.2143 cm vs 0.6488 cm)
+E8M5: +297.5% (2.5790 cm vs 0.6488 cm)
+E8M4: +939.7% (6.7454 cm vs 0.6488 cm)
+
+================================================================================
+KEY FINDINGS
+================================================================================
+
+1. BF16 (E8M7) - Current Default:
+   - Only 22.1% error increase vs FP32
+   - Mean error: 0.79 cm (acceptable for collision detection)
+   - Good balance of precision and memory efficiency
+
+2. E8M6 - Moderate Reduction:
+   - 87.2% error increase vs FP32
+   - Mean error: 1.21 cm (may be acceptable depending on use case)
+   - 95th percentile: 3.51 cm
+
+3. E8M5 - Aggressive Reduction:
+   - 297.5% error increase (4x worse than FP32)
+   - Mean error: 2.58 cm (risky for collision detection)
+   - 95th percentile: 8.07 cm
+
+4. E8M4 - Extreme Reduction:
+   - 939.7% error increase (10x worse than FP32)
+   - Mean error: 6.75 cm (unacceptable for most applications)
+   - Max error: 52.55 cm
+
+================================================================================
+RECOMMENDATION
+================================================================================
+
+BF16 (E8M7) provides the best tradeoff:
+- Only 22% accuracy loss vs FP32
+- 2x memory reduction (16-bit vs 32-bit)
+- Errors remain small enough for reliable collision detection
+- 95th percentile error < 2.3 cm
+
+E8M6 could be considered if memory is extremely constrained,
+but requires careful validation for the specific application.
+
+E8M5 and E8M4 are NOT recommended due to excessive errors.
+================================================================================
