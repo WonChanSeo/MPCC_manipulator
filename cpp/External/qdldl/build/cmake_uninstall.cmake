@@ -1,8 +1,8 @@
-if(NOT EXISTS "/home/mms-wonchan/osqp/qdldl/build/install_manifest.txt")
-  message(FATAL_ERROR "Cannot find install manifest: /home/mms-wonchan/osqp/qdldl/build/install_manifest.txt")
-endif(NOT EXISTS "/home/mms-wonchan/osqp/qdldl/build/install_manifest.txt")
+if(NOT EXISTS "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/install_manifest.txt")
+  message(FATAL_ERROR "Cannot find install manifest: /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/install_manifest.txt")
+endif(NOT EXISTS "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/install_manifest.txt")
 
-file(READ "/home/mms-wonchan/osqp/qdldl/build/install_manifest.txt" files)
+file(READ "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/install_manifest.txt" files)
 string(REGEX REPLACE "\n" ";" files "${files}")
 foreach(file ${files})
   message(STATUS "Uninstalling $ENV{DESTDIR}${file}")

@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/mms-wonchan/osqp/qdldl
+CMAKE_SOURCE_DIR = /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/mms-wonchan/osqp/qdldl/build
+CMAKE_BINARY_DIR = /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build
 
 # Utility rule file for uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/uninstall.dir/compiler_depend.make
 include CMakeFiles/uninstall.dir/progress.make
 
 CMakeFiles/uninstall:
-	/usr/bin/cmake -P /home/mms-wonchan/osqp/qdldl/build/cmake_uninstall.cmake
+	/usr/bin/cmake -P /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/cmake_uninstall.cmake
 
 uninstall: CMakeFiles/uninstall
 uninstall: CMakeFiles/uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/uninstall.dir/clean:
 .PHONY : CMakeFiles/uninstall.dir/clean
 
 CMakeFiles/uninstall.dir/depend:
-	cd /home/mms-wonchan/osqp/qdldl/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/mms-wonchan/osqp/qdldl /home/mms-wonchan/osqp/qdldl /home/mms-wonchan/osqp/qdldl/build /home/mms-wonchan/osqp/qdldl/build /home/mms-wonchan/osqp/qdldl/build/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/CMakeFiles/uninstall.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/uninstall.dir/depend
 

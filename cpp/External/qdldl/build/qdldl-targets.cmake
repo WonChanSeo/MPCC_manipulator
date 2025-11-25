@@ -45,7 +45,7 @@ unset(_expectedTargets)
 add_library(qdldl::qdldlstatic STATIC IMPORTED)
 
 set_target_properties(qdldl::qdldlstatic PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "/home/mms-wonchan/osqp/qdldl/include;/home/mms-wonchan/osqp/qdldl/build/include"
+  INTERFACE_INCLUDE_DIRECTORIES "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include;/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/include"
 )
 
 # Create imported target qdldl::qdldl
@@ -53,21 +53,21 @@ add_library(qdldl::qdldl SHARED IMPORTED)
 
 set_target_properties(qdldl::qdldl PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "QDLDL_SHARED_LIB"
-  INTERFACE_INCLUDE_DIRECTORIES "/home/mms-wonchan/osqp/qdldl/include;/home/mms-wonchan/osqp/qdldl/build/include"
+  INTERFACE_INCLUDE_DIRECTORIES "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include;/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/include"
 )
 
-# Import target "qdldl::qdldlstatic" for configuration ""
-set_property(TARGET qdldl::qdldlstatic APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+# Import target "qdldl::qdldlstatic" for configuration "Release"
+set_property(TARGET qdldl::qdldlstatic APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(qdldl::qdldlstatic PROPERTIES
-  IMPORTED_LINK_INTERFACE_LANGUAGES_NOCONFIG "C"
-  IMPORTED_LOCATION_NOCONFIG "/home/mms-wonchan/osqp/qdldl/build/out/libqdldl.a"
+  IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "C"
+  IMPORTED_LOCATION_RELEASE "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/out/libqdldl.a"
   )
 
-# Import target "qdldl::qdldl" for configuration ""
-set_property(TARGET qdldl::qdldl APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)
+# Import target "qdldl::qdldl" for configuration "Release"
+set_property(TARGET qdldl::qdldl APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(qdldl::qdldl PROPERTIES
-  IMPORTED_LOCATION_NOCONFIG "/home/mms-wonchan/osqp/qdldl/build/out/libqdldl.so"
-  IMPORTED_SONAME_NOCONFIG "libqdldl.so"
+  IMPORTED_LOCATION_RELEASE "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/out/libqdldl.so"
+  IMPORTED_SONAME_RELEASE "libqdldl.so"
   )
 
 # This file does not depend on other imported targets which have

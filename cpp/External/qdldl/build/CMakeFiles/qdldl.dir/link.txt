@@ -1,1 +1,1 @@
-/usr/bin/cc -fPIC  -O3 -shared -Wl,-soname,libqdldl.so -o out/libqdldl.so CMakeFiles/qdldl.dir/src/qdldl.c.o CMakeFiles/qdldl.dir/home/mms-wonchan/osqp/flexfloat/src/flexfloat.c.o 
+/usr/bin/cc -fPIC  -O3 -O3 -DNDEBUG -shared -Wl,-soname,libqdldl.so -o out/libqdldl.so CMakeFiles/qdldl.dir/src/qdldl.c.o CMakeFiles/qdldl.dir/home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.o 

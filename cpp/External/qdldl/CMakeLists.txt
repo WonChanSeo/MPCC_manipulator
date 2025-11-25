@@ -175,8 +175,11 @@ set(
 	src/qdldl.c
 	)
 
-# FlexFloat is compiled by OSQP, QDLDL only needs the headers
-# Do not compile flexfloat.c here to avoid duplicate symbols
+# FlexFloat compilation
+set(flexfloat_src "")
+if( QDLDL_USE_FLEXFLOAT )
+    list(APPEND flexfloat_src ${FLEXFLOAT_DIR}/src/flexfloat.c)
+endif()
 
 set(
 	qdldl_headers
@@ -217,7 +220,7 @@ message( STATUS "Static library build is ${QDLDL_BUILD_STATIC_LIB}" )
 
 if( QDLDL_BUILD_STATIC_LIB )
     # Static library
-    add_library (qdldlstatic STATIC ${qdldl_src} ${qdldl_headers})
+    add_library (qdldlstatic STATIC ${qdldl_src} ${flexfloat_src} ${qdldl_headers})
     # Give same name to static library output
     set_target_properties(qdldlstatic PROPERTIES OUTPUT_NAME qdldl)
 
@@ -258,7 +261,7 @@ install(FILES ${qdldl_headers} DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/qdldl")
 message( STATUS "Shared library build is ${QDLDL_BUILD_SHARED_LIB}" )
 
 if( QDLDL_BUILD_SHARED_LIB )
-    add_library (qdldl SHARED ${qdldl_src} ${qdldl_headers})
+    add_library (qdldl SHARED ${qdldl_src} ${flexfloat_src} ${qdldl_headers})
 
     # Declare that we are building the shared library to get proper symbol exports.
     # Shared library consumers should also define QDLDL_SHARED_LIB to get the library
@@ -276,7 +279,11 @@ if( QDLDL_BUILD_SHARED_LIB )
     # Add FlexFloat support for shared library
     if( QDLDL_USE_FLEXFLOAT )
         target_include_directories(qdldl PRIVATE ${FLEXFLOAT_DIR}/include)
-        target_compile_definitions(qdldl PRIVATE QDLDL_USE_FLEXFLOAT)
+        target_compile_definitions(qdldl PRIVATE
+            QDLDL_USE_FLEXFLOAT
+            FF_exponent_bits=${FF_EXPONENT_BITS}
+            FF_mantissa_bits=${FF_MANTISSA_BITS}
+        )
     endif()
 
     # Install qdldl shared library
@@ -293,7 +300,8 @@ message( STATUS "Demo executable build is ${QDLDL_BUILD_DEMO_EXE}" )
 if( QDLDL_BUILD_DEMO_EXE )
     # Create demo executable (linked to static library)
     add_executable (qdldl_example ${PROJECT_SOURCE_DIR}/examples/example.c)
-    target_link_libraries (qdldl_example qdldlstatic)
+    # FlexFloat is now compiled into static library, just link math library
+    target_link_libraries (qdldl_example qdldlstatic m)
 else()
     message( STATUS "Not building demo executable" )
 endif()

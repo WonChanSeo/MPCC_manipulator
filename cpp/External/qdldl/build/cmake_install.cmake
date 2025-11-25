@@ -1,8 +1,8 @@
-# Install script for directory: /home/mms-wonchan/osqp/qdldl
+# Install script for directory: /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/usr/local")
+  set(CMAKE_INSTALL_PREFIX "/home/mms-wonchan/git/MPCC_manipulator/cpp/lib")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -12,7 +12,7 @@ if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
     string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
   else()
-    set(CMAKE_INSTALL_CONFIG_NAME "")
+    set(CMAKE_INSTALL_CONFIG_NAME "Release")
   endif()
   message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
 endif()
@@ -43,14 +43,14 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/home/mms-wonchan/osqp/qdldl/build/out/libqdldl.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/out/libqdldl.a")
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include/qdldl" TYPE FILE FILES
-    "/home/mms-wonchan/osqp/qdldl/include/qdldl.h"
-    "/home/mms-wonchan/osqp/qdldl/build/include/qdldl_types.h"
-    "/home/mms-wonchan/osqp/qdldl/build/include/qdldl_version.h"
+    "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include/qdldl.h"
+    "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/include/qdldl_types.h"
+    "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/include/qdldl_version.h"
     )
 endif()
 
@@ -61,7 +61,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libqdldl.so"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/home/mms-wonchan/osqp/qdldl/build/out/libqdldl.so")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE SHARED_LIBRARY FILES "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/out/libqdldl.so")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libqdldl.so" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/libqdldl.so")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -77,7 +77,7 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/cmake/qdldl/qdldl-targets.cmake")
     file(DIFFERENT EXPORT_FILE_CHANGED FILES
          "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/cmake/qdldl/qdldl-targets.cmake"
-         "/home/mms-wonchan/osqp/qdldl/build/CMakeFiles/Export/lib/cmake/qdldl/qdldl-targets.cmake")
+         "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/CMakeFiles/Export/lib/cmake/qdldl/qdldl-targets.cmake")
     if(EXPORT_FILE_CHANGED)
       file(GLOB OLD_CONFIG_FILES "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/cmake/qdldl/qdldl-targets-*.cmake")
       if(OLD_CONFIG_FILES)
@@ -86,16 +86,16 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
       endif()
     endif()
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/qdldl" TYPE FILE FILES "/home/mms-wonchan/osqp/qdldl/build/CMakeFiles/Export/lib/cmake/qdldl/qdldl-targets.cmake")
-  if("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^()$")
-    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/qdldl" TYPE FILE FILES "/home/mms-wonchan/osqp/qdldl/build/CMakeFiles/Export/lib/cmake/qdldl/qdldl-targets-noconfig.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/qdldl" TYPE FILE FILES "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/CMakeFiles/Export/lib/cmake/qdldl/qdldl-targets.cmake")
+  if("${CMAKE_INSTALL_CONFIG_NAME}" MATCHES "^([Rr][Ee][Ll][Ee][Aa][Ss][Ee])$")
+    file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/qdldl" TYPE FILE FILES "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/CMakeFiles/Export/lib/cmake/qdldl/qdldl-targets-release.cmake")
   endif()
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/qdldl" TYPE FILE FILES
-    "/home/mms-wonchan/osqp/qdldl/build/qdldl-config.cmake"
-    "/home/mms-wonchan/osqp/qdldl/build/qdldl-config-version.cmake"
+    "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/qdldl-config.cmake"
+    "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/qdldl-config-version.cmake"
     )
 endif()
 
@@ -107,5 +107,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/mms-wonchan/osqp/qdldl/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

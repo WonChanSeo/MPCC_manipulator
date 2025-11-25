@@ -1,37 +1,32 @@
 [
 {
-  "directory": "/home/mms-wonchan/osqp/qdldl/build",
-  "command": "/usr/bin/cc -DQDLDL_USE_FLEXFLOAT -I/home/mms-wonchan/osqp/qdldl/include -I/home/mms-wonchan/osqp/qdldl/build/include -I/home/mms-wonchan/osqp/qdldl/../flexfloat/include  -O3 -fPIC -o CMakeFiles/qdldlobject.dir/src/qdldl.c.o -c /home/mms-wonchan/osqp/qdldl/src/qdldl.c",
-  "file": "/home/mms-wonchan/osqp/qdldl/src/qdldl.c"
+  "directory": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build",
+  "command": "/usr/bin/cc -DFF_exponent_bits=8 -DFF_mantissa_bits=10 -DQDLDL_USE_FLEXFLOAT -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/../flexfloat/include  -O3 -O3 -DNDEBUG -fPIC -o CMakeFiles/qdldlobject.dir/src/qdldl.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/src/qdldl.c",
+  "file": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/src/qdldl.c"
 },
 {
-  "directory": "/home/mms-wonchan/osqp/qdldl/build",
-  "command": "/usr/bin/cc -DQDLDL_USE_FLEXFLOAT -I/home/mms-wonchan/osqp/qdldl/include -I/home/mms-wonchan/osqp/qdldl/build/include -I/home/mms-wonchan/osqp/qdldl/../flexfloat/include  -O3 -fPIC -o CMakeFiles/qdldlobject.dir/home/mms-wonchan/osqp/flexfloat/src/flexfloat.c.o -c /home/mms-wonchan/osqp/flexfloat/src/flexfloat.c",
-  "file": "/home/mms-wonchan/osqp/flexfloat/src/flexfloat.c"
+  "directory": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build",
+  "command": "/usr/bin/cc -DFF_exponent_bits=8 -DFF_mantissa_bits=10 -DQDLDL_USE_FLEXFLOAT -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/../flexfloat/include  -O3 -O3 -DNDEBUG -fPIC -o CMakeFiles/qdldlstatic.dir/src/qdldl.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/src/qdldl.c",
+  "file": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/src/qdldl.c"
 },
 {
-  "directory": "/home/mms-wonchan/osqp/qdldl/build",
-  "command": "/usr/bin/cc -DQDLDL_USE_FLEXFLOAT -I/home/mms-wonchan/osqp/qdldl/include -I/home/mms-wonchan/osqp/qdldl/build/include -I/home/mms-wonchan/osqp/qdldl/../flexfloat/include  -O3 -fPIC -o CMakeFiles/qdldlstatic.dir/src/qdldl.c.o -c /home/mms-wonchan/osqp/qdldl/src/qdldl.c",
-  "file": "/home/mms-wonchan/osqp/qdldl/src/qdldl.c"
+  "directory": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build",
+  "command": "/usr/bin/cc -DFF_exponent_bits=8 -DFF_mantissa_bits=10 -DQDLDL_USE_FLEXFLOAT -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/../flexfloat/include  -O3 -O3 -DNDEBUG -fPIC -o CMakeFiles/qdldlstatic.dir/home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c",
+  "file": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c"
 },
 {
-  "directory": "/home/mms-wonchan/osqp/qdldl/build",
-  "command": "/usr/bin/cc -DQDLDL_USE_FLEXFLOAT -I/home/mms-wonchan/osqp/qdldl/include -I/home/mms-wonchan/osqp/qdldl/build/include -I/home/mms-wonchan/osqp/qdldl/../flexfloat/include  -O3 -fPIC -o CMakeFiles/qdldlstatic.dir/home/mms-wonchan/osqp/flexfloat/src/flexfloat.c.o -c /home/mms-wonchan/osqp/flexfloat/src/flexfloat.c",
-  "file": "/home/mms-wonchan/osqp/flexfloat/src/flexfloat.c"
+  "directory": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build",
+  "command": "/usr/bin/cc -DBUILDING_QDLDL -DFF_exponent_bits=8 -DFF_mantissa_bits=10 -DQDLDL_SHARED_LIB -DQDLDL_USE_FLEXFLOAT -Dqdldl_EXPORTS -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/../flexfloat/include  -O3 -O3 -DNDEBUG -fPIC -o CMakeFiles/qdldl.dir/src/qdldl.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/src/qdldl.c",
+  "file": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/src/qdldl.c"
 },
 {
-  "directory": "/home/mms-wonchan/osqp/qdldl/build",
-  "command": "/usr/bin/cc -DBUILDING_QDLDL -DQDLDL_SHARED_LIB -DQDLDL_USE_FLEXFLOAT -Dqdldl_EXPORTS -I/home/mms-wonchan/osqp/qdldl/include -I/home/mms-wonchan/osqp/qdldl/build/include -I/home/mms-wonchan/osqp/qdldl/../flexfloat/include  -O3 -fPIC -o CMakeFiles/qdldl.dir/src/qdldl.c.o -c /home/mms-wonchan/osqp/qdldl/src/qdldl.c",
-  "file": "/home/mms-wonchan/osqp/qdldl/src/qdldl.c"
+  "directory": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build",
+  "command": "/usr/bin/cc -DBUILDING_QDLDL -DFF_exponent_bits=8 -DFF_mantissa_bits=10 -DQDLDL_SHARED_LIB -DQDLDL_USE_FLEXFLOAT -Dqdldl_EXPORTS -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/../flexfloat/include  -O3 -O3 -DNDEBUG -fPIC -o CMakeFiles/qdldl.dir/home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c",
+  "file": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/flexfloat/src/flexfloat.c"
 },
 {
-  "directory": "/home/mms-wonchan/osqp/qdldl/build",
-  "command": "/usr/bin/cc -DBUILDING_QDLDL -DQDLDL_SHARED_LIB -DQDLDL_USE_FLEXFLOAT -Dqdldl_EXPORTS -I/home/mms-wonchan/osqp/qdldl/include -I/home/mms-wonchan/osqp/qdldl/build/include -I/home/mms-wonchan/osqp/qdldl/../flexfloat/include  -O3 -fPIC -o CMakeFiles/qdldl.dir/home/mms-wonchan/osqp/flexfloat/src/flexfloat.c.o -c /home/mms-wonchan/osqp/flexfloat/src/flexfloat.c",
-  "file": "/home/mms-wonchan/osqp/flexfloat/src/flexfloat.c"
-},
-{
-  "directory": "/home/mms-wonchan/osqp/qdldl/build",
-  "command": "/usr/bin/cc  -I/home/mms-wonchan/osqp/qdldl/include -I/home/mms-wonchan/osqp/qdldl/build/include  -O3 -fPIE -o CMakeFiles/qdldl_example.dir/examples/example.c.o -c /home/mms-wonchan/osqp/qdldl/examples/example.c",
-  "file": "/home/mms-wonchan/osqp/qdldl/examples/example.c"
+  "directory": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build",
+  "command": "/usr/bin/cc  -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/build/include  -O3 -O3 -DNDEBUG -fPIE -o CMakeFiles/qdldl_example.dir/examples/example.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/examples/example.c",
+  "file": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/examples/example.c"
 }
 ]
