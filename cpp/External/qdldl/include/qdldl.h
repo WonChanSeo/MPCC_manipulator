@@ -186,6 +186,78 @@ QDLDL_API void QDLDL_Lsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_
 QDLDL_API void QDLDL_Ltsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
                              const QDLDL_float* Lx, QDLDL_float* x);
 
+// ========================================
+// QDLDL Sample Data Logging API
+// ========================================
+// Enable sample logging by compiling with -DQDLDL_ENABLE_SAMPLE_LOGGING
+
+#ifdef QDLDL_ENABLE_SAMPLE_LOGGING
+
+/**
+ * Initialize sample logging with output directory
+ * @param output_dir  Directory where samples will be saved
+ */
+QDLDL_API void QDLDL_init_sample_logging(const char* output_dir);
+
+/**
+ * Reset the sample counter to 0
+ */
+QDLDL_API void QDLDL_reset_sample_counter(void);
+
+/**
+ * Get current sample count
+ * @return Number of samples saved so far
+ */
+QDLDL_API int QDLDL_get_sample_count(void);
+
+/**
+ * Save a complete QDLDL sample (all inputs and outputs)
+ * This saves: Ap, Ai, Ax, Lp, Li, Lx, D, Dinv, etree, Lnz, x_input, x_output
+ *
+ * @param n          Matrix dimension
+ * @param Ap         Column pointers for A (size n+1)
+ * @param Ai         Row indices for A (size Ap[n])
+ * @param Ax         Values for A (size Ap[n])
+ * @param Lp         Column pointers for L (size n+1)
+ * @param Li         Row indices for L (size Lp[n])
+ * @param Lx         Values for L (size Lp[n])
+ * @param D          Diagonal matrix D (size n)
+ * @param Dinv       Inverse of D (size n)
+ * @param etree      Elimination tree (size n)
+ * @param Lnz        Nonzeros per column of L (size n)
+ * @param x_input    Input b vector before solve (size n), can be NULL
+ * @param x_output   Output x vector after solve (size n)
+ */
+QDLDL_API void QDLDL_save_sample(
+    QDLDL_int n,
+    const QDLDL_int* Ap, const QDLDL_int* Ai, const QDLDL_float* Ax,
+    const QDLDL_int* Lp, const QDLDL_int* Li, const QDLDL_float* Lx,
+    const QDLDL_float* D, const QDLDL_float* Dinv,
+    const QDLDL_int* etree, const QDLDL_int* Lnz,
+    const QDLDL_float* x_input, const QDLDL_float* x_output
+);
+
+/**
+ * Store factor results for later save (called after QDLDL_factor)
+ * The sample will be saved on the first subsequent solve call
+ */
+QDLDL_API void QDLDL_store_factor_for_sample(
+    QDLDL_int n,
+    const QDLDL_int* Ap, const QDLDL_int* Ai, const QDLDL_float* Ax,
+    const QDLDL_int* Lp, const QDLDL_int* Li, const QDLDL_float* Lx,
+    const QDLDL_float* D, const QDLDL_float* Dinv,
+    const QDLDL_int* etree, const QDLDL_int* Lnz
+);
+
+/**
+ * Check if there's a pending factor and save sample with solve results
+ * Called automatically during solve to save factor + solve data together
+ * Only saves once per factor call
+ */
+QDLDL_API void QDLDL_save_sample_on_solve(const QDLDL_float* x_input, const QDLDL_float* x_output);
+
+#endif // QDLDL_ENABLE_SAMPLE_LOGGING
+
 #ifdef __cplusplus
 }
 #endif // ifdef __cplusplus

@@ -60,6 +60,12 @@ option( QDLDL_USE_FLEXFLOAT "Use FlexFloat for custom precision arithmetic" OFF 
 set(FF_EXPONENT_BITS "8" CACHE STRING "FlexFloat exponent bits")
 set(FF_MANTISSA_BITS "23" CACHE STRING "FlexFloat mantissa bits")
 
+# Sample logging for precision testing
+option( QDLDL_ENABLE_SAMPLE_LOGGING "Enable QDLDL sample data logging for precision analysis" OFF )
+if( QDLDL_ENABLE_SAMPLE_LOGGING )
+    message( STATUS "QDLDL sample logging is ENABLED" )
+endif()
+
 if( ${QDLDL_USE_FLEXFLOAT} )
     message( STATUS "Using FlexFloat for custom precision arithmetic" )
     message( STATUS "  FF_EXPONENT_BITS: ${FF_EXPONENT_BITS}" )
@@ -194,6 +200,11 @@ if( QDLDL_USE_FLEXFLOAT )
         FF_exponent_bits=${FF_EXPONENT_BITS}
         FF_mantissa_bits=${FF_MANTISSA_BITS}
     )
+endif()
+
+# Add sample logging compile definition if enabled
+if( QDLDL_ENABLE_SAMPLE_LOGGING )
+    target_compile_definitions(qdldlobject PRIVATE QDLDL_ENABLE_SAMPLE_LOGGING)
 endif()
 
 

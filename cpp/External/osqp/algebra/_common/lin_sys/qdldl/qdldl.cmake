@@ -38,6 +38,17 @@ else()
   message(STATUS "  FlexFloat support in QDLDL: DISABLED")
 endif()
 
+# Sample logging for precision testing
+if(NOT DEFINED QDLDL_ENABLE_SAMPLE_LOGGING)
+  set(QDLDL_ENABLE_SAMPLE_LOGGING OFF)
+endif()
+if(QDLDL_ENABLE_SAMPLE_LOGGING)
+  set(QDLDL_ENABLE_SAMPLE_LOGGING ON CACHE BOOL "QDLDL sample logging" FORCE)
+  message(STATUS "  QDLDL sample logging: ENABLED")
+else()
+  message(STATUS "  QDLDL sample logging: DISABLED")
+endif()
+
 # We only want the object library, so turn off the other library products
 set(QDLDL_BUILD_STATIC_LIB OFF CACHE BOOL "Build QDLDL static library")
 set(QDLDL_BUILD_SHARED_LIB OFF CACHE BOOL "Build QDLDL shared library")

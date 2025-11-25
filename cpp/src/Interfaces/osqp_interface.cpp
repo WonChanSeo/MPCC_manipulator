@@ -747,45 +747,17 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     // saveMatrixToFile(l, "lower", "/home/mms-wonchan/Studies/OSQP/Precision/lower.txt");
     // saveMatrixToFile(u, "lower", "/home/mms-wonchan/Studies/OSQP/Precision/upper.txt");
 
-    Eigen::MatrixX<_Float32> P_FP32(N_var, N_var);
-    Eigen::MatrixX<_Float32> A_FP32(N_constr, N_var);
-    Eigen::MatrixX<_Float32> q_FP32(N_var, 1);
-    Eigen::MatrixX<_Float32> l_FP32(N_constr, 1);
-    Eigen::MatrixX<_Float32> u_FP32(N_constr, 1);
-
-    // // 각 행렬에 대해 FP32 범위 초과 여부를 검사
-    // checkForFloatOverflow(P, "P");
-    // checkForFloatOverflow(A, "A");
-    // checkForFloatOverflow(q, "q");
-    // checkForFloatOverflow(l, "l");
-    // checkForFloatOverflow(u, "u");
-
-
-    P_FP32 = P.cast<_Float32>();
-    A_FP32 = A.cast<_Float32>();
-    q_FP32 = q.cast<_Float32>();
-    l_FP32 = l.cast<_Float32>();
-    u_FP32 = u.cast<_Float32>();
-
-    // saveMatrixToFile(P_FP32, "P_FP32", "/home/mms-wonchan/Studies/OSQP/Precision/P_FP32.txt");
-    // saveMatrixToFile(A_FP32, "A_FP32", "/home/mms-wonchan/Studies/OSQP/Precision/A_FP32.txt");
-    // saveMatrixToFile(q_FP32, "q_FP32", "/home/mms-wonchan/Studies/OSQP/Precision/q_FP32.txt");
-    // saveMatrixToFile(l_FP32, "l_FP32", "/home/mms-wonchan/Studies/OSQP/Precision/l_FP32.txt");
-    // saveMatrixToFile(u_FP32, "u_FP32", "/home/mms-wonchan/Studies/OSQP/Precision/u_FP32.txt");
-
-    Eigen::VectorX<_Float32> step_FP32(N_var, 1);
-    Eigen::VectorX<_Float32> step_lambda_FP32(N_constr, 1);
-
-   Eigen::SparseMatrix<_Float32> P_sp(N_var, N_var);
-   Eigen::SparseMatrix<_Float32> A_sp(N_constr, N_var);
-   Eigen::Matrix<_Float32, N_var,1> q_ds;
-   Eigen::Matrix<_Float32, N_constr,1> l_ds;
-   Eigen::Matrix<_Float32, N_constr,1> u_ds;
-   P_sp = P_FP32.sparseView();
-   A_sp = A_FP32.sparseView();
-   q_ds = q_FP32;
-   l_ds = l_FP32;
-   u_ds = u_FP32;
+   // Use double precision for OSQP (OSQP_USE_FLOAT=OFF)
+   Eigen::SparseMatrix<double> P_sp(N_var, N_var);
+   Eigen::SparseMatrix<double> A_sp(N_constr, N_var);
+   Eigen::Matrix<double, N_var,1> q_ds;
+   Eigen::Matrix<double, N_constr,1> l_ds;
+   Eigen::Matrix<double, N_constr,1> u_ds;
+   P_sp = P.sparseView();
+   A_sp = A.sparseView();
+   q_ds = q;
+   l_ds = l;
+   u_ds = u;
 
 //    saveSparseMatrixToFile(P_sp, "P_sp", "./P_sp.txt");
 //    saveSparseMatrixToFile(A_sp, "A_sp", "./A_sp.txt");
@@ -846,11 +818,9 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
 
     // printf("solver_.getSolution_size : %ld", solver_.getSolution().rows());
     // printf("solver_.getDualSolution_size : %ld", solver_.getDualSolution().rows());
-    step_FP32 = solver_.getSolution();
-    step_lambda_FP32 = solver_.getDualSolution();
-    // get the controller input
-    step = step_FP32.cast<double>();
-    step_lambda = step_lambda_FP32.cast<double>();
+    // Get solution directly as double (OSQP_USE_FLOAT=OFF)
+    step = solver_.getSolution();
+    step_lambda = solver_.getDualSolution();
 
     solver_.clearSolverVariables();
     solver_.clearSolver();

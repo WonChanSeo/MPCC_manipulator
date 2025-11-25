@@ -46,10 +46,10 @@
 /* #undef OSQP_USE_HALF */
 
 /* OSQP_USE_FLEXFLOAT */
-#define OSQP_USE_FLEXFLOAT
+/* #undef OSQP_USE_FLEXFLOAT */
 
 /* OSQP_USE_FLOAT */
-#define OSQP_USE_FLOAT
+/* #undef OSQP_USE_FLOAT */
 
 /* OSQP_USE_LONG */
 #define OSQP_USE_LONG

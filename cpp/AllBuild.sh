@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 # ========================================
@@ -11,9 +12,17 @@ USE_FLEXFLOAT=${USE_FLEXFLOAT:-OFF}
 # (defaults to same as USE_FLEXFLOAT if not specified)
 QDLDL_USE_FLEXFLOAT=${QDLDL_USE_FLEXFLOAT:-$USE_FLEXFLOAT}
 
-# FlexFloat precision configuration (only used when USE_FLEXFLOAT=ON)
-FF_EXPONENT_BITS=${FF_EXPONENT_BITS:-8}
-FF_MANTISSA_BITS=${FF_MANTISSA_BITS:-23}
+# OSQP FlexFloat precision configuration: E11M52 (double precision equivalent)
+FF_EXPONENT_BITS=${FF_EXPONENT_BITS:-11}
+FF_MANTISSA_BITS=${FF_MANTISSA_BITS:-52}
+
+# ========================================
+# QDLDL Sample Logging Configuration
+# ========================================
+# Set QDLDL_ENABLE_SAMPLE_LOGGING=ON to save QDLDL samples for precision analysis
+# Samples will be saved to QDLDL_SAMPLE_OUTPUT_DIR
+QDLDL_ENABLE_SAMPLE_LOGGING=${QDLDL_ENABLE_SAMPLE_LOGGING:-OFF}
+QDLDL_SAMPLE_OUTPUT_DIR=${QDLDL_SAMPLE_OUTPUT_DIR:-"../../result/qdldl_samples"}
 
 # ========================================
 # FlexFloat Configuration for NN Inference
@@ -21,9 +30,9 @@ FF_MANTISSA_BITS=${FF_MANTISSA_BITS:-23}
 # Set NN_USE_FLEXFLOAT=ON to enable FlexFloat for NN inference
 NN_USE_FLEXFLOAT=${NN_USE_FLEXFLOAT:-OFF}
 
-# NN FlexFloat precision configuration (only used when NN_USE_FLEXFLOAT=ON)
+# NN FlexFloat precision configuration: E8M7
 NN_FF_EXPONENT_BITS=${NN_FF_EXPONENT_BITS:-8}
-NN_FF_MANTISSA_BITS=${NN_FF_MANTISSA_BITS:-23}
+NN_FF_MANTISSA_BITS=${NN_FF_MANTISSA_BITS:-7}
 
 echo "========================================="
 echo "Build Configuration:"
@@ -33,6 +42,12 @@ echo "    QDLDL_USE_FLEXFLOAT:  $QDLDL_USE_FLEXFLOAT"
 if [ "$USE_FLEXFLOAT" = "ON" ]; then
     echo "    FF_EXPONENT_BITS:     $FF_EXPONENT_BITS"
     echo "    FF_MANTISSA_BITS:     $FF_MANTISSA_BITS"
+fi
+echo ""
+echo "  QDLDL Sample Logging:"
+echo "    QDLDL_ENABLE_SAMPLE_LOGGING: $QDLDL_ENABLE_SAMPLE_LOGGING"
+if [ "$QDLDL_ENABLE_SAMPLE_LOGGING" = "ON" ]; then
+    echo "    QDLDL_SAMPLE_OUTPUT_DIR:    $QDLDL_SAMPLE_OUTPUT_DIR"
 fi
 echo ""
 echo "  NN Inference FlexFloat:"
@@ -50,11 +65,12 @@ rm -rf lib
 mkdir -p build lib
 cd build
 cmake .. \
-    -DOSQP_USE_FLOAT=ON \
+    -DOSQP_USE_FLOAT=OFF \
     -DOSQP_USE_FLEXFLOAT=$USE_FLEXFLOAT \
     -DQDLDL_USE_FLEXFLOAT=$QDLDL_USE_FLEXFLOAT \
     -DFF_EXPONENT_BITS=$FF_EXPONENT_BITS \
     -DFF_MANTISSA_BITS=$FF_MANTISSA_BITS \
+    -DQDLDL_ENABLE_SAMPLE_LOGGING=$QDLDL_ENABLE_SAMPLE_LOGGING \
     -DCMAKE_INSTALL_PREFIX=$(realpath ../lib)
 make
 make install
@@ -73,7 +89,7 @@ rm -rf build
 rm -rf lib
 mkdir -p build lib
 cd build
-cmake .. -DOSQP_IS_V1=ON -DCMAKE_INSTALL_PREFIX:PATH=$(realpath ../lib) -DCMAKE_PREFIX_PATH=$(realpath ../../../$localFolder_osqp/lib) -DCMAKE_POSITION_INDEPENDENT_CODE=ON ..
+cmake .. -DOSQP_IS_V1=ON -DCMAKE_INSTALL_PREFIX:PATH=$(realpath ../lib) -DCMAKE_PREFIX_PATH=$(realpath ../../osqp/lib) -DCMAKE_POSITION_INDEPENDENT_CODE=ON ..
 make
 make install
 EXPORT_LINE="export OsqpEigen_DIR=\"$(realpath ..)\""
@@ -97,11 +113,12 @@ rm -rf build
 mkdir build
 cd build
 
-# cmake로 빌드 설정 및 make 실행 (NN FlexFloat 옵션 포함)
+# cmake로 빌드 설정 및 make 실행 (NN FlexFloat 및 QDLDL 샘플 로깅 옵션 포함)
 cmake .. \
     -DNN_USE_FLEXFLOAT=$NN_USE_FLEXFLOAT \
     -DNN_FF_EXPONENT_BITS=$NN_FF_EXPONENT_BITS \
-    -DNN_FF_MANTISSA_BITS=$NN_FF_MANTISSA_BITS
+    -DNN_FF_MANTISSA_BITS=$NN_FF_MANTISSA_BITS \
+    -DQDLDL_ENABLE_SAMPLE_LOGGING=$QDLDL_ENABLE_SAMPLE_LOGGING
 make -j8
 
 # 빌드 디렉토리에서 상위 디렉토리로 이동

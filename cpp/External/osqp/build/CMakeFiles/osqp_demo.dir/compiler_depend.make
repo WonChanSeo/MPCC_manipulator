@@ -148,8 +148,7 @@ CMakeFiles/osqp_demo.dir/examples/problems/cvxqp2_s.c.o: ../examples/problems/cv
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
-  ../include/private/algebra_vector.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h
+  ../include/private/algebra_vector.h
 
 CMakeFiles/osqp_demo.dir/examples/problems/hs21.c.o: ../examples/problems/hs21.c \
   /usr/include/stdc-predef.h \
@@ -218,8 +217,7 @@ CMakeFiles/osqp_demo.dir/examples/problems/hs21.c.o: ../examples/problems/hs21.c
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
-  ../include/private/algebra_vector.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h
+  ../include/private/algebra_vector.h
 
 CMakeFiles/osqp_demo.dir/examples/problems/hs35.c.o: ../examples/problems/hs35.c \
   /usr/include/stdc-predef.h \
@@ -288,8 +286,7 @@ CMakeFiles/osqp_demo.dir/examples/problems/hs35.c.o: ../examples/problems/hs35.c
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
-  ../include/private/algebra_vector.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h
+  ../include/private/algebra_vector.h
 
 CMakeFiles/osqp_demo.dir/examples/problems/largeqp.c.o: ../examples/problems/largeqp.c \
   /usr/include/stdc-predef.h \
@@ -357,8 +354,7 @@ CMakeFiles/osqp_demo.dir/examples/problems/largeqp.c.o: ../examples/problems/lar
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
-  ../include/private/algebra_vector.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h
+  ../include/private/algebra_vector.h
 
 CMakeFiles/osqp_demo.dir/examples/problems/primalc1.c.o: ../examples/problems/primalc1.c \
   /usr/include/stdc-predef.h \
@@ -434,8 +430,7 @@ CMakeFiles/osqp_demo.dir/examples/problems/qpcblend.c.o: ../examples/problems/qp
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
-  ../include/private/algebra_vector.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h
+  ../include/private/algebra_vector.h
 
 CMakeFiles/osqp_demo.dir/examples/problems/qptest.c.o: ../examples/problems/qptest.c \
   /usr/include/stdc-predef.h \
@@ -504,15 +499,12 @@ CMakeFiles/osqp_demo.dir/examples/problems/qptest.c.o: ../examples/problems/qpte
   /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
   /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
-  ../include/private/algebra_vector.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h
+  ../include/private/algebra_vector.h
 
 
 ../examples/problems/primalc1.c:
 
 ../examples/problems/hs35.c:
-
-/usr/lib/gcc/x86_64-linux-gnu/11/include/stdbool.h:
 
 ../include/private/algebra_vector.h:
 

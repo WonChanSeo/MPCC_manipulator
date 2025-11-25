@@ -669,6 +669,15 @@ static OSQPInt LDL_factor(OSQPCscMatrix* A,
                                  p->etree, p->bwork, p->iwork, p->fwork);
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_NUM_FAC);
 
+#ifdef QDLDL_ENABLE_SAMPLE_LOGGING
+    // Store factor results for sample logging (will be saved on first solve)
+    if (factor_status >= 0) {
+        QDLDL_store_factor_for_sample(A->n, A->p, A->i, A->x,
+                                       p->L->p, p->L->i, p->L->x,
+                                       p->D, p->Dinv, p->etree, p->Lnz);
+    }
+#endif
+
     if (factor_status < 0){
       // Error
       c_eprint("Error in KKT matrix LDL factorization when computing the nonzero elements. There are zeros in the diagonal matrix");
@@ -1130,6 +1139,42 @@ static void LDLSolve(OSQPFloat*           x,
   osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
 }
 
+#ifdef QDLDL_ENABLE_SAMPLE_LOGGING
+/* Extended LDLSolve that saves sample data only if factor was recently called */
+static void LDLSolve_with_logging(OSQPFloat*           x,
+                                   const OSQPFloat*     b,
+                                   qdldl_solver*        s) {
+
+  OSQPInt j;
+  OSQPInt n = s->L->n;
+  OSQPFloat* bp = s->bp;
+
+  osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
+
+  // permute_x(L->n, bp, b, P);
+  for (j = 0 ; j < n ; j++) bp[j] = b[s->P[j]];
+
+  // Save b_input (permuted) before solve
+  OSQPFloat* b_input_copy = (OSQPFloat*)c_malloc(sizeof(OSQPFloat) * n);
+  if (b_input_copy) {
+    for (j = 0; j < n; j++) b_input_copy[j] = bp[j];
+  }
+
+  QDLDL_solve(s->L->n, s->L->p, s->L->i, s->L->x, s->Dinv, bp);
+
+  // Save sample only if there's a pending factor (factor was recently called)
+  // This will save once per factor call, not on every solve
+  QDLDL_save_sample_on_solve(b_input_copy, bp);
+
+  if (b_input_copy) c_free(b_input_copy);
+
+  // permutet_x(L->n, x, bp, P);
+  for (j = 0 ; j < n ; j++) x[s->P[j]] = bp[j];
+
+  osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
+}
+#endif
+
 
 OSQPInt solve_linsys_qdldl(qdldl_solver* s,
                            OSQPVectorf*  b,
@@ -1152,7 +1197,11 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
   } else {
 #endif
     /* stores solution to the KKT system in s->sol */
+#ifdef QDLDL_ENABLE_SAMPLE_LOGGING
+    LDLSolve_with_logging(s->sol, bv, s);
+#else
     LDLSolve(s->sol, bv, s->L, s->Dinv, s->P, s->bp);
+#endif
 
     /* copy x_tilde from s->sol */
     for (j = 0 ; j < n ; j++) {
@@ -1203,6 +1252,15 @@ OSQPInt update_linsys_solver_matrices_qdldl(qdldl_solver*     s,
         s->etree, s->bwork, s->iwork, s->fwork);
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_NUM_FAC);
 
+#ifdef QDLDL_ENABLE_SAMPLE_LOGGING
+    // Store factor results for sample logging (will be saved on first solve)
+    if (pos_D_count >= 0) {
+        QDLDL_store_factor_for_sample(s->KKT->n, s->KKT->p, s->KKT->i, s->KKT->x,
+                                       s->L->p, s->L->i, s->L->x,
+                                       s->D, s->Dinv, s->etree, s->Lnz);
+    }
+#endif
+
     //number of positive elements in D should match the
     //dimension of P if P + \sigma I is PD.   Error otherwise.
     return (pos_D_count == P->csc->n) ? 0 : 1;
@@ -1237,6 +1295,15 @@ OSQPInt update_linsys_solver_rho_vec_qdldl(qdldl_solver*      s,
         s->L->p, s->L->i, s->L->x, s->D, s->Dinv, s->Lnz,
         s->etree, s->bwork, s->iwork, s->fwork);
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_NUM_FAC);
+
+#ifdef QDLDL_ENABLE_SAMPLE_LOGGING
+    // Store factor results for sample logging (will be saved on first solve)
+    if (retval >= 0) {
+        QDLDL_store_factor_for_sample(s->KKT->n, s->KKT->p, s->KKT->i, s->KKT->x,
+                                       s->L->p, s->L->i, s->L->x,
+                                       s->D, s->Dinv, s->etree, s->Lnz);
+    }
+#endif
 
     return (retval < 0);
 }

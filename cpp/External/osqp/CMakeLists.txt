@@ -380,6 +380,12 @@ if(OSQP_USE_FLEXFLOAT OR QDLDL_USE_FLEXFLOAT)
   target_include_directories(OSQPLIB PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../flexfloat/include)
 endif()
 
+# Add QDLDL sample logging compile definition if enabled
+if(QDLDL_ENABLE_SAMPLE_LOGGING)
+  target_compile_definitions(OSQPLIB PRIVATE QDLDL_ENABLE_SAMPLE_LOGGING)
+  message(STATUS "QDLDL sample logging enabled for OSQPLIB")
+endif()
+
 get_property(
   osqplib_includes
   TARGET OSQPLIB

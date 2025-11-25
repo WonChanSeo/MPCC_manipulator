@@ -23,12 +23,28 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+// QDLDL Sample Logging
+#ifdef QDLDL_ENABLE_SAMPLE_LOGGING
+extern "C" {
+    void QDLDL_init_sample_logging(const char* output_dir);
+    int QDLDL_get_sample_count(void);
+}
+#endif
+
 #ifdef USE_CVPLOT
 #include <CvPlot/cvplot.h>
 #include <opencv2/opencv.hpp>
 #endif
 
 int main() {
+
+#ifdef QDLDL_ENABLE_SAMPLE_LOGGING
+    // Initialize QDLDL sample logging for precision analysis
+    // Set output directory via environment variable or use default
+    const char* sample_dir = std::getenv("QDLDL_SAMPLE_OUTPUT_DIR");
+    if (!sample_dir) sample_dir = "../../result/qdldl_samples";
+    QDLDL_init_sample_logging(sample_dir);
+#endif
 
     using namespace mpcc;
     std::ifstream iConfig(pkg_path + "Params/config.json");
@@ -270,6 +286,10 @@ int main() {
     axes.setYLim({0.,2.*double(jsonConfig["Ts"])});
     CvPlot::show("mywindow", axes);
     #endif
+
+#ifdef QDLDL_ENABLE_SAMPLE_LOGGING
+    std::cout << "QDLDL samples saved: " << QDLDL_get_sample_count() << std::endl;
+#endif
 
     return 0;
 }

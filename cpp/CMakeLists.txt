@@ -21,6 +21,13 @@ if(NN_USE_FLEXFLOAT)
   add_definitions(-DNN_FF_mantissa_bits=${NN_FF_MANTISSA_BITS})
 endif()
 
+# QDLDL Sample Logging option (inherited from OSQP build)
+option(QDLDL_ENABLE_SAMPLE_LOGGING "Enable QDLDL sample data logging" OFF)
+if(QDLDL_ENABLE_SAMPLE_LOGGING)
+  message(STATUS "QDLDL sample logging: ON")
+  add_definitions(-DQDLDL_ENABLE_SAMPLE_LOGGING)
+endif()
+
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/External/Eigen/cmake")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/External/osqp_eigen/lib")
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/External/osqp/lib")

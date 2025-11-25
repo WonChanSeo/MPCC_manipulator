@@ -34,7 +34,7 @@ extern "C" {
 // QDLDL integer and float types
 
 typedef long long    QDLDL_int;   /* for indices */
-typedef float  QDLDL_float; /* for numerical values  */
+typedef double  QDLDL_float; /* for numerical values  */
 typedef unsigned char   QDLDL_bool;  /* for boolean values  */
 
 //Maximum value of the signed type QDLDL_int.
@@ -45,7 +45,7 @@ typedef unsigned char   QDLDL_bool;  /* for boolean values  */
  */
 
 /* When defined, QDLDL is using floats instead of doubles */
-#define QDLDL_FLOAT
+/* #undef QDLDL_FLOAT */
 
 /* When defined, QDLDL is using long long instead of int types */
 #define QDLDL_LONG
