@@ -1,0 +1,36 @@
+
+=== Statistics for Combined Statistics (Debug & Time Data) ===
+q               | mean:  -0.105395 | min:  -2.433397 | max:   1.596823 | var:   1.136092 | std:   1.065876 |
+qdot            | mean:   0.000339 | min:  -0.936923 | max:   0.926510 | var:   0.056307 | std:   0.237292 |
+qddot           | mean:   0.000339 | min:  -0.936923 | max:   0.926510 | var:   0.056307 | std:   0.237292 |
+s               | mean:   0.568429 | min:   0.000015 | max:   0.996463 | var:   0.079189 | std:   0.281406 |
+vs              | mean:   0.064007 | min:   0.001902 | max:   0.099759 | var:   0.001411 | std:   0.037565 |
+dVs             | mean:   0.001553 | min:  -1.307041 | max:   0.655963 | var:   0.024188 | std:   0.155526 |
+ee_vel          | mean:   0.000111 | min:  -0.271078 | max:   0.215490 | var:   0.007841 | std:   0.088552 |
+ee_speed        | mean:   0.132402 | min:   0.007563 | max:   0.271081 | var:   0.005994 | std:   0.077420 |
+sel_min_dist    | mean:  11.498351 | min:   1.625225 | max:  22.654140 | var:  45.164546 | std:   6.720457 |
+env_min_dist    | mean:  39.774355 | min:   7.812500 | max:  67.500000 | var: 243.878029 | std:  15.616595 |
+mani            | mean:   0.079292 | min:   0.050586 | max:   0.094309 | var:   0.000085 | std:   0.009233 |
+contour_error   | mean:   0.000707 | min:   0.000038 | max:   0.002369 | var:   0.000000 | std:   0.000443 |
+spline_ee_pose  | mean:  -0.008888 | min:  -1.000000 | max:   1.000000 | var:   0.214503 | std:   0.463144 |
+pred_ee_pose    | mean:  -0.006115 | min:  -1.000000 | max:   1.000000 | var:   0.214398 | std:   0.463032 |
+ref_ee_pose     | mean:  -0.006330 | min:  -1.000000 | max:   1.000000 | var:   0.214396 | std:   0.463030 |
+iter_count      | mean: 146.339114 | min:  50.000000 | max: 250.000000 | var: 5066.880506 | std:  71.182024 |
+sqp_iter_count  | mean:   1.047527 | min:   1.000000 | max:   2.000000 | var:   0.045268 | std:   0.212764 |
+total_iter_count | mean: 155.748234 | min:  50.000000 | max: 500.000000 | var: 6452.185811 | std:  80.325499 |
+solve_count     | final value: 1557
+top3_total_iter_counts | Top 3 values: [500, 450, 400]
+top3_solve_nums | Top 3 solve numbers:
+                  Rank 1: [327]
+                  Rank 2: [263, 280, 320, 351, 818, 825, 901, 905, 1227]
+                  Rank 3: [337, 342, 833]
+is_collision    | mean:   0.026333 | min:   0.000000 | max:   1.000000 | var:   0.025639 | std:   0.160123 |
+actual_min_dist | mean:   0.175954 | min:  -0.004532 | max:   0.420353 | var:   0.016390 | std:   0.128025 |
+nn_min_dist     | mean:  20.760096 | min:   7.812500 | max:  43.000000 | var: 122.007390 | std:  11.045696 |
+nn_error        | mean:  20.584141 | min:   7.763641 | max:  42.585430 | var: 119.325140 | std:  10.923605 |
+total           | mean:   0.097949 | min:   0.068557 | max:   0.163491 | var:   0.000216 | std:   0.014696 |
+set_env         | mean:   0.079381 | min:   0.052036 | max:   0.142885 | var:   0.000185 | std:   0.013595 |
+set_qp          | mean:   0.000414 | min:   0.000000 | max:   0.000975 | var:   0.000000 | std:   0.000136 |
+solve_qp        | mean:   0.015953 | min:   0.000000 | max:   0.043998 | var:   0.000032 | std:   0.005655 |
+get_alpha       | mean:   0.000182 | min:   0.000000 | max:   0.000629 | var:   0.000000 | std:   0.000075 |
+

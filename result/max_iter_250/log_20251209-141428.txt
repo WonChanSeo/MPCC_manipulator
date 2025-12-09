@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/home/mms-wonchan/git/MPCC_manipulator/python/main_w_sim.py", line 1, in <module>
+    import MPCC
+  File "/home/mms-wonchan/git/MPCC_manipulator/python/MPCC/__init__.py", line 1, in <module>
+    from .robot_model import RobotModel
+  File "/home/mms-wonchan/git/MPCC_manipulator/python/MPCC/robot_model.py", line 5, in <module>
+    from MPCC_WRAPPER import RobotModel as RobotModel_CPP
+ImportError: libosqp.so: cannot open shared object file: No such file or directory

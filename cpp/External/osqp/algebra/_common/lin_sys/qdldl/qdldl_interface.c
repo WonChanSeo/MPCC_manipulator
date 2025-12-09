@@ -40,7 +40,7 @@ static const char* CSV_DELIMS = " ,\t;";
 // ===== External permutation reader =====
 #ifndef OSQP_PERM_PATH
 // 기본 경로를 매크로로 지정해두고 필요 시 컴파일 옵션으로 바꿔도 됨
-#define OSQP_PERM_PATH "./P_ref.txt"
+#define OSQP_PERM_PATH "../reference_matrix/P_ref.txt"
 #endif
 
 // 파일에서 정수 토큰 하나를 읽어 n개 채운다. 구분자는 공백/탭/콤마/세미콜론 허용.
@@ -708,92 +708,59 @@ static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
     OSQPInt    i;
 
     OSQPCscMatrix* KKT_temp;
-
-    // OSQPCscMatrix* A = NULL;
-    // // 값까지 저장( store_values=1 ), 아주 작은 값은 0으로 취급(tol=1e-15)
-    // int rc = read_dense_csv_to_csc("./KKT_mask.csv",
-    //                             0, /*store_values=*/1, &A);
+    OSQPCscMatrix* KKT_mask = NULL;
 
     static int run_counter = 0;
     char path[512];
 
     info = (OSQPFloat *)c_malloc(AMD_INFO * sizeof(OSQPFloat));
 
-    // // (A) 퍼뮤테이션 전 KKT를 "행렬 모양"으로 저장
-    // // 예: CSV, 대칭 확장 on, 소수 17자리
-    // snprintf(path, sizeof(path),
-    //          "../result/KKT_dense/KKT_before_run_%d.csv", run_counter);
-    // if (dump_matrix_shape((*KKT), path, /*expand_sym=*/1, /*sep=*/",", /*precision=*/17) != 0){
-    //     c_eprint("Failed to dump dense matrix (before) to %s.", path);
-    // }
-
-    // snprintf(path, sizeof(path),
-    //          "../result/KKT_csc/KKT_before_run_%d.csc.txt", run_counter);
-    // if (dump_csc_text((*KKT), path) != 0) {
-    //     c_eprint("Failed to dump CSC (before) to %s.", path);
-    // }
-    // // (A) 퍼뮤테이션 전: 0/1 마스크 저장
-    // snprintf(path, sizeof(path),
-    //         "../result/KKT_mask/KKT_mask_before_run_%d.csv", run_counter);
-    // if (dump_matrix_mask_shape((*KKT), path, /*expand_sym=*/1, ",", /*tol=*/0.0) != 0){
-    //     c_eprint("Failed to dump dense mask (before) to %s.", path);
-    // }
-
-//     // (B) AMD로 P 계산
-// #ifdef OSQP_USE_LONG
-//     amd_status = amd_l_order((*KKT)->n, (*KKT)->p, (*KKT)->i, p->P, (OSQPFloat *)OSQP_NULL, info);
-
-// #else
-//     amd_status = amd_order((*KKT)->n, (*KKT)->p, (*KKT)->i, p->P, (OSQPFloat *)OSQP_NULL, info);
-// #endif
-//     if (amd_status < 0) {
-//         c_free(info);
-//         return amd_status;
-//     }
-
-//     // (C) P 저장 (기존 코드 그대로)
-//     snprintf(path, sizeof(path),
-//              "../result/permutation_vector/permutation_vector_run_%d.txt", run_counter);
-//     {
-//         FILE* file = fopen(path, "w");
-//         if (file) {
-//             for (i = 0; i < (*KKT)->n; i++) {
-// #ifdef OSQP_USE_LONG
-//                 fprintf(file, "%lld\n", (long long)p->P[i]);
-// #else
-//                 fprintf(file, "%d\n", p->P[i]);
-// #endif
-//             }
-//             fclose(file);
-//         } else {
-//             c_eprint("Failed to open file %s for saving permutation vector.", path);
-//         }
-//     }
-
-    // (B) AMD 대신 외부 P를 읽어 사용
+    // (B) KKT_mask.csv를 읽어서 AMD로 P 계산
     {
-        OSQPInt n = (*KKT)->n;
-        int rcP = read_perm_from_file(OSQP_PERM_PATH, n, p->P);
-        if (rcP){
-            c_eprint("Failed to read permutation P from '%s' (rc=%d).", OSQP_PERM_PATH, rcP);
-            return -100;  // 적절한 에러 코드로 조정 가능
+        // KKT_mask.csv 파일 읽기 (upper triangular만 사용)
+        int rc = read_dense_csv_to_csc("../reference_matrix/KKT_mask.csv", 0, /*store_values=*/1, &KKT_mask);
+        if (rc != 0 || !KKT_mask) {
+            c_eprint("Failed to read KKT_mask.csv (rc=%d). Falling back to runtime KKT.", rc);
+            // fallback: 런타임 KKT 사용
+            KKT_mask = *KKT;
         }
-//         // 참고: 필요 시 여기서 P를 저장도 가능
-//         snprintf(path, sizeof(path),
-//                  "../result/permutation_vector/permutation_vector_run_%d.txt", run_counter);
-//         FILE* file = fopen(path, "w");
-//         if (file) {
-//             for (i = 0; i < n; i++) {
-// #ifdef OSQP_USE_LONG
-//                 fprintf(file, "%lld\n", (long long)p->P[i]);
-// #else
-//                 fprintf(file, "%d\n", p->P[i]);
-// #endif
-//             }
-//             fclose(file);
-//         } else {
-//             c_eprint("Failed to open file %s for saving permutation vector.", path);
-//         }
+
+        // AMD ordering 수행
+#ifdef OSQP_USE_LONG
+        amd_status = amd_l_order(KKT_mask->n, KKT_mask->p, KKT_mask->i, p->P, (OSQPFloat *)OSQP_NULL, info);
+#else
+        amd_status = amd_order(KKT_mask->n, KKT_mask->p, KKT_mask->i, p->P, (OSQPFloat *)OSQP_NULL, info);
+#endif
+        if (amd_status < 0) {
+            c_eprint("AMD ordering failed with status %d.", amd_status);
+            if (KKT_mask != *KKT) csc_spfree(KKT_mask);
+            c_free(info);
+            return amd_status;
+        }
+
+        // P_ref.txt로 저장 (첫 번째 실행에서만)
+        if (run_counter == 0) {
+            FILE* file = fopen(OSQP_PERM_PATH, "w");
+            if (file) {
+                for (i = 0; i < KKT_mask->n; i++) {
+#ifdef OSQP_USE_LONG
+                    fprintf(file, "%lld\n", (long long)p->P[i]);
+#else
+                    fprintf(file, "%d\n", p->P[i]);
+#endif
+                }
+                fclose(file);
+                printf("[OSQP] Permutation vector (from KKT_mask.csv) saved to %s (n=%lld)\n",
+                       OSQP_PERM_PATH, (long long)KKT_mask->n);
+            } else {
+                c_eprint("Failed to open file %s for saving permutation vector.", OSQP_PERM_PATH);
+            }
+        }
+
+        // KKT_mask 메모리 해제 (런타임 KKT와 다른 경우에만)
+        if (KKT_mask != *KKT) {
+            csc_spfree(KKT_mask);
+        }
     }
 
     // (D) Pinv 및 대칭 퍼뮤테이션

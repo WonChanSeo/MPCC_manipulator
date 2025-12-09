@@ -1,0 +1,56 @@
+<frozen importlib._bootstrap>:241: RuntimeWarning: to-Python converter for std::vector<int, std::allocator<int> > already registered; second conversion method ignored.
+[INFO] [1765257230.622300816] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00429127 seconds
+[INFO] [1765257230.622363190] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1765257230.629068608] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1765257230.629099863] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1765257230.629325169] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1765257230.629333493] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[INFO] [1765257230.638384542] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.000991545 seconds
+[INFO] [1765257230.638393286] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1765257230.640189825] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1765257230.640200877] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1765257230.640287363] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1765257230.640291062] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[WARN] [1765257230.640948132] [moveit_ros.robot_model_loader]: No kinematics plugins defined. Fill and load kinematics.yaml!
+[INFO] [1765257230.643270984] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Publishing maintained planning scene on '/planning_scene'
+[INFO] [1765257230.643312945] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting planning scene monitor
+[INFO] [1765257230.643617723] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/planning_scene'
+[INFO] [1765257230.643624285] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Updating internal planning scene state at most every 0.010000 seconds
+link: base_link
+link: base_footprint
+link: default_mount
+link: front_bumper_mount
+link: front_left_wheel
+link: front_right_wheel
+link: fr3_base
+link: fr3_link0
+link: fr3_link1
+link: fr3_link2
+link: fr3_link3
+link: fr3_link4
+link: fr3_link5
+link: fr3_link6
+link: fr3_link7
+link: fr3_link8
+link: fr3_hand
+link: fr3_leftfinger
+link: fr3_rightfinger
+link: fr3_hand_tcp
+link: rgb_camera_link
+link: depth_camera_link
+link: camera_base
+link: imu_camera_link
+link: inertial_link
+link: rear_bumper_mount
+link: rear_left_wheel
+link: rear_right_wheel
+link: top_chassis_link
+link: top_structure_link
+Traceback (most recent call last):
+  File "/home/mms-wonchan/git/MPCC_manipulator/python/main_w_sim.py", line 892, in <module>
+    main(args)
+  File "/home/mms-wonchan/git/MPCC_manipulator/python/main_w_sim.py", line 332, in main
+    obs_limits[1] = np.array([obs_positions[1], obs_positions[1]])
+IndexError: index 1 is out of bounds for axis 0 with size 1
+[INFO] [1765257230.672254567] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Stopped publishing maintained planning scene.
+[INFO] [1765257230.672270869] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Stopping planning scene monitor
