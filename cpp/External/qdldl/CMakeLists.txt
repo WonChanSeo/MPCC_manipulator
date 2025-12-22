@@ -300,8 +300,31 @@ message( STATUS "Demo executable build is ${QDLDL_BUILD_DEMO_EXE}" )
 if( QDLDL_BUILD_DEMO_EXE )
     # Create demo executable (linked to static library)
     add_executable (qdldl_example ${PROJECT_SOURCE_DIR}/examples/example.c)
-    # FlexFloat is now compiled into static library, just link math library
-    target_link_libraries (qdldl_example qdldlstatic m)
+    add_executable (qdldl_example_save ${PROJECT_SOURCE_DIR}/examples/example_save.c)
+    add_executable (qdldl_csv ${PROJECT_SOURCE_DIR}/examples/example_csv.c)
+
+    # Link math library (not needed on Windows)
+    if(NOT WIN32)
+        target_link_libraries (qdldl_example qdldlstatic m)
+        target_link_libraries (qdldl_example_save qdldlstatic m)
+        target_link_libraries (qdldl_csv qdldlstatic m)
+    else()
+        target_link_libraries (qdldl_example qdldlstatic)
+        target_link_libraries (qdldl_example_save qdldlstatic)
+        target_link_libraries (qdldl_csv qdldlstatic)
+    endif()
+
+    # Add FlexFloat compile definitions and includes to example_save if enabled
+    if( QDLDL_USE_FLEXFLOAT )
+        target_compile_definitions(qdldl_example_save PRIVATE
+            QDLDL_USE_FLEXFLOAT
+            FF_exponent_bits=${FF_EXPONENT_BITS}
+            FF_mantissa_bits=${FF_MANTISSA_BITS}
+        )
+        target_include_directories(qdldl_example_save PRIVATE
+            ${FLEXFLOAT_DIR}/include
+        )
+    endif()
 else()
     message( STATUS "Not building demo executable" )
 endif()

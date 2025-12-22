@@ -1,0 +1,36 @@
+# Standalone CMakeLists.txt for FMA test
+# Usage:
+#   mkdir build_test && cd build_test
+#   cmake -f ../test_fma_CMakeLists.txt ..
+#   cmake --build .
+#   ./test_fma ../testdata
+
+cmake_minimum_required(VERSION 3.10)
+project(FlexFloatFMATest C)
+
+set(CMAKE_C_STANDARD 99)
+
+# FlexFloat configuration is read from include/flexfloat_config.h
+# (included by flexfloat.h automatically)
+
+# Include directories
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+# Build test executable
+add_executable(test_fma
+    test_fma.c
+    src/flexfloat.c
+)
+
+# Link math library (Linux/macOS)
+if(UNIX)
+    target_link_libraries(test_fma m)
+endif()
+
+# Copy testdata for convenience
+add_custom_command(TARGET test_fma POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/testdata
+    ${CMAKE_BINARY_DIR}/testdata
+    COMMENT "Copying testdata to build directory"
+)

@@ -258,6 +258,7 @@ class SQPParam{
         unsigned int line_search_max_iter;
         bool do_SOC;
         bool use_BFGS;
+        bool use_RTI;
 
         double line_search_tau;
         double line_search_eta;

@@ -410,6 +410,7 @@ SQPParam::SQPParam(std::string file){
     line_search_max_iter = jsonSQP["line_search_max_iter"];
     do_SOC = jsonSQP["do_SOC"];
     use_BFGS = jsonSQP["use_BFGS"];
+    use_RTI = jsonSQP["use_RTI"];
 
     line_search_tau = jsonSQP["line_search_tau"];
     line_search_eta = jsonSQP["line_search_eta"];
@@ -443,5 +444,8 @@ SQPParam::SQPParam(std::string file, std::map<std::string, double> sqp_param) {
 
     if(sqp_param.find("use_BFGS") == sqp_param.end()) use_BFGS = jsonSQP["use_BFGS"];
     else use_BFGS = static_cast<bool>(sqp_param["use_BFGS"]);
+
+    if(sqp_param.find("use_RTI") == sqp_param.end()) use_RTI = jsonSQP["use_RTI"];
+    else use_RTI = static_cast<bool>(sqp_param["use_RTI"]);
 }
 }

@@ -4,13 +4,13 @@ set -e
 # ========================================
 # FlexFloat Configuration for OSQP/QDLDL
 # ========================================
-# Set USE_FLEXFLOAT=ON to enable FlexFloat precision testing
-# Set USE_FLEXFLOAT=OFF to use standard float precision
-USE_FLEXFLOAT=${USE_FLEXFLOAT:-OFF}
+# Set OSQP_USE_FLEXFLOAT=ON to enable FlexFloat precision testing
+# Set OSQP_USE_FLEXFLOAT=OFF to use standard float precision
+OSQP_USE_FLEXFLOAT=${OSQP_USE_FLEXFLOAT:-OFF}
 
 # Set QDLDL_USE_FLEXFLOAT=OFF to disable FlexFloat only in QDLDL
-# (defaults to same as USE_FLEXFLOAT if not specified)
-QDLDL_USE_FLEXFLOAT=${QDLDL_USE_FLEXFLOAT:-$USE_FLEXFLOAT}
+# (defaults to same as OSQP_USE_FLEXFLOAT if not specified)
+QDLDL_USE_FLEXFLOAT=${QDLDL_USE_FLEXFLOAT:-$OSQP_USE_FLEXFLOAT}
 
 # OSQP FlexFloat precision configuration: E11M52 (double precision equivalent)
 FF_EXPONENT_BITS=${FF_EXPONENT_BITS:-11}
@@ -37,9 +37,9 @@ NN_FF_MANTISSA_BITS=${NN_FF_MANTISSA_BITS:-7}
 echo "========================================="
 echo "Build Configuration:"
 echo "  OSQP/QDLDL FlexFloat:"
-echo "    USE_FLEXFLOAT:        $USE_FLEXFLOAT"
+echo "    OSQP_USE_FLEXFLOAT:   $OSQP_USE_FLEXFLOAT"
 echo "    QDLDL_USE_FLEXFLOAT:  $QDLDL_USE_FLEXFLOAT"
-if [ "$USE_FLEXFLOAT" = "ON" ]; then
+if [ "$OSQP_USE_FLEXFLOAT" = "ON" ]; then
     echo "    FF_EXPONENT_BITS:     $FF_EXPONENT_BITS"
     echo "    FF_MANTISSA_BITS:     $FF_MANTISSA_BITS"
 fi
@@ -66,7 +66,7 @@ mkdir -p build lib
 cd build
 cmake .. \
     -DOSQP_USE_FLOAT=OFF \
-    -DOSQP_USE_FLEXFLOAT=$USE_FLEXFLOAT \
+    -DOSQP_USE_FLEXFLOAT=$OSQP_USE_FLEXFLOAT \
     -DQDLDL_USE_FLEXFLOAT=$QDLDL_USE_FLEXFLOAT \
     -DFF_EXPONENT_BITS=$FF_EXPONENT_BITS \
     -DFF_MANTISSA_BITS=$FF_MANTISSA_BITS \

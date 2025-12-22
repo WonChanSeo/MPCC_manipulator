@@ -472,7 +472,83 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
     }
 
     // printf("sqp_param_.max_iter %d\n", sqp_param_.max_iter);
-    // SQP itertion
+
+    // RTI (Real-Time Iteration) mode: single QP solve without convergence check
+    if(sqp_param_.use_RTI)
+    {
+        sqp_iter_ = 0;
+
+        auto start_set_qp = std::chrono::high_resolution_clock::now();
+
+        // QP formulation
+        setQP(initial_guess_, &Hess_, &grad_obj_, &obj_, &jac_constr_, &constr_, &l_, &u_);
+
+        // Hessian check
+        if (!isPosdef(Hess_))
+        {
+            std::cout << "[RTI] Hessian not positive definite\n";
+            (*status) = NON_PD_HESSIAN;
+            return false;
+        }
+        if (isNan(Hess_))
+        {
+            std::cout << "[RTI] Hessian is NaN\n";
+            (*status) = NAN_HESSIAN;
+            return false;
+        }
+
+        auto end_set_qp = std::chrono::high_resolution_clock::now();
+        auto start_solve_qp = std::chrono::high_resolution_clock::now();
+
+        // Solve QP
+        if(!solveQP(Hess_, grad_obj_, jac_constr_, l_-constr_, u_-constr_, step_, step_lambda_, qp_status_, iter_count))
+        {
+            total_iter_count += iter_count;
+            printf("[RTI] QP solve FAILED : %d \n", qp_status_);
+            switch (qp_status_)
+            {
+            case OsqpEigen::Status::DualInfeasibleInaccurate:
+                (*status) = QP_DualInfeasibleInaccurate; break;
+            case OsqpEigen::Status::PrimalInfeasibleInaccurate:
+                (*status) = QP_PrimalInfeasibleInaccurate; break;
+            case OsqpEigen::Status::SolvedInaccurate:
+                (*status) = QP_SolvedInaccurate; break;
+            case OsqpEigen::Status::MaxIterReached:
+                (*status) = QP_MaxIterReached; break;
+            case OsqpEigen::Status::PrimalInfeasible:
+                (*status) = QP_PrimalInfeasible; break;
+            case OsqpEigen::Status::DualInfeasible:
+                (*status) = QP_DualInfeasible; break;
+            case OsqpEigen::Status::Sigint:
+                (*status) = Sigint; break;
+            }
+            return false;
+        }
+
+        total_iter_count += iter_count;
+
+        auto end_solve_qp = std::chrono::high_resolution_clock::now();
+
+        // Apply step with alpha=1 (no line search)
+        initial_guess_vec_ += deNormalizeStep(step_);
+        initial_guess_ = vectorToOptvar(initial_guess_vec_);
+
+        // Update timing
+        mpc_time->set_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp - start_set_qp).count();
+        mpc_time->solve_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_solve_qp - start_solve_qp).count();
+        mpc_time->get_alpha = 0.0;  // No line search in RTI
+
+        auto end_total = std::chrono::high_resolution_clock::now();
+        mpc_time->total = std::chrono::duration_cast<std::chrono::duration<double>>(end_total - start_total).count();
+
+        sqp_iter_count = 1;
+        (*status) = SOLVED;
+        opt_sol = initial_guess_;
+        printf("[RTI] SOLVED\n");
+        return true;
+    }
+
+    // SQP itertion (non-RTI mode)
     for(sqp_iter_=0; sqp_iter_<sqp_param_.max_iter; sqp_iter_++)
     {
         // std::cout <<"sqp_iter_: " <<sqp_iter_<<std::endl;

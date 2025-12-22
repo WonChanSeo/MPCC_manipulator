@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.10)
 
 project(FlexFloat)
 
@@ -86,4 +86,15 @@ option(BUILD_EXAMPLES "Build FlexFloat examples" ON)
 
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
+endif()
+
+### FMA Test
+option(BUILD_FMA_TEST "Build FMA test executable" ON)
+
+if(BUILD_FMA_TEST)
+    add_executable(test_fma test_fma.c)
+    target_link_libraries(test_fma flexfloat)
+    if(UNIX)
+        target_link_libraries(test_fma m)
+    endif()
 endif()
