@@ -312,7 +312,7 @@ def main(args):
     pc = PlanningScene(arm_names=["fr3"], arm_dofs=[7], base_link="world")
     
     ## Obstacle information
-    num_obstacles = 1  # <-- 생성할 장애물 개수
+    num_obstacles = 3  # <-- 생성할 장애물 개수
 
     # ================================================
     #                     Case 3
@@ -320,8 +320,8 @@ def main(args):
     # 각 장애물의 초기 위치 (num_obstacles, 3) 형태로 정의
     obs_positions = np.array([
         [0.48,  0.218, 0.521],
-        # [0.40, -0.200, 0.450],
-        # [0.55, -0.200, 0.55]
+        [0.40, -0.200, 0.450],
+        [0.55, -0.200, 0.55]
     ])
 
     # 각 장애물의 이동 한계와 속도도 배열로 관리
@@ -329,9 +329,9 @@ def main(args):
     # Obstacle 1 & 2: 상한/하한을 초기 위치와 같게 설정하여 고정
     obs_limits[0] = np.array([[0.48,  0.218, 0.421],   # lower limit
                     [0.48,  0.218, 0.621]])  # upper limit
-    # obs_limits[1] = np.array([obs_positions[1], obs_positions[1]])
-    # # Obstacle 3: Y축(좌우)으로 -0.2에서 0.2까지 움직이도록 설정
-    # obs_limits[2] = np.array([[0.55, -0., 0.450], [0.55, 20, 0.450]])
+    obs_limits[1] = np.array([obs_positions[1], obs_positions[1]])
+    # Obstacle 3: Y축(좌우)으로 -0.2에서 0.2까지 움직이도록 설정
+    obs_limits[2] = np.array([[0.55, -0., 0.450], [0.55, 20, 0.450]])
 
     # Create publishers
     node = rclpy.create_node('mpcc_node')
@@ -433,8 +433,8 @@ def main(args):
     
     obs_steps = np.zeros((num_obstacles, 3))
     obs_steps[0, 2] = obs_speed * mpc.Ts  # 첫 번째 장애물은 Z축으로 이동
-    # obs_steps[1, 2] = obs_speed * mpc.Ts  # 두 번째 장애물은 Z축으로 이동
-    # obs_steps[2, 1] = obs_speed * mpc.Ts  # 세 번째 장애물은 Y축으로 이동
+    obs_steps[1, 2] = obs_speed * mpc.Ts  # 두 번째 장애물은 Z축으로 이동
+    obs_steps[2, 1] = obs_speed * mpc.Ts  # 세 번째 장애물은 Y축으로 이동
 
     while rclpy.ok():
         start = time.time()
@@ -448,12 +448,12 @@ def main(args):
             elif obs_steps[0, 2] < 0 and obs_positions[0, 2] <= obs_limits[0, 0, 2]:
                 obs_steps[0, 2] *= -1  # 방향을 위쪽으로 전환
     
-            # # 세 번째 장애물이 오른쪽으로 움직이고 있고(obs_steps > 0), 오른쪽 경계선을 넘었을 때
-            # if obs_steps[2, 1] > 0 and obs_positions[2, 1] >= obs_limits[2, 1, 1]:
-            #     obs_steps[2, 1] *= -1 # 방향을 왼쪽으로 전환
-            # # 세 번째 장애물이 왼쪽으로 움직이고 있고(obs_steps < 0), 왼쪽 경계선을 넘었을 때
-            # elif obs_steps[2, 1] < 0 and obs_positions[2, 1] <= obs_limits[2, 0, 1]:
-            #     obs_steps[2, 1] *= -1 # 방향을 오른쪽으로 전환
+            # 세 번째 장애물이 오른쪽으로 움직이고 있고(obs_steps > 0), 오른쪽 경계선을 넘었을 때
+            if obs_steps[2, 1] > 0 and obs_positions[2, 1] >= obs_limits[2, 1, 1]:
+                obs_steps[2, 1] *= -1 # 방향을 왼쪽으로 전환
+            # 세 번째 장애물이 왼쪽으로 움직이고 있고(obs_steps < 0), 왼쪽 경계선을 넘었을 때
+            elif obs_steps[2, 1] < 0 and obs_positions[2, 1] <= obs_limits[2, 0, 1]:
+                obs_steps[2, 1] *= -1 # 방향을 오른쪽으로 전환
 
             # 모든 장애물 위치 업데이트
             obs_positions += obs_steps

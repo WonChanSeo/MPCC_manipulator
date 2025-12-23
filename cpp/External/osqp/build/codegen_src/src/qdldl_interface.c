@@ -702,64 +702,47 @@ static OSQPInt permute_KKT(OSQPCscMatrix** KKT,
                            OSQPInt*        AtoKKT,
                            OSQPInt*        rhotoKKT) {
     OSQPFloat* info;
-    OSQPInt    amd_status;
     OSQPInt*   Pinv;
     OSQPInt*   KtoPKPt;
     OSQPInt    i;
 
     OSQPCscMatrix* KKT_temp;
-    OSQPCscMatrix* KKT_mask = NULL;
 
     static int run_counter = 0;
-    char path[512];
 
     info = (OSQPFloat *)c_malloc(AMD_INFO * sizeof(OSQPFloat));
 
-    // (B) KKT_mask.csv를 읽어서 AMD로 P 계산
+    // P_ref.txt에서 permutation vector 읽기
     {
-        // KKT_mask.csv 파일 읽기 (upper triangular만 사용)
-        int rc = read_dense_csv_to_csc("../reference_matrix/KKT_mask.csv", 0, /*store_values=*/1, &KKT_mask);
-        if (rc != 0 || !KKT_mask) {
-            c_eprint("Failed to read KKT_mask.csv (rc=%d). Falling back to runtime KKT.", rc);
-            // fallback: 런타임 KKT 사용
-            KKT_mask = *KKT;
-        }
-
-        // AMD ordering 수행
+        FILE* file = fopen(OSQP_PERM_PATH, "r");
+        if (file) {
+            OSQPInt n_kkt = (*KKT)->n;
+            for (i = 0; i < n_kkt; i++) {
 #ifdef OSQP_USE_LONG
-        amd_status = amd_l_order(KKT_mask->n, KKT_mask->p, KKT_mask->i, p->P, (OSQPFloat *)OSQP_NULL, info);
-#else
-        amd_status = amd_order(KKT_mask->n, KKT_mask->p, KKT_mask->i, p->P, (OSQPFloat *)OSQP_NULL, info);
-#endif
-        if (amd_status < 0) {
-            c_eprint("AMD ordering failed with status %d.", amd_status);
-            if (KKT_mask != *KKT) csc_spfree(KKT_mask);
-            c_free(info);
-            return amd_status;
-        }
-
-        // P_ref.txt로 저장 (첫 번째 실행에서만)
-        if (run_counter == 0) {
-            FILE* file = fopen(OSQP_PERM_PATH, "w");
-            if (file) {
-                for (i = 0; i < KKT_mask->n; i++) {
-#ifdef OSQP_USE_LONG
-                    fprintf(file, "%lld\n", (long long)p->P[i]);
-#else
-                    fprintf(file, "%d\n", p->P[i]);
-#endif
+                if (fscanf(file, "%lld", (long long*)&p->P[i]) != 1) {
+                    c_eprint("Failed to read permutation value at index %lld from %s.", (long long)i, OSQP_PERM_PATH);
+                    fclose(file);
+                    c_free(info);
+                    return -1;
                 }
-                fclose(file);
-                printf("[OSQP] Permutation vector (from KKT_mask.csv) saved to %s (n=%lld)\n",
-                       OSQP_PERM_PATH, (long long)KKT_mask->n);
-            } else {
-                c_eprint("Failed to open file %s for saving permutation vector.", OSQP_PERM_PATH);
+#else
+                if (fscanf(file, "%d", &p->P[i]) != 1) {
+                    c_eprint("Failed to read permutation value at index %d from %s.", i, OSQP_PERM_PATH);
+                    fclose(file);
+                    c_free(info);
+                    return -1;
+                }
+#endif
             }
-        }
-
-        // KKT_mask 메모리 해제 (런타임 KKT와 다른 경우에만)
-        if (KKT_mask != *KKT) {
-            csc_spfree(KKT_mask);
+            fclose(file);
+            if (run_counter == 0) {
+                printf("[OSQP] Permutation vector loaded from %s (n=%lld)\n",
+                       OSQP_PERM_PATH, (long long)n_kkt);
+            }
+        } else {
+            c_eprint("Failed to open file %s for reading permutation vector.", OSQP_PERM_PATH);
+            c_free(info);
+            return -1;
         }
     }
 
