@@ -9,21 +9,17 @@
 #include <fstream>
 #include <iomanip>
 #include <Eigen/Dense>
-#include <Eigen/src/Core/arch/Default/BFloat16.h>
 
 namespace mpcc
 {
-    // Type aliases for bfloat16 matrices and vectors
-    using MatrixXbf16 = Eigen::Matrix<Eigen::bfloat16, Eigen::Dynamic, Eigen::Dynamic>;
-    using VectorXbf16 = Eigen::Matrix<Eigen::bfloat16, Eigen::Dynamic, 1>;
     class EnvCollNNmodel
     {
         struct MLP
         {
             ~MLP() { std::cout << "MLP terminate" << std::endl; }
-            // --- 신경망 파라미터 (bfloat16 precision) ---
-            std::vector<MatrixXbf16> weight;
-            std::vector<VectorXbf16> bias;
+            // --- 신경망 파라미터 (FP32로 저장, bf16 precision 값) ---
+            std::vector<Eigen::MatrixXf> weight;
+            std::vector<Eigen::VectorXf> bias;
             std::vector<std::string> w_path;
             std::vector<std::string> b_path;
             std::vector<std::ifstream> weight_files;
@@ -35,22 +31,34 @@ namespace mpcc
             Eigen::VectorXd n_hidden;
             int n_layer;
 
-            // --- 단일 추론(Single Inference)용 변수 (bfloat16 precision) ---
-            std::vector<VectorXbf16> hidden;
-            std::vector<MatrixXbf16> hidden_derivative;
-            VectorXbf16 input;
-            VectorXbf16 output;
-            MatrixXbf16 output_derivative;
+            // --- 단일 추론(Single Inference)용 변수 (FP32) ---
+            std::vector<Eigen::VectorXf> hidden;
+            std::vector<Eigen::MatrixXf> hidden_derivative;
+            Eigen::VectorXf input;
+            Eigen::VectorXf output;
+            Eigen::MatrixXf output_derivative;
 
             // --- NeRF 관련 ---
             bool is_nerf;
-            VectorXbf16 input_nerf;
+            Eigen::VectorXf input_nerf;
 
-            // --- 배치 추론(Batch Inference)용 변수 (bfloat16 precision) ---
-            std::vector<MatrixXbf16> batch_hidden;
-            MatrixXbf16 batch_input;
-            MatrixXbf16 batch_input_nerf;
-            MatrixXbf16 batch_output;
+            // --- 배치 추론(Batch Inference)용 변수 (FP32) ---
+            std::vector<Eigen::MatrixXf> batch_hidden;
+            Eigen::MatrixXf batch_input;
+            Eigen::MatrixXf batch_input_nerf;
+            Eigen::MatrixXf batch_output;
+
+            // --- 배치 추론용 사전 할당 변수 (성능 최적화) ---
+            std::vector<Eigen::MatrixXf> pre_activations;      // 각 레이어의 pre-activation 저장
+            std::vector<Eigen::MatrixXf> batch_jacobian;       // 각 배치 샘플의 자코비안
+            Eigen::VectorXf final_min_output;                  // 최종 출력 벡터
+            Eigen::MatrixXf final_min_jacobian;                // 최종 자코비안 행렬
+            int allocated_batch_size = 0;                      // 현재 할당된 배치 크기
+
+            // --- 자코비안 계산용 임시 변수 (루프 내 동적 할당 제거) ---
+            Eigen::MatrixXf nerf_jac;                          // NeRF 자코비안 행렬
+            Eigen::MatrixXf temp_derivative;                   // 임시 미분 행렬
+            std::vector<Eigen::VectorXf> relu_derivatives;     // 각 레이어별 ReLU 미분
 
             // ▼▼▼▼▼ 여기에 시간 저장을 위한 변수를 추가합니다. ▼▼▼▼▼
             std::vector<double> inference_times_ms;
@@ -112,14 +120,14 @@ namespace mpcc
             void loadNetwork();
             void initializeNetwork(int n_input, int n_output, Eigen::VectorXd n_hidden, bool is_nerf);
 
-            // ReLU는 private 멤버로 유지 (bfloat16 precision)
-            Eigen::bfloat16 ReLU(Eigen::bfloat16 input)
+            // ReLU는 private 멤버로 유지 (FP32)
+            float ReLU(float input)
             {
-                return (input > Eigen::bfloat16(0)) ? input : Eigen::bfloat16(0);
+                return (input > 0.0f) ? input : 0.0f;
             }
-            Eigen::bfloat16 ReLU_derivative(Eigen::bfloat16 input)
+            float ReLU_derivative(float input)
             {
-                return (input > Eigen::bfloat16(0)) ? Eigen::bfloat16(1) : Eigen::bfloat16(0);
+                return (input > 0.0f) ? 1.0f : 0.0f;
             }
     };
 }

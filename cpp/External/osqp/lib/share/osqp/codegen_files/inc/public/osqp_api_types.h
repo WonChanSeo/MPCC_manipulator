@@ -161,6 +161,11 @@ typedef struct {
   OSQPFloat polish_time; ///< Polish phase time (seconds)
   OSQPFloat run_time;    ///< Total solve time (seconds)
 
+  // detailed timing breakdown (for setup phase)
+  OSQPFloat scaling_time;      ///< Data scaling time (seconds)
+  OSQPFloat permutation_time;  ///< Permutation computation time (seconds)
+  OSQPFloat factorization_time; ///< Initial LDL factorization time (seconds)
+
   // Convergence information
   OSQPFloat primdual_int;  ///< Integral of duality gap over time (Primal-dual integral), requires profiling
   OSQPFloat rel_kkt_error; ///< Relative KKT error

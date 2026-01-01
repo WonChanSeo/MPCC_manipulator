@@ -407,10 +407,15 @@ BOOST_PYTHON_MODULE(MPCC_WRAPPER)
 
     class_<ComputeTime>("ComputeTime")
         .def_readwrite("set_qp", &ComputeTime::set_qp)
+        .def_readwrite("init_solver", &ComputeTime::init_solver)
         .def_readwrite("solve_qp", &ComputeTime::solve_qp)
         .def_readwrite("get_alpha", &ComputeTime::get_alpha)
         .def_readwrite("set_env", &ComputeTime::set_env)
         .def_readwrite("total", &ComputeTime::total)
+        .def_readwrite("scaling_time", &ComputeTime::scaling_time)
+        .def_readwrite("permutation_time", &ComputeTime::permutation_time)
+        .def_readwrite("factorization_time", &ComputeTime::factorization_time)
+        .def_readwrite("rho_updates", &ComputeTime::rho_updates)
         .def("setZero", &ComputeTime::setZero)
     ;
 

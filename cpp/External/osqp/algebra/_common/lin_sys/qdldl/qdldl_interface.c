@@ -2,7 +2,7 @@
 #include "algebra_impl.h"
 #include "printing.h"
 #include "profilers.h"
-
+#include "timing.h"
 
 #include "error.h"
 #include "qdldl.h"
@@ -27,6 +27,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
+
+// External timing setter functions (defined in osqp_api.c)
+extern void osqp_set_permutation_time(OSQPFloat time);
+extern void osqp_set_factorization_time(OSQPFloat time);
 
 #ifdef OSQP_USE_LONG
 #  define OSQP_INT_FMT "%" PRId64
@@ -1015,9 +1019,13 @@ OSQPInt init_linsys_solver_qdldl(qdldl_solver**      sp,
                             sigma, s->rho_inv_vec, s->rho_inv,
                             s->PtoKKT, s->AtoKKT,s->rhotoKKT);
 
-        // Permute matrix
+        // Permute matrix with timing
         if (KKT_temp){
+            OSQPTimer* perm_timer = OSQPTimer_new();
+            osqp_tic(perm_timer);
             permute_KKT(&KKT_temp, s, P->csc->p[n], A->csc->p[n], m, s->PtoKKT, s->AtoKKT, s->rhotoKKT);
+            osqp_set_permutation_time(osqp_toc(perm_timer));
+            OSQPTimer_free(perm_timer);
         }
     }
 
@@ -1029,8 +1037,14 @@ OSQPInt init_linsys_solver_qdldl(qdldl_solver**      sp,
         return OSQP_LINSYS_SOLVER_INIT_ERROR;
     }
 
-    // Factorize the KKT matrix
-    if (LDL_factor(KKT_temp, s, n) < 0) {
+    // Factorize the KKT matrix with timing
+    OSQPTimer* fact_timer = OSQPTimer_new();
+    osqp_tic(fact_timer);
+    OSQPInt factor_result = LDL_factor(KKT_temp, s, n);
+    osqp_set_factorization_time(osqp_toc(fact_timer));
+    OSQPTimer_free(fact_timer);
+
+    if (factor_result < 0) {
         csc_spfree(KKT_temp);
         free_linsys_solver_qdldl(s);
         *sp = OSQP_NULL;

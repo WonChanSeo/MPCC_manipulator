@@ -74,5 +74,16 @@ CMakeFiles/OSQPLIB.dir/src/scaling.c.o: \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
- /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/algebra_vector.h
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h /usr/include/stdio.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/algebra_vector.h \
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/private/algebra_matrix.h

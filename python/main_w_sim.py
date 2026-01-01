@@ -32,7 +32,7 @@ param_value = {'cost': {
                     "qVs" : 10.0,
 
                     "qOri": 100,
-                    
+
                     "qSing": 1,
 
                     "rdq"  : 0.002,
@@ -49,131 +49,6 @@ param_value = {'cost': {
 
 obs_radius = 5         # unit: [cm]
 obs_speed = 0.05       # unit: [m/s]
-
-def check_actual_collision_capsule(robot, q, obs_positions, obs_radius, link_radii):
-    """
-    Capsule-based collision detection (improved precision)
-
-    Args:
-        robot: MPCC.RobotModel() instance
-        q: current joint angles [7,]
-        obs_positions: obstacle positions [N_obs, 3] in meters
-        obs_radius: obstacle radius in cm
-        link_radii: radius of each link [9,] in meters
-                   Example: [0.05, 0.08, 0.05, 0.08, 0.05, 0.06, 0.05, 0.04, 0.05]
-
-    Returns:
-        is_collision: bool, whether collision occurred
-        min_distance: float, minimum distance in meters (negative if collision)
-        collision_info: dict, detailed collision information
-    """
-    obs_radius_m = obs_radius * 0.01  # cm to m
-    num_links = 9  # PANDA_NUM_LINKS
-
-    collision_info = {
-        'is_collision': False,
-        'min_distance': float('inf'),
-        'collision_pairs': []
-    }
-
-    # Check each link as a capsule (line segment + radius)
-    for link_id in range(1, num_links):
-        # Get start and end position of the link
-        link_start = robot.getLinkPosition(q, link_id)
-        link_end = robot.getLinkPosition(q, link_id + 1)
-        link_r = link_radii[link_id - 1]
-
-        # Check distance to each obstacle
-        for obs_idx, obs_pos in enumerate(obs_positions):
-            # Point-to-segment minimum distance
-            ab = link_end - link_start
-            ap = obs_pos - link_start
-            ab_length_sq = np.dot(ab, ab)
-
-            if ab_length_sq < 1e-10:  # Link start and end are at the same point
-                closest = link_start
-            else:
-                t = np.clip(np.dot(ap, ab) / ab_length_sq, 0, 1)
-                closest = link_start + t * ab
-
-            # Distance from obstacle center to capsule surface
-            center_distance = np.linalg.norm(obs_pos - closest)
-            distance = center_distance - link_r - obs_radius_m
-
-            # Update minimum distance
-            if distance < collision_info['min_distance']:
-                collision_info['min_distance'] = distance
-
-            # Check collision
-            if distance < 0:  # Collision detected!
-                collision_info['is_collision'] = True
-                collision_info['collision_pairs'].append({
-                    'link_id': link_id,
-                    'obs_idx': obs_idx,
-                    'distance': distance,
-                    'penetration_depth': abs(distance),
-                    'closest_point': closest.tolist(),
-                    'link_start': link_start.tolist(),
-                    'link_end': link_end.tolist(),
-                    'obs_pos': obs_pos.tolist()
-                })
-
-    return collision_info['is_collision'], collision_info['min_distance'], collision_info
-
-def print_collision_statistics(collision_data):
-    """
-    Print detailed collision statistics
-
-    Args:
-        collision_data: dict containing collision tracking information
-    """
-    print("\n" + "="*80)
-    print("=== COLLISION DETECTION STATISTICS ===")
-    print("="*80)
-
-    total_steps = collision_data['total_steps']
-    collision_steps = collision_data['collision_steps']
-    num_collisions = len(collision_steps)
-
-    print(f"Total Steps: {total_steps}")
-    print(f"Collision Steps: {num_collisions} ({num_collisions/total_steps*100:.2f}%)")
-    print(f"Collision-Free Steps: {total_steps - num_collisions} ({(total_steps - num_collisions)/total_steps*100:.2f}%)")
-
-    if num_collisions > 0:
-        print("\n" + "-"*80)
-        print("Collision occurred at steps:")
-        print(collision_steps)
-
-        print("\n" + "-"*80)
-        print("Collision Details:")
-        for step_idx in collision_steps[:10]:  # Show first 10 collisions
-            info = collision_data['collision_details'][step_idx]
-            print(f"\n  Step {step_idx}:")
-            for pair in info['collision_pairs']:
-                print(f"    Link {pair['link_id']} <-> Obstacle {pair['obs_idx']}")
-                print(f"      Distance: {pair['distance']:.4f} m")
-                print(f"      Penetration Depth: {pair['penetration_depth']:.4f} m")
-
-        if num_collisions > 10:
-            print(f"\n  ... and {num_collisions - 10} more collision(s)")
-
-        # Collision pair statistics
-        print("\n" + "-"*80)
-        print("Most Frequent Collision Pairs:")
-        pair_counts = {}
-        for step_idx in collision_steps:
-            info = collision_data['collision_details'][step_idx]
-            for pair in info['collision_pairs']:
-                key = (pair['link_id'], pair['obs_idx'])
-                pair_counts[key] = pair_counts.get(key, 0) + 1
-
-        sorted_pairs = sorted(pair_counts.items(), key=lambda x: x[1], reverse=True)
-        for (link_id, obs_idx), count in sorted_pairs[:5]:
-            print(f"  Link {link_id} <-> Obstacle {obs_idx}: {count} times ({count/num_collisions*100:.1f}%)")
-    else:
-        print("\nNo collisions detected during the entire trajectory!")
-
-    print("="*80 + "\n")
 
 def print_stats(data_dict, name):
     """
@@ -400,28 +275,18 @@ def main(args):
     debug_data["solve_count"] = []            # Which solveOCP call this is
     debug_data["top3_total_iter_counts"] = []   # Top 3 max total_iter_count values
     debug_data["top3_solve_nums"] = []  # Solve numbers for each top 3 value
-    debug_data["is_collision"] = []             # Collision detection flag (per step)
-    debug_data["actual_min_dist"] = []          # Actual minimum distance (capsule-based)
-    debug_data["nn_min_dist"] = []              # NN predicted minimum distance
-    debug_data["nn_error"] = []                 # Error between NN and actual distance
-
-    # Collision tracking data structure
-    collision_data = {
-        'total_steps': 0,
-        'collision_steps': [],          # List of step indices where collision occurred
-        'collision_details': {}         # Dict mapping step_idx -> collision_info
-    }
-
-    # Panda link radii (approximate values in meters)
-    # Estimated based on Franka Emika Panda robot specifications
-    link_radii = np.array([0.06, 0.08, 0.06, 0.08, 0.05, 0.06, 0.04, 0.04, 0.05])
 
     time_data = {}
     time_data["total"] = []
     time_data["set_env"] = []
     time_data["set_qp"] = []
+    time_data["init_solver"] = []
     time_data["solve_qp"] = []
     time_data["get_alpha"] = []
+    time_data["scaling_time"] = []
+    time_data["permutation_time"] = []
+    time_data["factorization_time"] = []
+    time_data["rho_updates"] = []
 
     SLECOL_BUFFER = param_value["param"]["tol_selcol"]
     MANI_BUFFER = param_value["param"]["tol_sing"]
@@ -511,28 +376,12 @@ def main(args):
         dVs = input[-1]
         sel_min_dist, _ = selcolNN.calculateMlpOutput(q)
         num_obstacles = obs_positions.shape[0]
-        q_batch = np.tile(q.reshape(-1, 1), (1, num_obstacles))
-        obs_batch = obs_positions.T
-        batch_input = np.vstack([q_batch, obs_batch])
-        env_min_dist, _ = envcolNN.calculateMlpOutputBatch(batch_input)
-
-        # ★ Capsule-based collision detection
-        is_collision, actual_min_dist, collision_info = check_actual_collision_capsule(
-            robot, q, obs_positions, obs_radius, link_radii
-        )
-
-        # Calculate NN prediction error
-        nn_min_dist = np.min(env_min_dist)
-        nn_error = abs(nn_min_dist - actual_min_dist)
-
-        # Track collision events
-        collision_data['total_steps'] = time_idx + 1
-        if is_collision:
-            collision_data['collision_steps'].append(time_idx)
-            collision_data['collision_details'][time_idx] = collision_info
-            print(f"⚠️  COLLISION at step {time_idx}! Penetration: {-actual_min_dist:.4f}m")
-            for pair in collision_info['collision_pairs']:
-                print(f"    Link {pair['link_id']} <-> Obs {pair['obs_idx']}: depth={pair['penetration_depth']:.4f}m")
+        env_min_dists = []
+        for obs_idx in range(num_obstacles):
+            input_vec = np.concatenate([q, obs_positions[obs_idx]])
+            dist, _ = envcolNN.calculateMlpOutput(input_vec)
+            env_min_dists.append(dist)
+        env_min_dist = np.array(env_min_dists)
 
         mani = robot.getEEManipulability(q)
         contour_error = mpc.getContourError(s, x)
@@ -565,15 +414,16 @@ def main(args):
         debug_data["solve_count"].append(solve_count)
         debug_data["top3_total_iter_counts"].append(top3_total_iter_counts)
         debug_data["top3_solve_nums"].append(top3_solve_nums)
-        debug_data["is_collision"].append(is_collision)
-        debug_data["actual_min_dist"].append(actual_min_dist)
-        debug_data["nn_min_dist"].append(nn_min_dist)
-        debug_data["nn_error"].append(nn_error)
         time_data["total"].append(compute_time["total"])
         time_data["set_env"].append(compute_time["set_env"])
         time_data["set_qp"].append(compute_time["set_qp"])
+        time_data["init_solver"].append(compute_time["init_solver"])
         time_data["solve_qp"].append(compute_time["solve_qp"])
         time_data["get_alpha"].append(compute_time["get_alpha"])
+        time_data["scaling_time"].append(compute_time["scaling_time"])
+        time_data["permutation_time"].append(compute_time["permutation_time"])
+        time_data["factorization_time"].append(compute_time["factorization_time"])
+        time_data["rho_updates"].append(compute_time["rho_updates"])
 
         local_path_msg = create_pred_path_message(node, pred_ee_T[:, :3, 3], pred_ee_T[:, :3, :3])
         ref_local_path_msg = create_pred_path_message(node, ref_ee_T[:, :3, 3], ref_ee_T[:, :3, :3])
@@ -610,9 +460,6 @@ def main(args):
 
     node.destroy_node()
     rclpy.shutdown()
-
-    # ★★★ Print collision statistics ★★★
-    print_collision_statistics(collision_data)
 
     # ▼▼▼▼▼ ReLU deactivation 통계를 가져와서 출력합니다 ▼▼▼▼▼
     relu_deactivation_ratios = envcolNN.NNmodel.getReluDeactivationRatios()
@@ -658,6 +505,12 @@ def main(args):
         plt.savefig(fig_name)
         print(f"Saved figure to {fig_name}")
     
+    # scipy.io.savemat과 호환되지 않는 가변 길이 리스트는 제외
+    excluded_keys = ["top3_solve_nums", "top3_total_iter_counts"]
+    for key in excluded_keys:
+        if key in debug_data:
+            del debug_data[key]
+
     for key in debug_data:
         debug_data[key] = np.array(debug_data[key])
     for key in time_data:
@@ -666,7 +519,7 @@ def main(args):
     if args.name:
         # 1. 기본 출력 폴더 경로를 정의합니다.
         output_folder = os.path.join("../result", args.name)
-        
+
         # 2. 파일이 저장될 전체 경로를 만듭니다.
         stats_path_1 = os.path.join(output_folder, f"{args.name}_debug_data.mat")
         stats_path_2 = os.path.join(output_folder, f"{args.name}_time_data.mat")
@@ -686,13 +539,17 @@ def main(args):
     plt.plot(time_data["total"], label="Total Time", color='b')
     plt.plot(time_data["set_env"], label="Set Env Time", color='m')
     plt.plot(time_data["set_qp"], label="Set QP Time", color='g')
-    plt.plot(time_data["solve_qp"], label="Solve QP Time", color='r')
+    plt.plot(time_data["init_solver"], label="Init Solver Time", color='orange')
+    plt.plot(time_data["solve_qp"], label="Solve QP (ADMM+Fact)", color='r')
+    plt.plot(time_data["scaling_time"], label="Scaling Time", color='purple', linestyle='--')
+    plt.plot(time_data["permutation_time"], label="Permutation Time", color='brown', linestyle='--')
+    plt.plot(time_data["factorization_time"], label="Factorization Time", color='pink', linestyle='--')
     plt.plot(time_data["get_alpha"], label="Get Alpha Time", color='c')
     plt.axhline(y=mpc.Ts, color='black', linestyle='--', label="Ts")
     plt.xlabel("Time Step")
     plt.ylabel("Time (s)")
     plt.title("Computation Times per Time Step")
-    plt.ylim(-0.01, 0.2)  
+    plt.ylim(-0.01, 0.2)
     plt.xlim(0, len(time_data["total"]))
     plt.legend()
     plt.grid(True)
@@ -765,52 +622,6 @@ def main(args):
         print(f"Saved figure to {stats_path}")
     ### === NEWLY ADDED SECTION END === ###
 
-    # ★★★ Collision Detection Visualization ★★★
-    fig_collision = plt.figure(figsize=(14, 10))
-    fig_collision.subplots_adjust(hspace=0.4)
-
-    # Subplot 1: Collision flags over time
-    plt.subplot(311)
-    collision_flags = np.array(debug_data["is_collision"]).astype(int)
-    plt.plot(collision_flags, 'r-', linewidth=2, label='Collision Detected')
-    plt.fill_between(range(len(collision_flags)), 0, collision_flags, alpha=0.3, color='red')
-    plt.xlabel("Time Step")
-    plt.ylabel("Collision (1=Yes, 0=No)")
-    plt.title("Collision Detection Over Time")
-    plt.ylim(-0.1, 1.1)
-    plt.grid(True)
-    plt.legend()
-
-    # Subplot 2: Distance comparison (NN vs Actual)
-    plt.subplot(312)
-    plt.plot(debug_data["nn_min_dist"], 'b-', linewidth=1.5, alpha=0.7, label='NN Predicted Distance')
-    plt.plot(debug_data["actual_min_dist"], 'g-', linewidth=1.5, alpha=0.7, label='Actual Distance (Capsule)')
-    plt.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Collision Threshold')
-    plt.xlabel("Time Step")
-    plt.ylabel("Distance (m)")
-    plt.title("Minimum Distance: NN Prediction vs Actual")
-    plt.legend()
-    plt.grid(True)
-
-    # Subplot 3: NN prediction error
-    plt.subplot(313)
-    plt.plot(debug_data["nn_error"], 'orange', linewidth=1.5, label='Prediction Error')
-    mean_error = np.mean(debug_data["nn_error"])
-    max_error = np.max(debug_data["nn_error"])
-    plt.axhline(y=mean_error, color='purple', linestyle='--', linewidth=2, label=f'Mean Error: {mean_error:.4f}m')
-    plt.xlabel("Time Step")
-    plt.ylabel("Error (m)")
-    plt.title("NN Prediction Error (|NN - Actual|)")
-    plt.legend()
-    plt.grid(True)
-
-    if args.name:
-        output_folder = os.path.join("../result", args.name)
-        os.makedirs(output_folder, exist_ok=True)
-        collision_fig_path = os.path.join(output_folder, f"{args.name}_collision_analysis.png")
-        plt.savefig(collision_fig_path)
-        print(f"Saved collision analysis figure to {collision_fig_path}")
-
     ### MODIFIED SECTION START ###
     if args.name:
         # 1. 기본 출력 폴더 경로를 정의합니다.
@@ -844,35 +655,6 @@ def main(args):
                 f.write(f"{i:<8} {relu_total_units[i]:<15} {relu_avg_deactivated[i]:<15.2f} {relu_min_deactivated[i]:<15} {relu_max_deactivated[i]:<15} {relu_deactivation_ratios[i]*100:<15.2f}\n")
             f.write("="*80 + "\n")
         print(f"ReLU deactivation statistics saved to {relu_stats_path}")
-
-        # ★★★ 7. Collision statistics를 텍스트 파일로 저장합니다 ★★★
-        collision_stats_path = os.path.join(output_folder, f"{args.name}_collision_stats.txt")
-        original_stdout = sys.stdout
-        try:
-            with open(collision_stats_path, 'w', encoding='utf-8') as f:
-                sys.stdout = f
-                print_collision_statistics(collision_data)
-
-                # Additional NN prediction statistics
-                print("\n" + "="*80)
-                print("=== NN PREDICTION ERROR STATISTICS ===")
-                print("="*80)
-                nn_errors = np.array(debug_data["nn_error"])
-                print(f"Mean Error: {np.mean(nn_errors):.6f} m ({np.mean(nn_errors)*100:.4f} cm)")
-                print(f"Std Dev:    {np.std(nn_errors):.6f} m ({np.std(nn_errors)*100:.4f} cm)")
-                print(f"Min Error:  {np.min(nn_errors):.6f} m ({np.min(nn_errors)*100:.4f} cm)")
-                print(f"Max Error:  {np.max(nn_errors):.6f} m ({np.max(nn_errors)*100:.4f} cm)")
-                print(f"Median:     {np.median(nn_errors):.6f} m ({np.median(nn_errors)*100:.4f} cm)")
-                print("="*80 + "\n")
-        finally:
-            sys.stdout = original_stdout
-        print(f"Collision statistics saved to {collision_stats_path}")
-
-        # .mat 파일 저장 등 다른 로직은 그대로 유지할 수 있습니다.
-        # 예시:
-        # debug_mat_path = os.path.join(output_folder, f"{args.name}_debug_data.mat")
-        # scipy.io.savemat(debug_mat_path, debug_data)
-        # print(f"Data written to {debug_mat_path}")
 
     ### MODIFIED SECTION END ###
 

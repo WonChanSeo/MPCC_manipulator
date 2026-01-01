@@ -1,7 +1,57 @@
 #include "scaling.h"
 #include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "algebra_vector.h"
+#include "algebra_matrix.h"
+
+// EnvCol row indices for analysis
+// N_eq=99, N_ineqb=259, polytopic_start=358
+// EnvCol rows: polytopic_start + NPC*i + [2..10], where NPC=11, i=0..N-1, N=10
+#define ENVCOL_POLYTOPIC_START 358
+#define ENVCOL_NPC 11
+#define ENVCOL_N 10
+#define ENVCOL_CON_START 2  // con_envcol1
+#define ENVCOL_CON_END 10   // con_envcol9
+
+static int is_envcol_row(int row) {
+    if (row < ENVCOL_POLYTOPIC_START) return 0;
+    int local = row - ENVCOL_POLYTOPIC_START;
+    int step = local / ENVCOL_NPC;
+    int offset = local % ENVCOL_NPC;
+    if (step >= ENVCOL_N) return 0;  // k=N has zero Jacobian, exclude
+    return (offset >= ENVCOL_CON_START && offset <= ENVCOL_CON_END);
+}
+
+// Check if EnvCol rows affect column inf-norm calculation for matrix A
+// Returns number of columns where EnvCol row provides the max element
+static int check_envcol_affects_col_norm(const OSQPMatrix* A) {
+    OSQPInt* Ap = OSQPMatrix_get_p(A);
+    OSQPInt* Ai = OSQPMatrix_get_i(A);
+    OSQPFloat* Ax = OSQPMatrix_get_x(A);
+    OSQPInt n = OSQPMatrix_get_n(A);
+
+    int envcol_max_count = 0;
+
+    for (OSQPInt j = 0; j < n; j++) {
+        OSQPFloat max_val = 0.0;
+        int max_row = -1;
+
+        for (OSQPInt ptr = Ap[j]; ptr < Ap[j + 1]; ptr++) {
+            OSQPFloat abs_val = (Ax[ptr] >= 0) ? Ax[ptr] : -Ax[ptr];
+            if (abs_val > max_val) {
+                max_val = abs_val;
+                max_row = Ai[ptr];
+            }
+        }
+
+        if (max_row >= 0 && is_envcol_row(max_row)) {
+            envcol_max_count++;
+        }
+    }
+
+    return envcol_max_count;
+}
 
 // ===== 통일된 벡터 읽기 접근자 =====
 // ---- 통일된 벡터 읽기 접근자 ----
@@ -198,8 +248,18 @@ OSQPInt scale_data(OSQPSolver* solver) {
 
 
   /* ==================== 여기부터 루프 전체 교체 ==================== */
+  // static int scale_call_count = 0;
+  // int print_analysis = (scale_call_count % 100 == 0);  // Print every 100 calls
+
   for (OSQPInt t = 0; t < T; ++t) {
   /* 1) 열 패스: KKT 열 최대 exponent */
+
+    // === EnvCol Analysis: Check if EnvCol rows affect column inf-norm BEFORE scaling ===
+    // if (print_analysis) {
+    //     int envcol_affects = check_envcol_affects_col_norm(work->data->A);
+    //     printf("[Scaling iter %d] EnvCol affects col inf-norm: %d / %d columns\n",
+    //            (int)t, envcol_affects, (int)n);
+    // }
 
     col_expmax_KKT_using_norms(work->data->P,
                                work->data->A,
@@ -218,7 +278,7 @@ OSQPInt scale_data(OSQPSolver* solver) {
     // }
     // printf("\n");
 
-    
+
     // Copy inverses of D/E over themselves
     OSQPVectorf_ew_reciprocal(work->D_temp, work->D_temp);
     OSQPVectorf_ew_reciprocal(work->E_temp, work->E_temp);

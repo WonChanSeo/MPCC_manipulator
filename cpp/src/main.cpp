@@ -262,14 +262,16 @@ int main() {
     };
 
     std::vector<double> step(log.size()), limit_time(step.size()),
-                        time_total(step.size()), time_set_env(step.size()), time_set_qp(step.size()), time_solve_qp(step.size()), time_get_alpha(step.size());
-    for (size_t i = 0; i < step.size(); i++) 
+                        time_total(step.size()), time_set_env(step.size()), time_set_qp(step.size()),
+                        time_init_solver(step.size()), time_solve_qp(step.size()), time_get_alpha(step.size());
+    for (size_t i = 0; i < step.size(); i++)
     {
         step[i] = i;
         limit_time[i] = jsonConfig["Ts"];
         time_total[i] = log[i].compute_time.total;
         time_set_env[i] = log[i].compute_time.set_env;
         time_set_qp[i] = log[i].compute_time.set_qp;
+        time_init_solver[i] = log[i].compute_time.init_solver;
         time_solve_qp[i] = log[i].compute_time.solve_qp;
         time_get_alpha[i] = log[i].compute_time.get_alpha;
     }
@@ -278,7 +280,8 @@ int main() {
     axes.create<CvPlot::Series>(step, time_total, "-r").setName("Total");
     axes.create<CvPlot::Series>(step, time_set_env, "-c").setName("Set Env");
     axes.create<CvPlot::Series>(step, time_set_qp, "-b").setName("Set QP");
-    axes.create<CvPlot::Series>(step, time_solve_qp, "-g").setName("Solve QP");
+    axes.create<CvPlot::Series>(step, time_init_solver, "-m").setName("Init Solver");
+    axes.create<CvPlot::Series>(step, time_solve_qp, "-g").setName("Solve QP (ADMM)");
     // axes.create<CvPlot::Series>(step, time_get_alpha, "-c").setName("Linesearch");
 
     axes.create<Legend>()._parentAxes = &axes;

@@ -26,6 +26,15 @@ static OSQPInt g_sqp_iter_count = 0;
 static int g_logging_signal_installed = 0;
 static char g_log_filepath[512] = {0};
 
+// Detailed timing breakdown for setup phase
+static OSQPFloat g_scaling_time = 0.0;
+static OSQPFloat g_permutation_time = 0.0;
+static OSQPFloat g_factorization_time = 0.0;
+
+// Setter functions for timing (called from qdldl_interface.c)
+void osqp_set_permutation_time(OSQPFloat time) { g_permutation_time = time; }
+void osqp_set_factorization_time(OSQPFloat time) { g_factorization_time = time; }
+
 static void logging_signal_handler(int sig) {
   fprintf(stderr, "\nSignal %d received, closing log file...\n", sig);
   if (g_admm_log_file) {
@@ -725,16 +734,21 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
     if (!(work->D_temp) || !(work->D_temp_A) || !(work->E_temp))
       return osqp_error(OSQP_MEM_ALLOC_ERROR);
 
-    // Scale data
+    // Scale data with timing
+    OSQPTimer* scaling_timer = OSQPTimer_new();
+    osqp_tic(scaling_timer);
     osqp_profiler_sec_push(OSQP_PROFILER_SEC_SCALE);
     scale_data(solver);
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_SCALE);
+    g_scaling_time = osqp_toc(scaling_timer);
+    OSQPTimer_free(scaling_timer);
   } else {
     // printf("Skipping scaling...\n");
     work->scaling  = OSQP_NULL;
     work->D_temp   = OSQP_NULL;
     work->D_temp_A = OSQP_NULL;
     work->E_temp   = OSQP_NULL;
+    g_scaling_time = 0.0;
   }
 
   if (settings->rho_is_vec) {
@@ -813,6 +827,11 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
   solver->info->polish_time = 0.0;                   // Polish time to zero
   solver->info->run_time    = 0.0;                   // Total run time to zero
   solver->info->setup_time  = osqp_toc(work->timer); // Update timer information
+
+  // Store detailed timing breakdown
+  solver->info->scaling_time = g_scaling_time;
+  solver->info->permutation_time = g_permutation_time;
+  solver->info->factorization_time = g_factorization_time;
 
   work->first_run         = 1;
   work->clear_update_time = 0;

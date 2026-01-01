@@ -17,6 +17,10 @@
 #include "Interfaces/osqp_interface.h"
 #include "osqp_api_functions.h"
 #include <chrono>
+#include <fstream>
+
+// Global log file for solveQP failures
+static std::ofstream g_solveQP_fail_log;
 
 namespace mpcc{
 OsqpInterface::OsqpInterface(double Ts,const PathToJson &path)
@@ -86,6 +90,16 @@ void OsqpInterface::setMultiThread()
     Eigen::setNbThreads(cores > 1 ? cores - 1 : 1);
     Eigen::initParallel();
     cout << "Updated threads: " << Eigen::nbThreads() << endl;
+
+    // Initialize solveQP failure log file
+    if (!g_solveQP_fail_log.is_open()) {
+        g_solveQP_fail_log.open("/home/mms-wonchan/git/MPCC_manipulator/result/solveQP_failures.txt", std::ios::out | std::ios::trunc);
+        if (g_solveQP_fail_log.is_open()) {
+            g_solveQP_fail_log << "=== solveQP Failure Log ===" << std::endl;
+            g_solveQP_fail_log << "Format: [FAIL TYPE] solve_count, sqp_iter, additional_info" << std::endl;
+            g_solveQP_fail_log << "==========================================" << std::endl;
+        }
+    }
 }
 
 void OsqpInterface::setTrack(const ArcLengthSpline track)
@@ -417,6 +431,17 @@ void OsqpInterface::setConstraints(const std::vector<OptVariables> &initial_gues
         u->segment(N_eq, N_ineqb) = u_ineqb;
         u->segment(N_eq+N_ineqb, N_ineqp) = u_ineqp;
     }
+
+    // ===== EnvCol Scaling Analysis ===== (DISABLED for performance measurement)
+    // if(jac_constr)
+    // {
+    //     static int analysis_count = 0;
+    //     if(analysis_count % 100 == 0)
+    //     {
+    //         // ... analysis code ...
+    //     }
+    //     analysis_count++;
+    // }
 }
 
 void OsqpInterface::setQP(const std::vector<OptVariables> &initial_guess,
@@ -487,12 +512,30 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         if (!isPosdef(Hess_))
         {
             std::cout << "[RTI] Hessian not positive definite\n";
+            if (g_solveQP_fail_log.is_open()) {
+                g_solveQP_fail_log << "[RTI_NON_PD_HESSIAN] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+                g_solveQP_fail_log.flush();
+            }
+            // Record timing even on failure
+            auto end_set_qp_fail = std::chrono::high_resolution_clock::now();
+            mpc_time->set_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp_fail - start_set_qp).count();
+            auto end_total_fail = std::chrono::high_resolution_clock::now();
+            mpc_time->total = std::chrono::duration_cast<std::chrono::duration<double>>(end_total_fail - start_total).count();
             (*status) = NON_PD_HESSIAN;
             return false;
         }
         if (isNan(Hess_))
         {
             std::cout << "[RTI] Hessian is NaN\n";
+            if (g_solveQP_fail_log.is_open()) {
+                g_solveQP_fail_log << "[RTI_NAN_HESSIAN] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+                g_solveQP_fail_log.flush();
+            }
+            // Record timing even on failure
+            auto end_set_qp_fail = std::chrono::high_resolution_clock::now();
+            mpc_time->set_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp_fail - start_set_qp).count();
+            auto end_total_fail = std::chrono::high_resolution_clock::now();
+            mpc_time->total = std::chrono::duration_cast<std::chrono::duration<double>>(end_total_fail - start_total).count();
             (*status) = NAN_HESSIAN;
             return false;
         }
@@ -505,6 +548,21 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         {
             total_iter_count += iter_count;
             printf("[RTI] QP solve FAILED : %d \n", qp_status_);
+            if (g_solveQP_fail_log.is_open()) {
+                g_solveQP_fail_log << "[RTI_solveQP_FAIL] " << current_solve_count_ << ", " << sqp_iter_
+                                  << ", qp_status=" << static_cast<int>(qp_status_) << std::endl;
+                g_solveQP_fail_log.flush();
+            }
+            // Record timing even on failure
+            mpc_time->set_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp - start_set_qp).count();
+            mpc_time->init_solver = last_init_solver_time_;
+            mpc_time->solve_qp = last_solve_time_ + last_factorization_time_;  // ADMM + factorization
+            mpc_time->scaling_time = last_scaling_time_;
+            mpc_time->permutation_time = last_permutation_time_;
+            mpc_time->factorization_time = last_factorization_time_;
+            mpc_time->rho_updates = last_rho_updates_;
+            auto end_total_fail = std::chrono::high_resolution_clock::now();
+            mpc_time->total = std::chrono::duration_cast<std::chrono::duration<double>>(end_total_fail - start_total).count();
             switch (qp_status_)
             {
             case OsqpEigen::Status::DualInfeasibleInaccurate:
@@ -535,7 +593,12 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
 
         // Update timing
         mpc_time->set_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp - start_set_qp).count();
-        mpc_time->solve_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_solve_qp - start_solve_qp).count();
+        mpc_time->init_solver = last_init_solver_time_;  // initSolver time (scaling + permutation + factorization)
+        mpc_time->solve_qp = last_solve_time_ + last_factorization_time_;  // ADMM + factorization time
+        mpc_time->scaling_time = last_scaling_time_;
+        mpc_time->permutation_time = last_permutation_time_;
+        mpc_time->factorization_time = last_factorization_time_;
+        mpc_time->rho_updates = last_rho_updates_;
         mpc_time->get_alpha = 0.0;  // No line search in RTI
 
         auto end_total = std::chrono::high_resolution_clock::now();
@@ -544,7 +607,7 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         sqp_iter_count = 1;
         (*status) = SOLVED;
         opt_sol = initial_guess_;
-        printf("[RTI] SOLVED\n");
+        // printf("[RTI] SOLVED | init_solver: %.6f, solve_qp: %.6f\n", mpc_time->init_solver, mpc_time->solve_qp);
         return true;
     }
 
@@ -587,13 +650,19 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         //     saveMatrixToFile(Hess_, "Hess_", "/home/mms-wonchan/Studies/OSQP/Precision/first_hessian.txt");
         // }
         
-        if (!isPosdef(Hess_)) 
+        if (!isPosdef(Hess_))
         {
             std::cout << "Hessian not positive definite\n";
-
+            if (g_solveQP_fail_log.is_open()) {
+                g_solveQP_fail_log << "[SQP_NON_PD_HESSIAN] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+                g_solveQP_fail_log.flush();
+            }
+            // Record timing even on failure
+            auto end_set_qp_fail = std::chrono::high_resolution_clock::now();
+            mpc_time->set_qp += std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp_fail - start_set_qp).count();
             // double tau = 1e-3;
             // Eigen::VectorXd v(N_var);
-            // while (!isPosdef(Hess_)) 
+            // while (!isPosdef(Hess_))
             // {
             //     v.setConstant(tau);
             //     Hess_ += v.asDiagonal();
@@ -602,9 +671,16 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
             (*status) = NON_PD_HESSIAN;
             break;
         }
-        if (isNan(Hess_)) 
+        if (isNan(Hess_))
         {
             std::cout << "Hessian is NaN\n";
+            if (g_solveQP_fail_log.is_open()) {
+                g_solveQP_fail_log << "[SQP_NAN_HESSIAN] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+                g_solveQP_fail_log.flush();
+            }
+            // Record timing even on failure
+            auto end_set_qp_fail = std::chrono::high_resolution_clock::now();
+            mpc_time->set_qp += std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp_fail - start_set_qp).count();
             (*status) = NAN_HESSIAN;
             break;
         }
@@ -617,6 +693,19 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         {
             total_iter_count += iter_count;  // Accumulate QP iterations
             printf("QP solve FAILED : %d \n", qp_status_);
+            if (g_solveQP_fail_log.is_open()) {
+                g_solveQP_fail_log << "[SQP_solveQP_FAIL] " << current_solve_count_ << ", " << sqp_iter_
+                                  << ", qp_status=" << static_cast<int>(qp_status_) << std::endl;
+                g_solveQP_fail_log.flush();
+            }
+            // Record timing even on failure
+            mpc_time->set_qp += std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp - start_set_qp).count();
+            mpc_time->init_solver += last_init_solver_time_;
+            mpc_time->solve_qp += last_solve_time_ + last_factorization_time_;  // ADMM + factorization
+            mpc_time->scaling_time += last_scaling_time_;
+            mpc_time->permutation_time += last_permutation_time_;
+            mpc_time->factorization_time += last_factorization_time_;
+            mpc_time->rho_updates += last_rho_updates_;
             switch (qp_status_)
             {
             case OsqpEigen::Status::DualInfeasibleInaccurate:
@@ -736,7 +825,12 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         // std::cout << "\tdual_step_norm_: " << dual_step_norm_ << std::endl;
 
         mpc_time->set_qp += std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp - start_set_qp).count();
-        mpc_time->solve_qp += std::chrono::duration_cast<std::chrono::duration<double>>(end_solve_qp - start_solve_qp).count();
+        mpc_time->init_solver += last_init_solver_time_;  // initSolver time (scaling + permutation + factorization)
+        mpc_time->solve_qp += last_solve_time_ + last_factorization_time_;  // ADMM + factorization time
+        mpc_time->scaling_time += last_scaling_time_;
+        mpc_time->permutation_time += last_permutation_time_;
+        mpc_time->factorization_time += last_factorization_time_;
+        mpc_time->rho_updates += last_rho_updates_;
         mpc_time->get_alpha += std::chrono::duration_cast<std::chrono::duration<double>>(end_get_alpha - start_get_alpha).count();
 
         // termination condition
@@ -853,19 +947,73 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     // time limit
     // solver_.settings()->getSettings()->time_limit = (Ts_ / 5.);
     solver_.settings()->getSettings()->verbose = false;
+    // solver_.settings()->getSettings()->scaling = 0;  // Disable OSQP internal scaling
 
     // set the initial data of the QP solver
     solver_.data()->setNumberOfVariables(N_var);
     solver_.data()->setNumberOfConstraints(N_constr);
-    if (!solver_.data()->setHessianMatrix(P_sp))           return false;
-    if (!solver_.data()->setGradient(q_ds))                return false;
-    if (!solver_.data()->setLinearConstraintsMatrix(A_sp)) return false;
-    if (!solver_.data()->setLowerBound(l_ds))              return false;
-    if (!solver_.data()->setUpperBound(u_ds))              return false;
+    if (!solver_.data()->setHessianMatrix(P_sp)) {
+        printf("[solveQP FAIL] setHessianMatrix failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        if (g_solveQP_fail_log.is_open()) {
+            g_solveQP_fail_log << "[setHessianMatrix] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+            g_solveQP_fail_log.flush();
+        }
+        return false;
+    }
+    if (!solver_.data()->setGradient(q_ds)) {
+        printf("[solveQP FAIL] setGradient failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        if (g_solveQP_fail_log.is_open()) {
+            g_solveQP_fail_log << "[setGradient] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+            g_solveQP_fail_log.flush();
+        }
+        return false;
+    }
+    if (!solver_.data()->setLinearConstraintsMatrix(A_sp)) {
+        printf("[solveQP FAIL] setLinearConstraintsMatrix failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        if (g_solveQP_fail_log.is_open()) {
+            g_solveQP_fail_log << "[setLinearConstraintsMatrix] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+            g_solveQP_fail_log.flush();
+        }
+        return false;
+    }
+    if (!solver_.data()->setLowerBound(l_ds)) {
+        printf("[solveQP FAIL] setLowerBound failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        if (g_solveQP_fail_log.is_open()) {
+            g_solveQP_fail_log << "[setLowerBound] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+            g_solveQP_fail_log.flush();
+        }
+        return false;
+    }
+    if (!solver_.data()->setUpperBound(u_ds)) {
+        printf("[solveQP FAIL] setUpperBound failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        if (g_solveQP_fail_log.is_open()) {
+            g_solveQP_fail_log << "[setUpperBound] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+            g_solveQP_fail_log.flush();
+        }
+        return false;
+    }
 
     // printf("Before initSolver\n");
-    // instantiate the solver
-    if (!solver_.initSolver()) return false;
+    // instantiate the solver (includes scaling + permutation + factorization)
+    auto start_init = std::chrono::high_resolution_clock::now();
+    if (!solver_.initSolver()) {
+        printf("[solveQP FAIL] initSolver failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        if (g_solveQP_fail_log.is_open()) {
+            g_solveQP_fail_log << "[initSolver] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+            g_solveQP_fail_log.flush();
+        }
+        return false;
+    }
+    auto end_init = std::chrono::high_resolution_clock::now();
+    last_init_solver_time_ = std::chrono::duration_cast<std::chrono::duration<double>>(end_init - start_init).count();
+
+    // Get detailed timing breakdown from OSQPInfo
+    const OSQPInfo* osqp_info = solver_.getInfo();
+    if (osqp_info != nullptr) {
+        last_scaling_time_ = osqp_info->scaling_time;
+        last_permutation_time_ = osqp_info->permutation_time;
+        last_factorization_time_ = osqp_info->factorization_time;
+    }
     // printf("After initSolver : %d\n", solver_.getStatus());
 
     // printf("Solver settings :\n");
@@ -881,13 +1029,39 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     // Set iteration context for OSQP logging
     osqp_set_iteration_context(current_solve_count_, sqp_iter_);
 
-    // solve the QP problem
-    if (solver_.solveProblem() != OsqpEigen::ErrorExitFlag::NoError) return false;
+    // solve the QP problem (pure ADMM iteration)
+    auto start_solve = std::chrono::high_resolution_clock::now();
+    if (solver_.solveProblem() != OsqpEigen::ErrorExitFlag::NoError) {
+        printf("[solveQP FAIL] solveProblem failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        if (g_solveQP_fail_log.is_open()) {
+            g_solveQP_fail_log << "[solveProblem] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
+            g_solveQP_fail_log.flush();
+        }
+        return false;
+    }
+    auto end_solve = std::chrono::high_resolution_clock::now();
+    last_solve_time_ = std::chrono::duration_cast<std::chrono::duration<double>>(end_solve - start_solve).count();
+
+    // Get rho_updates from OSQPInfo after solve
+    const OSQPInfo* osqp_info_after_solve = solver_.getInfo();
+    if (osqp_info_after_solve != nullptr) {
+        last_rho_updates_ = osqp_info_after_solve->rho_updates;
+    }
+
     // printf("After solveProblem : %d\n", solver_.getStatus());
     iter_count = solver_.getNumberOfIterations();
     qp_status = solver_.getStatus();
     // printf("qp_status solved inaccurate : %s\n", qp_status == OsqpEigen::Status::SolvedInaccurate ? "true" : "false");
-    if (!(solver_.getStatus() == OsqpEigen::Status::Solved || solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate)) return false;
+    if (!(solver_.getStatus() == OsqpEigen::Status::Solved || solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate)) {
+        printf("[solveQP FAIL] solver status=%d (not Solved/SolvedInaccurate) at solve_count=%d, sqp_iter=%d\n",
+               static_cast<int>(solver_.getStatus()), current_solve_count_, sqp_iter_);
+        if (g_solveQP_fail_log.is_open()) {
+            g_solveQP_fail_log << "[solverStatus] " << current_solve_count_ << ", " << sqp_iter_
+                              << ", status=" << static_cast<int>(solver_.getStatus()) << std::endl;
+            g_solveQP_fail_log.flush();
+        }
+        return false;
+    }
     // if (!(solver_.getStatus() == OsqpEigen::Status::Solved)) return false;
     // if (!(solver_.getStatus() == OsqpEigen::Status::Solved || solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate) && solver_.getStatus() != OsqpEigen::Status::TimeLimitReached) return false;
     // printf("After getStatus : %d\n", solver_.getStatus());

@@ -72,10 +72,21 @@ struct ComputeTime
 {
     double set_env;
     double set_qp;
-    double solve_qp;
+    double init_solver;  // initSolver time (legacy: scaling + permutation + factorization combined)
+    double solve_qp;     // pure ADMM iteration time + initial factorization (for fair comparison)
     double get_alpha;
     double total;
-    void setZero(){set_env=0; set_qp=0; solve_qp=0;get_alpha=0;}
+    // Detailed timing breakdown (from osqp_setup)
+    double scaling_time;       // Data scaling time
+    double permutation_time;   // Permutation computation time
+    double factorization_time; // Initial LDL factorization time
+    // Adaptive rho information
+    int rho_updates;           // Number of rho updates performed during solve
+    void setZero(){
+        set_env=0; set_qp=0; init_solver=0; solve_qp=0; get_alpha=0; total=0;
+        scaling_time=0; permutation_time=0; factorization_time=0;
+        rho_updates=0;
+    }
 };
 
 class OsqpInterface : public SolverInterface {
@@ -138,6 +149,16 @@ private:
 
     double dual_step_norm_;
     double primal_step_norm_;
+
+    // Timing for solveQP breakdown
+    double last_init_solver_time_ = 0.0;  // initSolver time (scaling + permutation + factorization)
+    double last_solve_time_ = 0.0;        // pure ADMM iteration time
+    // Detailed timing breakdown (from osqp_setup)
+    double last_scaling_time_ = 0.0;       // Data scaling time
+    double last_permutation_time_ = 0.0;   // Permutation computation time
+    double last_factorization_time_ = 0.0; // Initial LDL factorization time
+    // Adaptive rho information
+    int last_rho_updates_ = 0;             // Number of rho updates performed
 
     std::vector<FilterData> filter_data_list_;
 

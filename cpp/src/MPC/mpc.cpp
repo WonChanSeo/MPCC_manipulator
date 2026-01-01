@@ -20,7 +20,11 @@
 #include <cmath>      // std::abs, std::fabs
 #include <Eigen/Core>
 #include <cstdlib>    // std::getenv
+#include <fstream>    // for logging
 #include "osqp_api_functions.h"
+
+// Global log file for generateNewInitialGuess calls
+static std::ofstream g_initialGuess_log;
 
 namespace mpcc {
 
@@ -248,9 +252,24 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     }
 
     // 3. Warm/Cold start
-    if(valid_initial_guess_) 
+    if(valid_initial_guess_)
         updateInitialGuess(x0);
     else {
+        // Initialize log file if not open
+        if (!g_initialGuess_log.is_open()) {
+            g_initialGuess_log.open("/home/mms-wonchan/git/MPCC_manipulator/result/initialGuess_calls.txt", std::ios::out | std::ios::trunc);
+            if (g_initialGuess_log.is_open()) {
+                g_initialGuess_log << "=== generateNewInitialGuess Call Log ===" << std::endl;
+                g_initialGuess_log << "Format: [COLD_START] solve_count, reason" << std::endl;
+                g_initialGuess_log << "=========================================" << std::endl;
+            }
+        }
+        // Log the cold start call
+        if (g_initialGuess_log.is_open()) {
+            std::string reason = (num_valid_guess_failed_ > 0) ? "path_deviation" : "qp_failure";
+            g_initialGuess_log << "[COLD_START] " << (solve_count_ + 1) << ", " << reason << std::endl;
+            g_initialGuess_log.flush();
+        }
         generateNewInitialGuess(x0);    // ★ 시그니처 수정
         // updateInitialGuess(x0);
     }

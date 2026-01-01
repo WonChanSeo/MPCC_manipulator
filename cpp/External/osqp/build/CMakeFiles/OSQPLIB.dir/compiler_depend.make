@@ -1335,11 +1335,16 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o: ../alg
   /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
   /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
   ../include/private/profilers.h \
-  ../include/private/error.h \
+  ../include/private/timing.h \
+  ../include/private/types.h \
   ../include/public/osqp.h \
   ../include/public/osqp_api_types.h \
   ../include/public/osqp_api_functions.h \
   ../include/public/osqp_export_define.h \
+  ../include/private/algebra_matrix.h \
+  ../include/private/glob_opts.h \
+  ../include/private/algebra_vector.h \
+  ../include/private/error.h \
   /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include/qdldl.h \
   _deps/qdldl-build/include/qdldl_types.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h \
@@ -1354,11 +1359,7 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o: ../alg
   _deps/qdldl-build/include/qdldl_version.h \
   ../algebra/_common/lin_sys/qdldl/qdldl_interface.h \
   ../include/private/types.h \
-  ../include/private/algebra_matrix.h \
-  ../include/private/glob_opts.h \
-  ../include/private/algebra_vector.h \
   ../include/private/util.h \
-  ../include/private/types.h \
   ../algebra/_common/lin_sys/qdldl/amd/include/amd.h \
   ../algebra/_common/lin_sys/qdldl/amd/include/SuiteSparse_config.h \
   ../algebra/_common/kkt.h \
@@ -2205,7 +2206,19 @@ CMakeFiles/OSQPLIB.dir/src/scaling.c.o: ../src/scaling.c \
   /usr/include/stdint.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  ../include/private/algebra_vector.h
+  /usr/include/stdio.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio.h \
+  /usr/include/x86_64-linux-gnu/bits/stdio2.h \
+  ../include/private/algebra_vector.h \
+  ../include/private/algebra_matrix.h
 
 CMakeFiles/OSQPLIB.dir/src/timing_linux.c.o: ../src/timing_linux.c \
   /usr/include/stdc-predef.h \
@@ -2427,8 +2440,6 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
 
 ../src/codegen.c:
 
-../include/private/timing.h:
-
 ../include/private/auxil.h:
 
 ../include/private/lin_alg.h:
@@ -2495,6 +2506,12 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
 
 /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
 
+../src/auxil.c:
+
+/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
+
+/usr/include/x86_64-linux-gnu/sys/select.h:
+
 ../algebra/_common/lin_sys/qdldl/amd/src/amd_valid.c:
 
 ../algebra/_common/csc_math.c:
@@ -2522,6 +2539,8 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
 include/public/osqp_configure.h:
 
 /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
+
+../include/private/timing.h:
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
 
@@ -2580,12 +2599,6 @@ include/public/osqp_configure.h:
 ../include/public/osqp_api_constants.h:
 
 ../include/public/osqp_api_types.h:
-
-../src/auxil.c:
-
-/usr/include/x86_64-linux-gnu/sys/select.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
 ../include/public/osqp_api_functions.h:
 

@@ -124,9 +124,14 @@ class MPCC():
         
         compute_time = {"total": mpc_sol.compute_time.total,
                         "set_qp": mpc_sol.compute_time.set_qp,
+                        "init_solver": mpc_sol.compute_time.init_solver,
                         "solve_qp": mpc_sol.compute_time.solve_qp,
                         "get_alpha": mpc_sol.compute_time.get_alpha,
                         "set_env": mpc_sol.compute_time.set_env,
+                        "scaling_time": mpc_sol.compute_time.scaling_time,
+                        "permutation_time": mpc_sol.compute_time.permutation_time,
+                        "factorization_time": mpc_sol.compute_time.factorization_time,
+                        "rho_updates": mpc_sol.compute_time.rho_updates,
                         }
         
         iter_count = mpc_sol.iter_count

@@ -411,8 +411,9 @@ void Constraints::getEnvcollConstraint(const State &x,const Input &u,const Robot
     const dJointVector dq = inputTodJointVector(u);
 
     // compute minimum distance between each links and its derivative
-    Eigen::Matrix<float, PANDA_NUM_LINKS, 1> min_dist = 0.01f*(rb.env_min_dist_.cast<float>() - Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(static_cast<float>(rb.obs_radius_)*1.2f)); // unit: [cm]->[m]
-    Eigen::Matrix<float, PANDA_NUM_LINKS, PANDA_DOF> d_min_dist = 0.01f*rb.d_env_min_dist_.cast<float>(); // unit: [cm]->[m]
+    // Note: MLP output is already scaled to meters (0.01 scaling absorbed in last layer weights)
+    Eigen::Matrix<float, PANDA_NUM_LINKS, 1> min_dist = rb.env_min_dist_.cast<float>() - Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(0.01f*static_cast<float>(rb.obs_radius_)*1.2f); // unit: [m]
+    Eigen::Matrix<float, PANDA_NUM_LINKS, PANDA_DOF> d_min_dist = rb.d_env_min_dist_.cast<float>(); // unit: [m]
 
     // compute RBF value of minimum distance and its derivative
     float r = 0.01f*static_cast<float>(param_.tol_envcol); //  [cm]->[m]
