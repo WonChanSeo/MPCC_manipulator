@@ -312,7 +312,9 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     }
     else if(sqp_status == MAX_ITER_EXCEEDED || sqp_status == QP_MaxIterReached || sqp_status == QP_SolvedInaccurate)
     {
-        // RTI mode: partial solution or max iter - keep warm start but increment failure counter
+        // RTI mode: partial solution or max iter
+        num_valid_guess_failed_++;
+
         std::cout << "===================================================" << std::endl;
         std::cout << "========== QP Partially Solved (RTI mode) =========" << std::endl;
         if(sqp_status == MAX_ITER_EXCEEDED)
@@ -321,14 +323,25 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
             std::cout << "================ QP Max Iter reached ===============" << std::endl;
         else
             std::cout << "================= QP Solved Inaccurate =============" << std::endl;
+
+        // Transition to cold start after 5 consecutive failures
+        if(num_valid_guess_failed_ >= 5)
+        {
+            std::cout << "====== 5 consecutive failures -> Cold Start =======" << std::endl;
+            valid_initial_guess_ = false;  // Trigger cold start
+        }
+        else
+        {
+            std::cout << "========= Consecutive failures: " << num_valid_guess_failed_ << " ==========" << std::endl;
+            valid_initial_guess_ = true;   // Keep warm start
+        }
         std::cout << "===================================================" << std::endl;
-        valid_initial_guess_ = true;  // Keep warm start for RTI
-        num_valid_guess_failed_++;
     }
     else
     {
-        // Critical failure - invalidate warm start
+        // Critical failure - stop simulation
         std::cout << "===================================================" << std::endl;
+        std::cout << "========== CRITICAL FAILURE - STOPPING ============" << std::endl;
         std::cout << "================ QP did not solved ================" << std::endl;
         switch (sqp_status)
         {
@@ -354,6 +367,7 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
             std::cout << "========== Not Possitive Definite Hessian ==========="<< std::endl;
             break;
         }
+        std::cout << "============ Simulation will be terminated =========" << std::endl;
         std::cout << "===================================================" << std::endl;
         valid_initial_guess_ = false;
         num_valid_guess_failed_++;
@@ -434,6 +448,7 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     // - SOLVED: convergence achieved
     // - MAX_ITER_EXCEEDED: SQP max iter (normal in RTI mode)
     // - QP partially solved: acceptable in RTI mode
+    // Critical failures (Infeasible, NAN, etc.) will stop simulation
 
     bool qp_acceptable = (sqp_status == SOLVED) ||
                          (sqp_status == MAX_ITER_EXCEEDED) ||
@@ -445,8 +460,9 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
         return true;
     }
     else {
-        // Critical failure (Infeasible, NAN, etc.)
-        printf("MPC failed: status=%d, num_valid_guess_failed=%d\n", sqp_status, num_valid_guess_failed_);
+        // Critical failure - terminate simulation
+        printf("MPC CRITICAL FAILURE: status=%d, num_valid_guess_failed=%d\n", sqp_status, num_valid_guess_failed_);
+        printf("Simulation terminated due to unrecoverable solver failure.\n");
         return false;
     }
 }
