@@ -310,32 +310,17 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
         valid_initial_guess_ = true;
         num_valid_guess_failed_ = 0;
     }
-    else if(sqp_status == MAX_ITER_EXCEEDED || sqp_status == QP_MaxIterReached || sqp_status == QP_SolvedInaccurate)
+    else if(sqp_status == MAX_ITER_EXCEEDED)
     {
-        // RTI mode: partial solution or max iter
-        num_valid_guess_failed_++;
-
+        // MAX_ITER_EXCEEDED: Immediately trigger cold start with generateNewInitialGuess
         std::cout << "===================================================" << std::endl;
-        std::cout << "========== QP Partially Solved (RTI mode) =========" << std::endl;
-        if(sqp_status == MAX_ITER_EXCEEDED)
-            std::cout << "============== SQP Max Iter reached ===============" << std::endl;
-        else if(sqp_status == QP_MaxIterReached)
-            std::cout << "================ QP Max Iter reached ===============" << std::endl;
-        else
-            std::cout << "================= QP Solved Inaccurate =============" << std::endl;
-
-        // Transition to cold start after 5 consecutive failures
-        if(num_valid_guess_failed_ >= 5)
-        {
-            std::cout << "====== 5 consecutive failures -> Cold Start =======" << std::endl;
-            valid_initial_guess_ = false;  // Trigger cold start
-        }
-        else
-        {
-            std::cout << "========= Consecutive failures: " << num_valid_guess_failed_ << " ==========" << std::endl;
-            valid_initial_guess_ = true;   // Keep warm start
-        }
+        std::cout << "============== SQP Max Iter reached ===============" << std::endl;
+        std::cout << "========== Triggering Cold Start Immediately ======" << std::endl;
         std::cout << "===================================================" << std::endl;
+
+        // Immediately generate new initial guess (cold start)
+        generateNewInitialGuess(x0);
+        num_valid_guess_failed_ = 0;  // Reset counter after cold start
     }
     else
     {
