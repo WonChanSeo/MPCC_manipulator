@@ -86,16 +86,14 @@ struct RobotData
             return;
         }
 
-        // 모든 장애물에 대한 입력 행렬 구성 (각 열이 하나의 장애물에 대한 입력)
-        // input shape: (PANDA_DOF + 3, num_obstacles)
-        Eigen::MatrixXd inputs(PANDA_DOF + 3, num_obstacles);
-        for (int i = 0; i < num_obstacles; ++i) {
-            inputs.col(i).head(PANDA_DOF) = q_;
-            inputs.col(i).tail(3) = obs_positions.row(i).transpose();
-        }
+        // 단일 장애물에 대한 입력 벡터 구성
+        // input shape: (PANDA_DOF + 3)
+        Eigen::VectorXd input(PANDA_DOF + 3);
+        input.head(PANDA_DOF) = q_;
+        input.tail(3) = obs_positions.row(0).transpose();  // 첫 번째 장애물만 사용
 
-        // 배치 추론: 모든 장애물에 대해 한번에 계산하고 링크별 최소 거리 반환
-        auto pred = envcol_model->calculateMlpOutputBatch(inputs);
+        // 단일 MLP 추론: 하나의 장애물에 대해 계산
+        auto pred = envcol_model->calculateMlpOutput(input);
 
         env_min_dist_ = pred.first;
         d_env_min_dist_ = pred.second.block(0, 0, PANDA_NUM_LINKS, PANDA_DOF);

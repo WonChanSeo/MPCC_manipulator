@@ -198,19 +198,19 @@ def main(args):
     pc = PlanningScene(arm_names=["fr3"], arm_dofs=[7], base_link="world")
     
     ## Obstacle information
-    num_obstacles = 1  # <-- 첫 번째 장애물만 활성화
+    num_obstacles = 1  # <-- 세 번째 장애물만 활성화
 
     # ================================================
-    #        Single Obstacle Configuration (Obstacle 1 only)
+    #        Single Obstacle Configuration (Obstacle 3 only from main_w_sim.py)
     # ================================================
-    # 첫 번째 장애물만 사용
+    # main_w_sim.py의 세 번째 장애물만 사용
     obs_positions = np.array([
-        [[0.55, -0.200, 0.55]],   # Obstacle 1: Z축으로 이동
+        [0.55, -0.200, 0.55],   # Obstacle 3: Y축으로 이동 (좌우)
     ])
 
-    # 첫 번째 장애물의 이동 한계
+    # 세 번째 장애물의 이동 한계 (Y축: -0.0 ~ 0.2)
     obs_limits = np.zeros((num_obstacles, 2, 3))
-    obs_limits[0] = np.array([[0.55, -0., 0.450], [0.55, 20, 0.450]])
+    obs_limits[0] = np.array([[0.55, -0.0, 0.450], [0.55, 20, 0.450]])
 
     # Create publishers
     node = rclpy.create_node('mpcc_node')
@@ -306,19 +306,19 @@ def main(args):
     qdot_pre = np.zeros(robot_dof)
     
     obs_steps = np.zeros((num_obstacles, 3))
-    obs_steps[0, 2] = obs_speed * mpc.Ts  # 첫 번째 장애물은 Z축으로 이동
+    obs_steps[0, 1] = obs_speed * mpc.Ts  # 세 번째 장애물은 Y축으로 이동 (좌우)
 
     while rclpy.ok():
         start = time.time()
         
         if args.is_obs:
-            # --- 1. 장애물 이동 로직 (첫 번째 장애물만) ---
-            # 첫 번째 장애물이 위쪽으로 움직이고 있고(obs_steps > 0), 위쪽 경계선을 넘었을 때
-            if obs_steps[0, 2] > 0 and obs_positions[0, 2] >= obs_limits[0, 1, 2]:
-                obs_steps[0, 2] *= -1  # 방향을 아래쪽으로 전환
-            # 첫 번째 장애물이 아래쪽으로 움직이고 있고(obs_steps < 0), 아래쪽 경계선을 넘었을 때
-            elif obs_steps[0, 2] < 0 and obs_positions[0, 2] <= obs_limits[0, 0, 2]:
-                obs_steps[0, 2] *= -1  # 방향을 위쪽으로 전환
+            # --- 1. 장애물 이동 로직 (세 번째 장애물만) ---
+            # 세 번째 장애물이 오른쪽으로 움직이고 있고(obs_steps > 0), 오른쪽 경계선을 넘었을 때
+            if obs_steps[0, 1] > 0 and obs_positions[0, 1] >= obs_limits[0, 1, 1]:
+                obs_steps[0, 1] *= -1 # 방향을 왼쪽으로 전환
+            # 세 번째 장애물이 왼쪽으로 움직이고 있고(obs_steps < 0), 왼쪽 경계선을 넘었을 때
+            elif obs_steps[0, 1] < 0 and obs_positions[0, 1] <= obs_limits[0, 0, 1]:
+                obs_steps[0, 1] *= -1 # 방향을 오른쪽으로 전환
 
             # 장애물 위치 업데이트
             obs_positions += obs_steps

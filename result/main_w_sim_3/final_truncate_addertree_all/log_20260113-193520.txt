@@ -1,0 +1,661 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+<frozen importlib._bootstrap>:241: RuntimeWarning: to-Python converter for std::vector<int, std::allocator<int> > already registered; second conversion method ignored.
+[INFO] [1768300521.650842863] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.0057197 seconds
+[INFO] [1768300521.650910864] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1768300521.660174635] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1768300521.660235618] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1768300521.660670959] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1768300521.660686538] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[INFO] [1768300521.674676182] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00104859 seconds
+[INFO] [1768300521.674683250] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1768300521.676564927] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1768300521.676577191] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1768300521.676664176] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1768300521.676667966] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[WARN] [1768300521.677323502] [moveit_ros.robot_model_loader]: No kinematics plugins defined. Fill and load kinematics.yaml!
+[INFO] [1768300521.679557908] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Publishing maintained planning scene on '/planning_scene'
+[INFO] [1768300521.679603068] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting planning scene monitor
+[INFO] [1768300521.679869852] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/planning_scene'
+[INFO] [1768300521.679875935] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Updating internal planning scene state at most every 0.010000 seconds
+link: base_link
+link: base_footprint
+link: default_mount
+link: front_bumper_mount
+link: front_left_wheel
+link: front_right_wheel
+link: fr3_base
+link: fr3_link0
+link: fr3_link1
+link: fr3_link2
+link: fr3_link3
+link: fr3_link4
+link: fr3_link5
+link: fr3_link6
+link: fr3_link7
+link: fr3_link8
+link: fr3_hand
+link: fr3_leftfinger
+link: fr3_rightfinger
+link: fr3_hand_tcp
+link: rgb_camera_link
+link: depth_camera_link
+link: camera_base
+link: imu_camera_link
+link: inertial_link
+link: rear_bumper_mount
+link: rear_left_wheel
+link: rear_right_wheel
+link: top_chassis_link
+link: top_structure_link
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+Default initialization of bounds
+Default initialization of model params
+bounds initialized
+Available cores: 28
+Default threads: 28
+Updated threads: 27
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+bounds initialized
+param values:
+	desired_s_velocity: 0.1
+	tol_envcol: 1
+	tol_selcol: 1
+	tol_sing: 0.018
+cost values:
+	qC: 1000
+	qCNmult: 10
+	qL: 500
+	qOri: 100
+	qSing: 1
+	qVs: 10
+	rdVs: 0.1
+	rddq: 50
+	rdq: 0.002
+bounds values:
+normalization values:
+sqp values:
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+----------------------------------------------------
+Step 0 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 0 - Current State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+Next State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 1 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 1 - Current State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+Next State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 2 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 2 - Current State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+Next State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 3 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 3 - Current State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+Next State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 4 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 4 - Current State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+Next State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 5 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 5 - Current State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+Next State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 6 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 6 - Current State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+Next State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 7 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 7 - Current State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+Next State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 8 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 8 - Current State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+Next State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 9 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 9 - Current State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+Next State: [q: 0.000000, 0.000000 0.000000 -1.570796 0.000000 1.570796 0.785398, s: 0.000000, vs: 0.000000]
+----------------------------------------------------
+====================================================================
+BEFORE initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+[OSQP] Permutation vector loaded from ../reference_matrix/P_ref.txt (n=658)
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.007248, -0.004023, -0.008731, -0.008097, 0.005055, 0.005894, -0.040964, 0.299953]
+BEFORE initial_guess_[0].uk: [-0.010262, -0.004085, -0.011745, -0.008001, 0.003882, 0.005898, -0.041129, 0.252298]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.020953, -0.002640, -0.058762, -0.013299, 0.004316, 0.009042, -0.079983, 0.539323]
+BEFORE initial_guess_[0].uk: [0.015300, -0.002870, -0.065267, -0.013007, 0.001707, 0.009051, -0.080408, 0.444528]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.049780, 0.002034, -0.108762, -0.010288, -0.004860, 0.004736, -0.108491, 0.592208]
+BEFORE initial_guess_[0].uk: [0.043405, 0.001656, -0.117858, -0.009729, -0.008088, 0.004770, -0.109128, 0.483056]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.074752, 0.008268, -0.158763, -0.002549, -0.001932, -0.004362, -0.117126, 0.517147]
+BEFORE initial_guess_[0].uk: [0.069196, 0.007770, -0.168161, -0.001797, -0.005291, -0.004327, -0.118316, 0.415147]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.103451, 0.009671, -0.208764, -0.001666, -0.004499, -0.005336, -0.129177, 0.457931]
+BEFORE initial_guess_[0].uk: [0.098576, 0.009153, -0.218276, -0.000823, -0.007846, -0.005316, -0.130531, 0.362457]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.132977, 0.007157, -0.258763, -0.000783, -0.007838, -0.003937, -0.143297, 0.406939]
+BEFORE initial_guess_[0].uk: [0.129034, 0.006453, -0.268882, 0.000213, -0.011017, -0.003830, -0.144755, 0.319043]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.162787, 0.004082, -0.308762, -0.000693, -0.009768, -0.001393, -0.158464, 0.366125]
+BEFORE initial_guess_[0].uk: [0.159788, 0.003184, -0.318525, 0.000449, -0.012722, -0.001204, -0.160019, 0.286359]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.196144, -0.000259, -0.358761, -0.002046, -0.010418, 0.002832, -0.172880, 0.339501]
+BEFORE initial_guess_[0].uk: [0.195090, -0.001163, -0.367414, -0.000921, -0.012689, 0.003071, -0.174446, 0.272533]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.233133, -0.001321, -0.408760, -0.001918, -0.010151, 0.003967, -0.185123, 0.311354]
+BEFORE initial_guess_[0].uk: [0.233625, -0.002246, -0.416263, -0.000761, -0.011918, 0.004243, -0.186716, 0.253011]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.270996, -0.001481, -0.458760, -0.003415, -0.008237, 0.005291, -0.196164, 0.290398]
+BEFORE initial_guess_[0].uk: [0.266336, -0.000378, -0.470960, -0.004505, -0.010606, 0.005062, -0.196822, 0.233914]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.297147, 0.001529, -0.508759, -0.010297, -0.005840, 0.006764, -0.204377, 0.271547]
+BEFORE initial_guess_[0].uk: [0.296385, 0.000893, -0.517625, -0.009430, -0.008054, 0.006997, -0.205868, 0.209807]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.334829, 0.001524, -0.558758, -0.006183, -0.005319, 0.005158, -0.216963, 0.252638]
+BEFORE initial_guess_[0].uk: [0.334008, 0.000887, -0.567497, -0.005315, -0.007544, 0.005400, -0.218418, 0.193658]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.315990, 0.027784, -0.543490, 0.003949, -0.014846, -0.018855, -0.201734, 0.090969]
+BEFORE initial_guess_[0].uk: [0.315944, 0.027004, -0.543557, 0.005928, -0.018275, -0.018664, -0.203874, 0.035001]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.313500, 0.024488, -0.546187, 0.012509, -0.015105, -0.019740, -0.209892, 0.072375]
+BEFORE initial_guess_[0].uk: [0.314215, 0.023815, -0.545669, 0.014388, -0.018420, -0.019669, -0.212014, 0.020924]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.298036, 0.025859, -0.525487, 0.018485, -0.024865, -0.023331, -0.210214, -0.018370]
+BEFORE initial_guess_[0].uk: [0.300317, 0.025041, -0.523150, 0.020788, -0.028019, -0.023163, -0.212510, -0.055667]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.284831, 0.028180, -0.505692, 0.031075, -0.030896, -0.030395, -0.209085, -0.083850]
+BEFORE initial_guess_[0].uk: [0.285226, 0.028063, -0.504503, 0.032819, -0.034477, -0.030500, -0.211111, -0.113236]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.271370, 0.023626, -0.489537, 0.028530, -0.028892, -0.025407, -0.210100, -0.091469]
+BEFORE initial_guess_[0].uk: [0.271733, 0.023911, -0.488087, 0.029909, -0.032269, -0.025623, -0.211952, -0.115052]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.257654, 0.027817, -0.471182, 0.038546, -0.033828, -0.032688, -0.205581, -0.147522]
+BEFORE initial_guess_[0].uk: [0.257715, 0.027833, -0.469660, 0.040401, -0.037647, -0.032824, -0.207554, -0.168021]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.215069, 0.029418, -0.421182, 0.054013, -0.039524, -0.040141, -0.202643, -0.196171]
+BEFORE initial_guess_[0].uk: [0.211624, 0.030345, -0.421532, 0.055122, -0.044032, -0.040567, -0.204172, -0.208114]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=20, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [0.211624, 0.030345, -0.421532, 0.055122, -0.044032, -0.040567, -0.204172, -0.208114]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+----------------------------------------------------
+Step 0 - Current Input: [0.219395, 0.026815, -0.410881, 0.062678, -0.050752, -0.039723, -0.209200, -0.015348], ddq: [-2.500000, -2.500000, 2.500000, -2.500000, 2.500000, 2.500000, 2.500000], dVs: [-0.015348]
+Step 0 - Current State: [q: 0.040378, 0.002421 -0.073294 -1.568986 -0.002915 1.568772 0.751334, s: 0.006785, vs: 0.040629]
+Next State: [q: 0.042572, 0.002689 -0.077403 -1.568360 -0.003422 1.568374 0.749242, s: 0.007191, vs: 0.040476]
+----------------------------------------------------
+----------------------------------------------------
+Step 1 - Current Input: [0.194395, 0.001815, -0.385881, 0.037678, -0.025752, -0.014723, -0.184200, -0.188287], ddq: [-2.500000, -2.500000, 2.500000, -2.500000, 2.500000, 2.500000, 2.500000], dVs: [-0.188287]
+Step 1 - Current State: [q: 0.042572, 0.002689 -0.077403 -1.568360 -0.003422 1.568374 0.749242, s: 0.007191, vs: 0.040476]
+Next State: [q: 0.044516, 0.002707 -0.081262 -1.567983 -0.003680 1.568227 0.747400, s: 0.007586, vs: 0.038593]
+----------------------------------------------------
+----------------------------------------------------
+Step 2 - Current Input: [0.169395, 0.000000, -0.360881, 0.012678, -0.000752, 0.000000, -0.159200, -0.004772], ddq: [-2.500000, 0.000000, 2.500000, -2.500000, 2.500000, 0.000000, 2.500000], dVs: [-0.004772]
+Step 2 - Current State: [q: 0.044516, 0.002707 -0.081262 -1.567983 -0.003680 1.568227 0.747400, s: 0.007586, vs: 0.038593]
+Next State: [q: 0.046210, 0.002707 -0.084870 -1.567856 -0.003687 1.568227 0.745808, s: 0.007972, vs: 0.038545]
+----------------------------------------------------
+----------------------------------------------------
+Step 3 - Current Input: [0.144395, 0.000000, -0.335881, 0.000000, 0.000000, 0.000000, -0.134200, 0.002336], ddq: [-2.500000, 0.000000, 2.500000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [0.002336]
+Step 3 - Current State: [q: 0.046210, 0.002707 -0.084870 -1.567856 -0.003687 1.568227 0.745808, s: 0.007972, vs: 0.038545]
+Next State: [q: 0.047654, 0.002707 -0.088229 -1.567856 -0.003687 1.568227 0.744466, s: 0.008357, vs: 0.038568]
+----------------------------------------------------
+----------------------------------------------------
+Step 4 - Current Input: [0.119395, 0.000000, -0.310881, 0.000000, 0.000000, 0.000000, -0.109200, 0.002317], ddq: [-2.500000, 0.000000, 2.500000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [0.002317]
+Step 4 - Current State: [q: 0.047654, 0.002707 -0.088229 -1.567856 -0.003687 1.568227 0.744466, s: 0.008357, vs: 0.038568]
+Next State: [q: 0.048848, 0.002707 -0.091338 -1.567856 -0.003687 1.568227 0.743374, s: 0.008743, vs: 0.038592]
+----------------------------------------------------
+----------------------------------------------------
+Step 5 - Current Input: [0.094395, 0.000000, -0.285881, 0.000000, 0.000000, 0.000000, -0.084200, 0.002402], ddq: [-2.500000, 0.000000, 2.500000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [0.002402]
+Step 5 - Current State: [q: 0.048848, 0.002707 -0.091338 -1.567856 -0.003687 1.568227 0.743374, s: 0.008743, vs: 0.038592]
+Next State: [q: 0.049791, 0.002707 -0.094197 -1.567856 -0.003687 1.568227 0.742532, s: 0.009129, vs: 0.038616]
+----------------------------------------------------
+----------------------------------------------------
+Step 6 - Current Input: [0.069395, 0.000000, -0.260881, 0.000000, 0.000000, 0.000000, -0.059200, 0.002487], ddq: [-2.500000, 0.000000, 2.500000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [0.002487]
+Step 6 - Current State: [q: 0.049791, 0.002707 -0.094197 -1.567856 -0.003687 1.568227 0.742532, s: 0.009129, vs: 0.038616]
+Next State: [q: 0.050485, 0.002707 -0.096806 -1.567856 -0.003687 1.568227 0.741940, s: 0.009515, vs: 0.038640]
+----------------------------------------------------
+----------------------------------------------------
+Step 7 - Current Input: [0.044395, 0.000000, -0.235881, 0.000000, 0.000000, 0.000000, -0.034200, 0.002573], ddq: [-2.500000, 0.000000, 2.500000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [0.002573]
+Step 7 - Current State: [q: 0.050485, 0.002707 -0.096806 -1.567856 -0.003687 1.568227 0.741940, s: 0.009515, vs: 0.038640]
+Next State: [q: 0.050929, 0.002707 -0.099164 -1.567856 -0.003687 1.568227 0.741598, s: 0.009902, vs: 0.038666]
+----------------------------------------------------
+----------------------------------------------------
+Step 8 - Current Input: [0.019395, 0.000000, -0.210881, 0.000000, 0.000000, 0.000000, -0.009200, -0.110697], ddq: [-2.500000, 0.000000, 2.500000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [-0.110697]
+Step 8 - Current State: [q: 0.050929, 0.002707 -0.099164 -1.567856 -0.003687 1.568227 0.741598, s: 0.009902, vs: 0.038666]
+Next State: [q: 0.051123, 0.002707 -0.101273 -1.567856 -0.003687 1.568227 0.741506, s: 0.010283, vs: 0.037559]
+----------------------------------------------------
+----------------------------------------------------
+Step 9 - Current Input: [0.000000, 0.000000, -0.185881, 0.000000, 0.000000, 0.000000, 0.000000, -0.503316], ddq: [0.000000, 0.000000, 2.500000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [-0.503316]
+Step 9 - Current State: [q: 0.051123, 0.002707 -0.101273 -1.567856 -0.003687 1.568227 0.741506, s: 0.010283, vs: 0.037559]
+Next State: [q: 0.051123, 0.002707 -0.103132 -1.567856 -0.003687 1.568227 0.741506, s: 0.010634, vs: 0.032526]
+----------------------------------------------------
+====================================================================
+BEFORE initial_guess_[0].uk: [0.219395, 0.026815, -0.410881, 0.062678, -0.050752, -0.039723, -0.209200, -0.015348]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.185654, 0.036525, -0.371527, 0.084322, -0.050421, -0.051069, -0.195406, -0.273672]
+BEFORE initial_guess_[0].uk: [0.204609, 0.030117, -0.348632, 0.092998, -0.051134, -0.049567, -0.199580, -0.239423]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.175792, 0.019827, -0.321527, 0.087358, -0.045073, -0.044165, -0.190237, -0.245866]
+BEFORE initial_guess_[0].uk: [0.174837, 0.021010, -0.318132, 0.086323, -0.047137, -0.044970, -0.190906, -0.194502]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.126616, 0.024968, -0.271528, 0.093391, -0.034950, -0.052992, -0.181660, -0.212077]
+BEFORE initial_guess_[0].uk: [0.125295, 0.026203, -0.267644, 0.091838, -0.035972, -0.054214, -0.181634, -0.152023]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.076610, 0.020894, -0.221533, 0.082694, -0.028624, -0.051344, -0.165358, -0.180947]
+BEFORE initial_guess_[0].uk: [0.075169, 0.022207, -0.217874, 0.081662, -0.029236, -0.052003, -0.166123, -0.125185]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.026624, 0.019081, -0.171519, 0.078377, -0.018527, -0.047521, -0.161716, -0.147808]
+BEFORE initial_guess_[0].uk: [0.026069, 0.021313, -0.167727, 0.076253, -0.019629, -0.048362, -0.162175, -0.097807]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.019661, 0.018589, -0.121519, 0.069372, -0.013473, -0.042463, -0.155616, -0.127172]
+BEFORE initial_guess_[0].uk: [-0.020006, 0.020814, -0.117965, 0.067196, -0.014771, -0.043293, -0.156032, -0.081013]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.065961, 0.017739, -0.071519, 0.060393, -0.009798, -0.037431, -0.149494, -0.105050]
+BEFORE initial_guess_[0].uk: [-0.066086, 0.019624, -0.068549, 0.058594, -0.011186, -0.038192, -0.150000, -0.063483]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.112107, 0.017455, -0.021520, 0.051873, -0.007228, -0.032797, -0.143782, -0.089991]
+BEFORE initial_guess_[0].uk: [-0.112105, 0.019003, -0.018954, 0.050425, -0.008705, -0.033490, -0.144368, -0.051929]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.161116, 0.016098, 0.028480, 0.047576, -0.002592, -0.029741, -0.140867, -0.063291]
+BEFORE initial_guess_[0].uk: [-0.161727, 0.017369, 0.031499, 0.046374, -0.004325, -0.030396, -0.141514, -0.032288]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.209747, 0.013196, 0.078478, 0.040536, 0.001106, -0.023708, -0.139992, -0.039643]
+BEFORE initial_guess_[0].uk: [-0.211202, 0.014455, 0.082555, 0.039214, -0.000687, -0.024362, -0.140589, -0.011050]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=31, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.211202, 0.014455, 0.082555, 0.039214, -0.000687, -0.024362, -0.140589, -0.011050]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+----------------------------------------------------
+Step 0 - Current Input: [-0.212476, 0.015855, 0.086560, 0.037770, -0.003797, -0.025373, -0.141914, -0.014649], ddq: [2.500000, -2.500000, -2.500000, -2.500000, 2.500000, 2.500000, 2.500000], dVs: [-0.014649]
+Step 0 - Current State: [q: 0.038493, 0.004609 -0.087121 -1.561635 -0.005017 1.564396 0.733687, s: 0.010150, vs: 0.025663]
+Next State: [q: 0.036368, 0.004767 -0.086255 -1.561258 -0.005055 1.564142 0.732268, s: 0.010406, vs: 0.025517]
+----------------------------------------------------
+----------------------------------------------------
+Step 1 - Current Input: [-0.187476, 0.000000, 0.061560, 0.012770, 0.000000, -0.000373, -0.116914, -0.000594], ddq: [2.500000, 0.000000, -2.500000, -2.500000, 0.000000, 2.500000, 2.500000], dVs: [-0.000594]
+Step 1 - Current State: [q: 0.036368, 0.004767 -0.086255 -1.561258 -0.005055 1.564142 0.732268, s: 0.010406, vs: 0.025517]
+Next State: [q: 0.034493, 0.004767 -0.085640 -1.561130 -0.005055 1.564138 0.731098, s: 0.010661, vs: 0.025511]
+----------------------------------------------------
+----------------------------------------------------
+Step 2 - Current Input: [-0.162476, 0.000000, 0.036560, 0.000000, 0.000000, 0.000000, -0.091914, 0.000144], ddq: [2.500000, 0.000000, -2.500000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [0.000144]
+Step 2 - Current State: [q: 0.034493, 0.004767 -0.085640 -1.561130 -0.005055 1.564138 0.731098, s: 0.010661, vs: 0.025511]
+Next State: [q: 0.032868, 0.004767 -0.085274 -1.561130 -0.005055 1.564138 0.730179, s: 0.010917, vs: 0.025512]
+----------------------------------------------------
+----------------------------------------------------
+Step 3 - Current Input: [-0.137476, 0.000000, 0.011560, 0.000000, 0.000000, 0.000000, -0.066914, -0.271731], ddq: [2.500000, 0.000000, -2.500000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [-0.271731]
+Step 3 - Current State: [q: 0.032868, 0.004767 -0.085274 -1.561130 -0.005055 1.564138 0.730179, s: 0.010917, vs: 0.025512]
+Next State: [q: 0.031494, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.729510, s: 0.011158, vs: 0.022795]
+----------------------------------------------------
+----------------------------------------------------
+Step 4 - Current Input: [-0.112476, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, -0.041914, -0.506041], ddq: [2.500000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [-0.506041]
+Step 4 - Current State: [q: 0.031494, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.729510, s: 0.011158, vs: 0.022795]
+Next State: [q: 0.030369, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.729091, s: 0.011361, vs: 0.017735]
+----------------------------------------------------
+----------------------------------------------------
+Step 5 - Current Input: [-0.087476, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, -0.016914, -0.506527], ddq: [2.500000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [-0.506527]
+Step 5 - Current State: [q: 0.030369, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.729091, s: 0.011361, vs: 0.017735]
+Next State: [q: 0.029494, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.728922, s: 0.011513, vs: 0.012669]
+----------------------------------------------------
+----------------------------------------------------
+Step 6 - Current Input: [-0.062476, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, -0.506843], ddq: [2.500000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [-0.506843]
+Step 6 - Current State: [q: 0.029494, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.728922, s: 0.011513, vs: 0.012669]
+Next State: [q: 0.028869, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.728922, s: 0.011614, vs: 0.007601]
+----------------------------------------------------
+----------------------------------------------------
+Step 7 - Current Input: [-0.037476, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, -0.507035], ddq: [2.500000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [-0.507035]
+Step 7 - Current State: [q: 0.028869, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.728922, s: 0.011614, vs: 0.007601]
+Next State: [q: 0.028495, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.728922, s: 0.011665, vs: 0.002531]
+----------------------------------------------------
+----------------------------------------------------
+Step 8 - Current Input: [-0.012476, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, -0.253069], ddq: [2.500000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [-0.253069]
+Step 8 - Current State: [q: 0.028495, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.728922, s: 0.011665, vs: 0.002531]
+Next State: [q: 0.028370, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.728922, s: 0.011677, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 9 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 9 - Current State: [q: 0.028370, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.728922, s: 0.011677, vs: 0.000000]
+Next State: [q: 0.028370, 0.004767 -0.085158 -1.561130 -0.005055 1.564138 0.728922, s: 0.011677, vs: 0.000000]
+----------------------------------------------------
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.212476, 0.015855, 0.086560, 0.037770, -0.003797, -0.025373, -0.141914, -0.014649]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.256864, -0.000815, 0.132554, 0.010586, 0.014859, -0.000413, -0.127195, -0.058239]
+BEFORE initial_guess_[0].uk: [-0.263852, 0.002605, 0.131963, 0.006671, 0.012638, -0.001479, -0.127009, -0.027249]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.206860, -0.007692, 0.082559, -0.013432, -0.000412, 0.017902, -0.128427, -0.073395]
+BEFORE initial_guess_[0].uk: [-0.194281, -0.006501, 0.073690, -0.015568, -0.002634, 0.017525, -0.129015, -0.046313]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.256865, 0.012598, 0.132554, 0.006320, 0.002604, -0.008110, -0.122462, 0.011152]
+BEFORE initial_guess_[0].uk: [-0.259893, 0.011744, 0.135800, 0.007604, 0.001043, -0.008290, -0.123745, 0.023549]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.206855, -0.009502, 0.082564, -0.013889, 0.005526, 0.018832, -0.127765, -0.063304]
+BEFORE initial_guess_[0].uk: [-0.190355, -0.007980, 0.070551, -0.016646, 0.002267, 0.018393, -0.128263, -0.046506]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.156854, 0.008509, 0.035421, 0.007493, 0.005920, -0.003296, -0.124654, -0.011984]
+BEFORE initial_guess_[0].uk: [-0.150899, 0.008819, 0.031604, 0.006838, 0.003396, -0.003685, -0.125563, 0.000063]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.206858, 0.026292, 0.085417, 0.023861, 0.006875, -0.024790, -0.122839, 0.033647]
+BEFORE initial_guess_[0].uk: [-0.208682, 0.025054, 0.087125, 0.025547, 0.004966, -0.025155, -0.124166, 0.040492]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.156852, -0.014340, 0.035425, -0.018469, 0.007557, 0.019584, -0.129380, -0.013211]
+BEFORE initial_guess_[0].uk: [-0.135511, -0.016026, 0.019654, -0.018029, 0.005851, 0.019733, -0.130812, 0.001636]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=39, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.135511, -0.016026, 0.019654, -0.018029, 0.005851, 0.019733, -0.130812, 0.001636]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+----------------------------------------------------
+Step 0 - Current Input: [-0.120569, -0.015613, 0.002138, -0.019128, 0.001892, 0.019401, -0.132646, -0.451886], ddq: [2.500000, 2.500000, -2.500000, 2.500000, -2.500000, -2.500000, 2.500000], dVs: [-0.451886]
+Step 0 - Current State: [q: 0.022658, 0.004599 -0.081059 -1.561791 -0.004530 1.564790 0.723551, s: 0.012092, vs: 0.023926]
+Next State: [q: 0.021452, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.722225, s: 0.012309, vs: 0.019408]
+----------------------------------------------------
+----------------------------------------------------
+Step 1 - Current Input: [-0.095569, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, -0.107646, -0.507277], ddq: [2.500000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [-0.507277]
+Step 1 - Current State: [q: 0.021452, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.722225, s: 0.012309, vs: 0.019408]
+Next State: [q: 0.020496, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.721148, s: 0.012477, vs: 0.014335]
+----------------------------------------------------
+----------------------------------------------------
+Step 2 - Current Input: [-0.070569, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, -0.082646, -0.507638], ddq: [2.500000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [-0.507638]
+Step 2 - Current State: [q: 0.020496, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.721148, s: 0.012477, vs: 0.014335]
+Next State: [q: 0.019791, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.720322, s: 0.012595, vs: 0.009258]
+----------------------------------------------------
+----------------------------------------------------
+Step 3 - Current Input: [-0.045569, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, -0.057646, -0.507892], ddq: [2.500000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [-0.507892]
+Step 3 - Current State: [q: 0.019791, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.720322, s: 0.012595, vs: 0.009258]
+Next State: [q: 0.019335, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719745, s: 0.012663, vs: 0.004180]
+----------------------------------------------------
+----------------------------------------------------
+Step 4 - Current Input: [-0.020569, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, -0.032646, -0.417955], ddq: [2.500000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [-0.417955]
+Step 4 - Current State: [q: 0.019335, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719745, s: 0.012663, vs: 0.004180]
+Next State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719419, s: 0.012683, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 5 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, -0.007646, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 2.500000], dVs: [0.000000]
+Step 5 - Current State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719419, s: 0.012683, vs: 0.000000]
+Next State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719343, s: 0.012683, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 6 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 6 - Current State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719343, s: 0.012683, vs: 0.000000]
+Next State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719343, s: 0.012683, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 7 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 7 - Current State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719343, s: 0.012683, vs: 0.000000]
+Next State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719343, s: 0.012683, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 8 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 8 - Current State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719343, s: 0.012683, vs: 0.000000]
+Next State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719343, s: 0.012683, vs: 0.000000]
+----------------------------------------------------
+----------------------------------------------------
+Step 9 - Current Input: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], ddq: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000], dVs: [0.000000]
+Step 9 - Current State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719343, s: 0.012683, vs: 0.000000]
+Next State: [q: 0.019129, 0.004443 -0.081038 -1.561982 -0.004511 1.564984 0.719343, s: 0.012683, vs: 0.000000]
+----------------------------------------------------
+====================================================================

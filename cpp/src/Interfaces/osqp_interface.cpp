@@ -940,16 +940,13 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
 
     OsqpEigen::Solver solver_;
     // settings
-    solver_.settings()->setWarmStart(false); //fasle
-    // solver_.settings()->getSettings()->adaptive_rho = 0;  // Disable adaptive rho update
-    solver_.settings()->getSettings()->eps_abs = 1e-3; // MODI 1e-4
-    solver_.settings()->getSettings()->eps_rel = 1e-4; // MODI 1e-5
-    // time limit
-    // solver_.settings()->getSettings()->time_limit = (Ts_ / 5.);
+    solver_.settings()->setWarmStart(false);
+    solver_.settings()->getSettings()->eps_abs = 1e-3;
+    solver_.settings()->getSettings()->eps_rel = 1e-4;
     solver_.settings()->getSettings()->verbose = false;
-    // solver_.settings()->getSettings()->scaling = 0;  // Disable OSQP internal scaling
 
     // set the initial data of the QP solver
+    auto start_init = std::chrono::high_resolution_clock::now();
     solver_.data()->setNumberOfVariables(N_var);
     solver_.data()->setNumberOfConstraints(N_constr);
     if (!solver_.data()->setHessianMatrix(P_sp)) {
@@ -993,9 +990,7 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
         return false;
     }
 
-    // printf("Before initSolver\n");
-    // instantiate the solver (includes scaling + permutation + factorization)
-    auto start_init = std::chrono::high_resolution_clock::now();
+    // instantiate the solver
     if (!solver_.initSolver()) {
         printf("[solveQP FAIL] initSolver failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
         if (g_solveQP_fail_log.is_open()) {
@@ -1029,7 +1024,7 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     // Set iteration context for OSQP logging
     osqp_set_iteration_context(current_solve_count_, sqp_iter_);
 
-    // solve the QP problem (pure ADMM iteration)
+    // solve the QP problem
     auto start_solve = std::chrono::high_resolution_clock::now();
     if (solver_.solveProblem() != OsqpEigen::ErrorExitFlag::NoError) {
         printf("[solveQP FAIL] solveProblem failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);

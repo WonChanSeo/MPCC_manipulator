@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iomanip>
 #include <sys/stat.h>
+#include <cstring>
 
 #ifdef NN_USE_TRUNCATE
 #include <cfenv>
@@ -14,14 +15,25 @@ namespace mpcc
     // =========== ASIC Test Case Logging ================================
     // ===================================================================
     static int g_asic_sample_count = 0;
-    static const std::string g_asic_output_dir = "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/";
+    static const std::string g_asic_output_dir = "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/mlp/";
     static bool g_asic_dir_initialized = false;
 
     void init_asic_output_dir() {
         if (!g_asic_dir_initialized) {
-            mkdir(g_asic_output_dir.c_str(), 0755);
+            // 부모 디렉토리들을 순차적으로 생성
+            std::string cmd = "mkdir -p " + g_asic_output_dir;
+            system(cmd.c_str());
             g_asic_dir_initialized = true;
         }
+    }
+
+    // FP32를 16진수 비트 표현으로 변환하는 헬퍼 함수
+    std::string float_to_hex(float value) {
+        uint32_t bits;
+        std::memcpy(&bits, &value, sizeof(float));
+        std::stringstream ss;
+        ss << std::hex << std::setw(8) << std::setfill('0') << bits;
+        return ss.str();
     }
 
     // 행렬을 파일에 저장하는 헬퍼 함수
@@ -364,6 +376,7 @@ namespace mpcc
         Eigen::VectorXf input_f = input.cast<float>();
         Eigen::VectorXf input_nerf_f;
         std::vector<Eigen::VectorXf> hidden_f(mlp_.n_layer - 1);
+        std::vector<Eigen::VectorXf> pre_activation_f(mlp_.n_layer - 1);  // ReLU 이전 값 저장
         std::vector<Eigen::MatrixXf> hidden_derivative_f(mlp_.n_layer - 1);
         Eigen::VectorXf output_f;
         Eigen::MatrixXf output_derivative_f;
@@ -383,6 +396,8 @@ namespace mpcc
         // 별도 캐스팅 불필요, 직접 참조
 
         Eigen::MatrixXf temp_derivative_f;
+        Eigen::MatrixXf nerf_jac_f;  // NeRF Jacobian (로깅용)
+
         for (int layer = 0; layer < mlp_.n_layer; layer++)
         {
             if (layer == 0) // input layer
@@ -392,24 +407,24 @@ namespace mpcc
                 const int n_inputs = current_input.size();
 
                 hidden_f[0].resize(n_neurons);
+                pre_activation_f[0].resize(n_neurons);
                 hidden_derivative_f[0].resize(n_neurons, n_inputs);
 
                 // Adder tree를 사용한 행렬-벡터 곱셈
                 for (int h = 0; h < n_neurons; ++h) {
-                    hidden_f[0](h) = matvec_row_adder_tree(
+                    pre_activation_f[0](h) = matvec_row_adder_tree(
                         mlp_.weight[0].row(h), current_input, mlp_.bias[0](h));
                 }
 
                 for (int h = 0; h < n_neurons; h++)
                 {
-                    float relu_deriv = (hidden_f[0](h) > 0.0f) ? 1.0f : 0.0f;
+                    float relu_deriv = (pre_activation_f[0](h) > 0.0f) ? 1.0f : 0.0f;
                     hidden_derivative_f[0].row(h) = relu_deriv * mlp_.weight[0].row(h);
-                    hidden_f[0](h) = std::max(0.0f, hidden_f[0](h));
+                    hidden_f[0](h) = std::max(0.0f, pre_activation_f[0](h));
                 }
 
                 if (mlp_.is_nerf)
                 {
-                    Eigen::MatrixXf nerf_jac_f;
                     nerf_jac_f.setZero(3 * mlp_.n_input, mlp_.n_input);
                     nerf_jac_f.block(0 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).setIdentity();
                     nerf_jac_f.block(1 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).diagonal() = input_f.array().cos();
@@ -457,19 +472,20 @@ namespace mpcc
             {
                 const int n_neurons = static_cast<int>(mlp_.n_hidden(layer));
                 hidden_f[layer].resize(n_neurons);
+                pre_activation_f[layer].resize(n_neurons);
                 hidden_derivative_f[layer].resize(n_neurons, static_cast<int>(mlp_.n_hidden(layer - 1)));
 
                 // Adder tree를 사용한 은닉층 계산
                 for (int h = 0; h < n_neurons; ++h) {
-                    hidden_f[layer](h) = matvec_row_adder_tree(
+                    pre_activation_f[layer](h) = matvec_row_adder_tree(
                         mlp_.weight[layer].row(h), hidden_f[layer - 1], mlp_.bias[layer](h));
                 }
 
                 for (int h = 0; h < n_neurons; h++)
                 {
-                    float relu_deriv = (hidden_f[layer](h) > 0.0f) ? 1.0f : 0.0f;
+                    float relu_deriv = (pre_activation_f[layer](h) > 0.0f) ? 1.0f : 0.0f;
                     hidden_derivative_f[layer].row(h) = relu_deriv * mlp_.weight[layer].row(h);
-                    hidden_f[layer](h) = std::max(0.0f, hidden_f[layer](h));
+                    hidden_f[layer](h) = std::max(0.0f, pre_activation_f[layer](h));
                 }
 
                 // Jacobian 계산 (adder tree 사용)
@@ -484,6 +500,263 @@ namespace mpcc
                 }
                 temp_derivative_f = std::move(new_temp_derivative_f);
             }
+        }
+
+        // ===== MLP 테스트 케이스 저장 =====
+        try {
+            init_asic_output_dir();
+
+            int sample_id = g_asic_sample_count++;
+            bool is_detailed = (sample_id % 100 == 0);  // 100번째 sample마다 상세 저장
+
+            std::string filename = g_asic_output_dir + "sample_" + std::to_string(sample_id) + ".csv";
+            std::string filename_bits = g_asic_output_dir + "sample_" + std::to_string(sample_id) + "_bits.csv";
+
+            // 첫 번째 샘플일 때만 로그 출력
+            if (sample_id == 0) {
+                std::cout << "[MLP Logging] Starting MLP test case logging to: " << g_asic_output_dir << std::endl;
+            }
+
+            std::ofstream file(filename);
+            std::ofstream file_bits(filename_bits);
+
+            if (file.is_open() && file_bits.is_open()) {
+            // ===== 실수 값 파일 =====
+            file << std::scientific << std::setprecision(8);
+
+            // 헤더 정보
+            file << "# MLP Test Case - Sample " << sample_id << "\n";
+            file << "# Detailed: " << (is_detailed ? "YES" : "NO") << "\n";
+            file << "# n_input: " << mlp_.n_input << ", n_output: " << mlp_.n_output << "\n";
+            file << "# n_hidden_layers: " << (mlp_.n_layer - 1) << "\n\n";
+
+            // 1. 입력 (nerf 적용된 값: [x, sin(x), cos(x)])
+            const Eigen::VectorXf& current_input = mlp_.is_nerf ? input_nerf_f : input_f;
+            file << "# INPUT (nerf_input) - " << current_input.size() << " values\n";
+            for (int i = 0; i < current_input.size(); ++i) {
+                file << current_input(i);
+                if (i < current_input.size() - 1) file << ",";
+            }
+            file << "\n\n";
+
+            // 2. 최종 출력 (output layer)
+            file << "# OUTPUT - " << mlp_.n_output << " values\n";
+            for (int i = 0; i < mlp_.n_output; ++i) {
+                file << output_f(i);
+                if (i < mlp_.n_output - 1) file << ",";
+            }
+            file << "\n\n";
+
+            // 3. Jacobian (output x input)
+            file << "# JACOBIAN - " << output_derivative_f.rows() << " x " << output_derivative_f.cols() << "\n";
+            for (int r = 0; r < output_derivative_f.rows(); ++r) {
+                for (int c = 0; c < output_derivative_f.cols(); ++c) {
+                    file << output_derivative_f(r, c);
+                    if (c < output_derivative_f.cols() - 1) file << ",";
+                }
+                file << "\n";
+            }
+            file << "\n";
+
+            // ===== FP32 비트 표현 파일 =====
+            file_bits << "# MLP Test Case (FP32 Bits) - Sample " << sample_id << "\n";
+            file_bits << "# Detailed: " << (is_detailed ? "YES" : "NO") << "\n";
+            file_bits << "# n_input: " << mlp_.n_input << ", n_output: " << mlp_.n_output << "\n";
+            file_bits << "# n_hidden_layers: " << (mlp_.n_layer - 1) << "\n";
+            file_bits << "# Format: 8-digit hexadecimal (32-bit IEEE 754)\n\n";
+
+            // 1. 입력 비트
+            file_bits << "# INPUT (nerf_input) - " << current_input.size() << " values\n";
+            for (int i = 0; i < current_input.size(); ++i) {
+                file_bits << float_to_hex(current_input(i));
+                if (i < current_input.size() - 1) file_bits << ",";
+            }
+            file_bits << "\n\n";
+
+            // 2. 출력 비트
+            file_bits << "# OUTPUT - " << mlp_.n_output << " values\n";
+            for (int i = 0; i < mlp_.n_output; ++i) {
+                file_bits << float_to_hex(output_f(i));
+                if (i < mlp_.n_output - 1) file_bits << ",";
+            }
+            file_bits << "\n\n";
+
+            // 3. Jacobian 비트
+            file_bits << "# JACOBIAN - " << output_derivative_f.rows() << " x " << output_derivative_f.cols() << "\n";
+            for (int r = 0; r < output_derivative_f.rows(); ++r) {
+                for (int c = 0; c < output_derivative_f.cols(); ++c) {
+                    file_bits << float_to_hex(output_derivative_f(r, c));
+                    if (c < output_derivative_f.cols() - 1) file_bits << ",";
+                }
+                file_bits << "\n";
+            }
+            file_bits << "\n";
+
+            // 4. 100번째 sample마다 상세 정보 저장
+            if (is_detailed) {
+                // ===== 실수 파일: NeRF Jacobian =====
+                if (mlp_.is_nerf) {
+                    file << "# NERF_JACOBIAN - " << nerf_jac_f.rows() << " x " << nerf_jac_f.cols() << "\n";
+                    for (int r = 0; r < nerf_jac_f.rows(); ++r) {
+                        for (int c = 0; c < nerf_jac_f.cols(); ++c) {
+                            file << nerf_jac_f(r, c);
+                            if (c < nerf_jac_f.cols() - 1) file << ",";
+                        }
+                        file << "\n";
+                    }
+                    file << "\n";
+
+                    // ===== 비트 파일: NeRF Jacobian =====
+                    file_bits << "# NERF_JACOBIAN - " << nerf_jac_f.rows() << " x " << nerf_jac_f.cols() << "\n";
+                    for (int r = 0; r < nerf_jac_f.rows(); ++r) {
+                        for (int c = 0; c < nerf_jac_f.cols(); ++c) {
+                            file_bits << float_to_hex(nerf_jac_f(r, c));
+                            if (c < nerf_jac_f.cols() - 1) file_bits << ",";
+                        }
+                        file_bits << "\n";
+                    }
+                    file_bits << "\n";
+                }
+
+                // 각 hidden layer의 pre_activation과 post_activation (ReLU 후)
+                for (int layer = 0; layer < mlp_.n_layer - 1; ++layer) {
+                    // ===== 실수 파일: Pre-activation =====
+                    file << "# LAYER_" << layer << "_PRE_ACTIVATION - " << pre_activation_f[layer].size() << " values\n";
+                    for (int h = 0; h < pre_activation_f[layer].size(); ++h) {
+                        file << pre_activation_f[layer](h);
+                        if (h < pre_activation_f[layer].size() - 1) file << ",";
+                    }
+                    file << "\n\n";
+
+                    // ===== 비트 파일: Pre-activation =====
+                    file_bits << "# LAYER_" << layer << "_PRE_ACTIVATION - " << pre_activation_f[layer].size() << " values\n";
+                    for (int h = 0; h < pre_activation_f[layer].size(); ++h) {
+                        file_bits << float_to_hex(pre_activation_f[layer](h));
+                        if (h < pre_activation_f[layer].size() - 1) file_bits << ",";
+                    }
+                    file_bits << "\n\n";
+
+                    // ===== 실수 파일: Post-activation =====
+                    file << "# LAYER_" << layer << "_POST_ACTIVATION - " << hidden_f[layer].size() << " values\n";
+                    for (int h = 0; h < hidden_f[layer].size(); ++h) {
+                        file << hidden_f[layer](h);
+                        if (h < hidden_f[layer].size() - 1) file << ",";
+                    }
+                    file << "\n\n";
+
+                    // ===== 비트 파일: Post-activation =====
+                    file_bits << "# LAYER_" << layer << "_POST_ACTIVATION - " << hidden_f[layer].size() << " values\n";
+                    for (int h = 0; h < hidden_f[layer].size(); ++h) {
+                        file_bits << float_to_hex(hidden_f[layer](h));
+                        if (h < hidden_f[layer].size() - 1) file_bits << ",";
+                    }
+                    file_bits << "\n\n";
+                }
+
+                // 각 layer별 intermediate jacobian 저장
+                file << "# === INTERMEDIATE JACOBIANS ===\n\n";
+                file_bits << "# === INTERMEDIATE JACOBIANS ===\n\n";
+
+                // Layer 0 이후 Jacobian
+                Eigen::MatrixXf temp_derivative_log;
+                if (mlp_.is_nerf) {
+                    Eigen::MatrixXf relu_deriv_0(pre_activation_f[0].size(), 1);
+                    for (int h = 0; h < pre_activation_f[0].size(); ++h) {
+                        relu_deriv_0(h, 0) = (pre_activation_f[0](h) > 0.0f) ? 1.0f : 0.0f;
+                    }
+                    Eigen::MatrixXf weight_scaled = relu_deriv_0.asDiagonal() * mlp_.weight[0];
+
+                    const int jac_rows = weight_scaled.rows();
+                    const int jac_cols = nerf_jac_f.cols();
+                    temp_derivative_log.resize(jac_rows, jac_cols);
+                    for (int r = 0; r < jac_rows; ++r) {
+                        for (int c = 0; c < jac_cols; ++c) {
+                            temp_derivative_log(r, c) = matvec_row_adder_tree(
+                                weight_scaled.row(r), nerf_jac_f.col(c), 0.0f);
+                        }
+                    }
+                } else {
+                    Eigen::MatrixXf relu_deriv_0(pre_activation_f[0].size(), 1);
+                    for (int h = 0; h < pre_activation_f[0].size(); ++h) {
+                        relu_deriv_0(h, 0) = (pre_activation_f[0](h) > 0.0f) ? 1.0f : 0.0f;
+                    }
+                    temp_derivative_log = relu_deriv_0.asDiagonal() * mlp_.weight[0];
+                }
+
+                // ===== 실수 파일: Layer 0 Jacobian =====
+                file << "# JACOBIAN_AFTER_LAYER_0 - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
+                for (int r = 0; r < temp_derivative_log.rows(); ++r) {
+                    for (int c = 0; c < temp_derivative_log.cols(); ++c) {
+                        file << temp_derivative_log(r, c);
+                        if (c < temp_derivative_log.cols() - 1) file << ",";
+                    }
+                    file << "\n";
+                }
+                file << "\n";
+
+                // ===== 비트 파일: Layer 0 Jacobian =====
+                file_bits << "# JACOBIAN_AFTER_LAYER_0 - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
+                for (int r = 0; r < temp_derivative_log.rows(); ++r) {
+                    for (int c = 0; c < temp_derivative_log.cols(); ++c) {
+                        file_bits << float_to_hex(temp_derivative_log(r, c));
+                        if (c < temp_derivative_log.cols() - 1) file_bits << ",";
+                    }
+                    file_bits << "\n";
+                }
+                file_bits << "\n";
+
+                // 나머지 hidden layers의 Jacobian
+                for (int layer = 1; layer < mlp_.n_layer - 1; ++layer) {
+                    Eigen::MatrixXf relu_deriv(pre_activation_f[layer].size(), 1);
+                    for (int h = 0; h < pre_activation_f[layer].size(); ++h) {
+                        relu_deriv(h, 0) = (pre_activation_f[layer](h) > 0.0f) ? 1.0f : 0.0f;
+                    }
+                    Eigen::MatrixXf weight_scaled = relu_deriv.asDiagonal() * mlp_.weight[layer];
+
+                    const int jac_rows = weight_scaled.rows();
+                    const int jac_cols = temp_derivative_log.cols();
+                    Eigen::MatrixXf new_temp(jac_rows, jac_cols);
+                    for (int r = 0; r < jac_rows; ++r) {
+                        for (int c = 0; c < jac_cols; ++c) {
+                            new_temp(r, c) = matvec_row_adder_tree(
+                                weight_scaled.row(r), temp_derivative_log.col(c), 0.0f);
+                        }
+                    }
+                    temp_derivative_log = std::move(new_temp);
+
+                    // ===== 실수 파일: 중간 레이어 Jacobian =====
+                    file << "# JACOBIAN_AFTER_LAYER_" << layer << " - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
+                    for (int r = 0; r < temp_derivative_log.rows(); ++r) {
+                        for (int c = 0; c < temp_derivative_log.cols(); ++c) {
+                            file << temp_derivative_log(r, c);
+                            if (c < temp_derivative_log.cols() - 1) file << ",";
+                        }
+                        file << "\n";
+                    }
+                    file << "\n";
+
+                    // ===== 비트 파일: 중간 레이어 Jacobian =====
+                    file_bits << "# JACOBIAN_AFTER_LAYER_" << layer << " - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
+                    for (int r = 0; r < temp_derivative_log.rows(); ++r) {
+                        for (int c = 0; c < temp_derivative_log.cols(); ++c) {
+                            file_bits << float_to_hex(temp_derivative_log(r, c));
+                            if (c < temp_derivative_log.cols() - 1) file_bits << ",";
+                        }
+                        file_bits << "\n";
+                    }
+                    file_bits << "\n";
+                }
+            }
+
+            file.close();
+            file_bits.close();
+            } else {
+                if (sample_id == 0) {
+                    std::cerr << "[MLP Logging ERROR] Failed to open file: " << filename << std::endl;
+                }
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "[MLP Logging ERROR] Exception during logging: " << e.what() << std::endl;
         }
 
         // Convert output from float to double for interface compatibility
