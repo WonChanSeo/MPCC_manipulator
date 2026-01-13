@@ -44,6 +44,10 @@ echo ">> OSQP log: $OSQP_LOG_PATH"
 export INITIAL_GUESS_LOG_PATH="$out_dir/initialGuess_calls.txt"
 echo ">> initialGuess log: $INITIAL_GUESS_LOG_PATH"
 
+# Set SIM_NAME for sqp_status_log.txt location
+export SIM_NAME="$script/$name"
+echo ">> SIM_NAME: $SIM_NAME"
+
 # python에 추가 인자 전달: "${@:3}" (3번째 인자부터)
 python3 "$script_dir/${script}.py" --name "$name" "${@:3}" |& tee "$log"
 status=${PIPESTATUS[0]}   # tee 파이프에서도 python 종료코드 보존

@@ -496,122 +496,7 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         zero_guess[i].uk.setZero();
     }
 
-    // printf("sqp_param_.max_iter %d\n", sqp_param_.max_iter);
-
-    // RTI (Real-Time Iteration) mode: single QP solve without convergence check
-    if(sqp_param_.use_RTI)
-    {
-        sqp_iter_ = 0;
-
-        auto start_set_qp = std::chrono::high_resolution_clock::now();
-
-        // QP formulation
-        setQP(initial_guess_, &Hess_, &grad_obj_, &obj_, &jac_constr_, &constr_, &l_, &u_);
-
-        // Hessian check
-        if (!isPosdef(Hess_))
-        {
-            std::cout << "[RTI] Hessian not positive definite\n";
-            if (g_solveQP_fail_log.is_open()) {
-                g_solveQP_fail_log << "[RTI_NON_PD_HESSIAN] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
-                g_solveQP_fail_log.flush();
-            }
-            // Record timing even on failure
-            auto end_set_qp_fail = std::chrono::high_resolution_clock::now();
-            mpc_time->set_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp_fail - start_set_qp).count();
-            auto end_total_fail = std::chrono::high_resolution_clock::now();
-            mpc_time->total = std::chrono::duration_cast<std::chrono::duration<double>>(end_total_fail - start_total).count();
-            (*status) = NON_PD_HESSIAN;
-            return false;
-        }
-        if (isNan(Hess_))
-        {
-            std::cout << "[RTI] Hessian is NaN\n";
-            if (g_solveQP_fail_log.is_open()) {
-                g_solveQP_fail_log << "[RTI_NAN_HESSIAN] " << current_solve_count_ << ", " << sqp_iter_ << std::endl;
-                g_solveQP_fail_log.flush();
-            }
-            // Record timing even on failure
-            auto end_set_qp_fail = std::chrono::high_resolution_clock::now();
-            mpc_time->set_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp_fail - start_set_qp).count();
-            auto end_total_fail = std::chrono::high_resolution_clock::now();
-            mpc_time->total = std::chrono::duration_cast<std::chrono::duration<double>>(end_total_fail - start_total).count();
-            (*status) = NAN_HESSIAN;
-            return false;
-        }
-
-        auto end_set_qp = std::chrono::high_resolution_clock::now();
-        auto start_solve_qp = std::chrono::high_resolution_clock::now();
-
-        // Solve QP
-        if(!solveQP(Hess_, grad_obj_, jac_constr_, l_-constr_, u_-constr_, step_, step_lambda_, qp_status_, iter_count))
-        {
-            total_iter_count += iter_count;
-            printf("[RTI] QP solve FAILED : %d \n", qp_status_);
-            if (g_solveQP_fail_log.is_open()) {
-                g_solveQP_fail_log << "[RTI_solveQP_FAIL] " << current_solve_count_ << ", " << sqp_iter_
-                                  << ", qp_status=" << static_cast<int>(qp_status_) << std::endl;
-                g_solveQP_fail_log.flush();
-            }
-            // Record timing even on failure
-            mpc_time->set_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp - start_set_qp).count();
-            mpc_time->init_solver = last_init_solver_time_;
-            mpc_time->solve_qp = last_solve_time_ + last_factorization_time_;  // ADMM + factorization
-            mpc_time->scaling_time = last_scaling_time_;
-            mpc_time->permutation_time = last_permutation_time_;
-            mpc_time->factorization_time = last_factorization_time_;
-            mpc_time->rho_updates = last_rho_updates_;
-            auto end_total_fail = std::chrono::high_resolution_clock::now();
-            mpc_time->total = std::chrono::duration_cast<std::chrono::duration<double>>(end_total_fail - start_total).count();
-            switch (qp_status_)
-            {
-            case OsqpEigen::Status::DualInfeasibleInaccurate:
-                (*status) = QP_DualInfeasibleInaccurate; break;
-            case OsqpEigen::Status::PrimalInfeasibleInaccurate:
-                (*status) = QP_PrimalInfeasibleInaccurate; break;
-            case OsqpEigen::Status::SolvedInaccurate:
-                (*status) = QP_SolvedInaccurate; break;
-            case OsqpEigen::Status::MaxIterReached:
-                (*status) = QP_MaxIterReached; break;
-            case OsqpEigen::Status::PrimalInfeasible:
-                (*status) = QP_PrimalInfeasible; break;
-            case OsqpEigen::Status::DualInfeasible:
-                (*status) = QP_DualInfeasible; break;
-            case OsqpEigen::Status::Sigint:
-                (*status) = Sigint; break;
-            }
-            return false;
-        }
-
-        total_iter_count += iter_count;
-
-        auto end_solve_qp = std::chrono::high_resolution_clock::now();
-
-        // Apply step with alpha=1 (no line search)
-        initial_guess_vec_ += deNormalizeStep(step_);
-        initial_guess_ = vectorToOptvar(initial_guess_vec_);
-
-        // Update timing
-        mpc_time->set_qp = std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp - start_set_qp).count();
-        mpc_time->init_solver = last_init_solver_time_;  // initSolver time (scaling + permutation + factorization)
-        mpc_time->solve_qp = last_solve_time_ + last_factorization_time_;  // ADMM + factorization time
-        mpc_time->scaling_time = last_scaling_time_;
-        mpc_time->permutation_time = last_permutation_time_;
-        mpc_time->factorization_time = last_factorization_time_;
-        mpc_time->rho_updates = last_rho_updates_;
-        mpc_time->get_alpha = 0.0;  // No line search in RTI
-
-        auto end_total = std::chrono::high_resolution_clock::now();
-        mpc_time->total = std::chrono::duration_cast<std::chrono::duration<double>>(end_total - start_total).count();
-
-        sqp_iter_count = 1;
-        (*status) = SOLVED;
-        opt_sol = initial_guess_;
-        // printf("[RTI] SOLVED | init_solver: %.6f, solve_qp: %.6f\n", mpc_time->init_solver, mpc_time->solve_qp);
-        return true;
-    }
-
-    // SQP itertion (non-RTI mode)
+    // SQP iteration
     for(sqp_iter_=0; sqp_iter_<sqp_param_.max_iter; sqp_iter_++)
     {
         // std::cout <<"sqp_iter_: " <<sqp_iter_<<std::endl;
@@ -698,14 +583,6 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
                                   << ", qp_status=" << static_cast<int>(qp_status_) << std::endl;
                 g_solveQP_fail_log.flush();
             }
-            // Record timing even on failure
-            mpc_time->set_qp += std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp - start_set_qp).count();
-            mpc_time->init_solver += last_init_solver_time_;
-            mpc_time->solve_qp += last_solve_time_ + last_factorization_time_;  // ADMM + factorization
-            mpc_time->scaling_time += last_scaling_time_;
-            mpc_time->permutation_time += last_permutation_time_;
-            mpc_time->factorization_time += last_factorization_time_;
-            mpc_time->rho_updates += last_rho_updates_;
             switch (qp_status_)
             {
             case OsqpEigen::Status::DualInfeasibleInaccurate:
@@ -737,15 +614,11 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
                 printf("Sigint\n");
                 break;
             }
-
-            break;
         }
-
-        // Accumulate QP iterations for successful solve
-        total_iter_count += iter_count;
-
-        // printf("qp_status_: %d\n", qp_status_);
-        // printf("*status: %d\n", (*status));
+        else
+        {
+            total_iter_count += iter_count;  // Accumulate QP iterations for successful solve
+        }
 
         if(sqp_param_.do_SOC)
         {
@@ -783,21 +656,6 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         auto end_solve_qp = std::chrono::high_resolution_clock::now();
         auto start_get_alpha = std::chrono::high_resolution_clock::now();
 
-        // <<< START: 추가할 코드 >>>
-        // =========================================================================
-        // 현재 SQP 반복 횟수와 함께 step_ 및 step_lambda_ 벡터를 출력합니다.
-        std::cout << "===== SQP Iteration: " << sqp_iter_ << " =====" << std::endl;
-        
-        // step_ 벡터 출력 (결정 변수의 변화량)
-        std::cout << "step_ (" << step_.size() << " x 1): \n" << step_.transpose() << std::endl;
-        
-        // step_lambda_ 벡터 출력 (라그랑주 승수의 변화량)
-        // std::cout << "step_lambda_ (" << step_lambda_.size() << " x 1): \n" << step_lambda_.transpose() << std::endl;
-        
-        std::cout << "========================================" << std::endl;
-        // =========================================================================
-        // <<< END: 추가할 코드 >>>
-
         step_lambda_ -= lambda_;
 
         // double alpha = meritLineSearch(step_, Hess_, grad_obj_, obj_, constr_, l_, u_);
@@ -815,10 +673,6 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         // update step info
         step_prev_ = alpha * step_;
         primal_step_norm_ = alpha * step_.template lpNorm<Eigen::Infinity>();
-        // // Fixed : step_이 정규화된 공간에서의 변화량이므로, 이를 비정규화된 공간으로 변환하여 노름을 계산해야 함.
-        // const auto dx_denorm = deNormalizeStep(step_); // 적용과 동일한 공간
-        // const double alpha_abs = std::abs(alpha);
-        // primal_step_norm_ = (alpha_abs * dx_denorm).template lpNorm<Eigen::Infinity>();
         // primal_step_norm_ = (alpha * step_).norm();
         dual_step_norm_ = alpha * step_lambda_.template lpNorm<Eigen::Infinity>();
         // std::cout << "\tprimal_step_norm_: " << primal_step_norm_ << std::endl;
@@ -838,12 +692,8 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         // if(primal_step_norm_ < sqp_param_.eps_prim && dual_step_norm_ < sqp_param_.eps_dual)
         if(primal_step_norm_ < sqp_param_.eps_prim)
         {
-            printf("primal_step_norm SUCCESS\n");
             (*status) = SOLVED;
             break;
-        }
-        else {
-            printf("primal_step_norm FAILED\n");
         }
     }
     if(sqp_iter_ == sqp_param_.max_iter) (*status) = MAX_ITER_EXCEEDED;
