@@ -917,17 +917,17 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     // saveMatrixToFile(l, "lower", "/home/mms-wonchan/Studies/OSQP/Precision/lower.txt");
     // saveMatrixToFile(u, "lower", "/home/mms-wonchan/Studies/OSQP/Precision/upper.txt");
 
-   // Use double precision for OSQP (OSQP_USE_FLOAT=OFF)
-   Eigen::SparseMatrix<double> P_sp(N_var, N_var);
-   Eigen::SparseMatrix<double> A_sp(N_constr, N_var);
-   Eigen::Matrix<double, N_var,1> q_ds;
-   Eigen::Matrix<double, N_constr,1> l_ds;
-   Eigen::Matrix<double, N_constr,1> u_ds;
-   P_sp = P.sparseView();
-   A_sp = A.sparseView();
-   q_ds = q;
-   l_ds = l;
-   u_ds = u;
+   // Use c_float precision for OSQP (c_float = float when OSQP_USE_FLOAT=ON, double otherwise)
+   Eigen::SparseMatrix<c_float> P_sp(N_var, N_var);
+   Eigen::SparseMatrix<c_float> A_sp(N_constr, N_var);
+   Eigen::Matrix<c_float, N_var,1> q_ds;
+   Eigen::Matrix<c_float, N_constr,1> l_ds;
+   Eigen::Matrix<c_float, N_constr,1> u_ds;
+   P_sp = P.cast<c_float>().sparseView();
+   A_sp = A.cast<c_float>().sparseView();
+   q_ds = q.cast<c_float>();
+   l_ds = l.cast<c_float>();
+   u_ds = u.cast<c_float>();
 
 //    saveSparseMatrixToFile(P_sp, "P_sp", "./P_sp.txt");
 //    saveSparseMatrixToFile(A_sp, "A_sp", "./A_sp.txt");
@@ -1068,9 +1068,9 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
 
     // printf("solver_.getSolution_size : %ld", solver_.getSolution().rows());
     // printf("solver_.getDualSolution_size : %ld", solver_.getDualSolution().rows());
-    // Get solution directly as double (OSQP_USE_FLOAT=OFF)
-    step = solver_.getSolution();
-    step_lambda = solver_.getDualSolution();
+    // Get solution and cast to double (c_float may be float when OSQP_USE_FLOAT=ON)
+    step = solver_.getSolution().cast<double>();
+    step_lambda = solver_.getDualSolution().cast<double>();
 
     solver_.clearSolverVariables();
     solver_.clearSolver();

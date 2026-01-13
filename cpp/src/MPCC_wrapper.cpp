@@ -444,6 +444,19 @@ BOOST_PYTHON_MODULE(MPCC_WRAPPER)
         .def_readwrite("solve_count", &MPCReturn::solve_count)
         .def_readwrite("top3_total_iter_counts", &MPCReturn::top3_total_iter_counts)
         .def_readwrite("top3_solve_nums", &MPCReturn::top3_solve_nums)
+        .def_readwrite("max_iter_reached_count", &MPCReturn::max_iter_reached_count)
+        .def_readwrite("max_iter_solve_failed_count", &MPCReturn::max_iter_solve_failed_count)
         .def("setZero", &MPCReturn::setZero)
+    ;
+
+    // BuildOptions binding
+    class_<BuildOptions>("BuildOptions")
+        .def_readwrite("osqp_use_float", &BuildOptions::osqp_use_float)
+        .def_readwrite("osqp_use_truncate", &BuildOptions::osqp_use_truncate)
+        .def_readwrite("nn_use_truncate", &BuildOptions::nn_use_truncate)
+        .def_readwrite("constraints_use_truncate", &BuildOptions::constraints_use_truncate)
+        .def_readwrite("ffp_contract_off", &BuildOptions::ffp_contract_off)
+        .def("get", &BuildOptions::get)
+        .staticmethod("get")
     ;
 }

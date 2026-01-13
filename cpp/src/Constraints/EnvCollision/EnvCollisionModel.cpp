@@ -1,20 +1,140 @@
 #include "Constraints/EnvCollision/EnvCollisionModel.h"
 #include <chrono>
+#include <fstream>
+#include <iomanip>
+#include <sys/stat.h>
 
-#ifdef NN_USE_FLEXFLOAT
-#include <flexfloat.h>
+#ifdef NN_USE_TRUNCATE
+#include <cfenv>
 #endif
-
-#ifndef NN_FF_exponent_bits
-#define NN_FF_exponent_bits 8
-#endif
-#ifndef NN_FF_mantissa_bits
-#define NN_FF_mantissa_bits 7
-#endif
-#define NN_FF_DESC ((flexfloat_desc_t){NN_FF_exponent_bits, NN_FF_mantissa_bits})
 
 namespace mpcc
 {
+    // ===================================================================
+    // =========== ASIC Test Case Logging ================================
+    // ===================================================================
+    static int g_asic_sample_count = 0;
+    static const std::string g_asic_output_dir = "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/";
+    static bool g_asic_dir_initialized = false;
+
+    void init_asic_output_dir() {
+        if (!g_asic_dir_initialized) {
+            mkdir(g_asic_output_dir.c_str(), 0755);
+            g_asic_dir_initialized = true;
+        }
+    }
+
+    // 행렬을 파일에 저장하는 헬퍼 함수
+    void save_matrix_to_file(const std::string& filepath, const Eigen::MatrixXf& mat, const std::string& name = "") {
+        std::ofstream file(filepath, std::ios::app);
+        if (file.is_open()) {
+            file << std::scientific << std::setprecision(8);
+            if (!name.empty()) {
+                file << "# " << name << " (" << mat.rows() << " x " << mat.cols() << ")\n";
+            }
+            for (int r = 0; r < mat.rows(); ++r) {
+                for (int c = 0; c < mat.cols(); ++c) {
+                    file << mat(r, c);
+                    if (c < mat.cols() - 1) file << ",";
+                }
+                file << "\n";
+            }
+            file << "\n";
+            file.close();
+        }
+    }
+
+    void save_vector_to_file(const std::string& filepath, const Eigen::VectorXf& vec, const std::string& name = "") {
+        std::ofstream file(filepath, std::ios::app);
+        if (file.is_open()) {
+            file << std::scientific << std::setprecision(8);
+            if (!name.empty()) {
+                file << "# " << name << " (" << vec.size() << ")\n";
+            }
+            for (int i = 0; i < vec.size(); ++i) {
+                file << vec(i);
+                if (i < vec.size() - 1) file << ",";
+            }
+            file << "\n\n";
+            file.close();
+        }
+    }
+    // ===================================================================
+    // =========== Hardware-like Adder Tree Functions ====================
+    // ===================================================================
+    // fesetround(FE_TOWARDZERO)가 설정된 상태에서 모든 연산이 자동으로 truncate됨
+
+    // Adder tree 합산 (임의 개수)
+    float adder_tree_sum(const float* data, int count) {
+        if (count == 0) return 0.0f;
+        if (count == 1) return data[0];
+
+        std::vector<float> current(data, data + count);
+
+        // 2의 거듭제곱으로 패딩
+        size_t next_pow2 = 1;
+        while (next_pow2 < static_cast<size_t>(count)) next_pow2 <<= 1;
+        current.resize(next_pow2, 0.0f);
+
+        // Adder tree 레벨별 수행
+        while (current.size() > 1) {
+            std::vector<float> next;
+            next.reserve(current.size() / 2);
+            for (size_t i = 0; i < current.size(); i += 2) {
+                float sum = current[i] + current[i + 1];
+#ifdef NN_USE_TRUNCATE
+                // volatile로 메모리에 강제 저장하여 truncate 적용
+                volatile float truncated = sum;
+                float truncated_val = truncated;
+                next.push_back(truncated_val);
+#else
+                next.push_back(sum);
+#endif
+            }
+            current = std::move(next);
+        }
+
+        return current[0];
+    }
+
+    // Matrix-vector multiplication using adder tree - Method A (하드웨어 방식)
+    // bias + chunk0 -> truncate -> + chunk1 -> truncate
+    float matvec_row_adder_tree(const Eigen::Ref<const Eigen::RowVectorXf>& weight_row,
+                                 const Eigen::Ref<const Eigen::VectorXf>& input,
+                                 float bias) {
+        const int n = weight_row.size();
+        const int chunk_size = 128;
+        std::vector<float> products(n);
+
+        // Stage 1: 모든 곱셈을 병렬로 수행
+        for (int i = 0; i < n; ++i) {
+            float prod = weight_row(i) * input(i);
+#ifdef NN_USE_TRUNCATE
+            volatile float truncated = prod;
+            products[i] = truncated;
+#else
+            products[i] = prod;
+#endif
+        }
+
+        // Stage 2: 128개씩 chunk로 adder tree 수행 (최대 2개 chunk)
+        float chunk_sum_0 = adder_tree_sum(products.data(), std::min(n, chunk_size));
+        float chunk_sum_1 = (n > chunk_size) ? adder_tree_sum(products.data() + chunk_size, n - chunk_size) : 0.0f;
+
+        // Method A: bias + chunk0 -> truncate -> + chunk1 -> truncate
+        float result = bias + chunk_sum_0;
+#ifdef NN_USE_TRUNCATE
+        volatile float truncated_1 = result;
+        result = truncated_1;
+#endif
+        result = result + chunk_sum_1;
+#ifdef NN_USE_TRUNCATE
+        volatile float truncated_2 = result;
+        result = truncated_2;
+#endif
+
+        return result;
+    }
     EnvCollNNmodel::EnvCollNNmodel()
     {
         file_path_ = pkg_path + "NNmodel/env/parameter_scaled_bf16/";
@@ -235,6 +355,11 @@ namespace mpcc
 
     std::pair<Eigen::VectorXd, Eigen::MatrixXd> EnvCollNNmodel::calculateMlpOutput(Eigen::VectorXd input, bool time_verbose)
     {
+#ifdef NN_USE_TRUNCATE
+        int old_round = std::fegetround();
+        std::fesetround(FE_TOWARDZERO);
+#endif
+
         // FP32 연산용 임시 변수들
         Eigen::VectorXf input_f = input.cast<float>();
         Eigen::VectorXf input_nerf_f;
@@ -262,13 +387,20 @@ namespace mpcc
         {
             if (layer == 0) // input layer
             {
-                hidden_f[0].resize(static_cast<int>(mlp_.n_hidden(0)));
-                hidden_derivative_f[0].resize(static_cast<int>(mlp_.n_hidden(0)), mlp_.is_nerf ? 3 * mlp_.n_input : mlp_.n_input);
+                const Eigen::VectorXf& current_input = mlp_.is_nerf ? input_nerf_f : input_f;
+                const int n_neurons = static_cast<int>(mlp_.n_hidden(0));
+                const int n_inputs = current_input.size();
 
-                if (mlp_.is_nerf) hidden_f[0] = mlp_.weight[0] * input_nerf_f + mlp_.bias[0];
-                else              hidden_f[0] = mlp_.weight[0] * input_f + mlp_.bias[0];
+                hidden_f[0].resize(n_neurons);
+                hidden_derivative_f[0].resize(n_neurons, n_inputs);
 
-                for (int h = 0; h < mlp_.n_hidden(layer); h++)
+                // Adder tree를 사용한 행렬-벡터 곱셈
+                for (int h = 0; h < n_neurons; ++h) {
+                    hidden_f[0](h) = matvec_row_adder_tree(
+                        mlp_.weight[0].row(h), current_input, mlp_.bias[0](h));
+                }
+
+                for (int h = 0; h < n_neurons; h++)
                 {
                     float relu_deriv = (hidden_f[0](h) > 0.0f) ? 1.0f : 0.0f;
                     hidden_derivative_f[0].row(h) = relu_deriv * mlp_.weight[0].row(h);
@@ -283,7 +415,16 @@ namespace mpcc
                     nerf_jac_f.block(1 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).diagonal() = input_f.array().cos();
                     nerf_jac_f.block(2 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).diagonal() = -input_f.array().sin();
 
-                    temp_derivative_f = hidden_derivative_f[0] * nerf_jac_f;
+                    // Jacobian도 adder tree로 계산
+                    const int jac_rows = hidden_derivative_f[0].rows();
+                    const int jac_cols = nerf_jac_f.cols();
+                    temp_derivative_f.resize(jac_rows, jac_cols);
+                    for (int r = 0; r < jac_rows; ++r) {
+                        for (int c = 0; c < jac_cols; ++c) {
+                            temp_derivative_f(r, c) = matvec_row_adder_tree(
+                                hidden_derivative_f[0].row(r), nerf_jac_f.col(c), 0.0f);
+                        }
+                    }
                 }
                 else
                 {
@@ -292,28 +433,63 @@ namespace mpcc
             }
             else if (layer == mlp_.n_layer - 1) // output layer
             {
-                output_f = mlp_.weight[layer] * hidden_f[layer - 1] + mlp_.bias[layer];
-                output_derivative_f = mlp_.weight[layer] * temp_derivative_f;
+                const int n_outputs = mlp_.n_output;
+                output_f.resize(n_outputs);
+
+                // Adder tree를 사용한 출력층 계산 - Method A 사용
+                for (int o = 0; o < n_outputs; ++o) {
+                    output_f(o) = matvec_row_adder_tree(
+                        mlp_.weight[layer].row(o), hidden_f[layer - 1], mlp_.bias[layer](o));
+                }
+
+                // 출력층 Jacobian 계산 (adder tree 사용)
+                const int deriv_rows = mlp_.weight[layer].rows();
+                const int deriv_cols = temp_derivative_f.cols();
+                output_derivative_f.resize(deriv_rows, deriv_cols);
+                for (int r = 0; r < deriv_rows; ++r) {
+                    for (int c = 0; c < deriv_cols; ++c) {
+                        output_derivative_f(r, c) = matvec_row_adder_tree(
+                            mlp_.weight[layer].row(r), temp_derivative_f.col(c), 0.0f);
+                    }
+                }
             }
             else // hidden layers
             {
-                hidden_f[layer].resize(static_cast<int>(mlp_.n_hidden(layer)));
-                hidden_derivative_f[layer].resize(static_cast<int>(mlp_.n_hidden(layer)), static_cast<int>(mlp_.n_hidden(layer - 1)));
+                const int n_neurons = static_cast<int>(mlp_.n_hidden(layer));
+                hidden_f[layer].resize(n_neurons);
+                hidden_derivative_f[layer].resize(n_neurons, static_cast<int>(mlp_.n_hidden(layer - 1)));
 
-                hidden_f[layer] = mlp_.weight[layer] * hidden_f[layer - 1] + mlp_.bias[layer];
+                // Adder tree를 사용한 은닉층 계산
+                for (int h = 0; h < n_neurons; ++h) {
+                    hidden_f[layer](h) = matvec_row_adder_tree(
+                        mlp_.weight[layer].row(h), hidden_f[layer - 1], mlp_.bias[layer](h));
+                }
 
-                for (int h = 0; h < mlp_.n_hidden(layer); h++)
+                for (int h = 0; h < n_neurons; h++)
                 {
                     float relu_deriv = (hidden_f[layer](h) > 0.0f) ? 1.0f : 0.0f;
                     hidden_derivative_f[layer].row(h) = relu_deriv * mlp_.weight[layer].row(h);
                     hidden_f[layer](h) = std::max(0.0f, hidden_f[layer](h));
                 }
 
-                temp_derivative_f = hidden_derivative_f[layer] * temp_derivative_f;
+                // Jacobian 계산 (adder tree 사용)
+                const int jac_rows = hidden_derivative_f[layer].rows();
+                const int jac_cols = temp_derivative_f.cols();
+                Eigen::MatrixXf new_temp_derivative_f(jac_rows, jac_cols);
+                for (int r = 0; r < jac_rows; ++r) {
+                    for (int c = 0; c < jac_cols; ++c) {
+                        new_temp_derivative_f(r, c) = matvec_row_adder_tree(
+                            hidden_derivative_f[layer].row(r), temp_derivative_f.col(c), 0.0f);
+                    }
+                }
+                temp_derivative_f = std::move(new_temp_derivative_f);
             }
         }
 
         // Convert output from float to double for interface compatibility
+#ifdef NN_USE_TRUNCATE
+        std::fesetround(old_round);
+#endif
         return std::make_pair(output_f.cast<double>(), output_derivative_f.cast<double>());
     }
 
@@ -333,8 +509,16 @@ namespace mpcc
 
     std::pair<Eigen::VectorXd, Eigen::MatrixXd> EnvCollNNmodel::calculateMlpOutputBatch(const Eigen::MatrixXd& inputs, bool time_verbose)
     {
+#ifdef NN_USE_TRUNCATE
+        int old_round_batch = std::fegetround();
+        std::fesetround(FE_TOWARDZERO);
+#endif
+
         const int batch_size = inputs.cols();
         if (batch_size == 0) {
+#ifdef NN_USE_TRUNCATE
+            std::fesetround(old_round_batch);
+#endif
             return {Eigen::VectorXd(), Eigen::MatrixXd()};
         }
 
@@ -350,7 +534,7 @@ namespace mpcc
             mlp_.allocated_batch_size = batch_size;
         }
 
-        // ===== 1. 모든 결과와 자코비안을 계산 (효율성을 위해 배치 연산 유지) =====
+        // ===== 1. 입력 준비 =====
         // Convert input from double to float for inference
         mlp_.batch_input = inputs.cast<float>();
 
@@ -364,21 +548,50 @@ namespace mpcc
             current_input_ptr = &mlp_.batch_input;
         }
 
+        // ===== 2. Forward pass with adder tree =====
         for (int layer = 0; layer < mlp_.n_layer; ++layer) {
             if (layer == 0) {
-                mlp_.pre_activations[0] = (mlp_.weight[0] * (*current_input_ptr)).colwise() + mlp_.bias[0];
+                const int n_neurons = static_cast<int>(mlp_.n_hidden(0));
+                const int n_inputs = current_input_ptr->rows();
+                mlp_.pre_activations[0].resize(n_neurons, batch_size);
+
+                // Adder tree를 사용한 행렬-행렬 곱셈
+                for (int b = 0; b < batch_size; ++b) {
+                    for (int h = 0; h < n_neurons; ++h) {
+                        mlp_.pre_activations[0](h, b) = matvec_row_adder_tree(
+                            mlp_.weight[0].row(h), current_input_ptr->col(b), mlp_.bias[0](h));
+                    }
+                }
                 mlp_.batch_hidden[0] = batch_ReLU_f(mlp_.pre_activations[0]);
             }
             else if (layer == mlp_.n_layer - 1) {
-                mlp_.batch_output = (mlp_.weight[layer] * mlp_.batch_hidden[layer - 1]).colwise() + mlp_.bias[layer];
+                const int n_outputs = mlp_.n_output;
+                mlp_.batch_output.resize(n_outputs, batch_size);
+
+                // Adder tree를 사용한 출력층 계산
+                for (int b = 0; b < batch_size; ++b) {
+                    for (int o = 0; o < n_outputs; ++o) {
+                        mlp_.batch_output(o, b) = matvec_row_adder_tree(
+                            mlp_.weight[layer].row(o), mlp_.batch_hidden[layer - 1].col(b), mlp_.bias[layer](o));
+                    }
+                }
             }
             else {
-                mlp_.pre_activations[layer] = (mlp_.weight[layer] * mlp_.batch_hidden[layer - 1]).colwise() + mlp_.bias[layer];
+                const int n_neurons = static_cast<int>(mlp_.n_hidden(layer));
+                mlp_.pre_activations[layer].resize(n_neurons, batch_size);
+
+                // Adder tree를 사용한 은닉층 계산
+                for (int b = 0; b < batch_size; ++b) {
+                    for (int h = 0; h < n_neurons; ++h) {
+                        mlp_.pre_activations[layer](h, b) = matvec_row_adder_tree(
+                            mlp_.weight[layer].row(h), mlp_.batch_hidden[layer - 1].col(b), mlp_.bias[layer](h));
+                    }
+                }
                 mlp_.batch_hidden[layer] = batch_ReLU_f(mlp_.pre_activations[layer]);
             }
         }
 
-        // --- 자코비안 계산 ---
+        // ===== 3. 자코비안 계산 (adder tree 사용) =====
         for (int i = 0; i < batch_size; ++i) {
             Eigen::MatrixXf temp_derivative;
             if (mlp_.is_nerf) {
@@ -388,7 +601,18 @@ namespace mpcc
                 nerf_jac.middleRows(mlp_.n_input, mlp_.n_input).diagonal() = inputs.col(i).array().cos().cast<float>();
                 nerf_jac.bottomRows(mlp_.n_input).diagonal() = (-inputs.col(i).array().sin()).cast<float>();
                 Eigen::MatrixXf relu_deriv_0 = batch_ReLU_derivative_f(mlp_.pre_activations[0].col(i));
-                temp_derivative = (relu_deriv_0.asDiagonal() * mlp_.weight[0]) * nerf_jac;
+                Eigen::MatrixXf weight_scaled = relu_deriv_0.asDiagonal() * mlp_.weight[0];
+
+                // Adder tree로 행렬-행렬 곱셈
+                const int jac_rows = weight_scaled.rows();
+                const int jac_cols = nerf_jac.cols();
+                temp_derivative.resize(jac_rows, jac_cols);
+                for (int r = 0; r < jac_rows; ++r) {
+                    for (int c = 0; c < jac_cols; ++c) {
+                        temp_derivative(r, c) = matvec_row_adder_tree(
+                            weight_scaled.row(r), nerf_jac.col(c), 0.0f);
+                    }
+                }
             } else {
                 Eigen::MatrixXf relu_deriv_0 = batch_ReLU_derivative_f(mlp_.pre_activations[0].col(i));
                 temp_derivative = relu_deriv_0.asDiagonal() * mlp_.weight[0];
@@ -396,24 +620,198 @@ namespace mpcc
 
             for (int layer = 1; layer < mlp_.n_layer - 1; ++layer) {
                 Eigen::MatrixXf relu_deriv = batch_ReLU_derivative_f(mlp_.pre_activations[layer].col(i));
-                temp_derivative = (relu_deriv.asDiagonal() * mlp_.weight[layer]) * temp_derivative;
+                Eigen::MatrixXf weight_scaled = relu_deriv.asDiagonal() * mlp_.weight[layer];
+
+                // Adder tree로 행렬-행렬 곱셈
+                const int jac_rows = weight_scaled.rows();
+                const int jac_cols = temp_derivative.cols();
+                Eigen::MatrixXf new_temp(jac_rows, jac_cols);
+                for (int r = 0; r < jac_rows; ++r) {
+                    for (int c = 0; c < jac_cols; ++c) {
+                        new_temp(r, c) = matvec_row_adder_tree(
+                            weight_scaled.row(r), temp_derivative.col(c), 0.0f);
+                    }
+                }
+                temp_derivative = std::move(new_temp);
             }
 
-            mlp_.batch_jacobian[i] = mlp_.weight.back() * temp_derivative;
+            // 출력층 Jacobian
+            const int out_rows = mlp_.weight.back().rows();
+            const int out_cols = temp_derivative.cols();
+            mlp_.batch_jacobian[i].resize(out_rows, out_cols);
+            for (int r = 0; r < out_rows; ++r) {
+                for (int c = 0; c < out_cols; ++c) {
+                    mlp_.batch_jacobian[i](r, c) = matvec_row_adder_tree(
+                        mlp_.weight.back().row(r), temp_derivative.col(c), 0.0f);
+                }
+            }
         }
 
-        // ===== 2. 각 행(링크)별 최소값 탐색 및 결과 재구성 =====
-        // 사전 할당된 멤버 변수 사용
+        // ===== 4. 각 행(링크)별 최소값 탐색 및 결과 재구성 =====
         for (int i = 0; i < mlp_.n_output; ++i)
         {
-            Eigen::Index min_col_for_row;
-            mlp_.batch_output.row(i).minCoeff(&min_col_for_row);
+            // 최소값 인덱스 찾기
+            Eigen::Index min_col;
+            mlp_.batch_output.row(i).minCoeff(&min_col);
 
-            mlp_.final_min_output(i) = mlp_.batch_output(i, min_col_for_row);
-            mlp_.final_min_jacobian.row(i) = mlp_.batch_jacobian[min_col_for_row].row(i);
+            // 최소값과 해당 jacobian 저장
+            mlp_.final_min_output(i) = mlp_.batch_output(i, min_col);
+            mlp_.final_min_jacobian.row(i) = mlp_.batch_jacobian[min_col].row(i);
         }
 
+        // ===== 5. ASIC 테스트 케이스 저장 (주석처리됨) =====
+        /*
+        init_asic_output_dir();
+
+        // 각 배치 sample에 대해 개별 파일로 저장
+        for (int b = 0; b < batch_size; ++b) {
+            int sample_id = g_asic_sample_count++;
+            bool is_detailed = (sample_id % 100 == 0);  // 100번째 sample마다 상세 저장
+
+            std::string filename = g_asic_output_dir + "sample_" + std::to_string(sample_id) + ".csv";
+            std::ofstream file(filename);
+
+            if (file.is_open()) {
+                file << std::scientific << std::setprecision(8);
+
+                // 헤더 정보
+                file << "# ASIC Test Case - Sample " << sample_id << "\n";
+                file << "# Detailed: " << (is_detailed ? "YES" : "NO") << "\n";
+                file << "# n_input: " << mlp_.n_input << ", n_output: " << mlp_.n_output << "\n";
+                file << "# n_hidden_layers: " << (mlp_.n_layer - 1) << "\n\n";
+
+                // 1. 입력 (nerf 적용된 값: [x, sin(x), cos(x)])
+                file << "# INPUT (nerf_input) - " << current_input_ptr->rows() << " values\n";
+                for (int i = 0; i < current_input_ptr->rows(); ++i) {
+                    file << (*current_input_ptr)(i, b);
+                    if (i < current_input_ptr->rows() - 1) file << ",";
+                }
+                file << "\n\n";
+
+                // 2. 최종 출력 (output layer)
+                file << "# OUTPUT - " << mlp_.n_output << " values\n";
+                for (int i = 0; i < mlp_.n_output; ++i) {
+                    file << mlp_.batch_output(i, b);
+                    if (i < mlp_.n_output - 1) file << ",";
+                }
+                file << "\n\n";
+
+                // 3. Jacobian (output x input)
+                file << "# JACOBIAN - " << mlp_.n_output << " x " << mlp_.n_input << "\n";
+                for (int r = 0; r < mlp_.batch_jacobian[b].rows(); ++r) {
+                    for (int c = 0; c < mlp_.batch_jacobian[b].cols(); ++c) {
+                        file << mlp_.batch_jacobian[b](r, c);
+                        if (c < mlp_.batch_jacobian[b].cols() - 1) file << ",";
+                    }
+                    file << "\n";
+                }
+                file << "\n";
+
+                // 4. 100번째 sample마다 상세 정보 저장
+                if (is_detailed) {
+                    // 각 hidden layer의 pre_activation과 post_activation (ReLU 후)
+                    for (int layer = 0; layer < mlp_.n_layer - 1; ++layer) {
+                        // Pre-activation (ReLU 전)
+                        file << "# LAYER_" << layer << "_PRE_ACTIVATION - " << mlp_.pre_activations[layer].rows() << " values\n";
+                        for (int h = 0; h < mlp_.pre_activations[layer].rows(); ++h) {
+                            file << mlp_.pre_activations[layer](h, b);
+                            if (h < mlp_.pre_activations[layer].rows() - 1) file << ",";
+                        }
+                        file << "\n\n";
+
+                        // Post-activation (ReLU 후)
+                        file << "# LAYER_" << layer << "_POST_ACTIVATION - " << mlp_.batch_hidden[layer].rows() << " values\n";
+                        for (int h = 0; h < mlp_.batch_hidden[layer].rows(); ++h) {
+                            file << mlp_.batch_hidden[layer](h, b);
+                            if (h < mlp_.batch_hidden[layer].rows() - 1) file << ",";
+                        }
+                        file << "\n\n";
+                    }
+
+                    // 각 layer별 intermediate jacobian 계산 및 저장
+                    file << "# === INTERMEDIATE JACOBIANS ===\n\n";
+
+                    Eigen::MatrixXf temp_derivative_log;
+                    if (mlp_.is_nerf) {
+                        Eigen::MatrixXf nerf_jac(3 * mlp_.n_input, mlp_.n_input);
+                        nerf_jac.setZero();
+                        nerf_jac.topRows(mlp_.n_input).setIdentity();
+                        nerf_jac.middleRows(mlp_.n_input, mlp_.n_input).diagonal() = inputs.col(b).array().cos().cast<float>();
+                        nerf_jac.bottomRows(mlp_.n_input).diagonal() = (-inputs.col(b).array().sin()).cast<float>();
+
+                        file << "# NERF_JACOBIAN - " << nerf_jac.rows() << " x " << nerf_jac.cols() << "\n";
+                        for (int r = 0; r < nerf_jac.rows(); ++r) {
+                            for (int c = 0; c < nerf_jac.cols(); ++c) {
+                                file << nerf_jac(r, c);
+                                if (c < nerf_jac.cols() - 1) file << ",";
+                            }
+                            file << "\n";
+                        }
+                        file << "\n";
+
+                        Eigen::MatrixXf relu_deriv_0 = batch_ReLU_derivative_f(mlp_.pre_activations[0].col(b));
+                        Eigen::MatrixXf weight_scaled = relu_deriv_0.asDiagonal() * mlp_.weight[0];
+
+                        const int jac_rows = weight_scaled.rows();
+                        const int jac_cols = nerf_jac.cols();
+                        temp_derivative_log.resize(jac_rows, jac_cols);
+                        for (int r = 0; r < jac_rows; ++r) {
+                            for (int c = 0; c < jac_cols; ++c) {
+                                temp_derivative_log(r, c) = matvec_row_adder_tree(
+                                    weight_scaled.row(r), nerf_jac.col(c), 0.0f);
+                            }
+                        }
+                    } else {
+                        Eigen::MatrixXf relu_deriv_0 = batch_ReLU_derivative_f(mlp_.pre_activations[0].col(b));
+                        temp_derivative_log = relu_deriv_0.asDiagonal() * mlp_.weight[0];
+                    }
+
+                    file << "# JACOBIAN_AFTER_LAYER_0 - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
+                    for (int r = 0; r < temp_derivative_log.rows(); ++r) {
+                        for (int c = 0; c < temp_derivative_log.cols(); ++c) {
+                            file << temp_derivative_log(r, c);
+                            if (c < temp_derivative_log.cols() - 1) file << ",";
+                        }
+                        file << "\n";
+                    }
+                    file << "\n";
+
+                    for (int layer = 1; layer < mlp_.n_layer - 1; ++layer) {
+                        Eigen::MatrixXf relu_deriv = batch_ReLU_derivative_f(mlp_.pre_activations[layer].col(b));
+                        Eigen::MatrixXf weight_scaled = relu_deriv.asDiagonal() * mlp_.weight[layer];
+
+                        const int jac_rows = weight_scaled.rows();
+                        const int jac_cols = temp_derivative_log.cols();
+                        Eigen::MatrixXf new_temp(jac_rows, jac_cols);
+                        for (int r = 0; r < jac_rows; ++r) {
+                            for (int c = 0; c < jac_cols; ++c) {
+                                new_temp(r, c) = matvec_row_adder_tree(
+                                    weight_scaled.row(r), temp_derivative_log.col(c), 0.0f);
+                            }
+                        }
+                        temp_derivative_log = std::move(new_temp);
+
+                        file << "# JACOBIAN_AFTER_LAYER_" << layer << " - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
+                        for (int r = 0; r < temp_derivative_log.rows(); ++r) {
+                            for (int c = 0; c < temp_derivative_log.cols(); ++c) {
+                                file << temp_derivative_log(r, c);
+                                if (c < temp_derivative_log.cols() - 1) file << ",";
+                            }
+                            file << "\n";
+                        }
+                        file << "\n";
+                    }
+                }
+
+                file.close();
+            }
+        }
+        */
+
         // Convert output from float to double for interface compatibility
+#ifdef NN_USE_TRUNCATE
+        std::fesetround(old_round_batch);
+#endif
         return std::make_pair(mlp_.final_min_output.cast<double>(), mlp_.final_min_jacobian.cast<double>());
     }
 

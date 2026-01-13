@@ -277,6 +277,10 @@ endif()
 # ----------------------------------------------
 set(CMAKE_POSITION_INDEPENDENT_CODE ON) # -fPIC
 
+# Disable FMA (fused multiply-add) for consistent float precision
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffp-contract=off")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
+
 if(NOT MSVC)
   if(OSQP_COVERAGE_CHECK)
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --coverage")
@@ -384,6 +388,13 @@ endif()
 if(QDLDL_ENABLE_SAMPLE_LOGGING)
   target_compile_definitions(OSQPLIB PRIVATE QDLDL_ENABLE_SAMPLE_LOGGING)
   message(STATUS "QDLDL sample logging enabled for OSQPLIB")
+endif()
+
+# Add OSQP truncate mode compile definition if enabled (applies to both OSQP and QDLDL)
+option(OSQP_USE_TRUNCATE "Enable truncation mode for OSQP/QDLDL (use truncation instead of rounding)" OFF)
+if(OSQP_USE_TRUNCATE)
+  target_compile_definitions(OSQPLIB PRIVATE OSQP_USE_TRUNCATE)
+  message(STATUS "OSQP/QDLDL truncation mode enabled for OSQPLIB")
 endif()
 
 get_property(

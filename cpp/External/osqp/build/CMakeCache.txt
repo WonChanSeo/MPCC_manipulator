@@ -293,10 +293,10 @@ FETCHCONTENT_UPDATES_DISCONNECTED:BOOL=OFF
 FETCHCONTENT_UPDATES_DISCONNECTED_QDLDL:BOOL=OFF
 
 //FlexFloat exponent bits
-FF_EXPONENT_BITS:STRING=11
+FF_EXPONENT_BITS:STRING=8
 
 //FlexFloat mantissa bits
-FF_MANTISSA_BITS:STRING=52
+FF_MANTISSA_BITS:STRING=23
 
 //The Algebra to use (builtin/mkl/cuda)
 OSQP_ALGEBRA_BACKEND:STRING=builtin
@@ -347,13 +347,17 @@ OSQP_PROFILER_ANNOTATIONS:STRING=OFF
 OSQP_USE_FLEXFLOAT:BOOL=OFF
 
 //Use floats instead of doubles
-OSQP_USE_FLOAT:BOOL=OFF
+OSQP_USE_FLOAT:BOOL=ON
 
 //Build OSQP and QDLDL in half‐precision (_Float16)
 OSQP_USE_HALF:BOOL=OFF
 
 //Use long integers (64bit) for indexing
 OSQP_USE_LONG:BOOL=ON
+
+//Enable truncation mode for OSQP/QDLDL (use truncation instead
+// of rounding)
+OSQP_USE_TRUNCATE:BOOL=ON
 
 //The version number of OSQP
 OSQP_VERSION:STRING=0.0.0
@@ -377,7 +381,7 @@ QDLDL_DEV_COVERAGE:BOOL=OFF
 QDLDL_ENABLE_SAMPLE_LOGGING:BOOL=OFF
 
 //Use float numbers instead of doubles
-QDLDL_FLOAT:BOOL=OFF
+QDLDL_FLOAT:BOOL=ON
 
 //Use long integers (64bit) for indexing
 QDLDL_LONG:BOOL=ON

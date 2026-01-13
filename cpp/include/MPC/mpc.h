@@ -55,6 +55,10 @@ struct MPCReturn {
     std::vector<int> top3_total_iter_counts;  // Top 3 values (sorted descending)
     std::vector<std::vector<int>> top3_solve_nums;  // Solve numbers for each top 3 value
 
+    // Max iter tracking
+    int max_iter_reached_count;    // Total count of times max_iter (250) was reached
+    int max_iter_solve_failed_count;  // Count of solve failures among max_iter cases
+
     void setZero()
     {
         u0.setZero();
@@ -67,6 +71,8 @@ struct MPCReturn {
         solve_count = 0;
         top3_total_iter_counts.clear();
         top3_solve_nums.clear();
+        max_iter_reached_count = 0;
+        max_iter_solve_failed_count = 0;
     }
 };
 
@@ -142,6 +148,10 @@ private:
     int solve_count_;
     std::vector<int> top3_total_iter_counts_;  // Top 3 values (sorted descending)
     std::vector<std::vector<int>> top3_solve_nums_;  // Solve numbers for each top 3 value
+
+    // Max iter tracking
+    int max_iter_reached_count_;       // Total count of times max_iter (250) was reached
+    int max_iter_solve_failed_count_;  // Count of solve failures among max_iter cases
 
     // vs = dot(xdot, a)/||a||^2  (arc-length면 a는 단위접선)
     double project_vs_workspace(double s,

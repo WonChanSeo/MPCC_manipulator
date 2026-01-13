@@ -27,23 +27,146 @@
 #include <stdio.h>
 #include <inttypes.h>
 #include <string.h>
+#include <stdlib.h>
 
-#ifdef QDLDL_USE_FLEXFLOAT
-#include <flexfloat.h>
+#ifdef OSQP_USE_TRUNCATE
+#include <fenv.h>
 #endif
-
-// FlexFloat precision configuration (should match OSQP settings)
-#ifndef FF_exponent_bits
-#define FF_exponent_bits 8
-#endif
-#ifndef FF_mantissa_bits
-#define FF_mantissa_bits 23
-#endif
-#define QDLDL_FF_DESC ((flexfloat_desc_t){FF_exponent_bits, FF_mantissa_bits})
 
 #define QDLDL_UNKNOWN (-1)
 #define QDLDL_USED (1)
 #define QDLDL_UNUSED (0)
+
+// ========================================
+// L의 CSR 저장 구조 (Lsolve용 adder tree 지원)
+// L을 CSR로 저장하면 L^T 관점에서는 CSC가 됨
+// ========================================
+static QDLDL_int* g_L_csr_rowptr = NULL;   // row pointers (size n+1)
+static QDLDL_int* g_L_csr_colind = NULL;   // column indices (size nnz_L)
+static QDLDL_float* g_L_csr_values = NULL; // values (size nnz_L)
+static QDLDL_int g_L_csr_n = 0;            // matrix dimension
+static QDLDL_int g_L_csr_nnz = 0;          // number of nonzeros
+static int g_L_csr_initialized = 0;        // initialization flag
+
+// Adder tree용 임시 버퍼 (동적 할당 최소화)
+static QDLDL_float* g_adder_tree_buffer = NULL;
+static QDLDL_int g_adder_tree_buffer_size = 0;
+
+// CSR 메모리 해제
+static void free_L_csr(void) {
+    if (g_L_csr_rowptr) { free(g_L_csr_rowptr); g_L_csr_rowptr = NULL; }
+    if (g_L_csr_colind) { free(g_L_csr_colind); g_L_csr_colind = NULL; }
+    if (g_L_csr_values) { free(g_L_csr_values); g_L_csr_values = NULL; }
+    if (g_adder_tree_buffer) { free(g_adder_tree_buffer); g_adder_tree_buffer = NULL; }
+    g_L_csr_n = 0;
+    g_L_csr_nnz = 0;
+    g_L_csr_initialized = 0;
+    g_adder_tree_buffer_size = 0;
+}
+
+// CSC에서 CSR로 변환 (L matrix)
+// CSC: Lp (col ptr), Li (row ind), Lx (values)
+// CSR: rowptr, colind, values
+static void convert_csc_to_csr(QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li, const QDLDL_float* Lx) {
+    QDLDL_int nnz = Lp[n];
+    QDLDL_int i, j, col, row, dest;
+    QDLDL_int* row_counts;
+
+    // 기존 CSR 해제
+    free_L_csr();
+
+    // 메모리 할당
+    g_L_csr_rowptr = (QDLDL_int*)malloc(sizeof(QDLDL_int) * (n + 1));
+    g_L_csr_colind = (QDLDL_int*)malloc(sizeof(QDLDL_int) * nnz);
+    g_L_csr_values = (QDLDL_float*)malloc(sizeof(QDLDL_float) * nnz);
+    row_counts = (QDLDL_int*)calloc(n, sizeof(QDLDL_int));
+
+    if (!g_L_csr_rowptr || !g_L_csr_colind || !g_L_csr_values || !row_counts) {
+        free_L_csr();
+        if (row_counts) free(row_counts);
+        return;
+    }
+
+    g_L_csr_n = n;
+    g_L_csr_nnz = nnz;
+
+    // Step 1: 각 row의 nnz 카운트
+    for (i = 0; i < nnz; i++) {
+        row_counts[Li[i]]++;
+    }
+
+    // Step 2: rowptr 계산 (cumsum)
+    g_L_csr_rowptr[0] = 0;
+    for (i = 0; i < n; i++) {
+        g_L_csr_rowptr[i + 1] = g_L_csr_rowptr[i] + row_counts[i];
+    }
+
+    // Step 3: row_counts를 현재 삽입 위치로 리셋
+    for (i = 0; i < n; i++) {
+        row_counts[i] = g_L_csr_rowptr[i];
+    }
+
+    // Step 4: CSC 순회하며 CSR에 데이터 채우기
+    for (col = 0; col < n; col++) {
+        for (j = Lp[col]; j < Lp[col + 1]; j++) {
+            row = Li[j];
+            dest = row_counts[row];
+            g_L_csr_colind[dest] = col;
+            g_L_csr_values[dest] = Lx[j];
+            row_counts[row]++;
+        }
+    }
+
+    free(row_counts);
+    g_L_csr_initialized = 1;
+
+    // Adder tree 버퍼 할당 (최대 row nnz 크기)
+    QDLDL_int max_row_nnz = 0;
+    for (i = 0; i < n; i++) {
+        QDLDL_int row_nnz = g_L_csr_rowptr[i + 1] - g_L_csr_rowptr[i];
+        if (row_nnz > max_row_nnz) max_row_nnz = row_nnz;
+    }
+    // 2의 거듭제곱으로 올림
+    QDLDL_int buf_size = 1;
+    while (buf_size < max_row_nnz) buf_size <<= 1;
+    g_adder_tree_buffer = (QDLDL_float*)malloc(sizeof(QDLDL_float) * buf_size);
+    g_adder_tree_buffer_size = buf_size;
+}
+
+// Adder tree 합산 (in-place, 버퍼 사용)
+// products 배열의 값들을 트리 구조로 합산
+static QDLDL_float adder_tree_sum_qdldl(QDLDL_float* buffer, QDLDL_int count) {
+    if (count == 0) return 0.0f;
+    if (count == 1) return buffer[0];
+
+    // 2의 거듭제곱으로 패딩
+    QDLDL_int padded_size = 1;
+    while (padded_size < count) padded_size <<= 1;
+
+    // 남은 공간은 0으로 채움
+    for (QDLDL_int i = count; i < padded_size; i++) {
+        buffer[i] = 0.0f;
+    }
+
+    // Adder tree 레벨별 수행
+    QDLDL_int current_size = padded_size;
+    while (current_size > 1) {
+        QDLDL_int half = current_size / 2;
+        for (QDLDL_int i = 0; i < half; i++) {
+            QDLDL_float sum = buffer[2*i] + buffer[2*i + 1];
+#ifdef OSQP_USE_TRUNCATE
+            // truncate는 fesetround(FE_TOWARDZERO)로 이미 설정됨
+            volatile QDLDL_float truncated = sum;
+            buffer[i] = truncated;
+#else
+            buffer[i] = sum;
+#endif
+        }
+        current_size = half;
+    }
+
+    return buffer[0];
+}
 
 // ========================================
 // QDLDL Sample Data Logging
@@ -78,17 +201,14 @@ static QDLDL_int* g_pending_Lnz = NULL;
 
 // Get precision string based on build configuration
 static const char* get_precision_string(void) {
-#ifdef QDLDL_USE_FLEXFLOAT
-    // FlexFloat enabled - use configured precision
-    static char precision_str[32];
-    snprintf(precision_str, sizeof(precision_str), "E%dM%d", FF_exponent_bits, FF_mantissa_bits);
-    return precision_str;
+#ifdef OSQP_USE_TRUNCATE
+    return "truncate";
 #else
     // Standard precision based on QDLDL_float type
     if (sizeof(QDLDL_float) == 8) {
-        return "double";  // E11M52 equivalent
+        return "double";
     } else if (sizeof(QDLDL_float) == 4) {
-        return "float";   // E8M23 equivalent
+        return "float";
     } else {
         return "unknown";
     }
@@ -279,12 +399,10 @@ static void write_sample_metadata(const char* filepath, QDLDL_int n, QDLDL_int n
     fprintf(f, "sizeof_int=%zu\n", sizeof(QDLDL_int));
     fprintf(f, "sizeof_float=%zu\n", sizeof(QDLDL_float));
     fprintf(f, "precision=%s\n", get_precision_string());
-#ifdef QDLDL_USE_FLEXFLOAT
-    fprintf(f, "flexfloat=ON\n");
-    fprintf(f, "exponent_bits=%d\n", FF_exponent_bits);
-    fprintf(f, "mantissa_bits=%d\n", FF_mantissa_bits);
+#ifdef OSQP_USE_TRUNCATE
+    fprintf(f, "truncate=ON\n");
 #else
-    fprintf(f, "flexfloat=OFF\n");
+    fprintf(f, "truncate=OFF\n");
 #endif
     fclose(f);
 }
@@ -376,43 +494,30 @@ static inline float init_reciprocal(float d) {
     return u.f;
 }
 
-#ifdef QDLDL_USE_FLEXFLOAT
-// FlexFloat version of reciprocal computation
+#ifdef OSQP_USE_TRUNCATE
+// Truncate version: mul/add with truncation (toward zero) instead of rounding
 float reciprocal_nr_fma(float d) {
-    // Get initial approximation using magic number (standard float)
-    float x_init = init_reciprocal(d);
+    int old_round = fegetround();
+    fesetround(FE_TOWARDZERO);
 
-    // Convert to FlexFloat
-    flexfloat_t ff_d, ff_x, ff_t, ff_two, ff_zero, ff_neg_d;
+    float x = init_reciprocal(d);
 
-    ff_init_float(&ff_d, d, QDLDL_FF_DESC);
-    ff_init_float(&ff_x, x_init, QDLDL_FF_DESC);  // Use magic number approximation
-    ff_init_float(&ff_t, 0.0f, QDLDL_FF_DESC);
-    ff_init_float(&ff_two, 2.0f, QDLDL_FF_DESC);
-    ff_init_float(&ff_zero, 0.0f, QDLDL_FF_DESC);
+    // Newton-Raphson iterations with separate mul/add and truncation
+    // t = -d * x + 2.0; x = x * t;
+    volatile float tmp = (-d) * x;
+    volatile float t = tmp + 2.0f;
+    x = x * t;
 
-    // Negate d in FlexFloat
-    float neg_d_val = -d;
-    ff_init_float(&ff_neg_d, neg_d_val, QDLDL_FF_DESC);
+    tmp = (-d) * x;
+    t = tmp + 2.0f;
+    x = x * t;
 
-    // Newton-Raphson iterations with FlexFloat arithmetic
-    // Iteration 1: t = fma(-d, x, 2.0); x = fma(x, t, 0.0);
-    ff_fma(&ff_t, &ff_neg_d, &ff_x, &ff_two);
-    ff_fma(&ff_x, &ff_x, &ff_t, &ff_zero);
+    tmp = (-d) * x;
+    t = tmp + 2.0f;
+    x = x * t;
 
-    // Iteration 2
-    ff_fma(&ff_t, &ff_neg_d, &ff_x, &ff_two);
-    ff_fma(&ff_x, &ff_x, &ff_t, &ff_zero);
-
-    // Iteration 3 (may need more iterations for lower precision)
-    ff_fma(&ff_t, &ff_neg_d, &ff_x, &ff_two);
-    ff_fma(&ff_x, &ff_x, &ff_t, &ff_zero);
-
-    // Additional iteration for lower precision (14-bit mantissa)
-    ff_fma(&ff_t, &ff_neg_d, &ff_x, &ff_two);
-    ff_fma(&ff_x, &ff_x, &ff_t, &ff_zero);
-
-    return (float)ff_get_float(&ff_x);
+    fesetround(old_round);
+    return x;
 }
 #else
 // Standard float version
@@ -686,54 +791,29 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
             tmpIdx = LNextSpaceInCol[cidx];
             yVals_cidx = yVals[cidx];
 
-            #ifdef QDLDL_USE_FLEXFLOAT
-            for(j = Lp[cidx]; j < tmpIdx; j++) {
+            #ifdef OSQP_USE_TRUNCATE
+            // Truncate version: mul/add with truncation (toward zero)
+            int old_round_factor = fegetround();
+            fesetround(FE_TOWARDZERO);
 
+            for(j = Lp[cidx]; j < tmpIdx; j++) {
                 // yVals[Li[j]] -= Lx[j] * yVals_cidx;
-                flexfloat_t ff_yVal, ff_Lx, ff_yVals_cidx, ff_product, ff_result, ff_zero, ff_neg_one;
-                ff_init_float(&ff_yVal, yVals[Li[j]], QDLDL_FF_DESC);
-                ff_init_float(&ff_Lx, Lx[j], QDLDL_FF_DESC);
-                ff_init_float(&ff_yVals_cidx, yVals_cidx, QDLDL_FF_DESC);
-                ff_init_float(&ff_zero, 0.0f, QDLDL_FF_DESC);
-                ff_init_float(&ff_neg_one, -1.0f, QDLDL_FF_DESC);
-                ff_init_float(&ff_product, 0.0f, QDLDL_FF_DESC);
-                ff_init_float(&ff_result, 0.0f, QDLDL_FF_DESC);
-                ff_fma(&ff_product, &ff_Lx, &ff_yVals_cidx, &ff_zero);
-                ff_fma(&ff_result, &ff_product, &ff_neg_one, &ff_yVal);
-                yVals[Li[j]] = ff_get_float(&ff_result);
+                volatile float prod = Lx[j] * yVals_cidx;
+                yVals[Li[j]] = yVals[Li[j]] - prod;
             }
 
-            // Now I have the cidx^th element of y = L\b.
-            // so compute the corresponding element of
-            // this row of L and put it into the right place
             Li[tmpIdx] = k;
-            // Lx[tmpIdx] = yVals_cidx * Dinv[cidx];
-            flexfloat_t ff_yVals_cidx, ff_Dinv, ff_Lx, ff_zero2;
-            ff_init_float(&ff_yVals_cidx, yVals_cidx, QDLDL_FF_DESC);
-            ff_init_float(&ff_Dinv, Dinv[cidx], QDLDL_FF_DESC);
-            ff_init_float(&ff_zero2, 0.0f, QDLDL_FF_DESC);
-            ff_init_float(&ff_Lx, 0.0f, QDLDL_FF_DESC);
-            ff_fma(&ff_Lx, &ff_yVals_cidx, &ff_Dinv, &ff_zero2);
-            Lx[tmpIdx] = ff_get_float(&ff_Lx);
+            Lx[tmpIdx] = yVals_cidx * Dinv[cidx];
 
-            // D[k] -= yVals[cidx]*yVals[cidx]*Dinv[cidx];
             // D[k] -= yVals_cidx * Lx[tmpIdx];
-            flexfloat_t ff_Dk, ff_yVals_cidx_sq, ff_temp, ff_Dk_new, ff_zero3, ff_zero4, ff_neg_one2;
-            ff_init_float(&ff_Dk, D[k], QDLDL_FF_DESC);
-            ff_init_float(&ff_yVals_cidx_sq, yVals_cidx, QDLDL_FF_DESC);
-            ff_init_float(&ff_zero3, 0.0f, QDLDL_FF_DESC);
-            ff_init_float(&ff_zero4, 0.0f, QDLDL_FF_DESC);
-            ff_init_float(&ff_neg_one2, -1.0f, QDLDL_FF_DESC);
-            ff_init_float(&ff_temp, 0.0f, QDLDL_FF_DESC);
-            ff_init_float(&ff_Dk_new, 0.0f, QDLDL_FF_DESC);
-            ff_fma(&ff_temp, &ff_yVals_cidx_sq, &ff_yVals_cidx_sq, &ff_zero3); // square
-            ff_fma(&ff_temp, &ff_temp, &ff_Dinv, &ff_zero4); // * Dinv[cidx]
-            ff_fma(&ff_Dk_new, &ff_temp, &ff_neg_one2, &ff_Dk);
-            D[k] = ff_get_float(&ff_Dk_new);
+            volatile float prod_D = yVals_cidx * Lx[tmpIdx];
+            D[k] = D[k] - prod_D;
             LNextSpaceInCol[cidx]++;
+
+            fesetround(old_round_factor);
             #else
             for(j = Lp[cidx]; j < tmpIdx; j++) {
-                
+
                 yVals[Li[j]] -= Lx[j] * yVals_cidx;
             }
 
@@ -787,73 +867,180 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
 
     // printf("Factorization complete.  %" PRId64 " positive entries in D out of %" PRId64 " total.\n",
     //        (int64_t)positiveValuesInD, (int64_t)n);
-    
+
+    // ========================================
+    // Factor 완료 후 L을 CSR로 변환 (Lsolve용 adder tree 지원)
+    // L의 CSR은 L^T의 CSC와 동일 (Ltsolve에서도 활용)
+    // ========================================
+    convert_csc_to_csr(n, Lp, Li, Lx);
 
     return positiveValuesInD;
 }
 
 // Solves (L+I)x = b
+// CSR 포맷 사용 + Adder tree로 row별 연산
+// (L+I)x = b => x_i = b_i - sum_j(L_ij * x_j) for j < i
 void QDLDL_Lsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
                   const QDLDL_float* Lx, QDLDL_float* x) {
     QDLDL_int i = 0;
     QDLDL_int j = 0;
 
-    for(i = 0; i < n; i++) {
-        QDLDL_float val = x[i];
+    // CSR이 초기화되지 않았으면 기존 CSC 방식 사용 (fallback)
+    if (!g_L_csr_initialized || g_L_csr_n != n) {
+        for(i = 0; i < n; i++) {
+            QDLDL_float val = x[i];
 
-        #ifdef QDLDL_USE_FLEXFLOAT
+            #ifdef OSQP_USE_TRUNCATE
+            int old_round_Lsolve = fegetround();
+            fesetround(FE_TOWARDZERO);
 
-        for(j = Lp[i]; j < Lp[i + 1]; j++)
-        {
-            flexfloat_t ff_Lx, ff_val, ff_result;
+            for(j = Lp[i]; j < Lp[i + 1]; j++) {
+                volatile float prod = Lx[j] * val;
+                x[Li[j]] = x[Li[j]] - prod;
+            }
 
-            ff_init_float(&ff_Lx, -Lx[j], QDLDL_FF_DESC);
-            ff_init_float(&ff_val, val, QDLDL_FF_DESC);
-            ff_init_float(&ff_result, x[Li[j]], QDLDL_FF_DESC);
-            ff_fma(&ff_result, &ff_Lx, &ff_val, &ff_result);
-            x[Li[j]] = ff_get_float(&ff_result);
+            fesetround(old_round_Lsolve);
+            #else
+
+            for(j = Lp[i]; j < Lp[i + 1]; j++) {
+                x[Li[j]] -= Lx[j] * val;
+            }
+            #endif
         }
+        return;
+    }
+
+    // CSR 포맷 + Adder tree 사용
+    // L은 strictly lower triangular이므로 row i의 열 인덱스는 모두 i보다 작음
+    // 따라서 forward substitution: x[i] = b[i] - sum_{j<i} L[i,j] * x[j]
+
+    #ifdef OSQP_USE_TRUNCATE
+    int old_round_Lsolve = fegetround();
+    fesetround(FE_TOWARDZERO);
+    #endif
+
+    for (i = 0; i < n; i++) {
+        QDLDL_int row_start = g_L_csr_rowptr[i];
+        QDLDL_int row_end = g_L_csr_rowptr[i + 1];
+        QDLDL_int row_nnz = row_end - row_start;
+
+        if (row_nnz == 0) {
+            // 이 row에 비대각 요소 없음, x[i]는 b[i] 그대로
+            continue;
+        }
+
+        // Stage 1: 모든 곱셈을 병렬로 수행하여 버퍼에 저장
+        for (j = 0; j < row_nnz; j++) {
+            QDLDL_int col = g_L_csr_colind[row_start + j];
+            QDLDL_float val = g_L_csr_values[row_start + j];
+            QDLDL_float prod = val * x[col];
+            #ifdef OSQP_USE_TRUNCATE
+            volatile QDLDL_float truncated = prod;
+            g_adder_tree_buffer[j] = truncated;
+            #else
+            g_adder_tree_buffer[j] = prod;
+            #endif
+        }
+
+        // Stage 2: Adder tree로 합산
+        QDLDL_float sum = adder_tree_sum_qdldl(g_adder_tree_buffer, row_nnz);
+
+        // Stage 3: x[i] = b[i] - sum
+        QDLDL_float result = x[i] - sum;
+        #ifdef OSQP_USE_TRUNCATE
+        volatile QDLDL_float truncated_result = result;
+        x[i] = truncated_result;
         #else
-
-        for(j = Lp[i]; j < Lp[i + 1]; j++) {
-            x[Li[j]] -= Lx[j] * val;
-        }
+        x[i] = result;
         #endif
     }
+
+    #ifdef OSQP_USE_TRUNCATE
+    fesetround(old_round_Lsolve);
+    #endif
 }
 
 // Solves (L+I)'x = b
+// L의 CSR = L^T의 CSC 이므로, L^T의 column 순서로 backward substitution
+// (L^T + I)x = b => x_i = b_i - sum_{j>i} L^T[i,j] * x[j]
+//                       = b_i - sum_{j>i} L[j,i] * x[j]
+// L의 CSR에서 row i는 L의 i번째 row = L^T의 i번째 column
 void QDLDL_Ltsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
                    const QDLDL_float* Lx, QDLDL_float* x) {
     QDLDL_int i = 0;
     QDLDL_int j = 0;
 
-    for(i = n - 1; i >= 0; i--) {
+    // CSR이 초기화되지 않았으면 기존 CSC 방식 사용 (fallback)
+    if (!g_L_csr_initialized || g_L_csr_n != n) {
+        for(i = n - 1; i >= 0; i--) {
+            QDLDL_float val = x[i];
+
+            #ifdef OSQP_USE_TRUNCATE
+            int old_round_Ltsolve = fegetround();
+            fesetround(FE_TOWARDZERO);
+
+            for(j = Lp[i]; j < Lp[i + 1]; j++) {
+                volatile float prod = Lx[j] * x[Li[j]];
+                val = val - prod;
+            }
+            x[i] = val;
+
+            fesetround(old_round_Ltsolve);
+            #else
+
+            for(j = Lp[i]; j < Lp[i + 1]; j++) {
+                val -= Lx[j] * x[Li[j]];
+            }
+            x[i] = val;
+            #endif
+        }
+        return;
+    }
+
+    // CSR 포맷 사용 (L의 CSR = L^T의 CSC)
+    // L^T를 column 순서로 처리 = L의 row 순서로 처리
+    // Backward substitution: i = n-1 부터 0까지
+    // L^T[col i]의 비대각 요소들은 L[row j, col i] for j > i
+    // 이는 L의 CSR에서 row j의 요소 중 colind == i인 것들
+
+    // CSR에서 L^T의 backward substitution:
+    // x[i]가 결정된 후, x[i]를 사용하여 x[col]들을 갱신
+    // L의 CSR row i: L[i, col] for col < i
+    // => L^T[col, i] for col < i
+    // => x[col]의 계산에 L^T[col, i] * x[i]가 기여
+
+    #ifdef OSQP_USE_TRUNCATE
+    int old_round_Ltsolve = fegetround();
+    fesetround(FE_TOWARDZERO);
+    #endif
+
+    // Backward: i = n-1 down to 0
+    // x[i]가 결정되면, L의 CSR row i를 순회하며 x[col]들에서 빼줌
+    for (i = n - 1; i >= 0; i--) {
+        // x[i]는 현재 상태 그대로 (이전 iteration에서 이미 갱신됨)
         QDLDL_float val = x[i];
 
-        #ifdef QDLDL_USE_FLEXFLOAT
+        // L의 CSR row i를 순회: L[i, col] for col < i
+        // 이 값들은 L^T[col, i]이므로, x[col] -= L^T[col, i] * x[i]
+        QDLDL_int row_start = g_L_csr_rowptr[i];
+        QDLDL_int row_end = g_L_csr_rowptr[i + 1];
 
-        for(j = Lp[i]; j < Lp[i + 1]; j++)
-        {
-            // val -= Lx[j] * x[Li[j]];
-            flexfloat_t ff_Lx, ff_xLi, ff_result, ff_zero;
-            
-            ff_init_float(&ff_Lx, -Lx[j], QDLDL_FF_DESC);
-            ff_init_float(&ff_xLi, x[Li[j]], QDLDL_FF_DESC);
-            ff_init_float(&ff_zero, 0.0f, QDLDL_FF_DESC);
-            ff_init_float(&ff_result, val, QDLDL_FF_DESC);
-            ff_fma(&ff_result, &ff_Lx, &ff_xLi, &ff_result);
-            val = ff_get_float(&ff_result);
-        }
-        x[i] = val;
-        #else
+        for (j = row_start; j < row_end; j++) {
+            QDLDL_int col = g_L_csr_colind[j];  // col < i
+            QDLDL_float L_val = g_L_csr_values[j];  // L[i, col] = L^T[col, i]
 
-        for(j = Lp[i]; j < Lp[i + 1]; j++) {
-            val -= Lx[j] * x[Li[j]];
+            #ifdef OSQP_USE_TRUNCATE
+            volatile QDLDL_float prod = L_val * val;
+            x[col] = x[col] - prod;
+            #else
+            x[col] -= L_val * val;
+            #endif
         }
-        x[i] = val;
-        #endif
     }
+
+    #ifdef OSQP_USE_TRUNCATE
+    fesetround(old_round_Ltsolve);
+    #endif
 }
 
 // Solves Ax = b where A has given LDL factors
@@ -867,17 +1054,15 @@ void QDLDL_solve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li, co
 
     // printf("After Lsolve\n");
 
-    #ifdef QDLDL_USE_FLEXFLOAT
+    #ifdef OSQP_USE_TRUNCATE
+    int old_round_solve = fegetround();
+    fesetround(FE_TOWARDZERO);
 
     for(i = 0; i < n; i++) {
-        flexfloat_t xi, ff_Dinv, ff_result, ff_zero;
-        ff_init_float(&xi, x[i], QDLDL_FF_DESC);
-        ff_init_float(&ff_Dinv, Dinv[i], QDLDL_FF_DESC);
-        ff_init_float(&ff_zero, 0.0f, QDLDL_FF_DESC);
-        ff_init_float(&ff_result, 0.0f, QDLDL_FF_DESC);
-        ff_fma(&ff_result, &xi, &ff_Dinv, &ff_zero);
-        x[i] = ff_get_float(&ff_result);
+        x[i] = x[i] * Dinv[i];
     }
+
+    fesetround(old_round_solve);
     #else
 
     for(i = 0; i < n; i++) {

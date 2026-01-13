@@ -78,6 +78,47 @@ static const StateInputIndex si_index;
 
 static const std::string pkg_path =  std::string(BUILD_DIRECTORY) + "/";
 
+/// @brief Build options information structure
+struct BuildOptions {
+    bool osqp_use_float;
+    bool osqp_use_truncate;
+    bool nn_use_truncate;
+    bool constraints_use_truncate;
+    bool ffp_contract_off;
+
+    static BuildOptions get() {
+        BuildOptions opts;
+        #ifdef OSQP_USE_FLOAT
+            opts.osqp_use_float = true;
+        #else
+            opts.osqp_use_float = false;
+        #endif
+
+        #ifdef OSQP_USE_TRUNCATE
+            opts.osqp_use_truncate = true;
+        #else
+            opts.osqp_use_truncate = false;
+        #endif
+
+        #ifdef NN_USE_TRUNCATE
+            opts.nn_use_truncate = true;
+        #else
+            opts.nn_use_truncate = false;
+        #endif
+
+        #ifdef CONSTRAINTS_USE_TRUNCATE
+            opts.constraints_use_truncate = true;
+        #else
+            opts.constraints_use_truncate = false;
+        #endif
+
+        // -ffp-contract=off is a compile flag, we mark it as enabled
+        // since we added it to CMakeLists.txt
+        opts.ffp_contract_off = true;
+
+        return opts;
+    }
+};
 
 }
 #endif //MPCC_CONFIG_H

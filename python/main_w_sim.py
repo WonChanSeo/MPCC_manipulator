@@ -50,15 +50,26 @@ param_value = {'cost': {
 obs_radius = 5         # unit: [cm]
 obs_speed = 0.05       # unit: [m/s]
 
-def print_stats(data_dict, name):
+def print_stats(data_dict, name, build_options=None):
     """
     data_dict: {'key1': array1, 'key2': array2, …}
     name: 'debug_data' 또는 'time_data' 등의 식별 문자열
+    build_options: BuildOptions 객체 (optional)
     """
+    # Print build options first if provided
+    if build_options is not None:
+        print(f"\n=== Build Options ===")
+        print(f"  osqp_use_float:           {build_options.osqp_use_float}")
+        print(f"  osqp_use_truncate:        {build_options.osqp_use_truncate}")
+        print(f"  nn_use_truncate:          {build_options.nn_use_truncate}")
+        print(f"  constraints_use_truncate: {build_options.constraints_use_truncate}")
+        print(f"  ffp_contract_off:         {build_options.ffp_contract_off}")
+        print()
+
     print(f"\n=== Statistics for {name} ===")
 
     # Keys that should only show final value (cumulative/tracking variables)
-    final_value_keys = ['solve_count']
+    final_value_keys = ['solve_count', 'max_iter_reached_count', 'max_iter_solve_failed_count']
 
     for key, arr in data_dict.items():
         # Skip non-array types
@@ -103,7 +114,7 @@ def print_stats(data_dict, name):
     print()
 
 ### NEW FUNCTION START ###
-def save_stats_as_txt(data_dict, name, filename):
+def save_stats_as_txt(data_dict, name, filename, build_options=None):
     """
     print_stats 함수의 콘솔 출력을 그대로 txt 파일에 저장합니다.
     """
@@ -113,10 +124,10 @@ def save_stats_as_txt(data_dict, name, filename):
     try:
         with open(filename, 'w', encoding='utf-8') as f:
             sys.stdout = f  # 표준 출력을 파일로 변경
-            print_stats(data_dict, name) # 이제 이 함수의 print문은 파일에 쓰여집니다.
+            print_stats(data_dict, name, build_options) # 이제 이 함수의 print문은 파일에 쓰여집니다.
     finally:
         sys.stdout = original_stdout # 표준 출력을 다시 원래대로(콘솔) 복원
-    
+
     print(f"Statistics data saved to {filename}")
 ### NEW FUNCTION END ###
 
@@ -187,26 +198,20 @@ def main(args):
     pc = PlanningScene(arm_names=["fr3"], arm_dofs=[7], base_link="world")
     
     ## Obstacle information
-    num_obstacles = 3  # <-- 생성할 장애물 개수
+    num_obstacles = 1  # <-- 첫 번째 장애물만 활성화
 
     # ================================================
-    #                     Case 3
+    #        Single Obstacle Configuration (Obstacle 1 only)
     # ================================================
-    # 각 장애물의 초기 위치 (num_obstacles, 3) 형태로 정의
+    # 첫 번째 장애물만 사용
     obs_positions = np.array([
-        [0.48,  0.218, 0.521],
-        [0.40, -0.200, 0.450],
-        [0.55, -0.200, 0.55]
+        [0.48,  0.218, 0.521],   # Obstacle 1: Z축으로 이동
     ])
 
-    # 각 장애물의 이동 한계와 속도도 배열로 관리
+    # 첫 번째 장애물의 이동 한계
     obs_limits = np.zeros((num_obstacles, 2, 3))
-    # Obstacle 1 & 2: 상한/하한을 초기 위치와 같게 설정하여 고정
     obs_limits[0] = np.array([[0.48,  0.218, 0.421],   # lower limit
-                    [0.48,  0.218, 0.621]])  # upper limit
-    obs_limits[1] = np.array([obs_positions[1], obs_positions[1]])
-    # Obstacle 3: Y축(좌우)으로 -0.2에서 0.2까지 움직이도록 설정
-    obs_limits[2] = np.array([[0.55, -0., 0.450], [0.55, 20, 0.450]])
+                              [0.48,  0.218, 0.621]])  # upper limit
 
     # Create publishers
     node = rclpy.create_node('mpcc_node')
@@ -225,6 +230,9 @@ def main(args):
     N = mpc.pred_horizon
     panda_num_links = mpc.num_links
     robot_dof = mpc.robot_dof
+
+    ## Get build options for logging
+    build_options = MPCC.BuildOptions.get()
 
     ## Create robot data processor
     integrator = MPCC.Integrator()
@@ -275,6 +283,8 @@ def main(args):
     debug_data["solve_count"] = []            # Which solveOCP call this is
     debug_data["top3_total_iter_counts"] = []   # Top 3 max total_iter_count values
     debug_data["top3_solve_nums"] = []  # Solve numbers for each top 3 value
+    debug_data["max_iter_reached_count"] = []  # Total count of times max_iter (250) was reached
+    debug_data["max_iter_solve_failed_count"] = []  # Count of solve failures among max_iter cases
 
     time_data = {}
     time_data["total"] = []
@@ -298,29 +308,20 @@ def main(args):
     
     obs_steps = np.zeros((num_obstacles, 3))
     obs_steps[0, 2] = obs_speed * mpc.Ts  # 첫 번째 장애물은 Z축으로 이동
-    obs_steps[1, 2] = obs_speed * mpc.Ts  # 두 번째 장애물은 Z축으로 이동
-    obs_steps[2, 1] = obs_speed * mpc.Ts  # 세 번째 장애물은 Y축으로 이동
 
     while rclpy.ok():
         start = time.time()
         
         if args.is_obs:
-            # --- 1. 장애물 이동 로직 (수정된 버전) ---
+            # --- 1. 장애물 이동 로직 (첫 번째 장애물만) ---
             # 첫 번째 장애물이 위쪽으로 움직이고 있고(obs_steps > 0), 위쪽 경계선을 넘었을 때
             if obs_steps[0, 2] > 0 and obs_positions[0, 2] >= obs_limits[0, 1, 2]:
                 obs_steps[0, 2] *= -1  # 방향을 아래쪽으로 전환
             # 첫 번째 장애물이 아래쪽으로 움직이고 있고(obs_steps < 0), 아래쪽 경계선을 넘었을 때
             elif obs_steps[0, 2] < 0 and obs_positions[0, 2] <= obs_limits[0, 0, 2]:
                 obs_steps[0, 2] *= -1  # 방향을 위쪽으로 전환
-    
-            # 세 번째 장애물이 오른쪽으로 움직이고 있고(obs_steps > 0), 오른쪽 경계선을 넘었을 때
-            if obs_steps[2, 1] > 0 and obs_positions[2, 1] >= obs_limits[2, 1, 1]:
-                obs_steps[2, 1] *= -1 # 방향을 왼쪽으로 전환
-            # 세 번째 장애물이 왼쪽으로 움직이고 있고(obs_steps < 0), 왼쪽 경계선을 넘었을 때
-            elif obs_steps[2, 1] < 0 and obs_positions[2, 1] <= obs_limits[2, 0, 1]:
-                obs_steps[2, 1] *= -1 # 방향을 오른쪽으로 전환
 
-            # 모든 장애물 위치 업데이트
+            # 장애물 위치 업데이트
             obs_positions += obs_steps
 
             # --- 2. 시각화 및 Planning Scene 업데이트 로직 ---
@@ -357,7 +358,7 @@ def main(args):
                 # 각 마커를 루프 안에서 즉시 퍼블리시
                 marker_pub.publish(m)
 
-        status, state, input, mpc_horizon, compute_time, iter_count, sqp_iter_count, total_iter_count, solve_count, top3_total_iter_counts, top3_solve_nums = mpc.runMPC(state, input, obs_positions, obs_radius) if args.is_obs else mpc.runMPC(state, input)
+        status, state, input, mpc_horizon, compute_time, iter_count, sqp_iter_count, total_iter_count, solve_count, top3_total_iter_counts, top3_solve_nums, max_iter_reached_count, max_iter_solve_failed_count = mpc.runMPC(state, input, obs_positions, obs_radius) if args.is_obs else mpc.runMPC(state, input)
         if status == False:
             print("MPC did not solve properly!!")
             break
@@ -414,6 +415,8 @@ def main(args):
         debug_data["solve_count"].append(solve_count)
         debug_data["top3_total_iter_counts"].append(top3_total_iter_counts)
         debug_data["top3_solve_nums"].append(top3_solve_nums)
+        debug_data["max_iter_reached_count"].append(max_iter_reached_count)
+        debug_data["max_iter_solve_failed_count"].append(max_iter_solve_failed_count)
         time_data["total"].append(compute_time["total"])
         time_data["set_env"].append(compute_time["set_env"])
         time_data["set_qp"].append(compute_time["set_qp"])
@@ -492,7 +495,7 @@ def main(args):
     
     if args.name:
         # 1. 기본 출력 폴더 경로를 정의합니다.
-        output_folder = os.path.join("../result", args.name)
+        output_folder = os.path.join("../result/main_w_sim", args.name)
         
         # 2. 파일이 저장될 전체 경로를 만듭니다.
         stats_path = os.path.join(output_folder, f"{args.name}_inference_times.png")
@@ -518,7 +521,7 @@ def main(args):
 
     if args.name:
         # 1. 기본 출력 폴더 경로를 정의합니다.
-        output_folder = os.path.join("../result", args.name)
+        output_folder = os.path.join("../result/main_w_sim", args.name)
 
         # 2. 파일이 저장될 전체 경로를 만듭니다.
         stats_path_1 = os.path.join(output_folder, f"{args.name}_debug_data.mat")
@@ -556,7 +559,7 @@ def main(args):
 
     if args.name:
         # 1. 기본 출력 폴더 경로를 정의합니다.
-        output_folder = os.path.join("../result", args.name)
+        output_folder = os.path.join("../result/main_w_sim", args.name)
         
         # 2. 파일이 저장될 전체 경로를 만듭니다.
         stats_path = os.path.join(output_folder, f"{args.name}_computation_times.png")
@@ -608,7 +611,7 @@ def main(args):
     # 마지막 4-subplot 그림을 저장합니다.
     if args.name:
         # 1. 기본 출력 폴더 경로를 정의합니다.
-        output_folder = os.path.join("../result", args.name)
+        output_folder = os.path.join("../result/main_w_sim", args.name)
         
         # 2. 저장할 폴더가 (아직) 없으면 자동으로 생성합니다.
         #    (위의 다른 저장 로직에서 이미 생성했을 수도 있지만, 안전을 위해 확인)
@@ -625,7 +628,7 @@ def main(args):
     ### MODIFIED SECTION START ###
     if args.name:
         # 1. 기본 출력 폴더 경로를 정의합니다.
-        output_folder = os.path.join("../result", args.name)
+        output_folder = os.path.join("../result/main_w_sim", args.name)
 
         # 2. 저장할 폴더가 없으면 자동으로 생성합니다.
         os.makedirs(output_folder, exist_ok=True)
@@ -640,7 +643,8 @@ def main(args):
         save_stats_as_txt(
             combined_stats_data,
             name="Combined Statistics (Debug & Time Data)",
-            filename=stats_path
+            filename=stats_path,
+            build_options=build_options
         )
 
         # ▼▼▼▼▼ 6. ReLU deactivation 통계를 텍스트 파일로 저장합니다 ▼▼▼▼▼

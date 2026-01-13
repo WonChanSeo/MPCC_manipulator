@@ -80,19 +80,22 @@ struct RobotData
 
         // 만약 장애물이 하나도 없으면, 최소 거리를 매우 큰 값으로 설정하고 함수를 종료합니다.
         if (num_obstacles == 0) {
-            env_min_dist_.resize(1);
-            env_min_dist_ << 1e5; // 충분히 큰 안전 거리
-            d_env_min_dist_.setZero(PANDA_NUM_LINKS, PANDA_DOF);
+            env_min_dist_.setConstant(1e5); // 충분히 큰 안전 거리
+            d_env_min_dist_.setZero();
             is_env_data_valid = true;
             return;
         }
 
-        // 첫 번째 장애물만 탐지
-        Eigen::VectorXd input_vec(PANDA_DOF + 3);
-        input_vec.head(PANDA_DOF) = q_;
-        input_vec.tail(3) = obs_positions.row(0).transpose();
+        // 모든 장애물에 대한 입력 행렬 구성 (각 열이 하나의 장애물에 대한 입력)
+        // input shape: (PANDA_DOF + 3, num_obstacles)
+        Eigen::MatrixXd inputs(PANDA_DOF + 3, num_obstacles);
+        for (int i = 0; i < num_obstacles; ++i) {
+            inputs.col(i).head(PANDA_DOF) = q_;
+            inputs.col(i).tail(3) = obs_positions.row(i).transpose();
+        }
 
-        auto pred = envcol_model->calculateMlpOutput(input_vec);
+        // 배치 추론: 모든 장애물에 대해 한번에 계산하고 링크별 최소 거리 반환
+        auto pred = envcol_model->calculateMlpOutputBatch(inputs);
 
         env_min_dist_ = pred.first;
         d_env_min_dist_ = pred.second.block(0, 0, PANDA_NUM_LINKS, PANDA_DOF);

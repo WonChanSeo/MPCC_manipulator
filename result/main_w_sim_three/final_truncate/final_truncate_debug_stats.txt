@@ -1,0 +1,42 @@
+
+=== Build Options ===
+  osqp_use_float:           True
+  osqp_use_truncate:        True
+  nn_use_truncate:          True
+  constraints_use_truncate: True
+  ffp_contract_off:         True
+
+
+=== Statistics for Combined Statistics (Debug & Time Data) ===
+q               | mean:   0.024707 | min:  -2.433449 | max:   1.596805 | var:   1.072531 | std:   1.035630 |
+qdot            | mean:   0.000227 | min:  -1.378374 | max:   1.025317 | var:   0.047110 | std:   0.217048 |
+qddot           | mean:   0.000227 | min:  -1.378374 | max:   1.025317 | var:   0.047110 | std:   0.217048 |
+s               | mean:   0.374107 | min:  -0.000125 | max:   0.996405 | var:   0.115168 | std:   0.339364 |
+vs              | mean:   0.042706 | min:  -0.019919 | max:   0.099648 | var:   0.001534 | std:   0.039169 |
+dVs             | mean:   0.001023 | min:  -0.971703 | max:   0.766574 | var:   0.022752 | std:   0.150839 |
+ee_vel          | mean:   0.000076 | min:  -0.270167 | max:   0.210093 | var:   0.004752 | std:   0.068935 |
+ee_speed        | mean:   0.095474 | min:   0.000000 | max:   0.270174 | var:   0.005141 | std:   0.071701 |
+sel_min_dist    | mean:  15.546318 | min:   1.494265 | max:  26.034277 | var:  67.552147 | std:   8.219011 |
+env_min_dist    | mean:   0.527162 | min:   0.043298 | max:   1.500762 | var:   0.072315 | std:   0.268914 |
+mani            | mean:   0.081035 | min:   0.061193 | max:   0.093636 | var:   0.000067 | std:   0.008208 |
+contour_error   | mean:   0.006276 | min:   0.000038 | max:   0.045384 | var:   0.000127 | std:   0.011266 |
+spline_ee_pose  | mean:  -0.008888 | min:  -1.000000 | max:   1.000000 | var:   0.214503 | std:   0.463144 |
+pred_ee_pose    | mean:  -0.005497 | min:  -1.000000 | max:   1.000000 | var:   0.217818 | std:   0.466709 |
+ref_ee_pose     | mean:  -0.004395 | min:  -1.000000 | max:   1.000000 | var:   0.217314 | std:   0.466169 |
+iter_count      | mean: 182.176521 | min:  50.000000 | max: 250.000000 | var: 4663.043390 | std:  68.286480 |
+sqp_iter_count  | mean:   0.856041 | min:   0.000000 | max:   1.000000 | var:   0.123235 | std:   0.351048 |
+total_iter_count | mean: 182.176521 | min:  50.000000 | max: 250.000000 | var: 4663.043390 | std:  68.286480 |
+solve_count     | final value: 2334
+max_iter_reached_count | final value: 336
+max_iter_solve_failed_count | final value: 336
+total           | mean:   0.007636 | min:   0.006647 | max:   0.033964 | var:   0.000001 | std:   0.000709 |
+set_env         | mean:   0.004828 | min:   0.004680 | max:   0.006649 | var:   0.000000 | std:   0.000088 |
+set_qp          | mean:   0.000334 | min:   0.000324 | max:   0.000516 | var:   0.000000 | std:   0.000007 |
+init_solver     | mean:   0.000206 | min:   0.000199 | max:   0.000281 | var:   0.000000 | std:   0.000004 |
+solve_qp        | mean:   0.001251 | min:   0.000388 | max:   0.025556 | var:   0.000000 | std:   0.000655 |
+get_alpha       | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+scaling_time    | mean:   0.000086 | min:   0.000080 | max:   0.000108 | var:   0.000000 | std:   0.000002 |
+permutation_time | mean:   0.000037 | min:   0.000035 | max:   0.000060 | var:   0.000000 | std:   0.000002 |
+factorization_time | mean:   0.000068 | min:   0.000066 | max:   0.000138 | var:   0.000000 | std:   0.000002 |
+rho_updates     | mean:   0.613111 | min:   0.000000 | max:   4.000000 | var:   0.371739 | std:   0.609704 |
+

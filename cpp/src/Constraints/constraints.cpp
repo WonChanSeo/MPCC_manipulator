@@ -15,6 +15,11 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "Constraints/constraints.h"
+
+#ifdef CONSTRAINTS_USE_TRUNCATE
+#include <cfenv>
+#endif
+
 namespace mpcc{
 Constraints::Constraints()
 {   
@@ -213,31 +218,62 @@ double cordic_log(double z, int iterations = 48) {
 //     return f * p;
 // }
 
-// ---- 사용자 근사 다항식들 (float-only) ----
+// ========================================
+// Double precision RBF functions (standard log)
+// Used by getSelcollConstraint and getSingularConstraint
+// ========================================
+double getRBF_double(const double &delta, const double &h)
+{
+    // Grandia, Ruben, et al.
+    // "Feedback mpc for torque-controlled legged robots."
+    // 2019 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). IEEE, 2019.
+    double result;
+    if (h >= delta) result = -log(h+1);
+    else            result = -log(delta+1) - 1/(delta+1) * (h-delta) + 1/(2*pow(delta+1,2)) * pow(h-delta,2);
+    return result;
+}
+
+double getDRBF_double(const double &delta, const double &h)
+{
+    // Grandia, Ruben, et al.
+    // "Feedback mpc for torque-controlled legged robots."
+    // 2019 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). IEEE, 2019.
+    double result;
+    if (h >= delta) result = -1/(h+1);
+    else            result = -1/(delta+1) + 1/(pow(delta+1,2)) * (h-delta);
+    return result;
+}
+
+// ========================================
+// Float precision RBF functions (mac_ln approximation)
+// Used only by getEnvcollConstraint
+// ========================================
+
+// ---- 사용자 근사 다항식들 (float-only, mul + add) ----
 static inline float poly_log2_1pf_deg3(float f) {
-    float p = fmaf(0.15391353f, f, -0.56775215f);
-    p = fmaf(p, f, 1.41348539f);
+    float p = 0.15391353f * f + (-0.56775215f);
+    p = p * f + 1.41348539f;
     return f * p;
 }
 static inline float poly_log2_1pf_deg4(float f) {
-    float p = fmaf(-0.07915037f, f, 0.31221427f);
-    p = fmaf(p, f, -0.66951521f);
-    p = fmaf(p, f,  1.43609808f);
+    float p = (-0.07915037f) * f + 0.31221427f;
+    p = p * f + (-0.66951521f);
+    p = p * f + 1.43609808f;
     return f * p;
 }
 static inline float poly_log2_1pf_deg5(float f) {
-    float p = fmaf( 0.04588701f, f, -0.19442591f);
-    p = fmaf(p, f,  0.41542437f);
-    p = fmaf(p, f, -0.70868282f);
-    p = fmaf(p, f,  1.44182586f);
+    float p = 0.04588701f * f + (-0.19442591f);
+    p = p * f + 0.41542437f;
+    p = p * f + (-0.70868282f);
+    p = p * f + 1.44182586f;
     return f * p;
 }
 static inline float poly_log2_1pf_deg6(float f) {
-    float p = fmaf(-0.03465904f, f, 0.14683537f);
-    p = fmaf(p, f, -0.30403335f);
-    p = fmaf(p, f,  0.46972589f);
-    p = fmaf(p, f, -0.72056392f);
-    p = fmaf(p, f,  1.44269504f);  // = 1/ln(2)
+    float p = (-0.03465904f) * f + 0.14683537f;
+    p = p * f + (-0.30403335f);
+    p = p * f + 0.46972589f;
+    p = p * f + (-0.72056392f);
+    p = p * f + 1.44269504f;  // = 1/ln(2)
     return f * p;
 }
 
@@ -262,18 +298,7 @@ float mac_ln(float y) {
     return mac_log2(y) * 0.6931471805599453f;  // LN2 (float)
 }
 
-// float getRBF(const float &delta, const float &h)
-// {
-//     // Grandia, Ruben, et al. 
-//     // "Feedback mpc for torque-controlled legged robots." 
-//     // 2019 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). IEEE, 2019.
-//     float result;
-//     if (h >= delta) result = -mac_ln(h+1);
-//     else            result = -mac_ln(delta+1) - 1/(delta+1) * (h-delta) + 1/(2*pow(delta+1,2)) * pow(h-delta,2);
-//     return result;
-// }
-
-float getRBF(const float& delta, const float& h) {
+float getRBF_float(const float& delta, const float& h) {
     const float one = 1.0f, half = 0.5f;
     const float t = h - delta;
     const float inv = one / (delta + one);
@@ -283,25 +308,14 @@ float getRBF(const float& delta, const float& h) {
     return -mac_ln(delta + one) - inv * t + half * inv2 * t * t;
 }
 
-Eigen::VectorXf getRBF(const Eigen::VectorXf& delta, const Eigen::VectorXf &h)
+Eigen::VectorXf getRBF_float(const Eigen::VectorXf& delta, const Eigen::VectorXf &h)
 {
     Eigen::VectorXf result(h.size());
-    for(size_t i=0; i<result.size(); i++) result(i) = getRBF(delta(i), h(i));
+    for(size_t i=0; i<result.size(); i++) result(i) = getRBF_float(delta(i), h(i));
     return result;
 }
 
-// float getDRBF(const float &delta, const float &h)
-// {
-//     // Grandia, Ruben, et al. 
-//     // "Feedback mpc for torque-controlled legged robots." 
-//     // 2019 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). IEEE, 2019.
-//     float result;
-//     if (h >= delta) result = -1/(h+1);
-//     else            result = -1/(delta+1) + 1/(pow(delta+1,2)) * (h-delta);
-//     return result;
-// }
-
-float getDRBF(const float& delta, const float& h) {
+float getDRBF_float(const float& delta, const float& h) {
     const float one = 1.0f;
     const float t = h - delta;
     const float inv = one / (delta + one);
@@ -311,10 +325,10 @@ float getDRBF(const float& delta, const float& h) {
     return -inv + inv2 * t;
 }
 
-Eigen::VectorXf getDRBF(const Eigen::VectorXf &delta, const Eigen::VectorXf &h)
+Eigen::VectorXf getDRBF_float(const Eigen::VectorXf &delta, const Eigen::VectorXf &h)
 {
     Eigen::VectorXf result(h.size());
-    for(size_t i=0; i<result.size(); i++) result(i) = getDRBF(delta(i), h(i));
+    for(size_t i=0; i<result.size(); i++) result(i) = getDRBF_float(delta(i), h(i));
     return result;
 }
 
@@ -326,14 +340,14 @@ void Constraints::getSelcollConstraint(const State &x,const Input &u,const Robot
     // const JointVector q = stateToJointVector(x);
     const dJointVector dq = inputTodJointVector(u);
 
-    // compute minimum distance between each links and its derivative
-    float min_dist = 0.01f*static_cast<float>(rb.sel_min_dist_); // unit: [cm] -> [m]
-    Eigen::VectorXf d_min_dist = 0.01f*rb.d_sel_min_dist_.cast<float>(); // unit: [cm]->[m]
+    // compute minimum distance between each links and its derivative (double precision)
+    double min_dist = 0.01*rb.sel_min_dist_; // unit: [cm] -> [m]
+    Eigen::VectorXd d_min_dist = 0.01*rb.d_sel_min_dist_; // unit: [cm]->[m]
 
-    // compute RBF value of minimum distance and its derivative
-    float r = static_cast<float>(param_.tol_selcol)*0.01f; // buffer [cm] -> [m]
-    float delta = -0.5f; // switching point of RBF
-    float RBF = getRBF(delta, min_dist - r);
+    // compute RBF value of minimum distance and its derivative (double precision, standard log)
+    double r = param_.tol_selcol*0.01; // buffer [cm] -> [m]
+    double delta = -0.5; // switching point of RBF
+    double RBF = getRBF_double(delta, min_dist - r);
 
     if(constraint)
     {
@@ -342,10 +356,7 @@ void Constraints::getSelcollConstraint(const State &x,const Input &u,const Robot
         {
             constraint->c_l = -INF;
             constraint->c_u = 0.0;
-            constraint->c = static_cast<double>(
-                -d_min_dist.dot(dq.cast<float>()) + RBF
-            );
-            
+            constraint->c = -d_min_dist.dot(dq) + RBF;
         }
     }
     if(Jac)
@@ -353,9 +364,9 @@ void Constraints::getSelcollConstraint(const State &x,const Input &u,const Robot
         Jac->setZero();
         if(k != N)
         {
-            float d_RBF = getDRBF(delta, min_dist - r);
-            Jac->c_x_i.block(0,si_index.q1,1,PANDA_DOF) = (d_RBF*d_min_dist).transpose().cast<double>();
-            Jac->c_u_i.block(0,si_index.dq1,1,PANDA_DOF) = -d_min_dist.transpose().cast<double>();
+            double d_RBF = getDRBF_double(delta, min_dist - r);
+            Jac->c_x_i.block(0,si_index.q1,1,PANDA_DOF) = (d_RBF*d_min_dist).transpose();
+            Jac->c_u_i.block(0,si_index.dq1,1,PANDA_DOF) = -d_min_dist.transpose();
         }
     }
     return;
@@ -368,14 +379,14 @@ void Constraints::getSingularConstraint(const State &x,const Input &u,const Robo
     // -∇_q μ(q)^T * q_dot + RBF(μ(q) - ɛ) <= 0, where ɛ is buffer
     const dJointVector dq = inputTodJointVector(u);
 
-    //  compute manipulability and its derivative
-    float manipulability = static_cast<float>(rb.manipul_); 
-    Eigen::VectorXf d_manipulability = rb.d_manipul_.cast<float>();
+    //  compute manipulability and its derivative (double precision)
+    double manipulability = rb.manipul_;
+    Eigen::VectorXd d_manipulability = rb.d_manipul_;
 
-    // compute RBF value of manipulability and its derivative
-    float eps = static_cast<float>(param_.tol_sing);    // buffer
-    float delta = -0.5f;  // switching point of RBF
-    float RBF = getRBF(delta, manipulability - eps);
+    // compute RBF value of manipulability and its derivative (double precision, standard log)
+    double eps = param_.tol_sing;    // buffer
+    double delta = -0.5;  // switching point of RBF
+    double RBF = getRBF_double(delta, manipulability - eps);
 
     if(constraint)
     {
@@ -384,9 +395,7 @@ void Constraints::getSingularConstraint(const State &x,const Input &u,const Robo
         {
             constraint->c_l = -INF;
             constraint->c_u = 0.0;
-            constraint->c = static_cast<double>(
-                -d_manipulability.dot(dq.cast<float>()) + RBF
-            );
+            constraint->c = -d_manipulability.dot(dq) + RBF;
         }
     }
     if(Jac)
@@ -394,9 +403,9 @@ void Constraints::getSingularConstraint(const State &x,const Input &u,const Robo
         Jac->setZero();
         if(k!=N)
         {
-            float d_RBF = getDRBF(delta, manipulability - eps);
-            Jac->c_x_i.block(0,si_index.q1,1,PANDA_DOF) = (d_RBF*d_manipulability).transpose().cast<double>();
-            Jac->c_u_i.block(0,si_index.dq1,1,PANDA_DOF) = -d_manipulability.transpose().cast<double>();
+            double d_RBF = getDRBF_double(delta, manipulability - eps);
+            Jac->c_x_i.block(0,si_index.q1,1,PANDA_DOF) = (d_RBF*d_manipulability).transpose();
+            Jac->c_u_i.block(0,si_index.dq1,1,PANDA_DOF) = -d_manipulability.transpose();
         }
     }
     return;
@@ -405,6 +414,11 @@ void Constraints::getSingularConstraint(const State &x,const Input &u,const Robo
 void Constraints::getEnvcollConstraint(const State &x,const Input &u,const RobotData &rb,int k,
                                        XDConstraintInfo *constraint, XDConstraintsJac* Jac)
 {
+#ifdef CONSTRAINTS_USE_TRUNCATE
+    int old_round_envcoll = std::fegetround();
+    std::fesetround(FE_TOWARDZERO);
+#endif
+
     // compute environment-collision constraints
     // -∇_q Γ(q)^T * q_dot + RBF(Γ(q) - r - ɛ) <= 0, where r is radius of obstacle and ɛ is buffer
     // const JointVector q = stateToJointVector(x);
@@ -415,12 +429,11 @@ void Constraints::getEnvcollConstraint(const State &x,const Input &u,const Robot
     Eigen::Matrix<float, PANDA_NUM_LINKS, 1> min_dist = rb.env_min_dist_.cast<float>() - Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(0.01f*static_cast<float>(rb.obs_radius_)*1.2f); // unit: [m]
     Eigen::Matrix<float, PANDA_NUM_LINKS, PANDA_DOF> d_min_dist = rb.d_env_min_dist_.cast<float>(); // unit: [m]
 
-    // compute RBF value of minimum distance and its derivative
+    // compute RBF value of minimum distance and its derivative (float precision with mac_ln)
     float r = 0.01f*static_cast<float>(param_.tol_envcol); //  [cm]->[m]
     float delta = -0.5f; // switching point of RBF
-    Eigen::Matrix<float, PANDA_NUM_LINKS, 1> RBF = getRBF(Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(delta), 
-                                                           min_dist - Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(r));
-    
+    Eigen::Matrix<float, PANDA_NUM_LINKS, 1> RBF = getRBF_float(Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(delta),
+                                                                 min_dist - Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(r));
 
     if(constraint)
     {
@@ -437,12 +450,16 @@ void Constraints::getEnvcollConstraint(const State &x,const Input &u,const Robot
         Jac->setZero(PANDA_NUM_LINKS);
         if(k != N)
         {
-            Eigen::Matrix<float, PANDA_NUM_LINKS, 1> d_RBF = getDRBF(Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(delta), 
-                                                                      min_dist - Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(r));
+            Eigen::Matrix<float, PANDA_NUM_LINKS, 1> d_RBF = getDRBF_float(Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(delta),
+                                                                            min_dist - Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(r));
             Jac->c_x_i.block(0,si_index.q1,PANDA_NUM_LINKS,PANDA_DOF) = (d_RBF.asDiagonal()*d_min_dist).cast<double>();
             Jac->c_u_i.block(0,si_index.dq1,PANDA_NUM_LINKS,PANDA_DOF) = -d_min_dist.cast<double>();
         }
     }
+
+#ifdef CONSTRAINTS_USE_TRUNCATE
+    std::fesetround(old_round_envcoll);
+#endif
     return;
 }
 

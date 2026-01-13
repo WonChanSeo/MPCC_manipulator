@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/_deps/qdldl-build/include
 
-C_FLAGS =  -O3 -O3 -fPIC
+C_FLAGS =  -ffp-contract=off -O3 -O3 -fPIC
 

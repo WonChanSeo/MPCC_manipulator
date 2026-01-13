@@ -44,7 +44,9 @@ MPC::MPC(double Ts,const PathToJson &path)
   param_(path.param_path),
   integrator_(Ts,path),
   robot_(new RobotModel()),
-  solve_count_(0)
+  solve_count_(0),
+  max_iter_reached_count_(0),
+  max_iter_solve_failed_count_(0)
 {
     initial_guess_.resize(N+1);
     top3_total_iter_counts_.clear();
@@ -67,7 +69,9 @@ MPC::MPC(double Ts,const PathToJson &path,const ParamValue &param_value)
   param_(path.param_path, param_value.param),
   integrator_(Ts,path),
   robot_(new RobotModel()),
-  solve_count_(0)
+  solve_count_(0),
+  max_iter_reached_count_(0),
+  max_iter_solve_failed_count_(0)
 {
     initial_guess_.resize(N+1);
     top3_total_iter_counts_.clear();
@@ -164,12 +168,13 @@ void MPC::generateNewInitialGuess(const State &x0)
         State& nxt_x = initial_guess_[i + 1].xk;
 
         // 1) 관절 감속 명령 (한 스텝 0-크로싱 방지)
+        // 최대 가속도의 절반을 사용하여 서서히 정지
         std::array<double, 7> ddq_array{};
         for (int j = 0; j < 7; ++j)
         {
             const double v = cur_u.get_dq(j);
-            if      (v >  1e-4) ddq_array[j] = bounds_param_.get_ddq(j, "l"); // 음의 가속(감속)
-            else if (v < -1e-4) ddq_array[j] = bounds_param_.get_ddq(j, "u"); // 양의 가속(감속)
+            if      (v >  1e-4) ddq_array[j] = 0.5 * bounds_param_.get_ddq(j, "l"); // 음의 가속(감속) - 절반
+            else if (v < -1e-4) ddq_array[j] = 0.5 * bounds_param_.get_ddq(j, "u"); // 양의 가속(감속) - 절반
             else                ddq_array[j] = 0.0;
         }
 
@@ -257,7 +262,9 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     else {
         // Initialize log file if not open
         if (!g_initialGuess_log.is_open()) {
-            g_initialGuess_log.open("/home/mms-wonchan/git/MPCC_manipulator/result/initialGuess_calls.txt", std::ios::out | std::ios::trunc);
+            const char* log_path = std::getenv("INITIAL_GUESS_LOG_PATH");
+            std::string log_file = log_path ? log_path : "/home/mms-wonchan/git/MPCC_manipulator/result/initialGuess_calls.txt";
+            g_initialGuess_log.open(log_file, std::ios::out | std::ios::trunc);
             if (g_initialGuess_log.is_open()) {
                 g_initialGuess_log << "=== generateNewInitialGuess Call Log ===" << std::endl;
                 g_initialGuess_log << "Format: [COLD_START] solve_count, reason" << std::endl;
@@ -300,6 +307,12 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     int total_iter_count = 0;
     solver_interface_->solveOCP(initial_guess_, &sqp_status, &time_nmpc, iter_count, sqp_iter_count, total_iter_count, solve_count_ + 1);
    
+    // Track max_iter reached cases
+    bool is_max_iter_reached = (sqp_status == MAX_ITER_EXCEEDED || sqp_status == QP_MaxIterReached);
+    if (is_max_iter_reached) {
+        max_iter_reached_count_++;
+    }
+
     if(sqp_status == SOLVED)
     {
         valid_initial_guess_ = true;
@@ -333,6 +346,11 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
         std::cout << "===================================================" << std::endl;
         valid_initial_guess_ = false;
         mpc_return.mpc_horizon = initial_guess_;
+
+        // Track solve failures among max_iter cases
+        if (is_max_iter_reached) {
+            max_iter_solve_failed_count_++;
+        }
     }
 
     printf("AFTER initial_guess_[0].uk: [%f, %f, %f, %f, %f, %f, %f, %f]\n",
@@ -402,6 +420,8 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
 
     mpc_return.top3_total_iter_counts = top3_total_iter_counts_;
     mpc_return.top3_solve_nums = top3_solve_nums_;
+    mpc_return.max_iter_reached_count = max_iter_reached_count_;
+    mpc_return.max_iter_solve_failed_count = max_iter_solve_failed_count_;
 
     if(sqp_status == SOLVED || 
        ((sqp_status == MAX_ITER_EXCEEDED || sqp_status == QP_MaxIterReached) && num_valid_guess_failed_ < 5))

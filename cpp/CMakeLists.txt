@@ -2,23 +2,22 @@ cmake_minimum_required(VERSION 3.10)
 project(MPCC)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "-O2")
+set(CMAKE_CXX_FLAGS "-O2 -ffp-contract=off")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# FlexFloat option for NN inference precision testing
-option(NN_USE_FLEXFLOAT "Enable FlexFloat precision control for NN inference" OFF)
-set(NN_FF_EXPONENT_BITS "8" CACHE STRING "FlexFloat exponent bits for NN")
-set(NN_FF_MANTISSA_BITS "23" CACHE STRING "FlexFloat mantissa bits for NN")
+# OSQP build options (for BuildOptions struct in config.h)
+option(OSQP_USE_FLOAT "OSQP uses single precision float (mirrors OSQP build)" OFF)
+option(OSQP_USE_TRUNCATE "OSQP uses truncation mode (mirrors OSQP build)" OFF)
 
-if(NN_USE_FLEXFLOAT)
-  message(STATUS "NN FlexFloat precision control: ON")
-  message(STATUS "  NN_FF_EXPONENT_BITS: ${NN_FF_EXPONENT_BITS}")
-  message(STATUS "  NN_FF_MANTISSA_BITS: ${NN_FF_MANTISSA_BITS}")
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/External/flexfloat/include)
-  add_definitions(-DNN_USE_FLEXFLOAT)
-  add_definitions(-DNN_FF_exponent_bits=${NN_FF_EXPONENT_BITS})
-  add_definitions(-DNN_FF_mantissa_bits=${NN_FF_MANTISSA_BITS})
+if(OSQP_USE_FLOAT)
+  message(STATUS "OSQP float mode: ON")
+  add_definitions(-DOSQP_USE_FLOAT)
+endif()
+
+if(OSQP_USE_TRUNCATE)
+  message(STATUS "OSQP truncation mode: ON")
+  add_definitions(-DOSQP_USE_TRUNCATE)
 endif()
 
 # QDLDL Sample Logging option (inherited from OSQP build)
@@ -26,6 +25,20 @@ option(QDLDL_ENABLE_SAMPLE_LOGGING "Enable QDLDL sample data logging" OFF)
 if(QDLDL_ENABLE_SAMPLE_LOGGING)
   message(STATUS "QDLDL sample logging: ON")
   add_definitions(-DQDLDL_ENABLE_SAMPLE_LOGGING)
+endif()
+
+# Truncate mode options (use truncation instead of rounding for float operations)
+option(NN_USE_TRUNCATE "Enable truncation mode for NN inference" OFF)
+option(CONSTRAINTS_USE_TRUNCATE "Enable truncation mode for constraints (getEnvcollConstraint)" OFF)
+
+if(NN_USE_TRUNCATE)
+  message(STATUS "NN truncation mode: ON")
+  add_definitions(-DNN_USE_TRUNCATE)
+endif()
+
+if(CONSTRAINTS_USE_TRUNCATE)
+  message(STATUS "Constraints truncation mode: ON")
+  add_definitions(-DCONSTRAINTS_USE_TRUNCATE)
 endif()
 
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/External/Eigen/cmake")
@@ -66,10 +79,6 @@ include_directories(
 )
 
 
-if(NN_USE_FLEXFLOAT)
-  set(FLEXFLOAT_NN_SRC ${CMAKE_CURRENT_SOURCE_DIR}/External/flexfloat/src/flexfloat.c)
-endif()
-
 add_library(MPCC_LIB SHARED
         src/types.cpp
         src/Model/robot_model.cpp
@@ -90,7 +99,6 @@ add_library(MPCC_LIB SHARED
         src/Params/track.cpp
         include/config.h
         include/Model/robot_model.h
-        ${FLEXFLOAT_NN_SRC}
         )
 target_link_libraries(MPCC_LIB PUBLIC
         ${RBDL_LIBRARY}

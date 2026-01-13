@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/include/public -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/include/public
 
-C_FLAGS =  -O3 -fPIE
+C_FLAGS =  -ffp-contract=off -O3 -fPIE
 
