@@ -341,8 +341,9 @@ void Constraints::getSelcollConstraint(const State &x,const Input &u,const Robot
     const dJointVector dq = inputTodJointVector(u);
 
     // compute minimum distance between each links and its derivative (double precision)
-    double min_dist = 0.01*rb.sel_min_dist_; // unit: [cm] -> [m]
-    Eigen::VectorXd d_min_dist = 0.01*rb.d_sel_min_dist_; // unit: [cm]->[m]
+    // Note: 0.01 scale is already applied in the last layer weights/biases
+    double min_dist = rb.sel_min_dist_; // unit: [m] (already scaled in NN)
+    Eigen::VectorXd d_min_dist = rb.d_sel_min_dist_; // unit: [m] (already scaled in NN)
 
     // compute RBF value of minimum distance and its derivative (double precision, standard log)
     double r = param_.tol_selcol*0.01; // buffer [cm] -> [m]

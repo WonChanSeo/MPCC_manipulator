@@ -692,57 +692,36 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         if(!solveQP(Hess_, grad_obj_, jac_constr_, l_-constr_, u_-constr_, step_, step_lambda_, qp_status_, iter_count))
         {
             total_iter_count += iter_count;  // Accumulate QP iterations
-            printf("QP solve FAILED : %d \n", qp_status_);
-            if (g_solveQP_fail_log.is_open()) {
-                g_solveQP_fail_log << "[SQP_solveQP_FAIL] " << current_solve_count_ << ", " << sqp_iter_
-                                  << ", qp_status=" << static_cast<int>(qp_status_) << std::endl;
-                g_solveQP_fail_log.flush();
-            }
-            // Record timing even on failure
-            mpc_time->set_qp += std::chrono::duration_cast<std::chrono::duration<double>>(end_set_qp - start_set_qp).count();
-            mpc_time->init_solver += last_init_solver_time_;
-            mpc_time->solve_qp += last_solve_time_ + last_factorization_time_;  // ADMM + factorization
-            mpc_time->scaling_time += last_scaling_time_;
-            mpc_time->permutation_time += last_permutation_time_;
-            mpc_time->factorization_time += last_factorization_time_;
-            mpc_time->rho_updates += last_rho_updates_;
             switch (qp_status_)
             {
             case OsqpEigen::Status::DualInfeasibleInaccurate:
                 (*status) = QP_DualInfeasibleInaccurate;
-                printf("QP_DualInfeasibleInaccurate\n");
                 break;
             case OsqpEigen::Status::PrimalInfeasibleInaccurate:
                 (*status) = QP_PrimalInfeasibleInaccurate;
-                printf("QP_PrimalInfeasibleInaccurate\n");
                 break;
             case OsqpEigen::Status::SolvedInaccurate:
                 (*status) = QP_SolvedInaccurate;
-                printf("QP_SolvedInaccurate\n");
                 break;
             case OsqpEigen::Status::MaxIterReached:
                 (*status) = QP_MaxIterReached;
-                printf("QP_MaxIterReached\n");
                 break;
             case OsqpEigen::Status::PrimalInfeasible:
                 (*status) = QP_PrimalInfeasible;
-                printf("QP_PrimalInfeasible\n");
                 break;
             case OsqpEigen::Status::DualInfeasible:
                 (*status) = QP_DualInfeasible;
-                printf("QP_DualInfeasible\n");
                 break;
             case OsqpEigen::Status::Sigint:
                 (*status) = Sigint;
-                printf("Sigint\n");
                 break;
             }
-
-            break;
         }
-
-        // Accumulate QP iterations for successful solve
-        total_iter_count += iter_count;
+        else
+        {
+            // Accumulate QP iterations for successful solve
+            total_iter_count += iter_count;
+        }
 
         // printf("qp_status_: %d\n", qp_status_);
         // printf("*status: %d\n", (*status));
@@ -782,21 +761,6 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
 
         auto end_solve_qp = std::chrono::high_resolution_clock::now();
         auto start_get_alpha = std::chrono::high_resolution_clock::now();
-
-        // <<< START: 추가할 코드 >>>
-        // =========================================================================
-        // 현재 SQP 반복 횟수와 함께 step_ 및 step_lambda_ 벡터를 출력합니다.
-        std::cout << "===== SQP Iteration: " << sqp_iter_ << " =====" << std::endl;
-        
-        // step_ 벡터 출력 (결정 변수의 변화량)
-        std::cout << "step_ (" << step_.size() << " x 1): \n" << step_.transpose() << std::endl;
-        
-        // step_lambda_ 벡터 출력 (라그랑주 승수의 변화량)
-        // std::cout << "step_lambda_ (" << step_lambda_.size() << " x 1): \n" << step_lambda_.transpose() << std::endl;
-        
-        std::cout << "========================================" << std::endl;
-        // =========================================================================
-        // <<< END: 추가할 코드 >>>
 
         step_lambda_ -= lambda_;
 
@@ -838,12 +802,8 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         // if(primal_step_norm_ < sqp_param_.eps_prim && dual_step_norm_ < sqp_param_.eps_dual)
         if(primal_step_norm_ < sqp_param_.eps_prim)
         {
-            printf("primal_step_norm SUCCESS\n");
             (*status) = SOLVED;
             break;
-        }
-        else {
-            printf("primal_step_norm FAILED\n");
         }
     }
     if(sqp_iter_ == sqp_param_.max_iter) (*status) = MAX_ITER_EXCEEDED;
@@ -852,17 +812,16 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
     mpc_time->total = std::chrono::duration_cast<std::chrono::duration<double>>(end_total - start_total).count();
 
     sqp_iter_count = sqp_iter_ + 1;
+    printf("[SQP] sqp_iter_=%d, sqp_iter_count=%d, total_iter_count=%d\n", sqp_iter_, sqp_iter_count, total_iter_count);
 
     if((*status) == SOLVED)
     {
-        printf("SOLVED , sqp_iter_: %d\n", sqp_iter_);
         opt_sol = initial_guess_;
         return true;
     }
     else
     {
-        printf("NOT SOLVED , sqp_iter_: %d\n", sqp_iter_);
-        // opt_sol = zero_guess;
+        opt_sol = zero_guess;
         return false;
     }
 }

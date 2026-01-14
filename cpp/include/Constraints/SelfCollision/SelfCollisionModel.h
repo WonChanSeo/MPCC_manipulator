@@ -17,10 +17,11 @@ namespace mpcc
         struct MLP
         {
             ~MLP() { std::cout << "MLP terminate" << std::endl; }
-            std::vector<Eigen::MatrixXd> weight;
-            std::vector<Eigen::VectorXd> bias;
-            std::vector<Eigen::VectorXd> hidden;
-            std::vector<Eigen::MatrixXd> hidden_derivative;
+            // --- 신경망 파라미터 (FP32) ---
+            std::vector<Eigen::MatrixXf> weight;
+            std::vector<Eigen::VectorXf> bias;
+            std::vector<Eigen::VectorXf> hidden;
+            std::vector<Eigen::MatrixXf> hidden_derivative;
 
             std::vector<std::string> w_path;
             std::vector<std::string> b_path;
@@ -33,17 +34,17 @@ namespace mpcc
             Eigen::VectorXd n_hidden;
             int n_layer;
 
-            Eigen::VectorXd input;
-            Eigen::VectorXd output;
-            Eigen::MatrixXd output_derivative;
+            Eigen::VectorXf input;
+            Eigen::VectorXf output;
+            Eigen::MatrixXf output_derivative;
 
             bool is_nerf;
-            Eigen::VectorXd input_nerf;
+            Eigen::VectorXf input_nerf;
 
             bool loadweightfile_verbose = false;
             bool loadbiasfile_verbose = false;
         };
-        
+
         public:
             SelCollNNmodel();
             SelCollNNmodel(const std::string & file_path);
@@ -59,13 +60,13 @@ namespace mpcc
             void loadNetwork();
             void initializeNetwork(int n_input, int n_output, Eigen::VectorXd n_hidden, bool is_nerf);
 
-            double ReLU(double input)
+            float ReLU(float input)
             {
-                return std::max(0.0, input);
+                return std::max(0.0f, input);
             }
-            double ReLU_derivative(double input)
+            float ReLU_derivative(float input)
             {
-                return (input > 0)? 1.0 : 0.0;
+                return (input > 0.0f) ? 1.0f : 0.0f;
             }
     };
 }

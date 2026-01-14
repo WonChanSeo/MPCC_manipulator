@@ -155,7 +155,7 @@ extern const char * OSQP_ERROR_MESSAGE[];
 # define OSQP_ADAPTIVE_RHO_FIXED (100)
 
 // termination parameters
-# define OSQP_MAX_ITER              (250) // MODI 4000
+# define OSQP_MAX_ITER              (500) // MODI 4000
 # define OSQP_EPS_ABS               (0.0009765625f)  // 1/1024 = 2^(-10) for hardware-friendly computation
 # define OSQP_EPS_REL               (0.0009765625f)  // 1/1024 = 2^(-10) for hardware-friendly computation
 # define OSQP_EPS_PRIM_INF          (1E-4)

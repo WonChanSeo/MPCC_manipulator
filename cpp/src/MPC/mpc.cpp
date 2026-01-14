@@ -147,89 +147,102 @@ double MPC::project_vs_joint(double /*s*/,
     return 0.0;
 }
 
-/* ===================== Cold start: 비상정지 기반 initial guess ===================== */
+/* ===================== Cold start: MPCC_original과 동일 ===================== */
 void MPC::generateNewInitialGuess(const State &x0)
 {
-    std::cout << "====================================================================" << std::endl;
-    std::cout << "[MPC] Generating a new initial guess based on maximum deceleration." << std::endl;
-
-    initial_guess_[0] = initial_guess_[1];
-    initial_guess_[0].xk = x0;
-
-    const double dVs_min = bounds_param_.get_dVs("l"); // 보통 음수(최대 감속)
-    const double dVs_max = bounds_param_.get_dVs("u"); // 보통 양수(최대 가속)
-
-    // ★ off-by-one: next index(i+1) 접근하므로 i<N
-    for (int i = 0; i < N; ++i)
+    std::cout << "generate new initial guess!!" << std::endl;
+    for(int i = 0; i <= N; i++)
     {
-        State& cur_x = initial_guess_[i].xk;
-        Input& cur_u = initial_guess_[i].uk;
-        Input& nxt_u = initial_guess_[i + 1].uk;
-        State& nxt_x = initial_guess_[i + 1].xk;
-
-        // 1) 관절 감속 명령 (한 스텝 0-크로싱 방지)
-        // 최대 가속도의 절반을 사용하여 서서히 정지
-        std::array<double, 7> ddq_array{};
-        for (int j = 0; j < 7; ++j)
-        {
-            const double v = cur_u.get_dq(j);
-            if      (v >  1e-4) ddq_array[j] = 0.5 * bounds_param_.get_ddq(j, "l"); // 음의 가속(감속) - 절반
-            else if (v < -1e-4) ddq_array[j] = 0.5 * bounds_param_.get_ddq(j, "u"); // 양의 가속(감속) - 절반
-            else                ddq_array[j] = 0.0;
-        }
-
-        // 2) vs를 dq에서 정사영으로 동기화
-        Eigen::VectorXd q_now  = stateToJointVector(cur_x);
-        Eigen::VectorXd dq_now = inputToDqVector(cur_u);
-
-        // double vs_now = project_vs_workspace(cur_x.s, q_now, dq_now);
-        // cur_x.vs = vs_now;
-
-        // 3) 1-스텝 예측 vs_next → dVs = (vs_next - vs_now)/Ts_
-        Eigen::VectorXd dq_next = dq_now;
-        for (int j = 0; j < 7; ++j) {
-            dq_next[j] = dq_now[j] + ddq_array[j] * Ts_;
-            if (dq_now[j] * dq_next[j] < 0.0) dq_next[j] = 0.0; // 0-크로싱 방지
-        }
-
-        Eigen::Map<Eigen::VectorXd> ddq_vec(ddq_array.data(), 7);
-        Eigen::VectorXd q_next_pred = q_now + dq_now * Ts_ + 0.5 * ddq_vec * (Ts_ * Ts_);
-        double s_next_pred = cur_x.s + cur_x.vs * Ts_;
-
-        // 예측 기하 사용(보수적으로 현재 기하 사용해도 됨)
-        double vs_next = project_vs_workspace(s_next_pred, q_next_pred, dq_next);
-
-        double dVs = (vs_next - cur_x.vs) / Ts_;
-        if (cur_x.vs * vs_next < 0.0) {          // vs 부호 반전 시 정확히 0으로 스냅
-            dVs = -cur_x.vs / Ts_;
-            vs_next = 0.0;
-        }
-        dVs = std::clamp(dVs, dVs_min, dVs_max);
-
-        // 4) 현재 스텝 입력에 dVs 반영 → 적분
-        cur_u.set_dVs(dVs);
-        nxt_x = integrator_.RK4(cur_x, cur_u, Ts_);
-
-        // 5) 다음 스텝 dq 초기화(예측값 기록)
-        for (int j = 0; j < 7; ++j) {
-            nxt_u.set_dq(j, dq_next[j]);
-        }
-
-        printf("----------------------------------------------------\n");
-        printf("Step %d - Current Input: [%f, %f, %f, %f, %f, %f, %f, %f], ddq: [%f, %f, %f, %f, %f, %f, %f], dVs: [%f]\n", i, cur_u.dq1, cur_u.dq2, cur_u.dq3, cur_u.dq4, cur_u.dq5, cur_u.dq6, cur_u.dq7, cur_u.dVs, ddq_array[0], ddq_array[1], ddq_array[2], ddq_array[3], ddq_array[4], ddq_array[5], ddq_array[6], dVs);
-        printf("Step %d - Current State: [q: %f, %f %f %f %f %f %f, s: %f, vs: %f]\n", i, cur_x.q1, cur_x.q2, cur_x.q3, cur_x.q4, cur_x.q5, cur_x.q6, cur_x.q7, cur_x.s, cur_x.vs);
-        printf("Next State: [q: %f, %f %f %f %f %f %f, s: %f, vs: %f]\n", nxt_x.q1, nxt_x.q2, nxt_x.q3, nxt_x.q4, nxt_x.q5, nxt_x.q6, nxt_x.q7, nxt_x.s, nxt_x.vs);
-        printf("----------------------------------------------------\n");
+        initial_guess_[i].xk = x0;
+        initial_guess_[i].uk.setZero();
     }
-
-    // 마지막 입력은 안전하게 0
-    initial_guess_[N].uk.setZero();
-
     unwrapInitialGuess();
-
-    std::cout << "====================================================================" << std::endl;
     valid_initial_guess_ = true;
 }
+
+/* ===================== Cold start: 비상정지 기반 initial guess (미사용) ===================== */
+// void MPC::generateNewInitialGuess_EmergencyStop(const State &x0)
+// {
+//     std::cout << "====================================================================" << std::endl;
+//     std::cout << "[MPC] Generating a new initial guess based on maximum deceleration." << std::endl;
+//
+//     initial_guess_[0] = initial_guess_[1];
+//     initial_guess_[0].xk = x0;
+//
+//     const double dVs_min = bounds_param_.get_dVs("l"); // 보통 음수(최대 감속)
+//     const double dVs_max = bounds_param_.get_dVs("u"); // 보통 양수(최대 가속)
+//
+//     // ★ off-by-one: next index(i+1) 접근하므로 i<N
+//     for (int i = 0; i < N; ++i)
+//     {
+//         State& cur_x = initial_guess_[i].xk;
+//         Input& cur_u = initial_guess_[i].uk;
+//         Input& nxt_u = initial_guess_[i + 1].uk;
+//         State& nxt_x = initial_guess_[i + 1].xk;
+//
+//         // 1) 관절 감속 명령 (한 스텝 0-크로싱 방지)
+//         // 최대 가속도의 절반을 사용하여 서서히 정지
+//         std::array<double, 7> ddq_array{};
+//         for (int j = 0; j < 7; ++j)
+//         {
+//             const double v = cur_u.get_dq(j);
+//             if      (v >  1e-4) ddq_array[j] = 0.5 * bounds_param_.get_ddq(j, "l"); // 음의 가속(감속) - 절반
+//             else if (v < -1e-4) ddq_array[j] = 0.5 * bounds_param_.get_ddq(j, "u"); // 양의 가속(감속) - 절반
+//             else                ddq_array[j] = 0.0;
+//         }
+//
+//         // 2) vs를 dq에서 정사영으로 동기화
+//         Eigen::VectorXd q_now  = stateToJointVector(cur_x);
+//         Eigen::VectorXd dq_now = inputToDqVector(cur_u);
+//
+//         // double vs_now = project_vs_workspace(cur_x.s, q_now, dq_now);
+//         // cur_x.vs = vs_now;
+//
+//         // 3) 1-스텝 예측 vs_next → dVs = (vs_next - vs_now)/Ts_
+//         Eigen::VectorXd dq_next = dq_now;
+//         for (int j = 0; j < 7; ++j) {
+//             dq_next[j] = dq_now[j] + ddq_array[j] * Ts_;
+//             if (dq_now[j] * dq_next[j] < 0.0) dq_next[j] = 0.0; // 0-크로싱 방지
+//         }
+//
+//         Eigen::Map<Eigen::VectorXd> ddq_vec(ddq_array.data(), 7);
+//         Eigen::VectorXd q_next_pred = q_now + dq_now * Ts_ + 0.5 * ddq_vec * (Ts_ * Ts_);
+//         double s_next_pred = cur_x.s + cur_x.vs * Ts_;
+//
+//         // 예측 기하 사용(보수적으로 현재 기하 사용해도 됨)
+//         double vs_next = project_vs_workspace(s_next_pred, q_next_pred, dq_next);
+//
+//         double dVs = (vs_next - cur_x.vs) / Ts_;
+//         if (cur_x.vs * vs_next < 0.0) {          // vs 부호 반전 시 정확히 0으로 스냅
+//             dVs = -cur_x.vs / Ts_;
+//             vs_next = 0.0;
+//         }
+//         dVs = std::clamp(dVs, dVs_min, dVs_max);
+//
+//         // 4) 현재 스텝 입력에 dVs 반영 → 적분
+//         cur_u.set_dVs(dVs);
+//         nxt_x = integrator_.RK4(cur_x, cur_u, Ts_);
+//
+//         // 5) 다음 스텝 dq 초기화(예측값 기록)
+//         for (int j = 0; j < 7; ++j) {
+//             nxt_u.set_dq(j, dq_next[j]);
+//         }
+//
+//         printf("----------------------------------------------------\n");
+//         printf("Step %d - Current Input: [%f, %f, %f, %f, %f, %f, %f, %f], ddq: [%f, %f, %f, %f, %f, %f, %f], dVs: [%f]\n", i, cur_u.dq1, cur_u.dq2, cur_u.dq3, cur_u.dq4, cur_u.dq5, cur_u.dq6, cur_u.dq7, cur_u.dVs, ddq_array[0], ddq_array[1], ddq_array[2], ddq_array[3], ddq_array[4], ddq_array[5], ddq_array[6], dVs);
+//         printf("Step %d - Current State: [q: %f, %f %f %f %f %f %f, s: %f, vs: %f]\n", i, cur_x.q1, cur_x.q2, cur_x.q3, cur_x.q4, cur_x.q5, cur_x.q6, cur_x.q7, cur_x.s, cur_x.vs);
+//         printf("Next State: [q: %f, %f %f %f %f %f %f, s: %f, vs: %f]\n", nxt_x.q1, nxt_x.q2, nxt_x.q3, nxt_x.q4, nxt_x.q5, nxt_x.q6, nxt_x.q7, nxt_x.s, nxt_x.vs);
+//         printf("----------------------------------------------------\n");
+//     }
+//
+//     // 마지막 입력은 안전하게 0
+//     initial_guess_[N].uk.setZero();
+//
+//     unwrapInitialGuess();
+//
+//     std::cout << "====================================================================" << std::endl;
+//     valid_initial_guess_ = true;
+// }
 
 bool MPC::runMPC(MPCReturn &mpc_return, State &x0, Input &u0)
 {
@@ -345,6 +358,7 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
         }
         std::cout << "===================================================" << std::endl;
         valid_initial_guess_ = false;
+        num_valid_guess_failed_++;  // MPCC_original과 동일하게 추가
         mpc_return.mpc_horizon = initial_guess_;
 
         // Track solve failures among max_iter cases
