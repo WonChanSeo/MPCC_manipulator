@@ -12,7 +12,7 @@ OSQP_USE_FLOAT=ON
 # ========================================
 # Truncation mode enabled for all components - hardcoded ON
 OSQP_USE_TRUNCATE=ON
-NN_USE_TRUNCATE=ON
+NN_USE_TRUNCATE=OFF
 CONSTRAINTS_USE_TRUNCATE=ON
 
 # ========================================
