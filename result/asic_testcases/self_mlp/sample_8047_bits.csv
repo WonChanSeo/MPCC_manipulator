@@ -1,0 +1,15 @@
+# Self Collision MLP Test Case (FP32 Bits) - Sample 8047
+# Detailed: NO
+# n_input: 7, n_output: 1
+# n_hidden_layers: 2
+# Format: 8-digit hexadecimal (32-bit IEEE 754)
+
+# INPUT (nerf_input) - 21 values
+bf601412,bf544015,bbf2c6a5,c01288c9,bbb33398,3fbae83e,bdc5286b,bf448a95,bf3cc15d,bbf2c613,bf40aa0f,bbb3335d,3f7e6fb1,bdc4da7e,3f2408f7,3f2cf008,3f7ffe33,bf289264,3f7fff05,3de203b2,3f7ed08d
+
+# OUTPUT - 1 values
+3d8ba94b
+
+# JACOBIAN - 1 x 7
+bdcbda69,3e5ca0ea,3d9cdf68,ba8fd654,39b5ca31,3d4aa9d9,badf671a
+
