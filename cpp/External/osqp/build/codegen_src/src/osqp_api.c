@@ -19,6 +19,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 // Truncation mode support
 #ifdef OSQP_USE_TRUNCATE
@@ -185,6 +186,214 @@ static void close_admm_log(void) {
     g_admm_log_file = NULL;
   }
 }
+
+// ===== ASIC Testcase: Save P and A matrices =====
+#define OSQP_TESTCASE_SAVE_INTERVAL 50
+#define OSQP_TESTCASE_DIR "../result/asic_testcases/osqp"
+
+static void save_csc_matrix_float(FILE* f, const char* name, const OSQPMatrix* M) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPInt* Mi = OSQPMatrix_get_i(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+  OSQPInt m = OSQPMatrix_get_m(M);
+  OSQPInt nnz = Mp[n];
+
+  fprintf(f, "# %s (CSC format) - %lld x %lld, nnz=%lld\n", name, (long long)m, (long long)n, (long long)nnz);
+  fprintf(f, "# col_ptr (%lld values)\n", (long long)(n + 1));
+  for (OSQPInt j = 0; j <= n; j++) {
+    fprintf(f, "%lld", (long long)Mp[j]);
+    if (j < n) fprintf(f, ",");
+  }
+  fprintf(f, "\n# row_idx (%lld values)\n", (long long)nnz);
+  for (OSQPInt k = 0; k < nnz; k++) {
+    fprintf(f, "%lld", (long long)Mi[k]);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n# values (%lld values)\n", (long long)nnz);
+  for (OSQPInt k = 0; k < nnz; k++) {
+    fprintf(f, "%.8e", (double)Mx[k]);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+// Save dense matrix (expand CSC to full matrix) - float format
+static void save_dense_matrix_float(FILE* f, const char* name, const OSQPMatrix* M, int is_symmetric) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPInt* Mi = OSQPMatrix_get_i(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+  OSQPInt m = OSQPMatrix_get_m(M);
+
+  fprintf(f, "# %s (dense) - %lld x %lld\n", name, (long long)m, (long long)n);
+  for (OSQPInt i = 0; i < m; i++) {
+    for (OSQPInt j = 0; j < n; j++) {
+      OSQPFloat val = 0.0;
+      // Search for (i,j) in CSC
+      for (OSQPInt k = Mp[j]; k < Mp[j + 1]; k++) {
+        if (Mi[k] == i) {
+          val = Mx[k];
+          break;
+        }
+      }
+      // For symmetric matrices (upper triangular stored), also check (j,i)
+      if (is_symmetric && val == 0.0 && i != j && j < m) {
+        for (OSQPInt k = Mp[i]; k < Mp[i + 1]; k++) {
+          if (Mi[k] == j) {
+            val = Mx[k];
+            break;
+          }
+        }
+      }
+      fprintf(f, "%.8e", (double)val);
+      if (j < n - 1) fprintf(f, ",");
+    }
+    fprintf(f, "\n");
+  }
+  fprintf(f, "\n");
+}
+
+// Save dense matrix (expand CSC to full matrix) - bits format
+static void save_dense_matrix_bits(FILE* f, const char* name, const OSQPMatrix* M, int is_symmetric) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPInt* Mi = OSQPMatrix_get_i(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+  OSQPInt m = OSQPMatrix_get_m(M);
+
+  fprintf(f, "# %s (dense, hex FP32) - %lld x %lld\n", name, (long long)m, (long long)n);
+  for (OSQPInt i = 0; i < m; i++) {
+    for (OSQPInt j = 0; j < n; j++) {
+      OSQPFloat val = 0.0;
+      // Search for (i,j) in CSC
+      for (OSQPInt k = Mp[j]; k < Mp[j + 1]; k++) {
+        if (Mi[k] == i) {
+          val = Mx[k];
+          break;
+        }
+      }
+      // For symmetric matrices (upper triangular stored), also check (j,i)
+      if (is_symmetric && val == 0.0 && i != j && j < m) {
+        for (OSQPInt k = Mp[i]; k < Mp[i + 1]; k++) {
+          if (Mi[k] == j) {
+            val = Mx[k];
+            break;
+          }
+        }
+      }
+      union { float f; uint32_t u; } v;
+      v.f = (float)val;
+      fprintf(f, "%08x", v.u);
+      if (j < n - 1) fprintf(f, ",");
+    }
+    fprintf(f, "\n");
+  }
+  fprintf(f, "\n");
+}
+
+static void save_csc_matrix_bits(FILE* f, const char* name, const OSQPMatrix* M) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPInt* Mi = OSQPMatrix_get_i(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+  OSQPInt m = OSQPMatrix_get_m(M);
+  OSQPInt nnz = Mp[n];
+
+  fprintf(f, "# %s (CSC format, FP32 bits) - %lld x %lld, nnz=%lld\n", name, (long long)m, (long long)n, (long long)nnz);
+  fprintf(f, "# col_ptr (%lld values)\n", (long long)(n + 1));
+  for (OSQPInt j = 0; j <= n; j++) {
+    fprintf(f, "%lld", (long long)Mp[j]);
+    if (j < n) fprintf(f, ",");
+  }
+  fprintf(f, "\n# row_idx (%lld values)\n", (long long)nnz);
+  for (OSQPInt k = 0; k < nnz; k++) {
+    fprintf(f, "%lld", (long long)Mi[k]);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n# values (%lld values, hex FP32)\n", (long long)nnz);
+  for (OSQPInt k = 0; k < nnz; k++) {
+    union { float f; uint32_t u; } v;
+    v.f = (float)Mx[k];
+    fprintf(f, "%08x", v.u);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+static void save_vector_float(FILE* f, const char* name, const OSQPVectorf* v) {
+  OSQPInt n = OSQPVectorf_length(v);
+  const OSQPFloat* data = OSQPVectorf_data(v);
+  fprintf(f, "# %s - %lld values\n", name, (long long)n);
+  for (OSQPInt i = 0; i < n; i++) {
+    fprintf(f, "%.8e", (double)data[i]);
+    if (i < n - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+static void save_vector_bits(FILE* f, const char* name, const OSQPVectorf* v) {
+  OSQPInt n = OSQPVectorf_length(v);
+  const OSQPFloat* data = OSQPVectorf_data(v);
+  fprintf(f, "# %s - %lld values (hex FP32)\n", name, (long long)n);
+  for (OSQPInt i = 0; i < n; i++) {
+    union { float f; uint32_t u; } val;
+    val.f = (float)data[i];
+    fprintf(f, "%08x", val.u);
+    if (i < n - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+static void save_osqp_testcase(OSQPSolver* solver, OSQPInt sample_id, const char* suffix) {
+  char path_float[256], path_bits[256];
+  snprintf(path_float, sizeof(path_float), "%s/sample_%lld_%s.csv", OSQP_TESTCASE_DIR, (long long)sample_id, suffix);
+  snprintf(path_bits, sizeof(path_bits), "%s/sample_%lld_%s_bits.csv", OSQP_TESTCASE_DIR, (long long)sample_id, suffix);
+
+  OSQPWorkspace* work = solver->work;
+
+  FILE* f_float = fopen(path_float, "w");
+  if (f_float) {
+    fprintf(f_float, "# OSQP Test Case (%s) - Sample %lld\n", suffix, (long long)sample_id);
+    fprintf(f_float, "# n=%lld, m=%lld\n\n", (long long)work->data->n, (long long)work->data->m);
+
+    // CSC format
+    save_csc_matrix_float(f_float, "P_csc", work->data->P);
+    save_csc_matrix_float(f_float, "A_csc", work->data->A);
+
+    // Dense format
+    save_dense_matrix_float(f_float, "P", work->data->P, 1);  // P is symmetric
+    save_dense_matrix_float(f_float, "A", work->data->A, 0);  // A is not symmetric
+
+    save_vector_float(f_float, "q", work->data->q);
+    save_vector_float(f_float, "l", work->data->l);
+    save_vector_float(f_float, "u", work->data->u);
+    fclose(f_float);
+  }
+
+  FILE* f_bits = fopen(path_bits, "w");
+  if (f_bits) {
+    fprintf(f_bits, "# OSQP Test Case FP32 Bits (%s) - Sample %lld\n", suffix, (long long)sample_id);
+    fprintf(f_bits, "# n=%lld, m=%lld\n\n", (long long)work->data->n, (long long)work->data->m);
+
+    // CSC format
+    save_csc_matrix_bits(f_bits, "P_csc", work->data->P);
+    save_csc_matrix_bits(f_bits, "A_csc", work->data->A);
+
+    // Dense format
+    save_dense_matrix_bits(f_bits, "P", work->data->P, 1);  // P is symmetric
+    save_dense_matrix_bits(f_bits, "A", work->data->A, 0);  // A is not symmetric
+
+    save_vector_bits(f_bits, "q", work->data->q);
+    save_vector_bits(f_bits, "l", work->data->l);
+    save_vector_bits(f_bits, "u", work->data->u);
+    fclose(f_bits);
+  }
+
+  printf("[OSQP] Saved testcase sample_%lld_%s\n", (long long)sample_id, suffix);
+}
+
+static OSQPInt g_testcase_count = 0;
 
 #ifdef OSQP_CODEGEN
   #include "codegen.h"
@@ -739,6 +948,11 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
     if (!(work->D_temp) || !(work->D_temp_A) || !(work->E_temp))
       return osqp_error(OSQP_MEM_ALLOC_ERROR);
 
+    // Save testcase before scaling (every OSQP_TESTCASE_SAVE_INTERVAL runs)
+    if (g_testcase_count % OSQP_TESTCASE_SAVE_INTERVAL == 0) {
+      save_osqp_testcase(solver, g_testcase_count, "scaling_before");
+    }
+
     // Scale data with timing
     OSQPTimer* scaling_timer = OSQPTimer_new();
     osqp_tic(scaling_timer);
@@ -747,6 +961,12 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_SCALE);
     g_scaling_time = osqp_toc(scaling_timer);
     OSQPTimer_free(scaling_timer);
+
+    // Save testcase after scaling (every OSQP_TESTCASE_SAVE_INTERVAL runs)
+    if (g_testcase_count % OSQP_TESTCASE_SAVE_INTERVAL == 0) {
+      save_osqp_testcase(solver, g_testcase_count, "scaling_after");
+    }
+    g_testcase_count++;
   } else {
     // printf("Skipping scaling...\n");
     work->scaling  = OSQP_NULL;

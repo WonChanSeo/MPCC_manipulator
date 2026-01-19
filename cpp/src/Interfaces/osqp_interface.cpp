@@ -1346,7 +1346,7 @@ void OsqpInterface::printOptVar(std::vector<OptVariables> opt_var)
 {
     for(size_t i=0;i<=N;i++)
     {
-        std::cout << "State[" << i << "]: " << std::endl;; 
+        std::cout << "State[" << i << "]: " << std::endl;;
         std::cout << "\tq    : " << stateToJointVector(opt_var[i].xk).transpose() << std::endl;
         std::cout << "\ts    : " << opt_var[i].xk.s << std::endl;
         std::cout << "\ts dot: " << opt_var[i].xk.vs << std::endl;
@@ -1354,9 +1354,231 @@ void OsqpInterface::printOptVar(std::vector<OptVariables> opt_var)
     std::cout <<" \n";
     for(size_t i=0;i<N;i++)
     {
-        std::cout << "Input[" << i << "]: " << std::endl;; 
-        std::cout << "\tqdot: " << inputTodJointVector(opt_var[i].uk).transpose() << std::endl;; 
-        std::cout << "\tdVs  : " << opt_var[i].uk.dVs << std::endl;; 
+        std::cout << "Input[" << i << "]: " << std::endl;;
+        std::cout << "\tqdot: " << inputTodJointVector(opt_var[i].uk).transpose() << std::endl;;
+        std::cout << "\tdVs  : " << opt_var[i].uk.dVs << std::endl;;
     }
+}
+
+void OsqpInterface::computeDiagonalScaling(const Eigen::MatrixXd &P, const Eigen::MatrixXd &A,
+                                           Eigen::VectorXd &D, Eigen::VectorXd &E)
+{
+    // Compute diagonal scaling factors using Jacobi scaling
+    // D: variable scaling (n x 1), E: constraint scaling (m x 1)
+    // D_i = 1 / sqrt(max(P_ii, max_j |A_ji|))
+    // E_i = 1 / max_j |A_ij|
+
+    const int n = P.rows();  // number of variables
+    const int m = A.rows();  // number of constraints
+
+    D.resize(n);
+    E.resize(m);
+
+    const double min_scaling = 1e-4;  // prevent division by very small numbers
+    const double max_scaling = 1e4;   // prevent too large scaling factors
+
+    // Compute D (variable scaling)
+    for(int j = 0; j < n; j++)
+    {
+        double max_val = std::abs(P(j, j));
+        for(int i = 0; i < m; i++)
+        {
+            max_val = std::max(max_val, std::abs(A(i, j)));
+        }
+        if(max_val < min_scaling)
+        {
+            D(j) = max_scaling;
+        }
+        else
+        {
+            D(j) = 1.0 / std::sqrt(max_val);
+            D(j) = std::min(D(j), max_scaling);
+        }
+    }
+
+    // Compute E (constraint scaling)
+    for(int i = 0; i < m; i++)
+    {
+        double max_val = 0.0;
+        for(int j = 0; j < n; j++)
+        {
+            max_val = std::max(max_val, std::abs(A(i, j)));
+        }
+        if(max_val < min_scaling)
+        {
+            E(i) = max_scaling;
+        }
+        else
+        {
+            E(i) = 1.0 / max_val;
+            E(i) = std::min(E(i), max_scaling);
+        }
+    }
+}
+
+void OsqpInterface::applyScaling(const Eigen::MatrixXd &P, const Eigen::VectorXd &q,
+                                 const Eigen::MatrixXd &A, const Eigen::VectorXd &l, const Eigen::VectorXd &u,
+                                 const Eigen::VectorXd &D, const Eigen::VectorXd &E,
+                                 Eigen::MatrixXd &P_scaled, Eigen::VectorXd &q_scaled,
+                                 Eigen::MatrixXd &A_scaled, Eigen::VectorXd &l_scaled, Eigen::VectorXd &u_scaled)
+{
+    // Apply scaling:
+    // P_scaled = D * P * D
+    // q_scaled = D * q
+    // A_scaled = E * A * D
+    // l_scaled = E * l
+    // u_scaled = E * u
+
+    const int n = P.rows();
+    const int m = A.rows();
+
+    // P_scaled = D * P * D (using diagonal matrix multiplication)
+    P_scaled.resize(n, n);
+    for(int i = 0; i < n; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            P_scaled(i, j) = D(i) * P(i, j) * D(j);
+        }
+    }
+
+    // q_scaled = D * q
+    q_scaled = D.asDiagonal() * q;
+
+    // A_scaled = E * A * D
+    A_scaled.resize(m, n);
+    for(int i = 0; i < m; i++)
+    {
+        for(int j = 0; j < n; j++)
+        {
+            A_scaled(i, j) = E(i) * A(i, j) * D(j);
+        }
+    }
+
+    // l_scaled = E * l, u_scaled = E * u
+    l_scaled = E.asDiagonal() * l;
+    u_scaled = E.asDiagonal() * u;
+}
+
+void OsqpInterface::unscaleSolution(const Eigen::VectorXd &x_scaled, const Eigen::VectorXd &lambda_scaled,
+                                    const Eigen::VectorXd &D, const Eigen::VectorXd &E,
+                                    Eigen::VectorXd &x, Eigen::VectorXd &lambda)
+{
+    // Unscale solution:
+    // x = D * x_scaled
+    // lambda = E * lambda_scaled
+
+    x = D.asDiagonal() * x_scaled;
+    lambda = E.asDiagonal() * lambda_scaled;
+}
+
+bool OsqpInterface::solveQPWithScaling(const Eigen::MatrixXd &P, const Eigen::VectorXd &q,
+                                       const Eigen::MatrixXd &A, const Eigen::VectorXd &l, const Eigen::VectorXd &u,
+                                       Eigen::VectorXd &step, Eigen::VectorXd &step_lambda,
+                                       OsqpEigen::Status &qp_status, int &iter_count)
+{
+    // Compute scaling factors
+    Eigen::VectorXd D, E;
+    computeDiagonalScaling(P, A, D, E);
+
+    // Apply scaling
+    Eigen::MatrixXd P_scaled;
+    Eigen::VectorXd q_scaled;
+    Eigen::MatrixXd A_scaled;
+    Eigen::VectorXd l_scaled, u_scaled;
+    applyScaling(P, q, A, l, u, D, E, P_scaled, q_scaled, A_scaled, l_scaled, u_scaled);
+
+    // Convert to c_float (OSQP precision)
+    Eigen::SparseMatrix<c_float> P_sp = P_scaled.cast<c_float>().sparseView();
+    Eigen::SparseMatrix<c_float> A_sp = A_scaled.cast<c_float>().sparseView();
+    Eigen::Matrix<c_float, N_var, 1> q_ds = q_scaled.cast<c_float>();
+    Eigen::Matrix<c_float, N_constr, 1> l_ds = l_scaled.cast<c_float>();
+    Eigen::Matrix<c_float, N_constr, 1> u_ds = u_scaled.cast<c_float>();
+
+    // Setup solver
+    OsqpEigen::Solver solver_;
+    solver_.settings()->setWarmStart(false);
+    solver_.settings()->getSettings()->eps_abs = 1e-3;
+    solver_.settings()->getSettings()->eps_rel = 1e-4;
+    solver_.settings()->getSettings()->verbose = false;
+
+    auto start_init = std::chrono::high_resolution_clock::now();
+    solver_.data()->setNumberOfVariables(N_var);
+    solver_.data()->setNumberOfConstraints(N_constr);
+    if (!solver_.data()->setHessianMatrix(P_sp)) {
+        printf("[solveQPWithScaling FAIL] setHessianMatrix failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        return false;
+    }
+    if (!solver_.data()->setGradient(q_ds)) {
+        printf("[solveQPWithScaling FAIL] setGradient failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        return false;
+    }
+    if (!solver_.data()->setLinearConstraintsMatrix(A_sp)) {
+        printf("[solveQPWithScaling FAIL] setLinearConstraintsMatrix failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        return false;
+    }
+    if (!solver_.data()->setLowerBound(l_ds)) {
+        printf("[solveQPWithScaling FAIL] setLowerBound failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        return false;
+    }
+    if (!solver_.data()->setUpperBound(u_ds)) {
+        printf("[solveQPWithScaling FAIL] setUpperBound failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        return false;
+    }
+
+    if (!solver_.initSolver()) {
+        printf("[solveQPWithScaling FAIL] initSolver failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        return false;
+    }
+    auto end_init = std::chrono::high_resolution_clock::now();
+    last_init_solver_time_ = std::chrono::duration_cast<std::chrono::duration<double>>(end_init - start_init).count();
+
+    // Get detailed timing breakdown from OSQPInfo
+    const OSQPInfo* osqp_info = solver_.getInfo();
+    if (osqp_info != nullptr) {
+        last_scaling_time_ = osqp_info->scaling_time;
+        last_permutation_time_ = osqp_info->permutation_time;
+        last_factorization_time_ = osqp_info->factorization_time;
+    }
+
+    // Set iteration context for OSQP logging
+    osqp_set_iteration_context(current_solve_count_, sqp_iter_);
+
+    // Solve
+    auto start_solve = std::chrono::high_resolution_clock::now();
+    if (solver_.solveProblem() != OsqpEigen::ErrorExitFlag::NoError) {
+        printf("[solveQPWithScaling FAIL] solveProblem failed at solve_count=%d, sqp_iter=%d\n", current_solve_count_, sqp_iter_);
+        return false;
+    }
+    auto end_solve = std::chrono::high_resolution_clock::now();
+    last_solve_time_ = std::chrono::duration_cast<std::chrono::duration<double>>(end_solve - start_solve).count();
+
+    // Get rho_updates from OSQPInfo after solve
+    const OSQPInfo* osqp_info_after_solve = solver_.getInfo();
+    if (osqp_info_after_solve != nullptr) {
+        last_rho_updates_ = osqp_info_after_solve->rho_updates;
+    }
+
+    iter_count = solver_.getNumberOfIterations();
+    qp_status = solver_.getStatus();
+
+    if (!(solver_.getStatus() == OsqpEigen::Status::Solved ||
+          solver_.getStatus() == OsqpEigen::Status::SolvedInaccurate)) {
+        printf("[solveQPWithScaling FAIL] solver status=%d at solve_count=%d, sqp_iter=%d\n",
+               static_cast<int>(solver_.getStatus()), current_solve_count_, sqp_iter_);
+        return false;
+    }
+
+    // Get scaled solution
+    Eigen::VectorXd step_scaled = solver_.getSolution().cast<double>();
+    Eigen::VectorXd step_lambda_scaled = solver_.getDualSolution().cast<double>();
+
+    // Unscale solution
+    unscaleSolution(step_scaled, step_lambda_scaled, D, E, step, step_lambda);
+
+    solver_.clearSolverVariables();
+    solver_.clearSolver();
+
+    return true;
 }
 }

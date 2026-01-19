@@ -44,7 +44,7 @@ static const char* CSV_DELIMS = " ,\t;";
 // ===== External permutation reader =====
 #ifndef OSQP_PERM_PATH
 // 기본 경로를 매크로로 지정해두고 필요 시 컴파일 옵션으로 바꿔도 됨
-#define OSQP_PERM_PATH "../reference_matrix/P_ref.txt"
+#define OSQP_PERM_PATH "../reference_matrix/P_rev.txt"
 #endif
 
 // 파일에서 정수 토큰 하나를 읽어 n개 채운다. 구분자는 공백/탭/콤마/세미콜론 허용.

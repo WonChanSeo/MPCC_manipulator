@@ -204,6 +204,22 @@ private:
     Eigen::VectorXd OptvarToVector(const std::vector<OptVariables>& opt_var);
     Eigen::VectorXd deNormalizeStep(const Eigen::VectorXd& step);
     void printOptVar(std::vector<OptVariables> opt_var);
+
+    // Diagonal scaling for ASIC implementation
+    void computeDiagonalScaling(const Eigen::MatrixXd &P, const Eigen::MatrixXd &A,
+                                Eigen::VectorXd &D, Eigen::VectorXd &E);
+    void applyScaling(const Eigen::MatrixXd &P, const Eigen::VectorXd &q,
+                      const Eigen::MatrixXd &A, const Eigen::VectorXd &l, const Eigen::VectorXd &u,
+                      const Eigen::VectorXd &D, const Eigen::VectorXd &E,
+                      Eigen::MatrixXd &P_scaled, Eigen::VectorXd &q_scaled,
+                      Eigen::MatrixXd &A_scaled, Eigen::VectorXd &l_scaled, Eigen::VectorXd &u_scaled);
+    void unscaleSolution(const Eigen::VectorXd &x_scaled, const Eigen::VectorXd &lambda_scaled,
+                         const Eigen::VectorXd &D, const Eigen::VectorXd &E,
+                         Eigen::VectorXd &x, Eigen::VectorXd &lambda);
+    bool solveQPWithScaling(const Eigen::MatrixXd &P, const Eigen::VectorXd &q,
+                            const Eigen::MatrixXd &A, const Eigen::VectorXd &l, const Eigen::VectorXd &u,
+                            Eigen::VectorXd &step, Eigen::VectorXd &step_lambda,
+                            OsqpEigen::Status &qp_status, int &iter_count);
 };
 }
 #endif //MPCC_OSQP_INTERFACE_H

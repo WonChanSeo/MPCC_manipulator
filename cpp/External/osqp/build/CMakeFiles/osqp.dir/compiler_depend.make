@@ -120,6 +120,10 @@ CMakeFiles/osqp.dir/src/osqp_api.c.o: ../src/osqp_api.c \
   /usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h \
   /usr/include/x86_64-linux-gnu/bits/sigthread.h \
   /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
+  /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/wchar.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
   ../include/private/codegen.h \
   ../include/private/polish.h \
   ../include/private/derivative.h \
@@ -129,6 +133,8 @@ CMakeFiles/osqp.dir/src/osqp_api.c.o: ../src/osqp_api.c \
 ../include/private/derivative.h:
 
 ../include/private/codegen.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigstksz.h:
 
@@ -208,6 +214,8 @@ CMakeFiles/osqp.dir/src/osqp_api.c.o: ../src/osqp_api.c \
 
 ../include/public/osqp_api_functions.h:
 
+/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
+
 ../include/public/osqp_api_types.h:
 
 ../include/private/auxil.h:
@@ -233,6 +241,8 @@ CMakeFiles/osqp.dir/src/osqp_api.c.o: ../src/osqp_api.c \
 /usr/include/endian.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
 
@@ -353,6 +363,8 @@ include/public/osqp_configure.h:
 /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
 
 ../include/private/polish.h:
+
+/usr/include/stdint.h:
 
 ../src/osqp_api.c:
 
