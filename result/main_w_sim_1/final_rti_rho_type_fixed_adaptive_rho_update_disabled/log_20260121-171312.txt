@@ -1,0 +1,3353 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+<frozen importlib._bootstrap>:241: RuntimeWarning: to-Python converter for std::vector<int, std::allocator<int> > already registered; second conversion method ignored.
+[INFO] [1768983193.422745267] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00538473 seconds
+[INFO] [1768983193.422804470] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1768983193.428747523] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1768983193.428773927] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1768983193.428984729] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1768983193.428991541] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[INFO] [1768983193.437259212] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.000992898 seconds
+[INFO] [1768983193.437267025] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1768983193.439066199] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1768983193.439079809] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1768983193.439167564] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1768983193.439171291] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[WARN] [1768983193.439812281] [moveit_ros.robot_model_loader]: No kinematics plugins defined. Fill and load kinematics.yaml!
+[INFO] [1768983193.442069940] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Publishing maintained planning scene on '/planning_scene'
+[INFO] [1768983193.442122688] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting planning scene monitor
+[INFO] [1768983193.442393669] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/planning_scene'
+[INFO] [1768983193.442401249] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Updating internal planning scene state at most every 0.010000 seconds
+link: base_link
+link: base_footprint
+link: default_mount
+link: front_bumper_mount
+link: front_left_wheel
+link: front_right_wheel
+link: fr3_base
+link: fr3_link0
+link: fr3_link1
+link: fr3_link2
+link: fr3_link3
+link: fr3_link4
+link: fr3_link5
+link: fr3_link6
+link: fr3_link7
+link: fr3_link8
+link: fr3_hand
+link: fr3_leftfinger
+link: fr3_rightfinger
+link: fr3_hand_tcp
+link: rgb_camera_link
+link: depth_camera_link
+link: camera_base
+link: imu_camera_link
+link: inertial_link
+link: rear_bumper_mount
+link: rear_left_wheel
+link: rear_right_wheel
+link: top_chassis_link
+link: top_structure_link
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+Default initialization of model params
+bounds initialized
+Available cores: 28
+Default threads: 28
+Updated threads: 27
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+bounds initialized
+param values:
+	desired_s_velocity: 0.1
+	tol_envcol: 1
+	tol_selcol: 1
+	tol_sing: 0.018
+cost values:
+	qC: 1000
+	qCNmult: 10
+	qL: 500
+	qOri: 100
+	qSing: 1
+	qVs: 10
+	rdVs: 0.1
+	rddq: 50
+	rdq: 0.002
+bounds values:
+normalization values:
+sqp values:
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+[Self MLP Logging] Starting Self Collision MLP test case logging to: /home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/self_mlp/
+[MLP Logging] Starting MLP test case logging to: /home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/mlp/
+BEFORE initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+[OSQP] Permutation vector loaded from ../reference_matrix/P_rev.txt (n=658)
+[OSQP] Saved factorization sample_0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.007322, -0.004023, -0.008655, -0.008096, 0.005049, 0.005894, -0.040962, 0.299951]
+BEFORE initial_guess_[0].uk: [-0.010336, -0.004085, -0.011668, -0.008000, 0.003876, 0.005898, -0.041126, 0.252297]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.018036, -0.006271, -0.020508, -0.011126, 0.007644, 0.009791, -0.078446, 0.518609]
+BEFORE initial_guess_[0].uk: [-0.023835, -0.006334, -0.026307, -0.011041, 0.005412, 0.009791, -0.078602, 0.432016]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.032210, -0.006855, -0.034944, -0.011256, 0.009094, 0.011083, -0.114913, 0.655986]
+BEFORE initial_guess_[0].uk: [-0.040094, -0.006896, -0.042827, -0.011197, 0.006065, 0.011056, -0.115116, 0.543713]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.045771, -0.004092, -0.048666, -0.006931, 0.008286, 0.006610, -0.135370, 0.616595]
+BEFORE initial_guess_[0].uk: [-0.053780, -0.004144, -0.056675, -0.006854, 0.005156, 0.006605, -0.135880, 0.508322]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.058980, -0.004005, -0.061719, -0.007471, 0.005392, 0.007113, -0.147503, 0.571093]
+BEFORE initial_guess_[0].uk: [-0.066742, -0.004078, -0.069483, -0.007361, 0.002342, 0.007158, -0.148074, 0.469568]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.072146, -0.002027, -0.074782, -0.003841, 0.004785, 0.004079, -0.169926, 0.529228]
+BEFORE initial_guess_[0].uk: [-0.079488, -0.002068, -0.082124, -0.003751, 0.001891, 0.004107, -0.170535, 0.434487]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.084548, -0.000388, -0.086926, -0.001771, 0.003431, 0.002052, -0.187004, 0.490548]
+BEFORE initial_guess_[0].uk: [-0.091415, -0.000432, -0.093794, -0.001664, 0.000706, 0.002109, -0.187674, 0.402155]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.096216, 0.000643, -0.098215, -0.000311, 0.002209, 0.001200, -0.203981, 0.454788]
+BEFORE initial_guess_[0].uk: [-0.102606, 0.000610, -0.104607, -0.000200, -0.000337, 0.001269, -0.204661, 0.372563]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.107230, 0.001571, -0.108625, 0.001001, 0.001184, 0.000692, -0.220499, 0.421697]
+BEFORE initial_guess_[0].uk: [-0.113161, 0.001548, -0.114556, 0.001115, -0.001187, 0.000771, -0.221179, 0.345268]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.117408, 0.002506, -0.118382, 0.002291, 0.000334, 0.000303, -0.236477, 0.390985]
+BEFORE initial_guess_[0].uk: [-0.122903, 0.002492, -0.123877, 0.002408, -0.001869, 0.000392, -0.237148, 0.319995]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.126897, 0.003213, -0.127468, 0.003376, -0.000166, 0.000405, -0.253621, 0.362476]
+BEFORE initial_guess_[0].uk: [-0.131981, 0.003214, -0.132553, 0.003487, -0.002203, 0.000492, -0.254229, 0.296809]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.135492, 0.003168, -0.135503, 0.002709, -0.002210, 0.002073, -0.261809, 0.336113]
+BEFORE initial_guess_[0].uk: [-0.140196, 0.003157, -0.140208, 0.002842, -0.004103, 0.002190, -0.262399, 0.275157]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.143868, 0.004900, -0.143520, 0.005648, -0.001469, 0.000363, -0.280621, 0.311694]
+BEFORE initial_guess_[0].uk: [-0.148215, 0.004914, -0.147867, 0.005763, -0.003220, 0.000458, -0.281200, 0.255100]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.151594, 0.006237, -0.150720, 0.007299, -0.001425, -0.000475, -0.295674, 0.288934]
+BEFORE initial_guess_[0].uk: [-0.155607, 0.006251, -0.154732, 0.007418, -0.003043, -0.000371, -0.296213, 0.236559]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.158502, 0.006007, -0.156981, 0.006415, -0.002949, 0.001577, -0.303859, 0.267873]
+BEFORE initial_guess_[0].uk: [-0.162205, 0.006010, -0.160685, 0.006549, -0.004443, 0.001700, -0.304326, 0.219547]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.165347, 0.007775, -0.163210, 0.009449, -0.001961, -0.000185, -0.320363, 0.248431]
+BEFORE initial_guess_[0].uk: [-0.168764, 0.007806, -0.166627, 0.009555, -0.003332, -0.000097, -0.320791, 0.203701]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.171304, 0.007859, -0.168573, 0.008611, -0.003204, 0.001399, -0.327054, 0.230333]
+BEFORE initial_guess_[0].uk: [-0.174443, 0.007856, -0.171713, 0.008751, -0.004476, 0.001529, -0.327464, 0.188928]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.177196, 0.009897, -0.173902, 0.012089, -0.002071, -0.000857, -0.341845, 0.213601]
+BEFORE initial_guess_[0].uk: [-0.180088, 0.009924, -0.176795, 0.012198, -0.003235, -0.000767, -0.342223, 0.175288]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.182375, 0.009737, -0.178290, 0.011092, -0.003087, 0.001137, -0.348792, 0.197999]
+BEFORE initial_guess_[0].uk: [-0.185029, 0.009745, -0.180945, 0.011220, -0.004156, 0.001252, -0.349090, 0.162839]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.187475, 0.011824, -0.182762, 0.014652, -0.001899, -0.001196, -0.361948, 0.183664]
+BEFORE initial_guess_[0].uk: [-0.189928, 0.011871, -0.185215, 0.014738, -0.002871, -0.001133, -0.362192, 0.151199]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.191927, 0.011610, -0.186409, 0.013497, -0.002784, 0.000933, -0.367986, 0.170225]
+BEFORE initial_guess_[0].uk: [-0.194165, 0.011634, -0.188648, 0.013605, -0.003671, 0.001022, -0.368158, 0.140517]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.196086, 0.011710, -0.189776, 0.013432, -0.003358, 0.002372, -0.373650, 0.157872]
+BEFORE initial_guess_[0].uk: [-0.198126, 0.011733, -0.191817, 0.013540, -0.004168, 0.002459, -0.373813, 0.130436]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.200185, 0.014729, -0.193318, 0.018407, -0.001734, -0.001617, -0.385138, 0.146391]
+BEFORE initial_guess_[0].uk: [-0.202095, 0.014814, -0.195229, 0.018453, -0.002468, -0.001603, -0.385243, 0.121021]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.203464, 0.013473, -0.195829, 0.015038, -0.003437, 0.002580, -0.387264, 0.135667]
+BEFORE initial_guess_[0].uk: [-0.205196, 0.013515, -0.197562, 0.015129, -0.004105, 0.002652, -0.387265, 0.112728]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.207045, 0.017031, -0.198960, 0.021246, -0.001500, -0.002392, -0.397296, 0.125900]
+BEFORE initial_guess_[0].uk: [-0.208604, 0.017118, -0.200522, 0.021292, -0.002096, -0.002381, -0.397391, 0.104366]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.209806, 0.015798, -0.200853, 0.017816, -0.003106, 0.001842, -0.398729, 0.116647]
+BEFORE initial_guess_[0].uk: [-0.211216, 0.015841, -0.202265, 0.017910, -0.003651, 0.001916, -0.398724, 0.097248]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.212925, 0.019547, -0.203413, 0.024351, -0.001067, -0.003421, -0.407798, 0.108251]
+BEFORE initial_guess_[0].uk: [-0.214186, 0.019637, -0.204676, 0.024398, -0.001548, -0.003410, -0.407882, 0.090026]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.215218, 0.018297, -0.204790, 0.020852, -0.002621, 0.000894, -0.408574, 0.100241]
+BEFORE initial_guess_[0].uk: [-0.216348, 0.018341, -0.205923, 0.020949, -0.003060, 0.000971, -0.408564, 0.083909]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.217875, 0.023411, -0.207209, 0.029380, 0.000215, -0.006824, -0.418379, 0.093004]
+BEFORE initial_guess_[0].uk: [-0.218874, 0.023507, -0.208210, 0.029425, -0.000164, -0.006814, -0.418453, 0.077665]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=30, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.218874, 0.023507, -0.208210, 0.029425, -0.000164, -0.006814, -0.418453, 0.077665]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.220145, 0.023676, -0.209488, 0.029500, -0.000647, -0.006805, -0.418594, -1.013495]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.190987, 0.015688, -0.179223, 0.020357, 0.003163, -0.010392, -0.368454, -1.262780]
+BEFORE initial_guess_[0].uk: [-0.179157, 0.015742, -0.167409, 0.020333, 0.007674, -0.010532, -0.348603, -1.052497]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.177714, 0.017855, -0.165199, 0.022163, -0.001836, -0.010121, -0.318454, -0.814139]
+BEFORE initial_guess_[0].uk: [-0.167549, 0.017869, -0.155049, 0.022184, 0.002019, -0.010195, -0.307583, -0.670897]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.165977, 0.017830, -0.152231, 0.021939, -0.008010, -0.007473, -0.268454, -0.474287]
+BEFORE initial_guess_[0].uk: [-0.158702, 0.017860, -0.144968, 0.021956, -0.005233, -0.007540, -0.268067, -0.384803]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.160996, 0.016977, -0.145124, 0.020088, -0.002712, -0.002987, -0.283854, -0.211364]
+BEFORE initial_guess_[0].uk: [-0.156643, 0.016994, -0.140780, 0.020123, -0.001074, -0.003016, -0.283881, -0.168306]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.159166, 0.016124, -0.141528, 0.018289, 0.000624, 0.001306, -0.299403, -0.022817]
+BEFORE initial_guess_[0].uk: [-0.157333, 0.016138, -0.139701, 0.018341, 0.001303, 0.001308, -0.299438, -0.013167]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.160208, 0.015308, -0.141168, 0.016589, 0.002344, 0.005410, -0.312807, 0.109867]
+BEFORE initial_guess_[0].uk: [-0.160320, 0.015321, -0.141285, 0.016655, 0.002287, 0.005440, -0.312837, 0.095606]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=37, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.160320, 0.015321, -0.141285, 0.016655, 0.002287, 0.005440, -0.312837, 0.095606]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.160928, 0.015334, -0.141903, 0.016782, 0.002030, 0.005507, -0.312888, -0.971238]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.134205, 0.014250, -0.117671, 0.019190, 0.004808, -0.010601, -0.262839, -1.049441]
+BEFORE initial_guess_[0].uk: [-0.124647, 0.014297, -0.108130, 0.019125, 0.008473, -0.010778, -0.246275, -0.874587]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.125199, 0.015999, -0.107597, 0.020289, -0.001642, -0.009391, -0.212839, -0.591128]
+BEFORE initial_guess_[0].uk: [-0.117782, 0.016010, -0.100195, 0.020279, 0.001184, -0.009494, -0.206972, -0.485188]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.120091, 0.016380, -0.100814, 0.020483, -0.001803, -0.006797, -0.200951, -0.246406]
+BEFORE initial_guess_[0].uk: [-0.115691, 0.016396, -0.096424, 0.020486, -0.000131, -0.006873, -0.200766, -0.196770]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.119902, 0.015885, -0.098711, 0.018794, 0.002631, -0.002487, -0.222116, 0.008435]
+BEFORE initial_guess_[0].uk: [-0.118411, 0.015883, -0.097227, 0.018829, 0.003181, -0.002505, -0.222171, 0.013311]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=42, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.118411, 0.015883, -0.097227, 0.018829, 0.003181, -0.002505, -0.222171, 0.013311]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.117019, 0.015864, -0.095847, 0.018913, 0.003681, -0.002507, -0.222268, -0.954109]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.094493, 0.011265, -0.079397, 0.014971, 0.000920, -0.007690, -0.172173, -0.771223]
+BEFORE initial_guess_[0].uk: [-0.087387, 0.011284, -0.072307, 0.014924, 0.003659, -0.007836, -0.162617, -0.640793]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.090389, 0.012498, -0.073500, 0.015752, -0.002961, -0.005557, -0.141815, -0.344999]
+BEFORE initial_guess_[0].uk: [-0.085727, 0.012509, -0.068851, 0.015742, -0.001176, -0.005654, -0.141532, -0.279863]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.091544, 0.012431, -0.071959, 0.014608, 0.002464, -0.001470, -0.168007, -0.025809]
+BEFORE initial_guess_[0].uk: [-0.089849, 0.012423, -0.070271, 0.014633, 0.003092, -0.001504, -0.168079, -0.015154]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.095438, 0.012202, -0.073814, 0.013509, 0.005720, 0.002542, -0.193081, 0.196345]
+BEFORE initial_guess_[0].uk: [-0.096413, 0.012190, -0.074794, 0.013560, 0.005330, 0.002558, -0.193162, 0.168497]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=47, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.096413, 0.012190, -0.074794, 0.013560, 0.005330, 0.002558, -0.193162, 0.168497]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.098352, 0.012160, -0.076742, 0.013664, 0.004558, 0.002600, -0.193307, -0.953435]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.076798, 0.010440, -0.063340, 0.014009, 0.001608, -0.007731, -0.143163, -0.624365]
+BEFORE initial_guess_[0].uk: [-0.071557, 0.010463, -0.058114, 0.013972, 0.003643, -0.007857, -0.134726, -0.519447]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.075777, 0.012027, -0.060485, 0.015268, -0.001539, -0.005906, -0.121764, -0.221444]
+BEFORE initial_guess_[0].uk: [-0.072764, 0.012036, -0.057484, 0.015269, -0.000385, -0.005977, -0.121546, -0.178223]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.079249, 0.012084, -0.061431, 0.014259, 0.003154, -0.001785, -0.149286, 0.076191]
+BEFORE initial_guess_[0].uk: [-0.078950, 0.012074, -0.061138, 0.014296, 0.003250, -0.001793, -0.149371, 0.068918]
+[OSQP] Saved factorization sample_50
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.085288, 0.011949, -0.065268, 0.013267, 0.005826, 0.002278, -0.175198, 0.280504]
+BEFORE initial_guess_[0].uk: [-0.087412, 0.011937, -0.067393, 0.013329, 0.005001, 0.002318, -0.175289, 0.237936]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.093756, 0.011737, -0.071992, 0.012269, 0.006764, 0.006226, -0.197759, 0.414840]
+BEFORE initial_guess_[0].uk: [-0.097726, 0.011726, -0.075961, 0.012352, 0.005241, 0.006304, -0.197842, 0.348424]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.103468, 0.017615, -0.080942, 0.022158, 0.008069, -0.001862, -0.218854, 0.468866]
+BEFORE initial_guess_[0].uk: [-0.108459, 0.017668, -0.085930, 0.022190, 0.006165, -0.001845, -0.218971, 0.391920]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.112397, 0.017827, -0.088950, 0.021033, 0.006364, -0.000379, -0.228558, 0.433990]
+BEFORE initial_guess_[0].uk: [-0.117430, 0.017838, -0.093980, 0.021116, 0.004446, -0.000297, -0.228628, 0.361977]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.121443, 0.019309, -0.097290, 0.021788, 0.004763, -0.001157, -0.235442, 0.402089]
+BEFORE initial_guess_[0].uk: [-0.126183, 0.019201, -0.102026, 0.021997, 0.002904, -0.000936, -0.235750, 0.334419]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.130120, 0.022939, -0.105616, 0.028147, 0.005108, -0.006340, -0.250054, 0.372649]
+BEFORE initial_guess_[0].uk: [-0.134574, 0.022891, -0.110066, 0.028298, 0.003366, -0.006186, -0.250367, 0.309771]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.138241, 0.023327, -0.112740, 0.027336, 0.003417, -0.005185, -0.257236, 0.345392]
+BEFORE initial_guess_[0].uk: [-0.142354, 0.023233, -0.116849, 0.027537, 0.001789, -0.004967, -0.257575, 0.287084]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.146162, 0.025590, -0.119652, 0.031497, 0.003840, -0.007876, -0.271348, 0.320209]
+BEFORE initial_guess_[0].uk: [-0.149946, 0.025547, -0.123432, 0.031647, 0.002348, -0.007718, -0.271675, 0.266266]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.153204, 0.025141, -0.125540, 0.030086, 0.002364, -0.005380, -0.278956, 0.296828]
+BEFORE initial_guess_[0].uk: [-0.156656, 0.025084, -0.128989, 0.030252, 0.000999, -0.005203, -0.279233, 0.247184]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=60, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.156656, 0.025084, -0.128989, 0.030252, 0.000999, -0.005203, -0.279233, 0.247184]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.161314, 0.025024, -0.133649, 0.030497, -0.000852, -0.004949, -0.279648, -1.085562]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.131516, 0.016380, -0.109001, 0.021480, 0.001837, -0.012546, -0.229233, -1.098450]
+BEFORE initial_guess_[0].uk: [-0.122859, 0.016343, -0.100378, 0.021534, 0.005062, -0.012606, -0.213028, -0.922215]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.123231, 0.017624, -0.099774, 0.022743, -0.006007, -0.009887, -0.179233, -0.632581]
+BEFORE initial_guess_[0].uk: [-0.116272, 0.017651, -0.092842, 0.022730, -0.003373, -0.009990, -0.174231, -0.523593]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.119835, 0.017741, -0.093001, 0.022566, -0.004065, -0.006408, -0.177857, -0.279851]
+BEFORE initial_guess_[0].uk: [-0.115460, 0.017780, -0.088646, 0.022552, -0.002413, -0.006501, -0.177742, -0.226372]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.120438, 0.017397, -0.089888, 0.020896, 0.000378, -0.002002, -0.199286, -0.018105]
+BEFORE initial_guess_[0].uk: [-0.118691, 0.017411, -0.088154, 0.020914, 0.001023, -0.002035, -0.199349, -0.008856]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=65, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.118691, 0.017411, -0.088154, 0.020914, 0.001023, -0.002035, -0.199349, -0.008856]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.116835, 0.017413, -0.086323, 0.020972, 0.001694, -0.002060, -0.199460, -1.005834]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.091878, 0.011985, -0.072210, 0.016005, -0.001579, -0.007363, -0.149350, -0.777380]
+BEFORE initial_guess_[0].uk: [-0.085268, 0.012030, -0.065629, 0.015957, 0.000959, -0.007530, -0.140996, -0.648768]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.089254, 0.013824, -0.066366, 0.017634, -0.004127, -0.005729, -0.126416, -0.349929]
+BEFORE initial_guess_[0].uk: [-0.084863, 0.013852, -0.061999, 0.017610, -0.002452, -0.005844, -0.126186, -0.285735]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=68, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.084863, 0.013852, -0.061999, 0.017610, -0.002452, -0.005844, -0.126186, -0.285735]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.078936, 0.013871, -0.056111, 0.017600, -0.000185, -0.006004, -0.125747, -1.081612]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.064215, 0.005617, -0.049406, 0.006395, -0.007596, 0.002403, -0.092067, -0.502099]
+BEFORE initial_guess_[0].uk: [-0.059312, 0.005626, -0.044525, 0.006374, -0.005699, 0.002278, -0.091818, -0.414788]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=70, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.059312, 0.005626, -0.044525, 0.006374, -0.005699, 0.002278, -0.091818, -0.414788]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.052213, 0.005616, -0.037468, 0.006363, -0.002929, 0.002092, -0.091333, -1.165817]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.047658, 0.004639, -0.036236, 0.004906, -0.005013, 0.003456, -0.072990, -0.286045]
+BEFORE initial_guess_[0].uk: [-0.044385, 0.004641, -0.032981, 0.004892, -0.003727, 0.003350, -0.072792, -0.233201]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=72, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.044385, 0.004641, -0.032981, 0.004892, -0.003727, 0.003350, -0.072792, -0.233201]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.039903, 0.004621, -0.028532, 0.004894, -0.001939, 0.003200, -0.072410, -1.116587]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.037846, 0.004164, -0.027539, 0.004177, -0.002587, 0.003576, -0.061817, -0.146980]
+BEFORE initial_guess_[0].uk: [-0.036050, 0.004156, -0.025755, 0.004179, -0.001873, 0.003502, -0.061691, -0.117540]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=74, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.036050, 0.004156, -0.025755, 0.004179, -0.001873, 0.003502, -0.061691, -0.117540]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.033673, 0.004126, -0.023404, 0.004205, -0.000907, 0.003399, -0.061447, -1.068502]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.032973, 0.003702, -0.022301, 0.003580, -0.001159, 0.003575, -0.056306, -0.074472]
+BEFORE initial_guess_[0].uk: [-0.032062, 0.003692, -0.021401, 0.003594, -0.000791, 0.003524, -0.056226, -0.057546]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=76, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.032062, 0.003692, -0.021401, 0.003594, -0.000791, 0.003524, -0.056226, -0.057546]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.030894, 0.003661, -0.020256, 0.003636, -0.000303, 0.003454, -0.056069, -0.998156]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.030335, 0.003292, -0.019773, 0.003096, -0.000396, 0.003563, -0.053418, -0.036777]
+BEFORE initial_guess_[0].uk: [-0.029905, 0.003283, -0.019352, 0.003117, -0.000215, 0.003527, -0.053363, -0.026417]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=78, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.029905, 0.003283, -0.019352, 0.003117, -0.000215, 0.003527, -0.053363, -0.026417]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.029387, 0.003256, -0.018854, 0.003170, 0.000015, 0.003478, -0.053256, -0.968563]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.028867, 0.002938, -0.018669, 0.002699, -0.000011, 0.003554, -0.051903, -0.018874]
+BEFORE initial_guess_[0].uk: [-0.028677, 0.002932, -0.018487, 0.002725, 0.000076, 0.003527, -0.051861, -0.011663]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=80, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.028677, 0.002932, -0.018487, 0.002725, 0.000076, 0.003527, -0.051861, -0.011663]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.028478, 0.002911, -0.018308, 0.002784, 0.000179, 0.003492, -0.051778, -0.958072]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.028210, 0.002646, -0.018032, 0.002373, 0.000148, 0.003559, -0.051101, -0.010302]
+BEFORE initial_guess_[0].uk: [-0.028137, 0.002642, -0.017966, 0.002402, 0.000189, 0.003537, -0.051066, -0.004604]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=82, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.028137, 0.002642, -0.017966, 0.002402, 0.000189, 0.003537, -0.051066, -0.004604]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.028093, 0.002626, -0.017941, 0.002465, 0.000231, 0.003511, -0.050996, -0.951692]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.027844, 0.002417, -0.017744, 0.002119, 0.000232, 0.003565, -0.050658, -0.006093]
+BEFORE initial_guess_[0].uk: [-0.027827, 0.002417, -0.017735, 0.002150, 0.000251, 0.003547, -0.050626, -0.001137]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=84, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.027827, 0.002417, -0.017735, 0.002150, 0.000251, 0.003547, -0.050626, -0.001137]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.027858, 0.002405, -0.017786, 0.002217, 0.000262, 0.003527, -0.050563, -0.949622]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.027627, 0.002240, -0.017610, 0.001920, 0.000266, 0.003573, -0.050395, -0.004083]
+BEFORE initial_guess_[0].uk: [-0.027638, 0.002241, -0.017629, 0.001952, 0.000273, 0.003558, -0.050365, 0.000517]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=86, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.027638, 0.002241, -0.017629, 0.001952, 0.000273, 0.003558, -0.050365, 0.000517]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.027706, 0.002233, -0.017715, 0.002021, 0.000270, 0.003543, -0.050304, -0.949398]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025339, 0.002126, -0.019707, 0.001802, 0.000286, 0.003551, -0.050222, -0.003120]
+BEFORE initial_guess_[0].uk: [-0.025363, 0.002128, -0.019738, 0.001835, 0.000289, 0.003538, -0.050193, 0.001310]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=88, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025363, 0.002128, -0.019738, 0.001835, 0.000289, 0.003538, -0.050193, 0.001310]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025448, 0.002123, -0.019842, 0.001906, 0.000278, 0.003526, -0.050134, -0.998204]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024842, 0.002004, -0.019992, 0.001661, 0.000266, 0.003563, -0.050235, -0.004196]
+BEFORE initial_guess_[0].uk: [-0.024861, 0.002008, -0.020018, 0.001695, 0.000272, 0.003551, -0.050203, 0.000411]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=90, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024861, 0.002008, -0.020018, 0.001695, 0.000272, 0.003551, -0.050203, 0.000411]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024937, 0.002005, -0.020112, 0.001766, 0.000267, 0.003540, -0.050138, -1.004481]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026440, 0.015523, -0.021689, 0.019650, 0.008415, -0.020681, -0.052285, -0.003468]
+BEFORE initial_guess_[0].uk: [-0.026456, 0.015341, -0.021714, 0.019881, 0.008327, -0.020461, -0.052247, 0.001075]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=92, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026456, 0.015341, -0.021714, 0.019881, 0.008327, -0.020461, -0.052247, 0.001075]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026512, 0.015056, -0.021790, 0.020253, 0.008172, -0.020106, -0.052188, -0.968057]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025014, 0.004169, -0.020111, 0.005421, 0.001502, -0.000776, -0.050948, -0.001630]
+BEFORE initial_guess_[0].uk: [-0.025047, 0.004166, -0.020151, 0.005465, 0.001487, -0.000756, -0.050917, 0.002583]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=94, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025047, 0.004166, -0.020151, 0.005465, 0.001487, -0.000756, -0.050917, 0.002583]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025147, 0.004154, -0.020270, 0.005552, 0.001451, -0.000715, -0.050851, -0.999719]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024650, 0.002333, -0.019922, 0.002824, 0.000464, 0.002487, -0.050413, -0.002875]
+BEFORE initial_guess_[0].uk: [-0.024681, 0.002352, -0.019960, 0.002846, 0.000463, 0.002478, -0.050379, 0.001524]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=96, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024681, 0.002352, -0.019960, 0.002846, 0.000463, 0.002478, -0.050379, 0.001524]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024776, 0.002371, -0.020074, 0.002901, 0.000449, 0.002473, -0.050309, -1.001690]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024844, 0.001986, -0.019570, 0.002144, 0.000320, 0.003135, -0.050143, -0.002572]
+BEFORE initial_guess_[0].uk: [-0.024877, 0.002003, -0.019610, 0.002169, 0.000321, 0.003124, -0.050109, 0.001776]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=98, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024877, 0.002003, -0.019610, 0.002169, 0.000321, 0.003124, -0.050109, 0.001776]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024975, 0.002019, -0.019727, 0.002225, 0.000308, 0.003114, -0.050041, -1.000894]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024472, 0.001848, -0.019855, 0.001787, 0.000308, 0.003384, -0.050004, -0.002331]
+BEFORE initial_guess_[0].uk: [-0.024507, 0.001861, -0.019897, 0.001814, 0.000308, 0.003373, -0.049972, 0.001975]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=100, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024507, 0.001861, -0.019897, 0.001814, 0.000308, 0.003373, -0.049972, 0.001975]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024608, 0.001872, -0.020017, 0.001877, 0.000294, 0.003365, -0.049906, -1.000538]
+[OSQP] Saved factorization sample_100
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024869, 0.013696, -0.022016, 0.017784, 0.006018, -0.017826, -0.043004, -0.001743]
+BEFORE initial_guess_[0].uk: [-0.024892, 0.013619, -0.022047, 0.017908, 0.005956, -0.017715, -0.043047, 0.002234]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=102, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024892, 0.013619, -0.022047, 0.017908, 0.005956, -0.017715, -0.043047, 0.002234]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024947, 0.013429, -0.022122, 0.018183, 0.005821, -0.017462, -0.043141, -1.001029]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024341, 0.003745, -0.020239, 0.004795, 0.001202, -0.000209, -0.047773, -0.002223]
+BEFORE initial_guess_[0].uk: [-0.024379, 0.003745, -0.020285, 0.004839, 0.001181, -0.000191, -0.047768, 0.001967]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=104, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024379, 0.003745, -0.020285, 0.004839, 0.001181, -0.000191, -0.047768, 0.001967]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024477, 0.003737, -0.020403, 0.004924, 0.001136, -0.000154, -0.047750, -1.000772]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024267, 0.002152, -0.019925, 0.002526, 0.000457, 0.002674, -0.049138, -0.002255]
+BEFORE initial_guess_[0].uk: [-0.024307, 0.002170, -0.019972, 0.002550, 0.000451, 0.002666, -0.049113, 0.002003]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=106, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024307, 0.002170, -0.019972, 0.002550, 0.000451, 0.002666, -0.049113, 0.002003]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024412, 0.002189, -0.020096, 0.002607, 0.000429, 0.002663, -0.049062, -1.000520]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024246, 0.001857, -0.019844, 0.001933, 0.000338, 0.003252, -0.049487, -0.002208]
+BEFORE initial_guess_[0].uk: [-0.024285, 0.001874, -0.019890, 0.001959, 0.000335, 0.003241, -0.049457, 0.002062]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=108, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024285, 0.001874, -0.019890, 0.001959, 0.000335, 0.003241, -0.049457, 0.002062]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024389, 0.001890, -0.020013, 0.002018, 0.000318, 0.003233, -0.049396, -1.000374]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026241, 0.012400, -0.019793, 0.016129, 0.004401, -0.015556, -0.039319, -0.001520]
+BEFORE initial_guess_[0].uk: [-0.026266, 0.012335, -0.019826, 0.016240, 0.004344, -0.015459, -0.039385, 0.002332]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=110, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026266, 0.012335, -0.019826, 0.016240, 0.004344, -0.015459, -0.039385, 0.002332]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026318, 0.012170, -0.019897, 0.016488, 0.004219, -0.015236, -0.039530, -0.971176]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026104, 0.003557, -0.018189, 0.004544, 0.000973, 0.000112, -0.046388, -0.001257]
+BEFORE initial_guess_[0].uk: [-0.026152, 0.003559, -0.018243, 0.004584, 0.000947, 0.000127, -0.046395, 0.002731]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=112, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026152, 0.003559, -0.018243, 0.004584, 0.000947, 0.000127, -0.046395, 0.002731]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026262, 0.003554, -0.018372, 0.004665, 0.000895, 0.000160, -0.046400, -0.973889]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025591, 0.002136, -0.018436, 0.002495, 0.000419, 0.002689, -0.048436, -0.001880]
+BEFORE initial_guess_[0].uk: [-0.025636, 0.002153, -0.018488, 0.002519, 0.000409, 0.002681, -0.048417, 0.002289]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=114, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025636, 0.002153, -0.018488, 0.002519, 0.000409, 0.002681, -0.048417, 0.002289]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025747, 0.002172, -0.018618, 0.002576, 0.000381, 0.002678, -0.048376, -0.986018]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025457, 0.001864, -0.018485, 0.001938, 0.000315, 0.003217, -0.049023, -0.002428]
+BEFORE initial_guess_[0].uk: [-0.025496, 0.001880, -0.018530, 0.001964, 0.000312, 0.003206, -0.048996, 0.001865]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=116, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025496, 0.001880, -0.018530, 0.001964, 0.000312, 0.003206, -0.048996, 0.001865]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025598, 0.001896, -0.018652, 0.002024, 0.000293, 0.003199, -0.048941, -0.988826]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025404, 0.001783, -0.018465, 0.001688, 0.000298, 0.003386, -0.049156, -0.002382]
+BEFORE initial_guess_[0].uk: [-0.025441, 0.001796, -0.018510, 0.001716, 0.000295, 0.003376, -0.049127, 0.001916]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=118, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025441, 0.001796, -0.018510, 0.001716, 0.000295, 0.003376, -0.049127, 0.001916]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025543, 0.001807, -0.018630, 0.001781, 0.000279, 0.003369, -0.049067, -0.989620]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026017, 0.012153, -0.019477, 0.015667, 0.003439, -0.015137, -0.035781, -0.001449]
+BEFORE initial_guess_[0].uk: [-0.026041, 0.012085, -0.019508, 0.015780, 0.003382, -0.015041, -0.035872, 0.002301]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=120, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026041, 0.012085, -0.019508, 0.015780, 0.003382, -0.015041, -0.035872, 0.002301]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026082, 0.011917, -0.019570, 0.016029, 0.003261, -0.014819, -0.036068, -0.978082]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025090, 0.003457, -0.018903, 0.004329, 0.000851, 0.000239, -0.045121, -0.001878]
+BEFORE initial_guess_[0].uk: [-0.025135, 0.003458, -0.018954, 0.004372, 0.000825, 0.000254, -0.045137, 0.002169]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=122, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025135, 0.003458, -0.018954, 0.004372, 0.000825, 0.000254, -0.045137, 0.002169]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025238, 0.003451, -0.019076, 0.004456, 0.000772, 0.000287, -0.045160, -0.997731]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024980, 0.002059, -0.018729, 0.002341, 0.000402, 0.002758, -0.047885, -0.002771]
+BEFORE initial_guess_[0].uk: [-0.025020, 0.002076, -0.018776, 0.002367, 0.000394, 0.002750, -0.047868, 0.001532]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=124, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025020, 0.002076, -0.018776, 0.002367, 0.000394, 0.002750, -0.047868, 0.001532]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025120, 0.002093, -0.018896, 0.002426, 0.000369, 0.002747, -0.047829, -0.999191]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024970, 0.001801, -0.018636, 0.001820, 0.000319, 0.003264, -0.048652, -0.002550]
+BEFORE initial_guess_[0].uk: [-0.025007, 0.001816, -0.018680, 0.001847, 0.000316, 0.003254, -0.048625, 0.001762]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=126, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025007, 0.001816, -0.018680, 0.001847, 0.000316, 0.003254, -0.048625, 0.001762]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025107, 0.001831, -0.018800, 0.001909, 0.000298, 0.003247, -0.048570, -0.998687]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025491, 0.011318, -0.019423, 0.014611, 0.002677, -0.013702, -0.035044, -0.001503]
+BEFORE initial_guess_[0].uk: [-0.025516, 0.011258, -0.019454, 0.014716, 0.002624, -0.013614, -0.035136, 0.002250]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=128, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025516, 0.011258, -0.019454, 0.014716, 0.002624, -0.013614, -0.035136, 0.002250]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025559, 0.011105, -0.019517, 0.014948, 0.002514, -0.013411, -0.035336, -0.989028]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024982, 0.003293, -0.018681, 0.004113, 0.000740, 0.000480, -0.044733, -0.001967]
+BEFORE initial_guess_[0].uk: [-0.025027, 0.003296, -0.018733, 0.004154, 0.000716, 0.000493, -0.044750, 0.002093]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=130, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025027, 0.003296, -0.018733, 0.004154, 0.000716, 0.000493, -0.044750, 0.002093]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025129, 0.003291, -0.018855, 0.004235, 0.000665, 0.000522, -0.044773, -0.999045]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024788, 0.002002, -0.018641, 0.002259, 0.000386, 0.002813, -0.047569, -0.002515]
+BEFORE initial_guess_[0].uk: [-0.024830, 0.002019, -0.018690, 0.002285, 0.000377, 0.002805, -0.047552, 0.001746]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=132, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024830, 0.002019, -0.018690, 0.002285, 0.000377, 0.002805, -0.047552, 0.001746]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024933, 0.002036, -0.018813, 0.002344, 0.000351, 0.002801, -0.047515, -1.001259]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024804, 0.001758, -0.018537, 0.001759, 0.000314, 0.003290, -0.048357, -0.002446]
+BEFORE initial_guess_[0].uk: [-0.024842, 0.001773, -0.018582, 0.001786, 0.000310, 0.003280, -0.048330, 0.001848]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=134, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024842, 0.001773, -0.018582, 0.001786, 0.000310, 0.003280, -0.048330, 0.001848]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024944, 0.001788, -0.018704, 0.001848, 0.000291, 0.003272, -0.048275, -1.000660]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024824, 0.010756, -0.019645, 0.013847, 0.002199, -0.012742, -0.034531, -0.001438]
+BEFORE initial_guess_[0].uk: [-0.024850, 0.010700, -0.019679, 0.013948, 0.002150, -0.012660, -0.034624, 0.002301]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=136, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024850, 0.010700, -0.019679, 0.013948, 0.002150, -0.012660, -0.034624, 0.002301]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024895, 0.010556, -0.019743, 0.014171, 0.002046, -0.012469, -0.034825, -1.001523]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024122, 0.003174, -0.019243, 0.003930, 0.000666, 0.000644, -0.044411, -0.002271]
+BEFORE initial_guess_[0].uk: [-0.024166, 0.003177, -0.019294, 0.003970, 0.000643, 0.000656, -0.044428, 0.001837]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=138, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024166, 0.003177, -0.019294, 0.003970, 0.000643, 0.000656, -0.044428, 0.001837]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024265, 0.003173, -0.019413, 0.004051, 0.000594, 0.000684, -0.044451, -1.001090]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023923, 0.001954, -0.019238, 0.002174, 0.000380, 0.002850, -0.047277, -0.002345]
+BEFORE initial_guess_[0].uk: [-0.023966, 0.001971, -0.019288, 0.002201, 0.000371, 0.002842, -0.047261, 0.001890]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=140, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023966, 0.001971, -0.019288, 0.002201, 0.000371, 0.002842, -0.047261, 0.001890]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024071, 0.001987, -0.019413, 0.002261, 0.000344, 0.002839, -0.047224, -1.000635]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023916, 0.001721, -0.019170, 0.001697, 0.000319, 0.003303, -0.048064, -0.002270]
+BEFORE initial_guess_[0].uk: [-0.023956, 0.001736, -0.019218, 0.001725, 0.000314, 0.003293, -0.048037, 0.001994]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=142, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023956, 0.001736, -0.019218, 0.001725, 0.000314, 0.003293, -0.048037, 0.001994]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024060, 0.001750, -0.019343, 0.001787, 0.000294, 0.003285, -0.047984, -1.000358]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024527, 0.010358, -0.019573, 0.013293, 0.001897, -0.012089, -0.034139, -0.001361]
+BEFORE initial_guess_[0].uk: [-0.024554, 0.010304, -0.019608, 0.013391, 0.001850, -0.012010, -0.034233, 0.002367]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=144, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024554, 0.010304, -0.019608, 0.013391, 0.001850, -0.012010, -0.034233, 0.002367]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024601, 0.010165, -0.019674, 0.013609, 0.001750, -0.011826, -0.034434, -1.001364]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024179, 0.003062, -0.018919, 0.003755, 0.000621, 0.000783, -0.044084, -0.002233]
+BEFORE initial_guess_[0].uk: [-0.024223, 0.003065, -0.018971, 0.003795, 0.000598, 0.000794, -0.044101, 0.001867]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=146, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024223, 0.003065, -0.018971, 0.003795, 0.000598, 0.000794, -0.044101, 0.001867]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024323, 0.003061, -0.019092, 0.003876, 0.000550, 0.000820, -0.044126, -1.000998]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024122, 0.001886, -0.018786, 0.002065, 0.000368, 0.002905, -0.046967, -0.002325]
+BEFORE initial_guess_[0].uk: [-0.024166, 0.001902, -0.018837, 0.002092, 0.000358, 0.002897, -0.046950, 0.001905]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=148, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024166, 0.001902, -0.018837, 0.002092, 0.000358, 0.002897, -0.046950, 0.001905]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024272, 0.001918, -0.018963, 0.002152, 0.000331, 0.002894, -0.046915, -1.000579]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024095, 0.001661, -0.018742, 0.001606, 0.000315, 0.003339, -0.047760, -0.002265]
+BEFORE initial_guess_[0].uk: [-0.024136, 0.001676, -0.018791, 0.001634, 0.000310, 0.003329, -0.047734, 0.001997]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=150, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024136, 0.001676, -0.018791, 0.001634, 0.000310, 0.003329, -0.047734, 0.001997]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024240, 0.001690, -0.018916, 0.001697, 0.000290, 0.003322, -0.047681, -1.000310]
+[OSQP] Saved factorization sample_150
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024128, 0.001588, -0.018643, 0.001392, 0.000293, 0.003481, -0.047932, -0.002207]
+BEFORE initial_guess_[0].uk: [-0.024167, 0.001601, -0.018690, 0.001422, 0.000290, 0.003472, -0.047904, 0.002060]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=152, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024167, 0.001601, -0.018690, 0.001422, 0.000290, 0.003472, -0.047904, 0.002060]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024271, 0.001610, -0.018815, 0.001489, 0.000272, 0.003465, -0.047847, -1.000163]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024731, 0.010777, -0.019074, 0.013779, 0.001813, -0.012907, -0.032331, -0.001244]
+BEFORE initial_guess_[0].uk: [-0.024757, 0.010717, -0.019107, 0.013883, 0.001763, -0.012822, -0.032437, 0.002430]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=154, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024757, 0.010717, -0.019107, 0.013883, 0.001763, -0.012822, -0.032437, 0.002430]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024798, 0.010565, -0.019169, 0.014113, 0.001659, -0.012626, -0.032664, -1.001349]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024240, 0.003060, -0.018545, 0.003728, 0.000616, 0.000689, -0.043281, -0.002216]
+BEFORE initial_guess_[0].uk: [-0.024285, 0.003062, -0.018598, 0.003771, 0.000591, 0.000702, -0.043304, 0.001863]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=156, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024285, 0.003062, -0.018598, 0.003771, 0.000591, 0.000702, -0.043304, 0.001863]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024385, 0.003055, -0.018719, 0.003854, 0.000540, 0.000731, -0.043337, -1.000996]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024127, 0.001822, -0.018467, 0.001971, 0.000371, 0.002917, -0.046461, -0.002329]
+BEFORE initial_guess_[0].uk: [-0.024172, 0.001838, -0.018520, 0.001999, 0.000360, 0.002909, -0.046447, 0.001893]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=158, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024172, 0.001838, -0.018520, 0.001999, 0.000360, 0.002909, -0.046447, 0.001893]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024278, 0.001853, -0.018647, 0.002060, 0.000331, 0.002906, -0.046415, -1.000560]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024158, 0.001587, -0.018366, 0.001505, 0.000312, 0.003366, -0.047338, -0.002269]
+BEFORE initial_guess_[0].uk: [-0.024199, 0.001602, -0.018415, 0.001533, 0.000307, 0.003356, -0.047313, 0.001989]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=160, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024199, 0.001602, -0.018415, 0.001533, 0.000307, 0.003356, -0.047313, 0.001989]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024304, 0.001615, -0.018541, 0.001597, 0.000286, 0.003349, -0.047262, -1.000279]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024569, 0.010334, -0.018902, 0.013255, 0.001633, -0.012214, -0.032713, -0.001335]
+BEFORE initial_guess_[0].uk: [-0.024596, 0.010278, -0.018937, 0.013355, 0.001586, -0.012134, -0.032813, 0.002374]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=162, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024596, 0.010278, -0.018937, 0.013355, 0.001586, -0.012134, -0.032813, 0.002374]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024640, 0.010136, -0.019001, 0.013574, 0.001488, -0.011947, -0.033028, -1.001318]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024222, 0.002948, -0.018298, 0.003610, 0.000579, 0.000802, -0.043173, -0.002228]
+BEFORE initial_guess_[0].uk: [-0.024268, 0.002951, -0.018351, 0.003650, 0.000555, 0.000813, -0.043193, 0.001859]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=164, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024268, 0.002951, -0.018351, 0.003650, 0.000555, 0.000813, -0.043193, 0.001859]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024368, 0.002946, -0.018473, 0.003732, 0.000505, 0.000840, -0.043224, -1.000949]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024124, 0.001758, -0.018216, 0.001905, 0.000363, 0.002944, -0.046210, -0.002328]
+BEFORE initial_guess_[0].uk: [-0.024169, 0.001774, -0.018269, 0.001931, 0.000353, 0.002936, -0.046195, 0.001895]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=166, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024169, 0.001774, -0.018269, 0.001931, 0.000353, 0.002936, -0.046195, 0.001895]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024275, 0.001790, -0.018397, 0.001992, 0.000324, 0.002933, -0.046163, -1.000516]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024069, 0.001529, -0.018202, 0.001440, 0.000310, 0.003383, -0.047044, -0.002264]
+BEFORE initial_guess_[0].uk: [-0.024111, 0.001544, -0.018251, 0.001468, 0.000305, 0.003373, -0.047020, 0.001992]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=168, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024111, 0.001544, -0.018251, 0.001468, 0.000305, 0.003373, -0.047020, 0.001992]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024216, 0.001557, -0.018378, 0.001531, 0.000284, 0.003366, -0.046969, -1.000243]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024541, 0.010032, -0.018631, 0.012858, 0.001533, -0.011761, -0.032881, -0.001365]
+BEFORE initial_guess_[0].uk: [-0.024570, 0.009978, -0.018667, 0.012955, 0.001488, -0.011684, -0.032977, 0.002362]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=170, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024570, 0.009978, -0.018667, 0.012955, 0.001488, -0.011684, -0.032977, 0.002362]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024615, 0.009841, -0.018733, 0.013170, 0.001393, -0.011503, -0.033184, -1.001241]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024216, 0.002846, -0.018046, 0.003470, 0.000568, 0.000896, -0.043004, -0.002226]
+BEFORE initial_guess_[0].uk: [-0.024262, 0.002849, -0.018099, 0.003510, 0.000545, 0.000907, -0.043024, 0.001866]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=172, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024262, 0.002849, -0.018099, 0.003510, 0.000545, 0.000907, -0.043024, 0.001866]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024362, 0.002845, -0.018221, 0.003591, 0.000496, 0.000933, -0.043052, -1.000881]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024146, 0.001696, -0.017939, 0.001821, 0.000364, 0.002968, -0.045940, -0.002316]
+BEFORE initial_guess_[0].uk: [-0.024192, 0.001712, -0.017992, 0.001848, 0.000353, 0.002960, -0.045926, 0.001904]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=174, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024192, 0.001712, -0.017992, 0.001848, 0.000353, 0.002960, -0.045926, 0.001904]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024298, 0.001727, -0.018120, 0.001909, 0.000325, 0.002956, -0.045893, -1.000469]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.022515, 0.001496, -0.019511, 0.001405, 0.000318, 0.003359, -0.046751, -0.002258]
+BEFORE initial_guess_[0].uk: [-0.022557, 0.001511, -0.019561, 0.001433, 0.000312, 0.003349, -0.046727, 0.001995]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=176, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.022557, 0.001511, -0.019561, 0.001433, 0.000312, 0.003349, -0.046727, 0.001995]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.022662, 0.001524, -0.019687, 0.001496, 0.000290, 0.003341, -0.046677, -1.000205]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.022219, 0.001418, -0.019740, 0.001184, 0.000299, 0.003500, -0.046929, -0.002203]
+BEFORE initial_guess_[0].uk: [-0.022260, 0.001431, -0.019789, 0.001215, 0.000294, 0.003490, -0.046902, 0.002055]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=178, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.022260, 0.001431, -0.019789, 0.001215, 0.000294, 0.003490, -0.046902, 0.002055]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.022364, 0.001441, -0.019915, 0.001282, 0.000274, 0.003483, -0.046848, -1.000058]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023194, 0.010509, -0.019733, 0.013435, 0.001596, -0.012712, -0.031465, -0.001274]
+BEFORE initial_guess_[0].uk: [-0.023221, 0.010449, -0.019767, 0.013539, 0.001548, -0.012629, -0.031571, 0.002417]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=180, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023221, 0.010449, -0.019767, 0.013539, 0.001548, -0.012629, -0.031571, 0.002417]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.023261, 0.010299, -0.019828, 0.013767, 0.001448, -0.012436, -0.031797, -1.001200]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023246, 0.002838, -0.018698, 0.003438, 0.000575, 0.000778, -0.042304, -0.002214]
+BEFORE initial_guess_[0].uk: [-0.023292, 0.002839, -0.018752, 0.003480, 0.000550, 0.000791, -0.042328, 0.001865]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=182, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023292, 0.002839, -0.018752, 0.003480, 0.000550, 0.000791, -0.042328, 0.001865]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.023393, 0.002831, -0.018875, 0.003564, 0.000499, 0.000819, -0.042363, -1.000852]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023182, 0.001605, -0.018577, 0.001692, 0.000358, 0.002986, -0.045452, -0.002317]
+BEFORE initial_guess_[0].uk: [-0.023228, 0.001620, -0.018632, 0.001720, 0.000347, 0.002978, -0.045439, 0.001898]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=184, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023228, 0.001620, -0.018632, 0.001720, 0.000347, 0.002978, -0.045439, 0.001898]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.023335, 0.001635, -0.018760, 0.001782, 0.000317, 0.002975, -0.045409, -1.000432]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023097, 0.001368, -0.018592, 0.001225, 0.000306, 0.003432, -0.046319, -0.002262]
+BEFORE initial_guess_[0].uk: [-0.023140, 0.001382, -0.018643, 0.001254, 0.000299, 0.003422, -0.046295, 0.001989]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=186, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023140, 0.001382, -0.018643, 0.001254, 0.000299, 0.003422, -0.046295, 0.001989]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.023246, 0.001395, -0.018770, 0.001317, 0.000277, 0.003416, -0.046248, -1.000159]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023650, 0.010073, -0.018966, 0.012925, 0.001521, -0.012069, -0.032016, -0.001364]
+BEFORE initial_guess_[0].uk: [-0.023678, 0.010018, -0.019002, 0.013024, 0.001476, -0.011989, -0.032114, 0.002363]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=188, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023678, 0.010018, -0.019002, 0.013024, 0.001476, -0.011989, -0.032114, 0.002363]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.023721, 0.009876, -0.019067, 0.013243, 0.001381, -0.011805, -0.032326, -1.001157]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023109, 0.002714, -0.018571, 0.003312, 0.000565, 0.000881, -0.042242, -0.002221]
+BEFORE initial_guess_[0].uk: [-0.023155, 0.002717, -0.018626, 0.003352, 0.000540, 0.000892, -0.042263, 0.001865]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=190, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023155, 0.002717, -0.018626, 0.003352, 0.000540, 0.000892, -0.042263, 0.001865]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.023256, 0.002712, -0.018749, 0.003434, 0.000490, 0.000919, -0.042295, -1.000801]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023042, 0.001525, -0.018455, 0.001609, 0.000357, 0.003013, -0.045206, -0.002320]
+BEFORE initial_guess_[0].uk: [-0.023089, 0.001541, -0.018509, 0.001636, 0.000346, 0.003005, -0.045192, 0.001898]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=192, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023089, 0.001541, -0.018509, 0.001636, 0.000346, 0.003005, -0.045192, 0.001898]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.023196, 0.001556, -0.018638, 0.001697, 0.000316, 0.003001, -0.045162, -1.000380]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023266, 0.001288, -0.018158, 0.001137, 0.000301, 0.003454, -0.046015, -0.002250]
+BEFORE initial_guess_[0].uk: [-0.023309, 0.001303, -0.018209, 0.001165, 0.000294, 0.003444, -0.045992, 0.001997]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=194, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023309, 0.001303, -0.018209, 0.001165, 0.000294, 0.003444, -0.045992, 0.001997]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.023414, 0.001316, -0.018337, 0.001228, 0.000272, 0.003437, -0.045944, -1.000126]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.017103, 0.001206, -0.024296, 0.000897, 0.000321, 0.003612, -0.046231, -0.002202]
+BEFORE initial_guess_[0].uk: [-0.017148, 0.001218, -0.024343, 0.000928, 0.000315, 0.003602, -0.046205, 0.002051]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=196, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.017148, 0.001218, -0.024343, 0.000928, 0.000315, 0.003602, -0.046205, 0.002051]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.017256, 0.001228, -0.024465, 0.000996, 0.000293, 0.003596, -0.046153, -0.999974]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024939, 0.010462, -0.017412, 0.013395, 0.001599, -0.012897, -0.030853, -0.001289]
+BEFORE initial_guess_[0].uk: [-0.024973, 0.010401, -0.017439, 0.013499, 0.001552, -0.012812, -0.030958, 0.002410]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=198, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024973, 0.010401, -0.017439, 0.013499, 0.001552, -0.012812, -0.030958, 0.002410]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025021, 0.010248, -0.017491, 0.013730, 0.001453, -0.012616, -0.031185, -1.000590]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025948, 0.002671, -0.015381, 0.003249, 0.000538, 0.000795, -0.041577, -0.002054]
+BEFORE initial_guess_[0].uk: [-0.026003, 0.002671, -0.015430, 0.003291, 0.000512, 0.000808, -0.041601, 0.001997]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=200, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026003, 0.002671, -0.015430, 0.003291, 0.000512, 0.000808, -0.041601, 0.001997]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026113, 0.002664, -0.015547, 0.003375, 0.000459, 0.000837, -0.041638, -0.973964]
+[OSQP] Saved factorization sample_200
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026310, 0.001422, -0.014868, 0.001479, 0.000325, 0.003035, -0.044618, -0.001527]
+BEFORE initial_guess_[0].uk: [-0.026369, 0.001438, -0.014922, 0.001507, 0.000310, 0.003028, -0.044608, 0.002552]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=202, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026369, 0.001438, -0.014922, 0.001507, 0.000310, 0.003028, -0.044608, 0.002552]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026492, 0.001452, -0.015052, 0.001568, 0.000275, 0.003025, -0.044584, -0.965706]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026523, 0.001179, -0.014627, 0.001003, 0.000267, 0.003489, -0.045425, -0.001601]
+BEFORE initial_guess_[0].uk: [-0.026579, 0.001194, -0.014677, 0.001031, 0.000257, 0.003479, -0.045405, 0.002527]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=204, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026579, 0.001194, -0.014677, 0.001031, 0.000257, 0.003479, -0.045405, 0.002527]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026699, 0.001206, -0.014805, 0.001095, 0.000229, 0.003472, -0.045364, -0.961524]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026374, 0.001099, -0.014749, 0.000783, 0.000250, 0.003632, -0.045593, -0.001736]
+BEFORE initial_guess_[0].uk: [-0.026427, 0.001111, -0.014797, 0.000813, 0.000242, 0.003623, -0.045571, 0.002426]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=206, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026427, 0.001111, -0.014797, 0.000813, 0.000242, 0.003623, -0.045571, 0.002426]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026544, 0.001120, -0.014922, 0.000881, 0.000217, 0.003616, -0.045525, -0.965933]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026870, 0.010689, -0.015300, 0.013719, 0.001589, -0.013459, -0.030438, -0.001208]
+BEFORE initial_guess_[0].uk: [-0.026905, 0.010626, -0.015330, 0.013826, 0.001541, -0.013370, -0.030546, 0.002470]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=208, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026905, 0.010626, -0.015330, 0.013826, 0.001541, -0.013370, -0.030546, 0.002470]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026953, 0.010466, -0.015384, 0.014062, 0.001441, -0.013167, -0.030776, -0.957133]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026270, 0.002626, -0.014884, 0.003219, 0.000529, 0.000714, -0.041037, -0.001839]
+BEFORE initial_guess_[0].uk: [-0.026326, 0.002627, -0.014935, 0.003262, 0.000501, 0.000728, -0.041065, 0.002165]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=210, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026326, 0.002627, -0.014935, 0.003262, 0.000501, 0.000728, -0.041065, 0.002165]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026438, 0.002618, -0.015054, 0.003346, 0.000446, 0.000758, -0.041109, -0.969997]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026000, 0.001323, -0.014956, 0.001376, 0.000308, 0.003035, -0.044150, -0.002528]
+BEFORE initial_guess_[0].uk: [-0.026053, 0.001338, -0.015005, 0.001403, 0.000295, 0.003027, -0.044141, 0.001698]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=212, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026053, 0.001338, -0.015005, 0.001403, 0.000295, 0.003027, -0.044141, 0.001698]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026166, 0.001353, -0.015125, 0.001464, 0.000263, 0.003024, -0.044120, -0.975792]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026058, 0.001066, -0.014806, 0.000876, 0.000244, 0.003506, -0.045020, -0.002570]
+BEFORE initial_guess_[0].uk: [-0.026107, 0.001081, -0.014849, 0.000904, 0.000236, 0.003495, -0.045000, 0.001712]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=214, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026107, 0.001081, -0.014849, 0.000904, 0.000236, 0.003495, -0.045000, 0.001712]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026217, 0.001094, -0.014965, 0.000967, 0.000213, 0.003488, -0.044959, -0.973639]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026441, 0.010100, -0.015378, 0.013016, 0.001488, -0.012573, -0.031446, -0.001525]
+BEFORE initial_guess_[0].uk: [-0.026475, 0.010042, -0.015406, 0.013117, 0.001444, -0.012491, -0.031542, 0.002244]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=216, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026475, 0.010042, -0.015406, 0.013117, 0.001444, -0.012491, -0.031542, 0.002244]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026525, 0.009895, -0.015463, 0.013340, 0.001352, -0.012300, -0.031749, -0.966705]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026293, 0.002454, -0.014548, 0.003026, 0.000500, 0.000867, -0.041121, -0.002010]
+BEFORE initial_guess_[0].uk: [-0.026348, 0.002456, -0.014597, 0.003067, 0.000474, 0.000879, -0.041144, 0.002039]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=218, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026348, 0.002456, -0.014597, 0.003067, 0.000474, 0.000879, -0.041144, 0.002039]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026459, 0.002450, -0.014714, 0.003148, 0.000422, 0.000906, -0.041179, -0.968311]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026202, 0.001215, -0.014453, 0.001253, 0.000296, 0.003078, -0.043928, -0.002247]
+BEFORE initial_guess_[0].uk: [-0.026257, 0.001231, -0.014503, 0.001279, 0.000283, 0.003070, -0.043918, 0.001941]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=220, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026257, 0.001231, -0.014503, 0.001279, 0.000283, 0.003070, -0.043918, 0.001941]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026373, 0.001246, -0.014625, 0.001340, 0.000251, 0.003066, -0.043895, -0.970056]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026142, 0.000965, -0.014436, 0.000758, 0.000235, 0.003535, -0.044694, -0.002285]
+BEFORE initial_guess_[0].uk: [-0.026193, 0.000980, -0.014482, 0.000786, 0.000227, 0.003525, -0.044675, 0.001949]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=222, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026193, 0.000980, -0.014482, 0.000786, 0.000227, 0.003525, -0.044675, 0.001949]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026306, 0.000993, -0.014602, 0.000848, 0.000202, 0.003517, -0.044635, -0.971322]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026174, 0.000878, -0.014333, 0.000523, 0.000220, 0.003683, -0.044863, -0.002259]
+BEFORE initial_guess_[0].uk: [-0.026223, 0.000890, -0.014377, 0.000554, 0.000214, 0.003673, -0.044841, 0.001986]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=224, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026223, 0.000890, -0.014377, 0.000554, 0.000214, 0.003673, -0.044841, 0.001986]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026335, 0.000900, -0.014495, 0.000620, 0.000191, 0.003666, -0.044796, -0.970271]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026894, 0.010372, -0.014634, 0.013328, 0.001551, -0.013234, -0.030698, -0.001371]
+BEFORE initial_guess_[0].uk: [-0.026928, 0.010309, -0.014662, 0.013434, 0.001506, -0.013147, -0.030798, 0.002367]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=226, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026928, 0.010309, -0.014662, 0.013434, 0.001506, -0.013147, -0.030798, 0.002367]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026977, 0.010152, -0.014717, 0.013667, 0.001411, -0.012947, -0.031013, -0.955258]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026419, 0.002390, -0.014092, 0.002931, 0.000499, 0.000790, -0.040558, -0.001684]
+BEFORE initial_guess_[0].uk: [-0.026477, 0.002390, -0.014144, 0.002973, 0.000472, 0.000802, -0.040584, 0.002308]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=228, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026477, 0.002390, -0.014144, 0.002973, 0.000472, 0.000802, -0.040584, 0.002308]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026590, 0.002382, -0.014265, 0.003057, 0.000417, 0.000831, -0.040624, -0.965430]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026490, 0.001093, -0.013824, 0.001095, 0.000278, 0.003089, -0.043439, -0.002351]
+BEFORE initial_guess_[0].uk: [-0.026546, 0.001108, -0.013874, 0.001122, 0.000264, 0.003082, -0.043431, 0.001846]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=230, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026546, 0.001108, -0.013874, 0.001122, 0.000264, 0.003082, -0.043431, 0.001846]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026661, 0.001122, -0.013997, 0.001183, 0.000231, 0.003078, -0.043411, -0.963080]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026658, 0.000837, -0.013585, 0.000596, 0.000223, 0.003556, -0.044221, -0.002206]
+BEFORE initial_guess_[0].uk: [-0.026711, 0.000851, -0.013632, 0.000624, 0.000214, 0.003546, -0.044203, 0.002011]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=232, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026711, 0.000851, -0.013632, 0.000624, 0.000214, 0.003546, -0.044203, 0.002011]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026825, 0.000864, -0.013752, 0.000687, 0.000188, 0.003538, -0.044166, -0.958710]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026345, 0.000748, -0.013840, 0.000361, 0.000209, 0.003706, -0.044379, -0.002038]
+BEFORE initial_guess_[0].uk: [-0.026396, 0.000760, -0.013886, 0.000391, 0.000201, 0.003696, -0.044358, 0.002165]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=234, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026396, 0.000760, -0.013886, 0.000391, 0.000201, 0.003696, -0.044358, 0.002165]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026510, 0.000768, -0.014007, 0.000458, 0.000176, 0.003689, -0.044317, -0.966656]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026979, 0.010478, -0.014257, 0.013482, 0.001583, -0.013639, -0.030280, -0.001550]
+BEFORE initial_guess_[0].uk: [-0.027013, 0.010413, -0.014284, 0.013591, 0.001537, -0.013550, -0.030380, 0.002216]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=236, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.027013, 0.010413, -0.014284, 0.013591, 0.001537, -0.013550, -0.030380, 0.002216]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.027060, 0.010251, -0.014337, 0.013829, 0.001443, -0.013345, -0.030597, -0.953447]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026527, 0.002282, -0.013650, 0.002812, 0.000492, 0.000755, -0.040118, -0.001828]
+BEFORE initial_guess_[0].uk: [-0.026584, 0.002281, -0.013701, 0.002854, 0.000465, 0.000769, -0.040145, 0.002184]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=238, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026584, 0.002281, -0.013701, 0.002854, 0.000465, 0.000769, -0.040145, 0.002184]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026697, 0.002272, -0.013820, 0.002938, 0.000410, 0.000799, -0.040187, -0.962835]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.026618, 0.000948, -0.013349, 0.000927, 0.000262, 0.003116, -0.042989, -0.002400]
+BEFORE initial_guess_[0].uk: [-0.026675, 0.000964, -0.013399, 0.000954, 0.000248, 0.003109, -0.042981, 0.001802]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=240, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.026675, 0.000964, -0.013399, 0.000954, 0.000248, 0.003109, -0.042981, 0.001802]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.026791, 0.000979, -0.013521, 0.001014, 0.000214, 0.003105, -0.042963, -0.959815]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024410, 0.000713, -0.015501, 0.000460, 0.000215, 0.003555, -0.043777, -0.002214]
+BEFORE initial_guess_[0].uk: [-0.024463, 0.000727, -0.015547, 0.000488, 0.000204, 0.003544, -0.043760, 0.002002]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=242, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024463, 0.000727, -0.015547, 0.000488, 0.000204, 0.003544, -0.043760, 0.002002]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024577, 0.000740, -0.015668, 0.000550, 0.000177, 0.003535, -0.043724, -1.004673]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023707, 0.000608, -0.016063, 0.000200, 0.000176, 0.003711, -0.044060, -0.003592]
+BEFORE initial_guess_[0].uk: [-0.023750, 0.000620, -0.016099, 0.000231, 0.000171, 0.003701, -0.044037, 0.000854]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=244, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.023750, 0.000620, -0.016099, 0.000231, 0.000171, 0.003701, -0.044037, 0.000854]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.023849, 0.000629, -0.016206, 0.000297, 0.000153, 0.003692, -0.043991, -1.001936]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025632, 0.010517, -0.015184, 0.013567, 0.001621, -0.013941, -0.029802, -0.002016]
+BEFORE initial_guess_[0].uk: [-0.025660, 0.010451, -0.015207, 0.013676, 0.001577, -0.013851, -0.029903, 0.001832]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=246, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025660, 0.010451, -0.015207, 0.013676, 0.001577, -0.013851, -0.029903, 0.001832]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025700, 0.010286, -0.015252, 0.013917, 0.001485, -0.013643, -0.030118, -0.984047]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024578, 0.002172, -0.015121, 0.002694, 0.000486, 0.000706, -0.039750, -0.001926]
+BEFORE initial_guess_[0].uk: [-0.024633, 0.002172, -0.015171, 0.002737, 0.000459, 0.000719, -0.039775, 0.002111]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=248, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024633, 0.002172, -0.015171, 0.002737, 0.000459, 0.000719, -0.039775, 0.002111]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024744, 0.002162, -0.015289, 0.002822, 0.000405, 0.000749, -0.039815, -1.001936]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024399, 0.000815, -0.015062, 0.000777, 0.000250, 0.003105, -0.042675, -0.002716]
+BEFORE initial_guess_[0].uk: [-0.024454, 0.000831, -0.015111, 0.000804, 0.000237, 0.003096, -0.042666, 0.001543]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=250, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024454, 0.000831, -0.015111, 0.000804, 0.000237, 0.003096, -0.042666, 0.001543]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024568, 0.000845, -0.015232, 0.000864, 0.000205, 0.003092, -0.042643, -1.000763]
+[OSQP] Saved factorization sample_250
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024364, 0.000545, -0.015006, 0.000254, 0.000189, 0.003592, -0.043472, -0.002434]
+BEFORE initial_guess_[0].uk: [-0.024416, 0.000560, -0.015052, 0.000282, 0.000180, 0.003581, -0.043452, 0.001824]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=252, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024416, 0.000560, -0.015052, 0.000282, 0.000180, 0.003581, -0.043452, 0.001824]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024530, 0.000572, -0.015172, 0.000345, 0.000155, 0.003572, -0.043412, -1.000153]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024355, 0.000450, -0.014934, 0.000006, 0.000170, 0.003747, -0.043639, -0.002275]
+BEFORE initial_guess_[0].uk: [-0.024407, 0.000462, -0.014979, 0.000037, 0.000163, 0.003737, -0.043617, 0.001972]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=254, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024407, 0.000462, -0.014979, 0.000037, 0.000163, 0.003737, -0.043617, 0.001972]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024520, 0.000470, -0.015099, 0.000104, 0.000139, 0.003728, -0.043571, -0.999850]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025479, 0.010449, -0.014944, 0.013495, 0.001673, -0.014065, -0.029274, -0.001417]
+BEFORE initial_guess_[0].uk: [-0.025513, 0.010381, -0.014972, 0.013605, 0.001626, -0.013974, -0.029376, 0.002338]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=256, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.025513, 0.010381, -0.014972, 0.013605, 0.001626, -0.013974, -0.029376, 0.002338]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.025559, 0.010214, -0.015024, 0.013847, 0.001530, -0.013764, -0.029595, -0.986492]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024659, 0.002020, -0.014635, 0.002513, 0.000484, 0.000720, -0.039277, -0.001748]
+BEFORE initial_guess_[0].uk: [-0.024718, 0.002020, -0.014688, 0.002556, 0.000456, 0.000734, -0.039303, 0.002255]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=258, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [-0.024718, 0.002020, -0.014688, 0.002556, 0.000456, 0.000734, -0.039303, 0.002255]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [-0.024832, 0.002010, -0.014809, 0.002640, 0.000400, 0.000764, -0.039344, -1.001277]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.024668, 0.000646, -0.014394, 0.000571, 0.000225, 0.003146, -0.042205, -0.002536]
+BEFORE initial_guess_[0].uk: [-0.024725, 0.000661, -0.014446, 0.000598, 0.000210, 0.003138, -0.042196, 0.001692]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=260, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================

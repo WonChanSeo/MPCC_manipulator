@@ -98,15 +98,15 @@ extern const char * OSQP_ERROR_MESSAGE[];
 # define OSQP_SCALING               (10)
 # define OSQP_POLISHING             (0) // 0
 
-// ADMM parameters
-# define OSQP_RHO                   (0.125) // 0.1
-# define OSQP_SIGMA                 (1E-06)
-# define OSQP_ALPHA                 (1.6)
+// ADMM parameters (FP32 exact values for ASIC)
+# define OSQP_RHO                   (0.125f)                       // 2^(-3), 0x3E000000, was 0.1
+# define OSQP_SIGMA                 (9.5367431640625e-07f)         // 2^(-20), 0x358637BD, was 1E-06
+# define OSQP_ALPHA                 (1.5f)                         // 0x3FC00000, was 1.6
 
-# define OSQP_RHO_MIN               (1e-06)
-# define OSQP_RHO_MAX               (1e06)
-# define OSQP_RHO_TOL               (1e-04) ///< tolerance for detecting if an inequality is set to equality
-# define OSQP_RHO_EQ_OVER_RHO_INEQ  (1e03)
+# define OSQP_RHO_MIN               (9.5367431640625e-07f)         // 2^(-20), 0x358637BD, was 1e-06
+# define OSQP_RHO_MAX               (1048576.0f)                   // 2^(20), 0x49800000, was 1e06
+# define OSQP_RHO_TOL               (1.220703125e-04f)             // 2^(-13), 0x39800000, was 1e-04
+# define OSQP_RHO_EQ_OVER_RHO_INEQ  (1024.0f)                      // 2^(10), 0x44800000, was 1e03
 
 #ifdef OSQP_ALGEBRA_CUDA
 # define OSQP_RHO_IS_VEC            (0)
@@ -155,7 +155,7 @@ extern const char * OSQP_ERROR_MESSAGE[];
 # define OSQP_ADAPTIVE_RHO_FIXED (100)
 
 // termination parameters
-# define OSQP_MAX_ITER              (500) // MODI 4000
+# define OSQP_MAX_ITER              (250) // was 500, MODI 4000
 # define OSQP_EPS_ABS               (0.0009765625f)  // 1/1024 = 2^(-10) for hardware-friendly computation
 # define OSQP_EPS_REL               (0.0009765625f)  // 1/1024 = 2^(-10) for hardware-friendly computation
 # define OSQP_EPS_PRIM_INF          (1E-4)

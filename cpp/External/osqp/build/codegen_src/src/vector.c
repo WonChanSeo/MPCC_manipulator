@@ -909,15 +909,20 @@ OSQPInt OSQPVectorf_ew_bounds_type(OSQPVectori*       iseq,
   OSQPFloat* lv = l->values;
   OSQPFloat* uv = u->values;
 
-  for (i = 0; i < length; i++) {
+  // ASIC simplification: constraint types are fixed by index range (no dynamic detection)
+  // Index layout (m=479 total):
+  //   [0, 99)   : Equality (dynamics)      -> type 1 (rho = OSQP_RHO_EQ_OVER_RHO_INEQ * rho)
+  //   [99, 198) : Inequality (state bounds) -> type 0 (rho = settings->rho)
+  //   [198, 278): Inequality (input bounds) -> type 0
+  //   [278, 358): Inequality (ddjoint bounds) -> type 0
+  //   [358, 479): Inequality (polytopic)    -> type 0
+  #define MPCC_N_EQ 99  // Number of equality constraints (dynamics)
 
+  for (i = 0; i < length; i++) {
     old_value = iseqv[i];
 
-    if ((lv[i] < -infval) && (uv[i] > infval)) {
-      // Loose bounds
-      iseqv[i] = -1;
-    } else if (uv[i] - lv[i] < tol) {
-      // Equality constraints
+    if (i < MPCC_N_EQ) {
+      // Equality constraints (dynamics): l == u == 0
       iseqv[i] = 1;
     } else {
       // Inequality constraints
