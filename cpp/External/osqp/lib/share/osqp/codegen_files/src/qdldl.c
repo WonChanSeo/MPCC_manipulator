@@ -495,45 +495,21 @@ static inline float init_reciprocal(float d) {
 }
 
 #ifdef OSQP_USE_TRUNCATE
-// Truncate version: mul/add with truncation (toward zero) instead of rounding
+// Truncate version: use actual division with truncation (toward zero)
 float reciprocal_nr_fma(float d) {
     int old_round = fegetround();
     fesetround(FE_TOWARDZERO);
 
-    float x = init_reciprocal(d);
-
-    // Newton-Raphson iterations with separate mul/add and truncation
-    // t = -d * x + 2.0; x = x * t;
-    volatile float tmp = (-d) * x;
-    volatile float t = tmp + 2.0f;
-    x = x * t;
-
-    tmp = (-d) * x;
-    t = tmp + 2.0f;
-    x = x * t;
-
-    tmp = (-d) * x;
-    t = tmp + 2.0f;
-    x = x * t;
+    // Use actual division instead of Newton-Raphson MAC
+    volatile float result = 1.0f / d;
 
     fesetround(old_round);
-    return x;
+    return result;
 }
 #else
-// Standard float version
+// Standard float version - also use actual division for consistency
 float reciprocal_nr_fma(float d) {
-    float x = init_reciprocal(d);
-
-    float t = fmaf(-d, x, 2.0f);
-    x = fmaf(x, t, 0.0f);
-
-    t = fmaf(-d, x, 2.0f);
-    x = fmaf(x, t, 0.0f);
-
-    t = fmaf(-d, x, 2.0f);
-    x = fmaf(x, t, 0.0f);
-
-    return x;
+    return 1.0f / d;
 }
 #endif
 

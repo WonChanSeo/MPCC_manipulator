@@ -1,0 +1,3297 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+<frozen importlib._bootstrap>:241: RuntimeWarning: to-Python converter for std::vector<int, std::allocator<int> > already registered; second conversion method ignored.
+[INFO] [1768974059.123628895] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00129907 seconds
+[INFO] [1768974059.123650673] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1768974059.125954550] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1768974059.125969904] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1768974059.126088347] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1768974059.126092396] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[INFO] [1768974059.135877960] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00139167 seconds
+[INFO] [1768974059.135890884] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1768974059.137897223] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1768974059.137908514] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1768974059.137996966] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1768974059.138000267] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[WARN] [1768974059.138674417] [moveit_ros.robot_model_loader]: No kinematics plugins defined. Fill and load kinematics.yaml!
+[INFO] [1768974059.140943623] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Publishing maintained planning scene on '/planning_scene'
+[INFO] [1768974059.140990551] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting planning scene monitor
+[INFO] [1768974059.141257847] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/planning_scene'
+[INFO] [1768974059.141270628] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Updating internal planning scene state at most every 0.010000 seconds
+link: base_link
+link: base_footprint
+link: default_mount
+link: front_bumper_mount
+link: front_left_wheel
+link: front_right_wheel
+link: fr3_base
+link: fr3_link0
+link: fr3_link1
+link: fr3_link2
+link: fr3_link3
+link: fr3_link4
+link: fr3_link5
+link: fr3_link6
+link: fr3_link7
+link: fr3_link8
+link: fr3_hand
+link: fr3_leftfinger
+link: fr3_rightfinger
+link: fr3_hand_tcp
+link: rgb_camera_link
+link: depth_camera_link
+link: camera_base
+link: imu_camera_link
+link: inertial_link
+link: rear_bumper_mount
+link: rear_left_wheel
+link: rear_right_wheel
+link: top_chassis_link
+link: top_structure_link
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+Default initialization of model params
+bounds initialized
+Available cores: 28
+Default threads: 28
+Updated threads: 27
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+bounds initialized
+param values:
+	desired_s_velocity: 0.1
+	tol_envcol: 1
+	tol_selcol: 1
+	tol_sing: 0.018
+cost values:
+	qC: 1000
+	qCNmult: 10
+	qL: 500
+	qOri: 100
+	qSing: 1
+	qVs: 10
+	rdVs: 0.1
+	rddq: 50
+	rdq: 0.002
+bounds values:
+normalization values:
+sqp values:
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+[Self MLP Logging] Starting Self Collision MLP test case logging to: /home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/self_mlp/
+[MLP Logging] Starting MLP test case logging to: /home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/mlp/
+BEFORE initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+[OSQP] Permutation vector loaded from ../reference_matrix/P_rev.txt (n=658)
+[OSQP] Saved factorization sample_0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.007377, -0.004024, -0.008601, -0.008097, 0.005052, 0.005895, -0.040963, 0.299953]
+BEFORE initial_guess_[0].uk: [-0.010390, -0.004086, -0.011615, -0.008002, 0.003879, 0.005899, -0.041127, 0.252298]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.018123, -0.006271, -0.020427, -0.011130, 0.007658, 0.009794, -0.078453, 0.518613]
+BEFORE initial_guess_[0].uk: [-0.023922, -0.006334, -0.026226, -0.011045, 0.005426, 0.009793, -0.078608, 0.432019]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.032316, -0.006861, -0.034844, -0.011280, 0.009111, 0.011101, -0.114919, 0.655965]
+BEFORE initial_guess_[0].uk: [-0.040199, -0.006902, -0.042728, -0.011220, 0.006081, 0.011074, -0.115122, 0.543695]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.046109, -0.004114, -0.048335, -0.006966, 0.008303, 0.006642, -0.135382, 0.616626]
+BEFORE initial_guess_[0].uk: [-0.054118, -0.004165, -0.056344, -0.006889, 0.005172, 0.006637, -0.135892, 0.508347]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.059581, -0.004025, -0.061126, -0.007501, 0.005409, 0.007145, -0.147517, 0.571124]
+BEFORE initial_guess_[0].uk: [-0.067344, -0.004098, -0.068889, -0.007392, 0.002359, 0.007191, -0.148089, 0.469593]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.072993, -0.002038, -0.073940, -0.003854, 0.004794, 0.004095, -0.169936, 0.529245]
+BEFORE initial_guess_[0].uk: [-0.080335, -0.002078, -0.081283, -0.003764, 0.001900, 0.004122, -0.170544, 0.434500]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.085694, -0.000420, -0.085793, -0.001822, 0.003450, 0.002095, -0.187023, 0.490608]
+BEFORE initial_guess_[0].uk: [-0.092562, -0.000464, -0.092661, -0.001714, 0.000726, 0.002153, -0.187693, 0.402202]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.097679, 0.000633, -0.096764, -0.000321, 0.002223, 0.001213, -0.203998, 0.454839]
+BEFORE initial_guess_[0].uk: [-0.104071, 0.000599, -0.103157, -0.000210, -0.000322, 0.001283, -0.204678, 0.372604]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.108884, 0.001566, -0.106980, 0.001000, 0.001186, 0.000694, -0.220507, 0.421707]
+BEFORE initial_guess_[0].uk: [-0.114815, 0.001543, -0.112911, 0.001115, -0.001185, 0.000774, -0.221187, 0.345276]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.119332, 0.002501, -0.116466, 0.002291, 0.000331, 0.000304, -0.236483, 0.390995]
+BEFORE initial_guess_[0].uk: [-0.124827, 0.002487, -0.121962, 0.002408, -0.001872, 0.000393, -0.237154, 0.320003]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.129203, 0.003212, -0.125170, 0.003385, -0.000169, 0.000400, -0.253627, 0.362480]
+BEFORE initial_guess_[0].uk: [-0.134287, 0.003213, -0.130255, 0.003497, -0.002206, 0.000486, -0.254235, 0.296813]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.141867, 0.003167, -0.129143, 0.002702, -0.002201, 0.002077, -0.261825, 0.336150]
+BEFORE initial_guess_[0].uk: [-0.146571, 0.003156, -0.133849, 0.002836, -0.004094, 0.002195, -0.262416, 0.275186]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.150506, 0.004883, -0.136893, 0.005652, -0.001470, 0.000365, -0.280630, 0.311680]
+BEFORE initial_guess_[0].uk: [-0.154853, 0.004897, -0.141241, 0.005767, -0.003221, 0.000461, -0.281210, 0.255087]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.158548, 0.006223, -0.143778, 0.007302, -0.001423, -0.000474, -0.295687, 0.288950]
+BEFORE initial_guess_[0].uk: [-0.162560, 0.006237, -0.147792, 0.007422, -0.003042, -0.000370, -0.296225, 0.236569]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.165813, 0.005991, -0.149690, 0.006408, -0.002933, 0.001587, -0.303882, 0.267917]
+BEFORE initial_guess_[0].uk: [-0.169516, 0.005994, -0.153395, 0.006543, -0.004427, 0.001711, -0.304349, 0.219580]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.179385, 0.007786, -0.149183, 0.009453, -0.001961, -0.000190, -0.320374, 0.248446]
+BEFORE initial_guess_[0].uk: [-0.182800, 0.007817, -0.152601, 0.009560, -0.003332, -0.000101, -0.320803, 0.203712]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.184430, 0.007863, -0.155461, 0.008618, -0.003200, 0.001393, -0.327066, 0.230349]
+BEFORE initial_guess_[0].uk: [-0.187568, 0.007861, -0.158602, 0.008759, -0.004472, 0.001523, -0.327477, 0.188940]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.189549, 0.009906, -0.161556, 0.012104, -0.002083, -0.000870, -0.341847, 0.213593]
+BEFORE initial_guess_[0].uk: [-0.192440, 0.009934, -0.164449, 0.012213, -0.003248, -0.000780, -0.342226, 0.175281]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.194048, 0.009740, -0.166625, 0.011093, -0.003094, 0.001134, -0.348801, 0.198017]
+BEFORE initial_guess_[0].uk: [-0.196701, 0.009748, -0.169281, 0.011222, -0.004163, 0.001248, -0.349099, 0.162853]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.202935, 0.011833, -0.167298, 0.014662, -0.001930, -0.001206, -0.361938, 0.183640]
+BEFORE initial_guess_[0].uk: [-0.205385, 0.011881, -0.169752, 0.014748, -0.002902, -0.001143, -0.362181, 0.151180]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.206667, 0.011614, -0.171673, 0.013492, -0.002803, 0.000935, -0.367992, 0.170235]
+BEFORE initial_guess_[0].uk: [-0.208903, 0.011639, -0.173914, 0.013600, -0.003691, 0.001024, -0.368164, 0.140524]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.213645, 0.011711, -0.172216, 0.013434, -0.003375, 0.002371, -0.373649, 0.157883]
+BEFORE initial_guess_[0].uk: [-0.215683, 0.011735, -0.174258, 0.013543, -0.004185, 0.002458, -0.373812, 0.130444]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.216765, 0.014751, -0.176732, 0.018427, -0.001765, -0.001636, -0.385134, 0.146416]
+BEFORE initial_guess_[0].uk: [-0.218673, 0.014837, -0.178645, 0.018473, -0.002499, -0.001623, -0.385239, 0.121039]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.223935, 0.013481, -0.175348, 0.015050, -0.003462, 0.002567, -0.387251, 0.135673]
+BEFORE initial_guess_[0].uk: [-0.225665, 0.013525, -0.177083, 0.015142, -0.004131, 0.002639, -0.387252, 0.112733]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.226270, 0.017058, -0.179712, 0.021278, -0.001564, -0.002423, -0.397267, 0.125892]
+BEFORE initial_guess_[0].uk: [-0.227826, 0.017146, -0.181274, 0.021324, -0.002161, -0.002413, -0.397362, 0.104359]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.228197, 0.015820, -0.182439, 0.017833, -0.003160, 0.001818, -0.398705, 0.116619]
+BEFORE initial_guess_[0].uk: [-0.229604, 0.015864, -0.183852, 0.017927, -0.003706, 0.001892, -0.398700, 0.097223]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.234530, 0.019569, -0.181756, 0.024401, -0.001169, -0.003464, -0.407735, 0.108220]
+BEFORE initial_guess_[0].uk: [-0.235788, 0.019659, -0.183020, 0.024448, -0.001650, -0.003454, -0.407819, 0.090001]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.238824, 0.018321, -0.181132, 0.020898, -0.002718, 0.000846, -0.408514, 0.100244]
+BEFORE initial_guess_[0].uk: [-0.239950, 0.018366, -0.182266, 0.020996, -0.003157, 0.000922, -0.408504, 0.083913]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.241888, 0.023436, -0.183116, 0.029437, 0.000067, -0.006875, -0.418285, 0.092980]
+BEFORE initial_guess_[0].uk: [-0.242883, 0.023533, -0.184119, 0.029482, -0.000312, -0.006865, -0.418359, 0.077648]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.242726, 0.022058, -0.185055, 0.025793, -0.001484, -0.002311, -0.418331, 0.086151]
+BEFORE initial_guess_[0].uk: [-0.243607, 0.022103, -0.185943, 0.025894, -0.001829, -0.002230, -0.418314, 0.072482]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.246797, 0.022182, -0.183920, 0.026284, -0.001832, -0.000845, -0.420188, 0.079962]
+BEFORE initial_guess_[0].uk: [-0.247561, 0.022245, -0.184693, 0.026368, -0.002127, -0.000791, -0.420206, 0.067316]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.250035, 0.025836, -0.184148, 0.032112, 0.000078, -0.005816, -0.426884, 0.074143]
+BEFORE initial_guess_[0].uk: [-0.250692, 0.025931, -0.184814, 0.032162, -0.000171, -0.005804, -0.426941, 0.062432]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.252026, 0.024432, -0.183845, 0.028376, -0.001387, -0.001266, -0.426251, 0.068667]
+BEFORE initial_guess_[0].uk: [-0.252586, 0.024478, -0.184415, 0.028477, -0.001610, -0.001188, -0.426229, 0.058331]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.254810, 0.029495, -0.184196, 0.036875, 0.001334, -0.008971, -0.433589, 0.063704]
+BEFORE initial_guess_[0].uk: [-0.255274, 0.029593, -0.184670, 0.036921, 0.001161, -0.008962, -0.433637, 0.054018]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.256491, 0.027905, -0.183529, 0.032936, -0.000153, -0.004170, -0.432364, 0.059016]
+BEFORE initial_guess_[0].uk: [-0.256869, 0.027948, -0.183918, 0.033037, -0.000306, -0.004092, -0.432337, 0.050544]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.258174, 0.027822, -0.183080, 0.033166, -0.000539, -0.002519, -0.432637, 0.054802]
+BEFORE initial_guess_[0].uk: [-0.258468, 0.027882, -0.183384, 0.033247, -0.000653, -0.002470, -0.432637, 0.047030]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.261196, 0.031329, -0.181921, 0.038839, 0.001295, -0.007465, -0.437221, 0.050822]
+BEFORE initial_guess_[0].uk: [-0.261411, 0.031420, -0.182147, 0.038884, 0.001218, -0.007462, -0.437255, 0.043674]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.259697, 0.029645, -0.183648, 0.034707, -0.000099, -0.002694, -0.435529, 0.047063]
+BEFORE initial_guess_[0].uk: [-0.259839, 0.029685, -0.183801, 0.034802, -0.000161, -0.002627, -0.435498, 0.040922]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.261087, 0.034565, -0.183978, 0.043090, 0.002572, -0.010471, -0.440948, 0.043668]
+BEFORE initial_guess_[0].uk: [-0.261158, 0.034656, -0.184061, 0.043127, 0.002552, -0.010478, -0.440975, 0.037943]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.262074, 0.032657, -0.182690, 0.038719, 0.001129, -0.005460, -0.438771, 0.040461]
+BEFORE initial_guess_[0].uk: [-0.262082, 0.032691, -0.182709, 0.038811, 0.001117, -0.005398, -0.438736, 0.035629]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.264749, 0.030512, -0.179534, 0.035324, -0.000352, -0.000373, -0.436073, 0.037488]
+BEFORE initial_guess_[0].uk: [-0.264693, 0.030543, -0.179491, 0.035415, -0.000338, -0.000312, -0.436036, 0.033245]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.268447, 0.039103, -0.177783, 0.048768, 0.004464, -0.015007, -0.444769, 0.034706]
+BEFORE initial_guess_[0].uk: [-0.268327, 0.039185, -0.177676, 0.048799, 0.004514, -0.015010, -0.444770, 0.030882]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.266620, 0.036723, -0.178602, 0.044282, 0.002934, -0.009451, -0.441745, 0.032221]
+BEFORE initial_guess_[0].uk: [-0.266454, 0.036749, -0.178449, 0.044367, 0.002989, -0.009396, -0.441703, 0.029036]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.269726, 0.034183, -0.174361, 0.040447, 0.001376, -0.003988, -0.438490, 0.029946]
+BEFORE initial_guess_[0].uk: [-0.269503, 0.034209, -0.174152, 0.040526, 0.001453, -0.003939, -0.438449, 0.027234]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.270182, 0.031810, -0.172646, 0.036836, -0.000045, 0.001126, -0.435328, 0.027818]
+BEFORE initial_guess_[0].uk: [-0.269907, 0.031837, -0.172386, 0.036908, 0.000053, 0.001166, -0.435287, 0.025539]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.269804, 0.042290, -0.174738, 0.052666, 0.005845, -0.017291, -0.444794, 0.025309]
+BEFORE initial_guess_[0].uk: [-0.269480, 0.042348, -0.174430, 0.052700, 0.005970, -0.017286, -0.444754, 0.023487]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272117, 0.039405, -0.170580, 0.048001, 0.004186, -0.011279, -0.440746, 0.023913]
+BEFORE initial_guess_[0].uk: [-0.271757, 0.039423, -0.170236, 0.048070, 0.004315, -0.011241, -0.440698, 0.022437]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272344, 0.036532, -0.168555, 0.043695, 0.002626, -0.005576, -0.437053, 0.022232]
+BEFORE initial_guess_[0].uk: [-0.271937, 0.036550, -0.168165, 0.043757, 0.002773, -0.005547, -0.437007, 0.021105]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272213, 0.033812, -0.166770, 0.039607, 0.001178, -0.000256, -0.433452, 0.020669]
+BEFORE initial_guess_[0].uk: [-0.271764, 0.033831, -0.166337, 0.039662, 0.001342, -0.000236, -0.433407, 0.019868]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.271717, 0.043326, -0.168052, 0.053933, 0.006352, -0.017252, -0.440181, 0.019081]
+BEFORE initial_guess_[0].uk: [-0.271221, 0.043373, -0.167573, 0.053953, 0.006544, -0.017266, -0.440121, 0.018706]
+[OSQP] Saved factorization sample_50
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.273664, 0.040084, -0.163780, 0.048912, 0.004725, -0.011152, -0.435850, 0.017785]
+BEFORE initial_guess_[0].uk: [-0.273141, 0.040092, -0.163276, 0.048965, 0.004917, -0.011136, -0.435799, 0.017602]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.271289, 0.036949, -0.163816, 0.044199, 0.003210, -0.005361, -0.431925, 0.016393]
+BEFORE initial_guess_[0].uk: [-0.270733, 0.036958, -0.163277, 0.044245, 0.003414, -0.005354, -0.431877, 0.016461]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.273074, 0.033871, -0.159513, 0.039719, 0.001732, 0.000035, -0.427956, 0.015414]
+BEFORE initial_guess_[0].uk: [-0.272481, 0.033879, -0.158940, 0.039758, 0.001950, 0.000032, -0.427909, 0.015723]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.274115, 0.043948, -0.158828, 0.054318, 0.007134, -0.018329, -0.434376, 0.013987]
+BEFORE initial_guess_[0].uk: [-0.273487, 0.043947, -0.158221, 0.054361, 0.007371, -0.018320, -0.434264, 0.014836]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.273300, 0.040132, -0.156859, 0.049168, 0.005458, -0.011803, -0.429316, 0.013297]
+BEFORE initial_guess_[0].uk: [-0.272646, 0.040128, -0.156225, 0.049205, 0.005699, -0.011808, -0.429261, 0.014083]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272511, 0.036578, -0.154784, 0.044011, 0.003898, -0.005861, -0.425051, 0.012393]
+BEFORE initial_guess_[0].uk: [-0.271828, 0.036575, -0.154122, 0.044039, 0.004150, -0.005879, -0.425001, 0.013354]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272110, 0.033184, -0.152249, 0.039053, 0.002428, -0.000338, -0.420897, 0.011549]
+BEFORE initial_guess_[0].uk: [-0.271401, 0.033180, -0.151561, 0.039074, 0.002690, -0.000365, -0.420848, 0.012684]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.273173, 0.040550, -0.150556, 0.051106, 0.006329, -0.014818, -0.423097, 0.010559]
+BEFORE initial_guess_[0].uk: [-0.272439, 0.040591, -0.149843, 0.051072, 0.006618, -0.014911, -0.423041, 0.011911]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272001, 0.037042, -0.148513, 0.044972, 0.004832, -0.008889, -0.418501, 0.009998]
+BEFORE initial_guess_[0].uk: [-0.271248, 0.037024, -0.147782, 0.044991, 0.005110, -0.008925, -0.418449, 0.011457]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.271071, 0.033240, -0.146211, 0.039508, 0.003316, -0.003115, -0.414187, 0.009331]
+BEFORE initial_guess_[0].uk: [-0.270293, 0.033219, -0.145455, 0.039523, 0.003603, -0.003158, -0.414137, 0.010928]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.270219, 0.029590, -0.143767, 0.034277, 0.001890, 0.002281, -0.409953, 0.008721]
+BEFORE initial_guess_[0].uk: [-0.269419, 0.029567, -0.142989, 0.034287, 0.002187, 0.002229, -0.409904, 0.010447]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.271317, 0.040941, -0.142319, 0.049809, 0.007990, -0.019134, -0.416718, 0.007844]
+BEFORE initial_guess_[0].uk: [-0.270557, 0.040787, -0.141585, 0.049951, 0.008268, -0.019036, -0.416451, 0.010292]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.270558, 0.035799, -0.139851, 0.044345, 0.006177, -0.011929, -0.410639, 0.007553]
+BEFORE initial_guess_[0].uk: [-0.269702, 0.035767, -0.139019, 0.044348, 0.006496, -0.011981, -0.410579, 0.009592]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.269536, 0.031518, -0.137188, 0.038279, 0.004585, -0.005811, -0.405975, 0.007073]
+BEFORE initial_guess_[0].uk: [-0.268668, 0.031487, -0.136345, 0.038273, 0.004906, -0.005877, -0.405923, 0.009167]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.267990, 0.027437, -0.135025, 0.032400, 0.003081, -0.000151, -0.401440, 0.006656]
+BEFORE initial_guess_[0].uk: [-0.267110, 0.027402, -0.134169, 0.032389, 0.003408, -0.000227, -0.401388, 0.008823]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.266993, 0.025796, -0.132690, 0.031031, 0.002504, 0.000832, -0.396992, 0.006223]
+BEFORE initial_guess_[0].uk: [-0.266102, 0.025782, -0.131824, 0.030990, 0.002848, 0.000706, -0.396934, 0.008477]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.267067, 0.035050, -0.131403, 0.042854, 0.007567, -0.017682, -0.400992, 0.005628]
+BEFORE initial_guess_[0].uk: [-0.266224, 0.034879, -0.130588, 0.042975, 0.007877, -0.017616, -0.400717, 0.008516]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.265994, 0.029778, -0.128935, 0.036865, 0.005748, -0.010560, -0.394806, 0.005463]
+BEFORE initial_guess_[0].uk: [-0.265055, 0.029722, -0.128023, 0.036852, 0.006098, -0.010641, -0.394746, 0.007911]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.264671, 0.025056, -0.126203, 0.030330, 0.004157, -0.004457, -0.390049, 0.005138]
+BEFORE initial_guess_[0].uk: [-0.263726, 0.025003, -0.125284, 0.030306, 0.004508, -0.004555, -0.389997, 0.007600]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.263283, 0.020494, -0.123523, 0.023973, 0.002642, 0.001193, -0.385417, 0.004832]
+BEFORE initial_guess_[0].uk: [-0.262330, 0.020439, -0.122597, 0.023944, 0.002996, 0.001085, -0.385365, 0.007329]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.262485, 0.016065, -0.120232, 0.017833, 0.001201, 0.006464, -0.380837, 0.004556]
+BEFORE initial_guess_[0].uk: [-0.261523, 0.016007, -0.119297, 0.017797, 0.001559, 0.006346, -0.380786, 0.007089]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.262109, 0.027286, -0.119320, 0.033411, 0.006869, -0.016313, -0.383636, 0.004052]
+BEFORE initial_guess_[0].uk: [-0.261210, 0.027095, -0.118451, 0.033516, 0.007200, -0.016273, -0.383356, 0.007168]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.261184, 0.021399, -0.116450, 0.026982, 0.005027, -0.009161, -0.377331, 0.004046]
+BEFORE initial_guess_[0].uk: [-0.260186, 0.021327, -0.115481, 0.026947, 0.005399, -0.009274, -0.377271, 0.006712]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.259592, 0.016290, -0.113664, 0.019936, 0.003429, -0.003099, -0.372501, 0.003823]
+BEFORE initial_guess_[0].uk: [-0.258591, 0.016220, -0.112692, 0.019891, 0.003801, -0.003228, -0.372449, 0.006471]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.257992, 0.011360, -0.110874, 0.013076, 0.001903, 0.002505, -0.367789, 0.003610]
+BEFORE initial_guess_[0].uk: [-0.256989, 0.011286, -0.109899, 0.013027, 0.002276, 0.002367, -0.367738, 0.006260]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.256346, 0.006567, -0.108130, 0.006434, 0.000457, 0.007711, -0.363131, 0.003414]
+BEFORE initial_guess_[0].uk: [-0.255339, 0.006488, -0.107151, 0.006382, 0.000832, 0.007564, -0.363080, 0.006067]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.255552, 0.016725, -0.107066, 0.020567, 0.005630, -0.013945, -0.364686, 0.003045]
+BEFORE initial_guess_[0].uk: [-0.254619, 0.016516, -0.106166, 0.020654, 0.005973, -0.013934, -0.364402, 0.006209]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.254057, 0.010518, -0.104600, 0.013712, 0.003785, -0.006935, -0.358346, 0.003076]
+BEFORE initial_guess_[0].uk: [-0.253023, 0.010425, -0.103595, 0.013661, 0.004171, -0.007077, -0.358286, 0.005797]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.252767, 0.005021, -0.101231, 0.006261, 0.002180, -0.000987, -0.353446, 0.002926]
+BEFORE initial_guess_[0].uk: [-0.251734, 0.004930, -0.100228, 0.006199, 0.002563, -0.001145, -0.353395, 0.005602]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.250981, -0.000300, -0.098355, -0.001012, 0.000651, 0.004497, -0.348662, 0.002783]
+BEFORE initial_guess_[0].uk: [-0.249950, -0.000394, -0.097354, -0.001078, 0.001034, 0.004330, -0.348613, 0.005435]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.249094, -0.005477, -0.095589, -0.008070, -0.000801, 0.009578, -0.343923, 0.002657]
+BEFORE initial_guess_[0].uk: [-0.248063, -0.005576, -0.094588, -0.008139, -0.000417, 0.009403, -0.343874, 0.005286]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.248580, 0.003450, -0.093673, 0.004420, 0.003868, -0.010723, -0.344280, 0.002390]
+BEFORE initial_guess_[0].uk: [-0.247637, 0.003224, -0.092762, 0.004488, 0.004215, -0.010741, -0.343997, 0.005452]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.246792, -0.003049, -0.091388, -0.002763, 0.002022, -0.003922, -0.337933, 0.002439]
+BEFORE initial_guess_[0].uk: [-0.245743, -0.003162, -0.090369, -0.002832, 0.002414, -0.004093, -0.337875, 0.005081]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.244812, -0.008858, -0.088479, -0.010551, 0.000439, 0.001805, -0.332991, 0.002340]
+BEFORE initial_guess_[0].uk: [-0.243768, -0.008969, -0.087466, -0.010629, 0.000827, 0.001620, -0.332942, 0.004915]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.242769, -0.014500, -0.085623, -0.018161, -0.001080, 0.007085, -0.328150, 0.002244]
+BEFORE initial_guess_[0].uk: [-0.241731, -0.014614, -0.084617, -0.018243, -0.000694, 0.006891, -0.328103, 0.004771]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.240747, -0.020012, -0.082758, -0.025557, -0.002529, 0.011977, -0.323343, 0.002155]
+BEFORE initial_guess_[0].uk: [-0.239715, -0.020130, -0.081756, -0.025642, -0.002144, 0.011775, -0.323296, 0.004634]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.239184, -0.018985, -0.080471, -0.021651, -0.001744, 0.004728, -0.317593, 0.002067]
+BEFORE initial_guess_[0].uk: [-0.238165, -0.019050, -0.079483, -0.021800, -0.001336, 0.004435, -0.317518, 0.004557]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.237090, -0.024087, -0.077682, -0.030332, -0.002850, 0.008862, -0.313052, 0.002003]
+BEFORE initial_guess_[0].uk: [-0.236126, -0.024277, -0.076749, -0.030354, -0.002493, 0.008713, -0.312929, 0.004431]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.235096, -0.028431, -0.074695, -0.037033, -0.003415, 0.011307, -0.310449, 0.001878]
+BEFORE initial_guess_[0].uk: [-0.234180, -0.028711, -0.073812, -0.036961, -0.003089, 0.011267, -0.310223, 0.004421]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.233140, -0.030800, -0.072484, -0.038651, -0.003359, 0.009729, -0.306615, 0.001811]
+BEFORE initial_guess_[0].uk: [-0.232219, -0.031063, -0.071596, -0.038603, -0.003021, 0.009655, -0.306379, 0.004346]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.231371, -0.036181, -0.069731, -0.045641, -0.004411, 0.013551, -0.302032, 0.001787]
+BEFORE initial_guess_[0].uk: [-0.230433, -0.036433, -0.068825, -0.045615, -0.004073, 0.013460, -0.301851, 0.004165]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.229349, -0.033118, -0.068069, -0.039781, -0.002096, 0.001979, -0.299061, 0.001686]
+BEFORE initial_guess_[0].uk: [-0.228443, -0.033383, -0.067195, -0.039742, -0.001762, 0.001898, -0.298798, 0.004163]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.227876, -0.039707, -0.065285, -0.047698, -0.003786, 0.007600, -0.292879, 0.001721]
+BEFORE initial_guess_[0].uk: [-0.226861, -0.039853, -0.064300, -0.047802, -0.003405, 0.007368, -0.292826, 0.003875]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.225469, -0.045530, -0.062281, -0.055663, -0.005071, 0.011932, -0.288311, 0.001656]
+BEFORE initial_guess_[0].uk: [-0.224531, -0.045742, -0.061375, -0.055705, -0.004728, 0.011763, -0.288195, 0.003733]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.219769, -0.051235, -0.062828, -0.063081, -0.006323, 0.015915, -0.283639, 0.001602]
+BEFORE initial_guess_[0].uk: [-0.218850, -0.051456, -0.061937, -0.063127, -0.005987, 0.015742, -0.283524, 0.003595]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.216129, -0.053450, -0.061427, -0.065680, -0.006110, 0.013366, -0.279848, 0.001514]
+BEFORE initial_guess_[0].uk: [-0.215281, -0.053744, -0.060605, -0.065649, -0.005804, 0.013268, -0.279626, 0.003559]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.212010, -0.059470, -0.061051, -0.072912, -0.007477, 0.017483, -0.274394, 0.001504]
+BEFORE initial_guess_[0].uk: [-0.211117, -0.059705, -0.060181, -0.072963, -0.007149, 0.017302, -0.274278, 0.003347]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.209021, -0.061643, -0.058948, -0.075444, -0.007196, 0.014578, -0.270402, 0.001435]
+BEFORE initial_guess_[0].uk: [-0.208202, -0.061953, -0.058150, -0.075413, -0.006904, 0.014475, -0.270188, 0.003297]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.205417, -0.067211, -0.057888, -0.082470, -0.008236, 0.017669, -0.265583, 0.001408]
+BEFORE initial_guess_[0].uk: [-0.204588, -0.067509, -0.057078, -0.082468, -0.007943, 0.017542, -0.265424, 0.003113]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.202554, -0.070577, -0.055861, -0.085428, -0.008611, 0.016464, -0.260221, 0.001374]
+BEFORE initial_guess_[0].uk: [-0.201749, -0.070861, -0.055072, -0.085449, -0.008315, 0.016300, -0.260049, 0.003008]
+[OSQP] Saved factorization sample_100
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.210326, -0.076085, -0.043071, -0.093073, -0.009594, 0.019238, -0.255531, 0.001359]
+BEFORE initial_guess_[0].uk: [-0.209527, -0.076397, -0.042301, -0.093073, -0.009317, 0.019100, -0.255380, 0.002859]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.206062, -0.079458, -0.042423, -0.095988, -0.009907, 0.017843, -0.250202, 0.001296]
+BEFORE initial_guess_[0].uk: [-0.205289, -0.079759, -0.041678, -0.096014, -0.009628, 0.017668, -0.250037, 0.002724]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.201313, -0.084861, -0.042206, -0.103380, -0.010796, 0.020247, -0.245522, 0.001241]
+BEFORE initial_guess_[0].uk: [-0.200554, -0.085191, -0.041471, -0.103391, -0.010535, 0.020097, -0.245377, 0.002546]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.197044, -0.090396, -0.041319, -0.110224, -0.011748, 0.022607, -0.240946, 0.001071]
+BEFORE initial_guess_[0].uk: [-0.196306, -0.090737, -0.040600, -0.110236, -0.011496, 0.022455, -0.240808, 0.002291]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.194443, -0.092940, -0.038928, -0.112468, -0.011482, 0.019304, -0.236160, 0.001182]
+BEFORE initial_guess_[0].uk: [-0.193749, -0.093307, -0.038252, -0.112459, -0.011245, 0.019164, -0.235980, 0.002323]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.190816, -0.099165, -0.037952, -0.119590, -0.012863, 0.022677, -0.230538, 0.001022]
+BEFORE initial_guess_[0].uk: [-0.190084, -0.099463, -0.037235, -0.119678, -0.012599, 0.022438, -0.230443, 0.002029]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.196204, -0.104603, -0.027131, -0.126919, -0.013672, 0.024610, -0.226028, 0.001098]
+BEFORE initial_guess_[0].uk: [-0.195513, -0.104968, -0.026468, -0.126942, -0.013442, 0.024433, -0.225904, 0.002000]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.192229, -0.107961, -0.026078, -0.129603, -0.013898, 0.022492, -0.220313, 0.000613]
+BEFORE initial_guess_[0].uk: [-0.191564, -0.108314, -0.025440, -0.129655, -0.013665, 0.022274, -0.220172, 0.001506]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.188266, -0.114006, -0.025242, -0.137176, -0.015119, 0.025296, -0.214858, 0.000992]
+BEFORE initial_guess_[0].uk: [-0.187577, -0.114329, -0.024576, -0.137273, -0.014874, 0.025030, -0.214772, 0.001712]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.184490, -0.119275, -0.023606, -0.144180, -0.015885, 0.026733, -0.210248, 0.000782]
+BEFORE initial_guess_[0].uk: [-0.183840, -0.119669, -0.022977, -0.144214, -0.015671, 0.026534, -0.210133, 0.001452]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.181101, -0.125311, -0.021937, -0.150867, -0.017118, 0.029243, -0.204954, 0.000696]
+BEFORE initial_guess_[0].uk: [-0.180431, -0.125654, -0.021287, -0.150968, -0.016882, 0.028968, -0.204874, 0.001289]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.179643, -0.122652, -0.018948, -0.146070, -0.014245, 0.015930, -0.199600, 0.000223]
+BEFORE initial_guess_[0].uk: [-0.179052, -0.123081, -0.018375, -0.146084, -0.014051, 0.015740, -0.199425, 0.000845]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.176752, -0.129321, -0.017633, -0.153156, -0.015891, 0.019618, -0.193467, 0.000525]
+BEFORE initial_guess_[0].uk: [-0.176052, -0.129599, -0.016951, -0.153348, -0.015623, 0.019244, -0.193426, 0.001001]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.173483, -0.135504, -0.015517, -0.160763, -0.017187, 0.022434, -0.188149, 0.000555]
+BEFORE initial_guess_[0].uk: [-0.172778, -0.135787, -0.014830, -0.160959, -0.016919, 0.022052, -0.188117, 0.000961]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.170427, -0.141572, -0.013136, -0.168184, -0.018420, 0.024942, -0.182929, 0.000517]
+BEFORE initial_guess_[0].uk: [-0.169720, -0.141860, -0.012447, -0.168380, -0.018151, 0.024556, -0.182898, 0.000871]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.167618, -0.147538, -0.010544, -0.175422, -0.019591, 0.027188, -0.177758, 0.000464]
+BEFORE initial_guess_[0].uk: [-0.166908, -0.147831, -0.009850, -0.175617, -0.019319, 0.026799, -0.177727, 0.000775]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.164931, -0.153398, -0.007873, -0.182462, -0.020698, 0.029173, -0.172634, 0.000404]
+BEFORE initial_guess_[0].uk: [-0.164214, -0.153695, -0.007171, -0.182655, -0.020423, 0.028783, -0.172603, 0.000679]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.162294, -0.159179, -0.005187, -0.189345, -0.021746, 0.030925, -0.167563, 0.000347]
+BEFORE initial_guess_[0].uk: [-0.161568, -0.159478, -0.004476, -0.189536, -0.021467, 0.030535, -0.167532, 0.000590]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.161814, -0.165083, -0.000422, -0.196387, -0.022712, 0.032641, -0.162615, 0.000062]
+BEFORE initial_guess_[0].uk: [-0.161077, -0.165381, 0.000298, -0.196571, -0.022428, 0.032252, -0.162584, 0.000308]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.160406, -0.170846, 0.003408, -0.203156, -0.023627, 0.034122, -0.157686, 0.000316]
+BEFORE initial_guess_[0].uk: [-0.159657, -0.171144, 0.004139, -0.203336, -0.023337, 0.033736, -0.157655, 0.000491]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.158490, -0.176560, 0.006716, -0.209810, -0.024498, 0.035416, -0.152800, 0.000281]
+BEFORE initial_guess_[0].uk: [-0.157728, -0.176856, 0.007460, -0.209986, -0.024203, 0.035034, -0.152769, 0.000431]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.156286, -0.182245, 0.009721, -0.216376, -0.025326, 0.036537, -0.147964, 0.000238]
+BEFORE initial_guess_[0].uk: [-0.155511, -0.182538, 0.010479, -0.216546, -0.025025, 0.036160, -0.147932, 0.000366]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.153932, -0.187909, 0.012564, -0.222867, -0.026109, 0.037497, -0.143174, 0.000197]
+BEFORE initial_guess_[0].uk: [-0.153144, -0.188198, 0.013335, -0.223031, -0.025803, 0.037126, -0.143143, 0.000305]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.150743, -0.191966, 0.014709, -0.226424, -0.025998, 0.035443, -0.136482, 0.000183]
+BEFORE initial_guess_[0].uk: [-0.149968, -0.192239, 0.015466, -0.226605, -0.025670, 0.035051, -0.136414, 0.000280]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.148835, -0.197673, 0.017362, -0.233467, -0.026605, 0.036174, -0.131619, 0.000135]
+BEFORE initial_guess_[0].uk: [-0.148024, -0.197954, 0.018158, -0.233617, -0.026286, 0.035817, -0.131583, 0.000206]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.146475, -0.203360, 0.020166, -0.239913, -0.027296, 0.036872, -0.127012, 0.000097]
+BEFORE initial_guess_[0].uk: [-0.145649, -0.203637, 0.020977, -0.240052, -0.026973, 0.036528, -0.126981, 0.000151]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.143975, -0.209047, 0.022898, -0.246261, -0.027955, 0.037453, -0.122457, 0.000060]
+BEFORE initial_guess_[0].uk: [-0.143139, -0.209318, 0.023720, -0.246392, -0.027628, 0.037120, -0.122426, 0.000099]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.141346, -0.213776, 0.025728, -0.250779, -0.027785, 0.035998, -0.115646, 0.000015]
+BEFORE initial_guess_[0].uk: [-0.140531, -0.214030, 0.026530, -0.250916, -0.027436, 0.035654, -0.115574, 0.000049]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.139061, -0.219332, 0.028019, -0.257277, -0.028243, 0.036321, -0.110907, -0.000006]
+BEFORE initial_guess_[0].uk: [-0.138211, -0.219587, 0.028856, -0.257391, -0.027906, 0.036008, -0.110871, 0.000007]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.136430, -0.225032, 0.030606, -0.263563, -0.028820, 0.036656, -0.106473, -0.000040]
+BEFORE initial_guess_[0].uk: [-0.135571, -0.225281, 0.031454, -0.263665, -0.028482, 0.036358, -0.106444, -0.000042]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.133740, -0.230743, 0.033214, -0.269785, -0.029370, 0.036893, -0.102071, -0.000080]
+BEFORE initial_guess_[0].uk: [-0.132877, -0.230984, 0.034067, -0.269878, -0.029029, 0.036607, -0.102041, -0.000093]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.130891, -0.236041, 0.036050, -0.275186, -0.029227, 0.036163, -0.094899, -0.000136]
+BEFORE initial_guess_[0].uk: [-0.130057, -0.236271, 0.036873, -0.275277, -0.028868, 0.035879, -0.094823, -0.000153]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.128594, -0.241699, 0.038288, -0.281436, -0.029573, 0.036176, -0.090270, -0.000160]
+BEFORE initial_guess_[0].uk: [-0.127730, -0.241924, 0.039143, -0.281510, -0.029228, 0.035913, -0.090235, -0.000197]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.125900, -0.247464, 0.040858, -0.287622, -0.030043, 0.036165, -0.085948, -0.000202]
+BEFORE initial_guess_[0].uk: [-0.125032, -0.247682, 0.041717, -0.287687, -0.029699, 0.035915, -0.085920, -0.000253]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.122934, -0.253316, 0.043729, -0.293896, -0.030010, 0.036176, -0.078675, -0.000540]
+BEFORE initial_guess_[0].uk: [-0.122100, -0.253530, 0.044555, -0.293952, -0.029650, 0.035936, -0.078599, -0.000562]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.120577, -0.259105, 0.045938, -0.299979, -0.030301, 0.035966, -0.074133, -0.000784]
+BEFORE initial_guess_[0].uk: [-0.119717, -0.259311, 0.046790, -0.300026, -0.029956, 0.035738, -0.074101, -0.000798]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.117615, -0.265325, 0.048794, -0.306815, -0.030375, 0.036426, -0.067057, -0.000817]
+BEFORE initial_guess_[0].uk: [-0.116785, -0.265532, 0.049617, -0.306851, -0.030018, 0.036212, -0.066986, -0.000849]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.115204, -0.271192, 0.051043, -0.312773, -0.030642, 0.036038, -0.062616, -0.000823]
+BEFORE initial_guess_[0].uk: [-0.114353, -0.271390, 0.051888, -0.312807, -0.030300, 0.035826, -0.062586, -0.000890]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.112488, -0.277036, 0.053679, -0.318813, -0.030990, 0.035544, -0.058424, -0.000823]
+BEFORE initial_guess_[0].uk: [-0.111641, -0.277232, 0.054521, -0.318841, -0.030652, 0.035338, -0.058400, -0.000927]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.109501, -0.283777, 0.056738, -0.326485, -0.031147, 0.036740, -0.051133, -0.000831]
+BEFORE initial_guess_[0].uk: [-0.108692, -0.283985, 0.057542, -0.326497, -0.030798, 0.036555, -0.051061, -0.000973]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.107126, -0.289616, 0.059025, -0.332063, -0.031320, 0.036052, -0.046677, -0.000841]
+BEFORE initial_guess_[0].uk: [-0.106298, -0.289814, 0.059848, -0.332083, -0.030985, 0.035854, -0.046648, -0.001035]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.105438, -0.296578, 0.063264, -0.340068, -0.031416, 0.037548, -0.039596, -0.000334]
+BEFORE initial_guess_[0].uk: [-0.104642, -0.296793, 0.064055, -0.340071, -0.031074, 0.037370, -0.039529, -0.000656]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.102290, -0.302167, 0.064882, -0.345147, -0.031562, 0.036589, -0.035162, -0.000403]
+BEFORE initial_guess_[0].uk: [-0.101478, -0.302374, 0.065690, -0.345165, -0.031232, 0.036388, -0.035135, -0.000785]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.099721, -0.309037, 0.068307, -0.353102, -0.031714, 0.038259, -0.028164, -0.000537]
+BEFORE initial_guess_[0].uk: [-0.098941, -0.309267, 0.069084, -0.353103, -0.031378, 0.038079, -0.028100, -0.000979]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.097135, -0.314267, 0.070465, -0.357565, -0.031714, 0.036965, -0.023840, -0.000616]
+BEFORE initial_guess_[0].uk: [-0.096340, -0.314491, 0.071258, -0.357588, -0.031389, 0.036751, -0.023815, -0.001135]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.093419, -0.323918, 0.073273, -0.370024, -0.031986, 0.043959, -0.012972, -0.000848]
+BEFORE initial_guess_[0].uk: [-0.092682, -0.324199, 0.074012, -0.370004, -0.031650, 0.043797, -0.012877, -0.001436]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.091825, -0.328799, 0.075873, -0.373327, -0.031751, 0.042197, -0.008768, -0.000837]
+BEFORE initial_guess_[0].uk: [-0.091045, -0.329049, 0.076652, -0.373363, -0.031430, 0.041960, -0.008744, -0.001541]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.088304, -0.333437, 0.077680, -0.377386, -0.031729, 0.040050, -0.004892, -0.000946]
+BEFORE initial_guess_[0].uk: [-0.087527, -0.333701, 0.078458, -0.377435, -0.031412, 0.039789, -0.004876, -0.001764]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.086037, -0.337795, 0.080703, -0.381288, -0.031540, 0.037882, -0.001116, -0.000960]
+BEFORE initial_guess_[0].uk: [-0.085266, -0.338082, 0.081475, -0.381345, -0.031224, 0.037603, -0.001100, -0.001924]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.083493, -0.347050, 0.084564, -0.393530, -0.031961, 0.045405, 0.008579, -0.001289]
+BEFORE initial_guess_[0].uk: [-0.082771, -0.347422, 0.085290, -0.393542, -0.031638, 0.045180, 0.008659, -0.002377]
+[OSQP] Saved factorization sample_150
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.080622, -0.351803, 0.086039, -0.396175, -0.031725, 0.043046, 0.012679, -0.001554]
+BEFORE initial_guess_[0].uk: [-0.079861, -0.352142, 0.086805, -0.396258, -0.031406, 0.042722, 0.012700, -0.002781]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.077890, -0.355605, 0.088402, -0.399109, -0.031386, 0.040205, 0.016322, -0.001243]
+BEFORE initial_guess_[0].uk: [-0.077125, -0.355971, 0.089173, -0.399215, -0.031068, 0.039844, 0.016336, -0.002721]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.075736, -0.361516, 0.091903, -0.405709, -0.031263, 0.040947, 0.022060, -0.001511]
+BEFORE initial_guess_[0].uk: [-0.074987, -0.361938, 0.092659, -0.405807, -0.030939, 0.040591, 0.022105, -0.003191]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.073219, -0.367110, 0.094508, -0.411123, -0.031084, 0.041452, 0.027753, -0.001551]
+BEFORE initial_guess_[0].uk: [-0.072464, -0.367571, 0.095272, -0.411243, -0.030756, 0.041060, 0.027798, -0.003481]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.070508, -0.370541, 0.096353, -0.412845, -0.030570, 0.038356, 0.031420, -0.001509]
+BEFORE initial_guess_[0].uk: [-0.069729, -0.371018, 0.097144, -0.413015, -0.030239, 0.037889, 0.031438, -0.003708]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.068341, -0.379970, 0.100251, -0.425179, -0.030853, 0.046266, 0.040270, -0.001730]
+BEFORE initial_guess_[0].uk: [-0.067587, -0.380551, 0.101021, -0.425312, -0.030512, 0.045839, 0.040343, -0.004220]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.065716, -0.383288, 0.101722, -0.425762, -0.030199, 0.042741, 0.043870, -0.001749]
+BEFORE initial_guess_[0].uk: [-0.064910, -0.383848, 0.102542, -0.425988, -0.029854, 0.042185, 0.043890, -0.004526]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.063152, -0.386420, 0.103998, -0.427537, -0.029497, 0.038837, 0.047136, -0.001771]
+BEFORE initial_guess_[0].uk: [-0.062327, -0.387019, 0.104841, -0.427797, -0.029145, 0.038226, 0.047150, -0.004873]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.061262, -0.395040, 0.107986, -0.438713, -0.029506, 0.045646, 0.055613, -0.002018]
+BEFORE initial_guess_[0].uk: [-0.060455, -0.395755, 0.108816, -0.438939, -0.029139, 0.045071, 0.055685, -0.005480]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.058554, -0.398257, 0.109360, -0.438969, -0.028696, 0.041506, 0.059033, -0.002004]
+BEFORE initial_guess_[0].uk: [-0.057689, -0.398953, 0.110249, -0.439286, -0.028320, 0.040804, 0.059053, -0.005788]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.056383, -0.402752, 0.112371, -0.443234, -0.027977, 0.040303, 0.063950, -0.002077]
+BEFORE initial_guess_[0].uk: [-0.055506, -0.403515, 0.113277, -0.443564, -0.027586, 0.039577, 0.063993, -0.006247]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.054056, -0.407286, 0.114898, -0.447000, -0.027233, 0.039171, 0.068953, -0.002125]
+BEFORE initial_guess_[0].uk: [-0.053153, -0.408099, 0.115833, -0.447356, -0.026829, 0.038402, 0.069000, -0.006672]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.051718, -0.411868, 0.117392, -0.450718, -0.026441, 0.038061, 0.073938, -0.002169]
+BEFORE initial_guess_[0].uk: [-0.050785, -0.412726, 0.118360, -0.451103, -0.026022, 0.037247, 0.073985, -0.007095]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.049382, -0.416451, 0.119909, -0.454398, -0.025593, 0.036942, 0.078892, -0.002209]
+BEFORE initial_guess_[0].uk: [-0.048418, -0.417353, 0.120911, -0.454811, -0.025158, 0.036084, 0.078940, -0.007511]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.046991, -0.421032, 0.122389, -0.458025, -0.024696, 0.035793, 0.083828, -0.002239]
+BEFORE initial_guess_[0].uk: [-0.045997, -0.421975, 0.123426, -0.458464, -0.024246, 0.034895, 0.083878, -0.007910]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.044862, -0.429031, 0.125597, -0.466942, -0.024290, 0.040958, 0.091374, -0.002352]
+BEFORE initial_guess_[0].uk: [-0.043852, -0.430049, 0.126656, -0.467372, -0.023825, 0.040061, 0.091446, -0.008397]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.041800, -0.431630, 0.126802, -0.466072, -0.023062, 0.035474, 0.094203, -0.002290]
+BEFORE initial_guess_[0].uk: [-0.040727, -0.432611, 0.127923, -0.466582, -0.022586, 0.034467, 0.094223, -0.008599]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.039457, -0.435535, 0.129750, -0.469423, -0.021872, 0.033317, 0.098739, -0.002306]
+BEFORE initial_guess_[0].uk: [-0.038370, -0.436573, 0.130891, -0.469931, -0.021377, 0.032306, 0.098787, -0.008986]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.036925, -0.439755, 0.132215, -0.472430, -0.020688, 0.031349, 0.103521, -0.002325]
+BEFORE initial_guess_[0].uk: [-0.035812, -0.440826, 0.133387, -0.472949, -0.020177, 0.030318, 0.103574, -0.009314]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.034689, -0.447445, 0.135398, -0.480706, -0.019992, 0.035834, 0.111167, -0.002421]
+BEFORE initial_guess_[0].uk: [-0.033563, -0.448580, 0.136588, -0.481205, -0.019467, 0.034821, 0.111245, -0.009726]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.031326, -0.449790, 0.136466, -0.479328, -0.018541, 0.029712, 0.113789, -0.002333]
+BEFORE initial_guess_[0].uk: [-0.030143, -0.450871, 0.137713, -0.479892, -0.018008, 0.028611, 0.113810, -0.009781]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.029279, -0.456613, 0.140197, -0.487135, -0.017532, 0.033095, 0.121096, -0.002410]
+BEFORE initial_guess_[0].uk: [-0.028104, -0.457777, 0.141444, -0.487657, -0.016980, 0.032042, 0.121172, -0.010200]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025836, -0.458729, 0.141284, -0.485569, -0.015962, 0.026640, 0.123587, -0.002325]
+BEFORE initial_guess_[0].uk: [-0.024608, -0.459839, 0.142581, -0.486141, -0.015406, 0.025516, 0.123607, -0.010201]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.023334, -0.462128, 0.144214, -0.488076, -0.014369, 0.023768, 0.127951, -0.002313]
+BEFORE initial_guess_[0].uk: [-0.022102, -0.463279, 0.145521, -0.488631, -0.013797, 0.022664, 0.128004, -0.010462]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.021069, -0.469238, 0.147465, -0.495431, -0.013252, 0.027411, 0.135676, -0.002388]
+BEFORE initial_guess_[0].uk: [-0.019837, -0.470443, 0.148778, -0.495949, -0.012667, 0.026348, 0.135759, -0.010763]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.017310, -0.471222, 0.148321, -0.493421, -0.011576, 0.020713, 0.138117, -0.002307]
+BEFORE initial_guess_[0].uk: [-0.016028, -0.472353, 0.149682, -0.493989, -0.010990, 0.019584, 0.138137, -0.010666]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.015306, -0.477648, 0.152115, -0.500623, -0.010204, 0.023868, 0.145529, -0.002385]
+BEFORE initial_guess_[0].uk: [-0.014042, -0.478855, 0.153466, -0.501137, -0.009600, 0.022803, 0.145611, -0.011032]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.011466, -0.479433, 0.152940, -0.498369, -0.008442, 0.016956, 0.147875, -0.002285]
+BEFORE initial_guess_[0].uk: [-0.010157, -0.480566, 0.154333, -0.498924, -0.007841, 0.015836, 0.147894, -0.010866]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.009494, -0.485624, 0.156721, -0.505165, -0.006905, 0.019869, 0.155236, -0.002350]
+BEFORE initial_guess_[0].uk: [-0.008206, -0.486831, 0.158101, -0.505662, -0.006285, 0.018817, 0.155318, -0.011203]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.005606, -0.487231, 0.157553, -0.502661, -0.005058, 0.012816, 0.157518, -0.002260]
+BEFORE initial_guess_[0].uk: [-0.004276, -0.488361, 0.158972, -0.503195, -0.004443, 0.011715, 0.157537, -0.011002]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.003607, -0.493240, 0.161264, -0.509172, -0.003393, 0.015662, 0.164874, -0.002325]
+BEFORE initial_guess_[0].uk: [-0.002298, -0.494442, 0.162670, -0.509648, -0.002759, 0.014630, 0.164958, -0.011336]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.000372, -0.494683, 0.162045, -0.506402, -0.001476, 0.008499, 0.167113, -0.002241]
+BEFORE initial_guess_[0].uk: [0.001720, -0.495804, 0.163486, -0.506914, -0.000849, 0.007422, 0.167131, -0.011102]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.002234, -0.500529, 0.165826, -0.512665, 0.000345, 0.011334, 0.174437, -0.002303]
+BEFORE initial_guess_[0].uk: [0.003560, -0.501723, 0.167252, -0.513117, 0.000993, 0.010327, 0.174522, -0.011434]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.006250, -0.501812, 0.166609, -0.509634, 0.002339, 0.004075, 0.176629, -0.002226]
+BEFORE initial_guess_[0].uk: [0.007614, -0.502921, 0.168069, -0.510120, 0.002977, 0.003024, 0.176647, -0.011167]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.008219, -0.507502, 0.170249, -0.515652, 0.004263, 0.006906, 0.183959, -0.002292]
+BEFORE initial_guess_[0].uk: [0.009558, -0.508685, 0.171694, -0.516078, 0.004922, 0.005928, 0.184045, -0.011509]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.012144, -0.508611, 0.171135, -0.512357, 0.006358, -0.000433, 0.186083, -0.002209]
+BEFORE initial_guess_[0].uk: [0.013520, -0.509706, 0.172611, -0.512816, 0.007006, -0.001454, 0.186100, -0.011204]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.014208, -0.514138, 0.174649, -0.518123, 0.008385, 0.002382, 0.193406, -0.002272]
+BEFORE initial_guess_[0].uk: [0.015559, -0.515308, 0.176110, -0.518520, 0.009055, 0.001435, 0.193492, -0.011548]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.018070, -0.515075, 0.175610, -0.514571, 0.010570, -0.005022, 0.195472, -0.002195]
+BEFORE initial_guess_[0].uk: [0.019457, -0.516154, 0.177100, -0.515001, 0.011227, -0.006012, 0.195488, -0.011222]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.020206, -0.520430, 0.179014, -0.520071, 0.012704, -0.002234, 0.202775, -0.002257]
+BEFORE initial_guess_[0].uk: [0.021568, -0.521585, 0.180489, -0.520439, 0.013384, -0.003151, 0.202862, -0.011573]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.024179, -0.521417, 0.180206, -0.516261, 0.014773, -0.009320, 0.204455, -0.002194]
+BEFORE initial_guess_[0].uk: [0.025507, -0.522419, 0.181634, -0.516727, 0.015478, -0.010349, 0.204545, -0.011265]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.027410, -0.526658, 0.182637, -0.521552, 0.016715, -0.006480, 0.211928, -0.002265]
+BEFORE initial_guess_[0].uk: [0.028718, -0.527734, 0.184054, -0.521960, 0.017447, -0.007441, 0.212087, -0.011644]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.031118, -0.527127, 0.183471, -0.517724, 0.019166, -0.014190, 0.214130, -0.002272]
+BEFORE initial_guess_[0].uk: [0.032527, -0.528176, 0.184991, -0.518096, 0.019844, -0.015121, 0.214146, -0.011344]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.033763, -0.532234, 0.186638, -0.522459, 0.021326, -0.011333, 0.221286, -0.002357]
+BEFORE initial_guess_[0].uk: [0.035085, -0.533294, 0.188072, -0.522839, 0.022072, -0.012266, 0.221443, -0.011770]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.037096, -0.532693, 0.188123, -0.518336, 0.023789, -0.018716, 0.222980, -0.002172]
+BEFORE initial_guess_[0].uk: [0.038449, -0.533663, 0.189581, -0.518743, 0.024517, -0.019687, 0.223064, -0.011263]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.039441, -0.537404, 0.191203, -0.522840, 0.026290, -0.016245, 0.230316, -0.002234]
+BEFORE initial_guess_[0].uk: [0.040773, -0.538447, 0.192649, -0.523191, 0.027048, -0.017149, 0.230472, -0.011648]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.042774, -0.537483, 0.192419, -0.518546, 0.029010, -0.024056, 0.232346, -0.002148]
+BEFORE initial_guess_[0].uk: [0.044199, -0.538500, 0.193960, -0.518856, 0.029705, -0.024923, 0.232360, -0.011199]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.045321, -0.542171, 0.195587, -0.522617, 0.031464, -0.021409, 0.239418, -0.002215]
+BEFORE initial_guess_[0].uk: [0.046662, -0.543196, 0.197044, -0.522938, 0.032232, -0.022281, 0.239570, -0.011615]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.048800, -0.542325, 0.197011, -0.518084, 0.034011, -0.028821, 0.241106, -0.002145]
+BEFORE initial_guess_[0].uk: [0.050173, -0.543258, 0.198492, -0.518434, 0.034759, -0.029730, 0.241184, -0.011198]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.052030, -0.546619, 0.199324, -0.521951, 0.036532, -0.026526, 0.248514, -0.002118]
+BEFORE initial_guess_[0].uk: [0.053378, -0.547624, 0.200789, -0.522243, 0.037311, -0.027369, 0.248665, -0.011492]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.054999, -0.546605, 0.201173, -0.517235, 0.039285, -0.033950, 0.250073, -0.002111]
+BEFORE initial_guess_[0].uk: [0.056380, -0.547520, 0.202663, -0.517554, 0.040042, -0.034829, 0.250147, -0.011127]
+[OSQP] Saved factorization sample_200
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.057143, -0.552122, 0.204414, -0.522435, 0.042019, -0.029423, 0.258316, -0.002243]
+BEFORE initial_guess_[0].uk: [0.058499, -0.553113, 0.205888, -0.522692, 0.042809, -0.030234, 0.258463, -0.011579]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.070106, -0.550642, 0.198340, -0.516724, 0.042813, -0.037181, 0.262001, -0.004909]
+BEFORE initial_guess_[0].uk: [0.071522, -0.551625, 0.199848, -0.516946, 0.043551, -0.037970, 0.261999, -0.013813]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.075858, -0.553535, 0.198669, -0.518302, 0.045188, -0.036436, 0.268535, -0.005468]
+BEFORE initial_guess_[0].uk: [0.077185, -0.554513, 0.200076, -0.518544, 0.046008, -0.037241, 0.268661, -0.014701]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.082092, -0.553175, 0.197071, -0.513467, 0.048075, -0.044512, 0.270744, -0.004399]
+BEFORE initial_guess_[0].uk: [0.083502, -0.554135, 0.198576, -0.513658, 0.048823, -0.045264, 0.270751, -0.013300]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.132092, -0.550002, 0.164717, -0.509997, 0.040367, -0.040729, 0.284963, -0.028917]
+BEFORE initial_guess_[0].uk: [0.133456, -0.551004, 0.165614, -0.510277, 0.041370, -0.041654, 0.285041, -0.037353]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.182092, -0.553755, 0.128580, -0.510925, 0.028745, -0.041783, 0.304873, -0.023357]
+BEFORE initial_guess_[0].uk: [0.183344, -0.554817, 0.129658, -0.511059, 0.029597, -0.042524, 0.304933, -0.032132]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.212196, -0.552210, 0.106048, -0.504585, 0.029255, -0.050310, 0.311255, -0.024054]
+BEFORE initial_guess_[0].uk: [0.213345, -0.553210, 0.107081, -0.504750, 0.030185, -0.051087, 0.311261, -0.032726]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.239988, -0.558932, 0.094883, -0.508656, 0.010941, -0.041096, 0.330414, -0.024596]
+BEFORE initial_guess_[0].uk: [0.241051, -0.559780, 0.095760, -0.508961, 0.012071, -0.042035, 0.330528, -0.033542]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.256426, -0.554232, 0.081670, -0.502423, 0.018672, -0.050074, 0.332250, -0.028640]
+BEFORE initial_guess_[0].uk: [0.257513, -0.555225, 0.082567, -0.502562, 0.019693, -0.050836, 0.332251, -0.037427]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.287980, -0.555677, 0.064451, -0.501254, 0.005511, -0.050236, 0.348831, -0.035956]
+BEFORE initial_guess_[0].uk: [0.288948, -0.556731, 0.065178, -0.501376, 0.006534, -0.051021, 0.348838, -0.044661]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.337987, -0.549744, 0.027542, -0.494503, -0.000768, -0.054505, 0.362548, -0.046741]
+BEFORE initial_guess_[0].uk: [0.338994, -0.550852, 0.028051, -0.494576, 0.000284, -0.055242, 0.362511, -0.055143]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.377189, -0.549738, 0.003349, -0.491099, -0.014315, -0.054547, 0.375547, -0.062849]
+BEFORE initial_guess_[0].uk: [0.377740, -0.550850, 0.003345, -0.491135, -0.013097, -0.055306, 0.375404, -0.069624]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.427189, -0.529248, -0.031124, -0.471031, -0.021362, -0.061667, 0.385797, -0.109955]
+BEFORE initial_guess_[0].uk: [0.427427, -0.530223, -0.031918, -0.470811, -0.020084, -0.062390, 0.385604, -0.113220]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.477190, -0.531159, -0.068345, -0.467679, -0.038864, -0.062860, 0.404722, -0.112102]
+BEFORE initial_guess_[0].uk: [0.476829, -0.531829, -0.069950, -0.467394, -0.037507, -0.063460, 0.404455, -0.111934]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.467237, -0.521687, -0.062339, -0.452683, -0.031518, -0.071059, 0.398139, -0.142968]
+BEFORE initial_guess_[0].uk: [0.465891, -0.522070, -0.064970, -0.452159, -0.030243, -0.071508, 0.397791, -0.137643]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.470092, -0.508171, -0.057390, -0.444012, -0.029663, -0.067858, 0.396385, -0.162871]
+BEFORE initial_guess_[0].uk: [0.469045, -0.509008, -0.059900, -0.443624, -0.027952, -0.068649, 0.395954, -0.162735]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.499238, -0.501109, -0.083264, -0.433906, -0.035375, -0.071784, 0.401149, -0.190692]
+BEFORE initial_guess_[0].uk: [0.497450, -0.501988, -0.086823, -0.433333, -0.033650, -0.072522, 0.400638, -0.186877]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.449250, -0.480622, -0.051925, -0.395599, -0.017975, -0.100344, 0.379617, -0.252594]
+BEFORE initial_guess_[0].uk: [0.444752, -0.480262, -0.056504, -0.394511, -0.016464, -0.100835, 0.379050, -0.236337]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.399245, -0.474130, -0.024278, -0.393560, 0.002868, -0.091692, 0.356522, -0.268834]
+BEFORE initial_guess_[0].uk: [0.395769, -0.473745, -0.028142, -0.392517, 0.004503, -0.092057, 0.355892, -0.245256]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.349247, -0.468422, 0.004557, -0.391852, 0.023024, -0.085558, 0.333525, -0.281926]
+BEFORE initial_guess_[0].uk: [0.342275, -0.468405, -0.004847, -0.389926, 0.023839, -0.085287, 0.332827, -0.247202]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.299250, -0.453850, 0.021383, -0.358140, 0.031914, -0.106767, 0.317816, -0.298335]
+BEFORE initial_guess_[0].uk: [0.288231, -0.452148, 0.009892, -0.355424, 0.031794, -0.105568, 0.317160, -0.244981]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.249259, -0.448959, 0.038037, -0.359844, 0.043929, -0.096105, 0.299535, -0.279312]
+BEFORE initial_guess_[0].uk: [0.246894, -0.446760, 0.037029, -0.358966, 0.044771, -0.095130, 0.299021, -0.219170]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.199260, -0.444039, 0.072087, -0.361601, 0.058402, -0.086642, 0.281253, -0.255070]
+BEFORE initial_guess_[0].uk: [0.200639, -0.441807, 0.075208, -0.361574, 0.059552, -0.085767, 0.280894, -0.192822]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.149262, -0.438974, 0.113330, -0.362902, 0.073441, -0.078786, 0.262084, -0.227309]
+BEFORE initial_guess_[0].uk: [0.143357, -0.437370, 0.106684, -0.361131, 0.073279, -0.077284, 0.261703, -0.165142]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.099267, -0.428888, 0.141466, -0.354207, 0.084001, -0.075474, 0.245304, -0.207533]
+BEFORE initial_guess_[0].uk: [0.097735, -0.427180, 0.140269, -0.353581, 0.084389, -0.074291, 0.245016, -0.144270]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.049268, -0.408499, 0.181421, -0.323817, 0.090991, -0.091480, 0.232952, -0.183446]
+BEFORE initial_guess_[0].uk: [0.046756, -0.405957, 0.181059, -0.323111, 0.091293, -0.090340, 0.232822, -0.119992]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.000730, -0.405126, 0.216139, -0.328029, 0.106110, -0.085846, 0.212933, -0.160810]
+BEFORE initial_guess_[0].uk: [-0.012425, -0.403012, 0.202581, -0.324986, 0.104317, -0.083698, 0.212802, -0.090546]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.050729, -0.402425, 0.244386, -0.324535, 0.110508, -0.073760, 0.203421, -0.087836]
+BEFORE initial_guess_[0].uk: [-0.052568, -0.400625, 0.243621, -0.323883, 0.110703, -0.072415, 0.203633, -0.034079]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.068696, -0.396514, 0.256714, -0.320543, 0.113025, -0.069749, 0.201286, -0.054930]
+BEFORE initial_guess_[0].uk: [-0.062107, -0.394335, 0.265312, -0.321768, 0.114450, -0.068840, 0.201818, -0.006731]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.018699, -0.393558, 0.233468, -0.316238, 0.102439, -0.073032, 0.217091, -0.065487]
+BEFORE initial_guess_[0].uk: [-0.018137, -0.390964, 0.230934, -0.315548, 0.102343, -0.071806, 0.217683, -0.016932]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.041308, -0.385555, 0.249685, -0.312715, 0.101042, -0.069768, 0.217972, 0.003564]
+BEFORE initial_guess_[0].uk: [-0.035713, -0.382261, 0.256993, -0.313657, 0.102124, -0.069054, 0.218679, 0.042084]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.037920, -0.376928, 0.259220, -0.310636, 0.100022, -0.070019, 0.223727, 0.030452]
+BEFORE initial_guess_[0].uk: [-0.030502, -0.374345, 0.268204, -0.310572, 0.101417, -0.069321, 0.224468, 0.060498]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.004698, -0.368036, 0.251006, -0.300887, 0.089561, -0.073271, 0.243287, 0.050681]
+BEFORE initial_guess_[0].uk: [-0.004155, -0.365792, 0.251489, -0.300033, 0.089909, -0.072656, 0.243164, 0.073394]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.013428, -0.361447, 0.250972, -0.285282, 0.078635, -0.078894, 0.248741, 0.079953]
+BEFORE initial_guess_[0].uk: [0.016172, -0.359629, 0.253962, -0.284968, 0.079968, -0.079298, 0.248547, 0.078806]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.011179, -0.356052, 0.257343, -0.278255, 0.083275, -0.083835, 0.247368, 0.076294]
+BEFORE initial_guess_[0].uk: [0.016800, -0.353553, 0.265500, -0.277944, 0.085460, -0.084301, 0.247046, 0.068670]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.025839, -0.347061, 0.307340, -0.272166, 0.105298, -0.083169, 0.228489, 0.071062]
+BEFORE initial_guess_[0].uk: [-0.026354, -0.346237, 0.306787, -0.271486, 0.106890, -0.084570, 0.228646, 0.048397]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.075829, -0.349699, 0.339393, -0.268900, 0.129070, -0.090280, 0.211884, 0.054453]
+BEFORE initial_guess_[0].uk: [-0.076705, -0.348616, 0.338711, -0.268316, 0.130769, -0.091852, 0.212032, 0.032980]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.125827, -0.350588, 0.368958, -0.267643, 0.156384, -0.094244, 0.192739, 0.028082]
+BEFORE initial_guess_[0].uk: [-0.123568, -0.347944, 0.372927, -0.267955, 0.158244, -0.095827, 0.192892, 0.013319]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.175823, -0.346463, 0.415102, -0.269301, 0.181300, -0.093104, 0.172671, 0.023207]
+BEFORE initial_guess_[0].uk: [-0.177405, -0.344824, 0.414458, -0.268810, 0.183042, -0.094740, 0.172750, 0.007511]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.225823, -0.347193, 0.444595, -0.270361, 0.207824, -0.094614, 0.152031, 0.007382]
+BEFORE initial_guess_[0].uk: [-0.227980, -0.344941, 0.443141, -0.269714, 0.209166, -0.095856, 0.152082, 0.003159]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.275813, -0.348538, 0.473542, -0.269668, 0.230612, -0.097855, 0.134040, 0.004907]
+BEFORE initial_guess_[0].uk: [-0.278342, -0.345285, 0.472058, -0.268957, 0.231410, -0.098588, 0.134091, 0.011093]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.325810, -0.352255, 0.523544, -0.276450, 0.243048, -0.088885, 0.119749, 0.050604]
+BEFORE initial_guess_[0].uk: [-0.326009, -0.350110, 0.526000, -0.276163, 0.244693, -0.090430, 0.119739, 0.032036]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.375809, -0.356480, 0.561251, -0.267139, 0.263198, -0.100213, 0.100875, 0.042695]
+BEFORE initial_guess_[0].uk: [-0.376537, -0.362742, 0.561488, -0.267347, 0.264883, -0.102434, 0.100860, 0.022364]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.425809, -0.387632, 0.589277, -0.275833, 0.287642, -0.099047, 0.077219, 0.039688]
+BEFORE initial_guess_[0].uk: [-0.426440, -0.386129, 0.590592, -0.275304, 0.289639, -0.100911, 0.077178, 0.014424]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.475816, -0.389949, 0.623680, -0.273154, 0.314752, -0.104977, 0.054546, 0.017859]
+BEFORE initial_guess_[0].uk: [-0.476553, -0.388416, 0.624730, -0.272502, 0.316768, -0.106856, 0.054486, -0.004637]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.525819, -0.388637, 0.660551, -0.269395, 0.337639, -0.110142, 0.036525, 0.014873]
+BEFORE initial_guess_[0].uk: [-0.526326, -0.386698, 0.661894, -0.268819, 0.339615, -0.112025, 0.036462, -0.006292]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.575814, -0.388552, 0.696512, -0.264340, 0.362186, -0.116841, 0.015103, 0.007616]
+BEFORE initial_guess_[0].uk: [-0.577053, -0.386307, 0.697811, -0.263739, 0.364064, -0.118713, 0.015021, -0.010665]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.625810, -0.389468, 0.731123, -0.261385, 0.386453, -0.122598, -0.005548, 0.003358]
+BEFORE initial_guess_[0].uk: [-0.627233, -0.386870, 0.732272, -0.260747, 0.388191, -0.124392, -0.005624, -0.011304]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.675801, -0.392218, 0.764802, -0.259620, 0.409642, -0.127554, -0.025114, 0.008905]
+BEFORE initial_guess_[0].uk: [-0.676770, -0.388905, 0.766751, -0.259096, 0.411244, -0.129134, -0.025193, -0.001763]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.725801, -0.396862, 0.798942, -0.261028, 0.433995, -0.128189, -0.049597, 0.004857]
+BEFORE initial_guess_[0].uk: [-0.726261, -0.400927, 0.799017, -0.260975, 0.435344, -0.130469, -0.049586, -0.007087]
+[OSQP] Saved factorization sample_250
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.775801, -0.409129, 0.830000, -0.262160, 0.459187, -0.132397, -0.072892, 0.003330]
+BEFORE initial_guess_[0].uk: [-0.776168, -0.415528, 0.829396, -0.262139, 0.460384, -0.134705, -0.072864, -0.005005]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.825799, -0.424175, 0.859858, -0.263028, 0.482726, -0.137226, -0.094722, 0.013633]
+BEFORE initial_guess_[0].uk: [-0.826213, -0.430955, 0.858815, -0.262940, 0.483677, -0.139326, -0.094677, 0.008924]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.875799, -0.450864, 0.896237, -0.266367, 0.500590, -0.134881, -0.114055, 0.057364]
+BEFORE initial_guess_[0].uk: [-0.875338, -0.448418, 0.898841, -0.265949, 0.502297, -0.136852, -0.114069, 0.034968]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.925799, -0.454048, 0.932078, -0.265620, 0.528976, -0.140863, -0.138245, 0.052627]
+BEFORE initial_guess_[0].uk: [-0.925080, -0.451464, 0.934501, -0.265241, 0.530592, -0.142791, -0.138257, 0.033129]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.975797, -0.460091, 0.966115, -0.264059, 0.556911, -0.148683, -0.163507, 0.049632]
+BEFORE initial_guess_[0].uk: [-0.975036, -0.457365, 0.968191, -0.263657, 0.558364, -0.150508, -0.163516, 0.033539]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.015998, -0.466686, 0.992455, -0.262405, 0.580952, -0.156403, -0.184917, 0.046958]
+BEFORE initial_guess_[0].uk: [-1.014684, -0.466223, 0.993895, -0.262149, 0.582195, -0.158190, -0.184921, 0.034411]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.021011, -0.467665, 0.995737, -0.258645, 0.591252, -0.163748, -0.191474, 0.041385]
+BEFORE initial_guess_[0].uk: [-1.017868, -0.478782, 0.995875, -0.259223, 0.592278, -0.165911, -0.191466, 0.032495]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.023361, -0.491496, 0.994190, -0.257822, 0.600310, -0.171152, -0.198869, 0.037512]
+BEFORE initial_guess_[0].uk: [-1.022272, -0.491179, 0.995260, -0.257650, 0.601393, -0.172873, -0.198882, 0.028510]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.033010, -0.493714, 0.998954, -0.253525, 0.611734, -0.179426, -0.207845, 0.032540]
+BEFORE initial_guess_[0].uk: [-1.032201, -0.493514, 0.999622, -0.253392, 0.612630, -0.181037, -0.207865, 0.027672]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.044834, -0.496497, 1.003556, -0.248797, 0.623358, -0.188433, -0.218210, 0.028722]
+BEFORE initial_guess_[0].uk: [-1.041221, -0.511098, 1.002908, -0.249316, 0.624075, -0.190266, -0.218217, 0.026946]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.067493, -0.524079, 1.013573, -0.247490, 0.640138, -0.197153, -0.235828, 0.027548]
+BEFORE initial_guess_[0].uk: [-1.065998, -0.528558, 1.013482, -0.247408, 0.640832, -0.198758, -0.235849, 0.025845]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.091727, -0.535301, 1.024031, -0.243275, 0.656592, -0.207444, -0.253049, 0.025764]
+BEFORE initial_guess_[0].uk: [-1.089785, -0.542471, 1.023521, -0.243181, 0.657155, -0.209024, -0.253068, 0.025781]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.096079, -0.544089, 1.021556, -0.237107, 0.664587, -0.217251, -0.261312, 0.019675]
+BEFORE initial_guess_[0].uk: [-1.092031, -0.560225, 1.020262, -0.237400, 0.665058, -0.219008, -0.261324, 0.020733]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.109423, -0.568347, 1.023834, -0.234097, 0.677130, -0.226639, -0.275356, 0.015930]
+BEFORE initial_guess_[0].uk: [-1.106259, -0.579562, 1.023072, -0.233967, 0.677705, -0.228309, -0.275375, 0.014564]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.112814, -0.595658, 1.019418, -0.231093, 0.685877, -0.234487, -0.285597, 0.011806]
+BEFORE initial_guess_[0].uk: [-1.112893, -0.592319, 1.020212, -0.230506, 0.686831, -0.236190, -0.285633, 0.005161]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.080066, -0.581856, 0.995410, -0.224002, 0.679998, -0.240772, -0.278332, -0.010751]
+BEFORE initial_guess_[0].uk: [-1.079055, -0.583016, 0.995488, -0.223507, 0.681041, -0.242645, -0.278387, -0.013701]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.097216, -0.588554, 1.001621, -0.217847, 0.693699, -0.250771, -0.292650, -0.014385]
+BEFORE initial_guess_[0].uk: [-1.096336, -0.589714, 1.001548, -0.217459, 0.694584, -0.252592, -0.292743, -0.014400]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.100062, -0.590819, 0.998440, -0.212365, 0.701812, -0.259693, -0.300728, -0.018236]
+BEFORE initial_guess_[0].uk: [-1.099424, -0.592146, 0.997920, -0.212064, 0.702497, -0.261400, -0.300844, -0.013680]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.050062, -0.575732, 0.960111, -0.211509, 0.689268, -0.261120, -0.291482, -0.054821]
+BEFORE initial_guess_[0].uk: [-1.048680, -0.576433, 0.957345, -0.210637, 0.690039, -0.262721, -0.291619, -0.042307]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.000062, -0.560450, 0.923325, -0.196313, 0.669953, -0.267226, -0.271811, -0.064615]
+BEFORE initial_guess_[0].uk: [-0.995954, -0.576660, 0.919556, -0.196397, 0.670290, -0.268791, -0.271958, -0.045675]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.004951, -0.594517, 0.915397, -0.194190, 0.676330, -0.273466, -0.284768, -0.059484]
+BEFORE initial_guess_[0].uk: [-1.005253, -0.595853, 0.912752, -0.193596, 0.676970, -0.274980, -0.284951, -0.046719]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.026626, -0.603401, 0.917335, -0.188031, 0.689173, -0.284272, -0.301344, -0.052538]
+BEFORE initial_guess_[0].uk: [-1.026901, -0.605018, 0.914629, -0.187493, 0.689736, -0.285742, -0.301525, -0.038893]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.052726, -0.614244, 0.921620, -0.182970, 0.704314, -0.295295, -0.319172, -0.039839]
+BEFORE initial_guess_[0].uk: [-1.048739, -0.628480, 0.918415, -0.182861, 0.704749, -0.296926, -0.319318, -0.026364]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.091799, -0.652326, 0.933454, -0.182873, 0.727915, -0.306631, -0.347207, -0.020076]
+BEFORE initial_guess_[0].uk: [-1.091455, -0.654853, 0.931263, -0.182379, 0.728439, -0.308140, -0.347334, -0.010414]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.092819, -0.655295, 0.925066, -0.178569, 0.732926, -0.315473, -0.352629, -0.010218]
+BEFORE initial_guess_[0].uk: [-1.089017, -0.667293, 0.922586, -0.178320, 0.733306, -0.317125, -0.352721, 0.001273]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.116072, -0.681833, 0.930751, -0.180599, 0.749695, -0.324709, -0.372062, 0.012218]
+BEFORE initial_guess_[0].uk: [-1.114992, -0.685663, 0.928827, -0.180237, 0.750000, -0.326138, -0.372137, 0.023335]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.100087, -0.679382, 0.917863, -0.179415, 0.744802, -0.329984, -0.368283, 0.030506]
+BEFORE initial_guess_[0].uk: [-1.098845, -0.683277, 0.916282, -0.179367, 0.744876, -0.331364, -0.368359, 0.041726]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.092624, -0.680006, 0.903294, -0.173847, 0.746544, -0.341051, -0.371079, 0.032461]
+BEFORE initial_guess_[0].uk: [-1.083286, -0.704765, 0.900449, -0.173402, 0.746271, -0.342501, -0.371105, 0.046222]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.059808, -0.729635, 0.873267, -0.172394, 0.739375, -0.344067, -0.370286, 0.041008]
+BEFORE initial_guess_[0].uk: [-1.058193, -0.732737, 0.872588, -0.172120, 0.739959, -0.345909, -0.370319, 0.036524]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.068839, -0.736738, 0.869272, -0.166143, 0.749387, -0.359481, -0.381916, 0.034588]
+BEFORE initial_guess_[0].uk: [-1.067119, -0.739930, 0.868697, -0.165764, 0.750026, -0.361345, -0.381933, 0.030473]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.074686, -0.742626, 0.863506, -0.159536, 0.757907, -0.374928, -0.391934, 0.027797]
+BEFORE initial_guess_[0].uk: [-1.069577, -0.753984, 0.862373, -0.159111, 0.758479, -0.376960, -0.391921, 0.024528]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.079615, -0.778368, 0.854519, -0.157250, 0.768012, -0.388280, -0.407484, 0.027800]
+BEFORE initial_guess_[0].uk: [-1.079188, -0.777150, 0.855055, -0.156459, 0.769147, -0.390307, -0.407478, 0.015397]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.091317, -0.781321, 0.852374, -0.148461, 0.778666, -0.405806, -0.419623, 0.016261]
+BEFORE initial_guess_[0].uk: [-1.091823, -0.778581, 0.852739, -0.147582, 0.779661, -0.407572, -0.419612, 0.009021]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.113108, -0.788254, 0.854462, -0.139952, 0.793851, -0.423389, -0.437579, 0.007637]
+BEFORE initial_guess_[0].uk: [-1.110761, -0.792438, 0.854113, -0.139014, 0.794658, -0.425009, -0.437551, 0.003912]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.121265, -0.797052, 0.849879, -0.131429, 0.803859, -0.438722, -0.449273, 0.000483]
+BEFORE initial_guess_[0].uk: [-1.116501, -0.806939, 0.848913, -0.130485, 0.804481, -0.440213, -0.449233, -0.000200]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.071263, -0.801363, 0.818112, -0.148010, 0.795145, -0.413851, -0.453118, -0.091806]
+BEFORE initial_guess_[0].uk: [-1.068545, -0.799072, 0.814538, -0.146218, 0.795913, -0.414813, -0.453407, -0.089662]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.021260, -0.770015, 0.785633, -0.127355, 0.770927, -0.419847, -0.424950, -0.102916]
+BEFORE initial_guess_[0].uk: [-1.021332, -0.766388, 0.781608, -0.125778, 0.771179, -0.420116, -0.425268, -0.087910]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.971260, -0.736658, 0.750930, -0.109276, 0.745017, -0.422301, -0.397269, -0.108279]
+BEFORE initial_guess_[0].uk: [-0.968867, -0.742202, 0.745108, -0.109385, 0.744205, -0.424792, -0.397566, -0.082470]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.943816, -0.726110, 0.724481, -0.096509, 0.730321, -0.429191, -0.385011, -0.101414]
+BEFORE initial_guess_[0].uk: [-0.941829, -0.733906, 0.718079, -0.097263, 0.728951, -0.432078, -0.385304, -0.069862]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.948033, -0.734455, 0.708993, -0.090091, 0.727883, -0.441856, -0.393475, -0.089129]
+BEFORE initial_guess_[0].uk: [-0.941043, -0.751470, 0.701525, -0.092245, 0.725600, -0.447238, -0.393705, -0.057504]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.971351, -0.784458, 0.698308, -0.091097, 0.738789, -0.465628, -0.421487, -0.060074]
+BEFORE initial_guess_[0].uk: [-0.971815, -0.785887, 0.694007, -0.090497, 0.738345, -0.467085, -0.421793, -0.046150]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.997095, -0.798461, 0.692117, -0.081918, 0.750279, -0.483879, -0.441868, -0.050216]
+BEFORE initial_guess_[0].uk: [-0.994645, -0.804223, 0.687707, -0.081911, 0.749762, -0.486548, -0.442111, -0.040366]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.023028, -0.818828, 0.687274, -0.073276, 0.763714, -0.504412, -0.463059, -0.037464]
+BEFORE initial_guess_[0].uk: [-1.019987, -0.824995, 0.683436, -0.073197, 0.763359, -0.507277, -0.463245, -0.031708]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.055894, -0.844609, 0.686527, -0.064774, 0.781208, -0.527112, -0.486606, -0.014421]
+BEFORE initial_guess_[0].uk: [-1.052141, -0.851024, 0.683839, -0.064730, 0.781045, -0.530147, -0.486701, -0.012388]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.062680, -0.856172, 0.680942, -0.054401, 0.788523, -0.544287, -0.495420, -0.007749]
+BEFORE initial_guess_[0].uk: [-1.063223, -0.854843, 0.679688, -0.053029, 0.789060, -0.545398, -0.495524, -0.004536]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.059074, -0.849915, 0.673180, -0.046856, 0.789656, -0.550984, -0.493661, 0.012045]
+BEFORE initial_guess_[0].uk: [-1.061387, -0.845733, 0.672450, -0.045337, 0.790176, -0.551228, -0.493740, 0.020972]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-1.027147, -0.824112, 0.652167, -0.038947, 0.778291, -0.548430, -0.475039, 0.015172]
+BEFORE initial_guess_[0].uk: [-1.024612, -0.829998, 0.648683, -0.040185, 0.777097, -0.550914, -0.475021, 0.037836]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.977147, -0.800134, 0.621147, -0.036087, 0.758387, -0.540515, -0.447262, 0.023411]
+BEFORE initial_guess_[0].uk: [-0.961950, -0.829214, 0.613040, -0.042922, 0.754231, -0.548825, -0.447057, 0.055827]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.942306, -0.850137, 0.587086, -0.058020, 0.750742, -0.548668, -0.447283, 0.053911]
+BEFORE initial_guess_[0].uk: [-0.940215, -0.856678, 0.583083, -0.059167, 0.749259, -0.550667, -0.447211, 0.071873]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.966191, -0.871557, 0.579488, -0.056460, 0.765083, -0.564651, -0.466741, 0.070650]
+BEFORE initial_guess_[0].uk: [-0.953016, -0.893229, 0.572803, -0.060760, 0.761893, -0.571419, -0.466496, 0.085886]
+[OSQP] Saved factorization sample_300
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.916191, -0.921557, 0.529488, -0.091859, 0.745858, -0.577018, -0.455708, 0.150585]
+BEFORE initial_guess_[0].uk: [-0.906301, -0.933670, 0.526212, -0.091239, 0.745921, -0.578052, -0.455532, 0.132394]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.866185, -0.964212, 0.487604, -0.114130, 0.737229, -0.561832, -0.440338, 0.195857]
+BEFORE initial_guess_[0].uk: [-0.858534, -0.967335, 0.487313, -0.112919, 0.738198, -0.564369, -0.440060, 0.151485]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.816185, -0.953525, 0.462620, -0.109799, 0.716338, -0.567026, -0.409854, 0.190607]
+BEFORE initial_guess_[0].uk: [-0.808684, -0.955677, 0.463090, -0.107999, 0.717728, -0.569382, -0.409559, 0.141434]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.766184, -0.935689, 0.438597, -0.101635, 0.700635, -0.571632, -0.377684, 0.175947]
+BEFORE initial_guess_[0].uk: [-0.758731, -0.937999, 0.439071, -0.099818, 0.702074, -0.574069, -0.377342, 0.127964]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.716182, -0.920097, 0.417273, -0.094323, 0.681319, -0.573875, -0.346771, 0.163184]
+BEFORE initial_guess_[0].uk: [-0.708989, -0.922471, 0.417678, -0.092506, 0.682627, -0.576234, -0.346414, 0.117527]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.666181, -0.903306, 0.393765, -0.087926, 0.665645, -0.576174, -0.314353, 0.151727]
+BEFORE initial_guess_[0].uk: [-0.659343, -0.905604, 0.393994, -0.086181, 0.666876, -0.578439, -0.313965, 0.108671]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.616174, -0.887356, 0.372686, -0.081846, 0.645669, -0.576011, -0.283008, 0.141331]
+BEFORE initial_guess_[0].uk: [-0.609737, -0.889581, 0.372793, -0.080153, 0.646723, -0.578121, -0.282627, 0.101214]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.566175, -0.869654, 0.349492, -0.077157, 0.629166, -0.575802, -0.248262, 0.131715]
+BEFORE initial_guess_[0].uk: [-0.560153, -0.871758, 0.349428, -0.075531, 0.630119, -0.577743, -0.247891, 0.094514]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.516175, -0.852178, 0.328681, -0.072008, 0.608380, -0.573031, -0.215615, 0.122881]
+BEFORE initial_guess_[0].uk: [-0.510573, -0.854162, 0.328526, -0.070455, 0.609166, -0.574812, -0.215266, 0.088597]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.466176, -0.834199, 0.308128, -0.067476, 0.587353, -0.568512, -0.182720, 0.114747]
+BEFORE initial_guess_[0].uk: [-0.460984, -0.836041, 0.307871, -0.066012, 0.588031, -0.570152, -0.182379, 0.083107]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.416171, -0.815564, 0.285868, -0.064793, 0.569951, -0.562372, -0.147691, 0.106166]
+BEFORE initial_guess_[0].uk: [-0.411496, -0.817235, 0.285500, -0.063422, 0.570582, -0.563882, -0.147337, 0.077026]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.383115, -0.788418, 0.276098, -0.046500, 0.554161, -0.564934, -0.123794, 0.070746]
+BEFORE initial_guess_[0].uk: [-0.380958, -0.790521, 0.275488, -0.045621, 0.554440, -0.566564, -0.123500, 0.050538]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.384413, -0.791527, 0.268785, -0.039508, 0.557486, -0.578666, -0.122047, 0.066242]
+BEFORE initial_guess_[0].uk: [-0.382313, -0.793605, 0.267903, -0.038841, 0.557604, -0.580139, -0.121741, 0.049697]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.387988, -0.799303, 0.261018, -0.033819, 0.562184, -0.588682, -0.123722, 0.062007]
+BEFORE initial_guess_[0].uk: [-0.386071, -0.801231, 0.259851, -0.033425, 0.562059, -0.589999, -0.123409, 0.049729]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.381371, -0.792933, 0.253276, -0.024066, 0.555547, -0.599675, -0.116391, 0.059058]
+BEFORE initial_guess_[0].uk: [-0.376068, -0.797467, 0.251390, -0.025103, 0.554608, -0.601954, -0.116092, 0.050418]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.331371, -0.805352, 0.223435, -0.046033, 0.540168, -0.580980, -0.091345, 0.083183]
+BEFORE initial_guess_[0].uk: [-0.327897, -0.806202, 0.222625, -0.045082, 0.540341, -0.581851, -0.091043, 0.064689]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.286668, -0.765040, 0.212695, -0.031328, 0.516458, -0.571690, -0.054255, 0.057572]
+BEFORE initial_guess_[0].uk: [-0.282288, -0.768501, 0.211166, -0.031704, 0.515686, -0.573196, -0.054120, 0.049898]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.253312, -0.747216, 0.200023, -0.026996, 0.498603, -0.569417, -0.029926, 0.056145]
+BEFORE initial_guess_[0].uk: [-0.249377, -0.750298, 0.198398, -0.027214, 0.497860, -0.570699, -0.029765, 0.049454]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.203299, -0.739395, 0.176672, -0.037928, 0.478881, -0.554212, 0.002329, 0.070771]
+BEFORE initial_guess_[0].uk: [-0.200707, -0.740010, 0.175787, -0.037071, 0.478927, -0.554648, 0.002534, 0.057296]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.175623, -0.715861, 0.168810, -0.026020, 0.463615, -0.549816, 0.023534, 0.051064]
+BEFORE initial_guess_[0].uk: [-0.174344, -0.717031, 0.167892, -0.025459, 0.463410, -0.550452, 0.023616, 0.042250]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.176126, -0.717538, 0.162312, -0.022011, 0.465710, -0.556337, 0.026026, 0.047483]
+BEFORE initial_guess_[0].uk: [-0.174851, -0.718705, 0.161283, -0.021525, 0.465538, -0.556905, 0.026158, 0.039753]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.170691, -0.710817, 0.157035, -0.012975, 0.459255, -0.562880, 0.031758, 0.044495]
+BEFORE initial_guess_[0].uk: [-0.169413, -0.711915, 0.156015, -0.012626, 0.458918, -0.563411, 0.031840, 0.038926]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.177915, -0.725985, 0.148489, -0.013582, 0.469741, -0.563094, 0.026104, 0.041272]
+BEFORE initial_guess_[0].uk: [-0.176988, -0.726735, 0.147384, -0.013445, 0.469383, -0.563643, 0.026285, 0.037357]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.170650, -0.715156, 0.143802, -0.006350, 0.461309, -0.569381, 0.034402, 0.039136]
+BEFORE initial_guess_[0].uk: [-0.167655, -0.717300, 0.142282, -0.006682, 0.460487, -0.570139, 0.034448, 0.037645]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.120652, -0.696690, 0.126959, -0.013114, 0.436467, -0.553005, 0.067650, 0.050523]
+BEFORE initial_guess_[0].uk: [-0.118826, -0.696945, 0.126076, -0.012419, 0.436283, -0.552933, 0.067694, 0.044468]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.151742, -0.709038, 0.128683, 0.000882, 0.445793, -0.577290, 0.043410, 0.035378]
+BEFORE initial_guess_[0].uk: [-0.151950, -0.709164, 0.128061, 0.001733, 0.445701, -0.577336, 0.043399, 0.029666]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.152992, -0.713114, 0.120187, 0.000956, 0.451365, -0.578880, 0.045815, 0.032740]
+BEFORE initial_guess_[0].uk: [-0.153254, -0.713233, 0.119452, 0.001789, 0.451347, -0.578879, 0.045865, 0.027345]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.154851, -0.706933, 0.117630, 0.011214, 0.446895, -0.587020, 0.047361, 0.029497]
+BEFORE initial_guess_[0].uk: [-0.155154, -0.706969, 0.116993, 0.011987, 0.446765, -0.587032, 0.047363, 0.025209]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.160270, -0.711240, 0.112119, 0.013347, 0.451257, -0.591222, 0.045272, 0.026595]
+BEFORE initial_guess_[0].uk: [-0.160656, -0.711254, 0.111361, 0.014120, 0.451178, -0.591120, 0.045300, 0.023094]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.155437, -0.700975, 0.108570, 0.022700, 0.443481, -0.594964, 0.051433, 0.024522]
+BEFORE initial_guess_[0].uk: [-0.155915, -0.700873, 0.107870, 0.023379, 0.443283, -0.594859, 0.051432, 0.022425]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.165121, -0.711452, 0.101757, 0.022675, 0.452110, -0.597559, 0.045139, 0.022037]
+BEFORE initial_guess_[0].uk: [-0.165760, -0.711261, 0.100919, 0.023309, 0.451917, -0.597325, 0.045163, 0.021444]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.158634, -0.698864, 0.098487, 0.031484, 0.442787, -0.599993, 0.052638, 0.020504]
+BEFORE initial_guess_[0].uk: [-0.159474, -0.698502, 0.097642, 0.031986, 0.442441, -0.599679, 0.052635, 0.022124]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.160126, -0.696990, 0.093436, 0.034473, 0.442382, -0.602307, 0.053610, 0.019516]
+BEFORE initial_guess_[0].uk: [-0.161201, -0.696503, 0.092399, 0.034892, 0.442011, -0.601789, 0.053628, 0.022969]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.153022, -0.683961, 0.089486, 0.042632, 0.432683, -0.602795, 0.061371, 0.018822]
+BEFORE initial_guess_[0].uk: [-0.152143, -0.684631, 0.088010, 0.042405, 0.432022, -0.602606, 0.061382, 0.023947]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.162226, -0.698552, 0.079712, 0.039867, 0.442963, -0.602136, 0.053460, 0.017703]
+BEFORE initial_guess_[0].uk: [-0.161293, -0.699180, 0.078102, 0.039446, 0.442242, -0.601945, 0.053500, 0.023969]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.152238, -0.684878, 0.076043, 0.046052, 0.431653, -0.602933, 0.061778, 0.017203]
+BEFORE initial_guess_[0].uk: [-0.151300, -0.685518, 0.074401, 0.045581, 0.430845, -0.602642, 0.061793, 0.024335]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.141865, -0.671573, 0.072367, 0.052103, 0.420303, -0.602070, 0.070080, 0.016999]
+BEFORE initial_guess_[0].uk: [-0.141262, -0.671995, 0.070757, 0.051653, 0.419486, -0.601660, 0.070091, 0.024651]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.153058, -0.683056, 0.063014, 0.050170, 0.430949, -0.603673, 0.063095, 0.015037]
+BEFORE initial_guess_[0].uk: [-0.151035, -0.684288, 0.060965, 0.049243, 0.430013, -0.603447, 0.063138, 0.023972]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.103062, -0.652853, 0.053863, 0.046102, 0.403853, -0.579610, 0.097898, 0.022150]
+BEFORE initial_guess_[0].uk: [-0.101909, -0.652947, 0.052408, 0.045790, 0.403103, -0.579066, 0.097906, 0.028446]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.079187, -0.628414, 0.051154, 0.052227, 0.387895, -0.567887, 0.116888, 0.016202]
+BEFORE initial_guess_[0].uk: [-0.078644, -0.628702, 0.049609, 0.051735, 0.387071, -0.567371, 0.116888, 0.024439]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.079152, -0.628045, 0.044241, 0.051624, 0.389448, -0.566690, 0.117690, 0.015172]
+BEFORE initial_guess_[0].uk: [-0.078755, -0.628253, 0.042625, 0.051135, 0.388709, -0.566081, 0.117715, 0.023577]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.071495, -0.616186, 0.040524, 0.057233, 0.380390, -0.564457, 0.124176, 0.014610]
+BEFORE initial_guess_[0].uk: [-0.071119, -0.616343, 0.039018, 0.056692, 0.379561, -0.563868, 0.124178, 0.023421]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.066066, -0.607943, 0.036688, 0.060313, 0.374014, -0.562394, 0.128534, 0.014045]
+BEFORE initial_guess_[0].uk: [-0.065919, -0.607963, 0.035196, 0.059792, 0.373230, -0.561730, 0.128542, 0.022954]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.067005, -0.609149, 0.028860, 0.058440, 0.377173, -0.558583, 0.129306, 0.013121]
+BEFORE initial_guess_[0].uk: [-0.065805, -0.609736, 0.027104, 0.057647, 0.376325, -0.558021, 0.129330, 0.022636]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.019618, -0.575535, 0.024042, 0.057166, 0.352358, -0.531662, 0.163918, 0.014790]
+BEFORE initial_guess_[0].uk: [-0.018868, -0.575736, 0.022521, 0.056522, 0.351501, -0.531045, 0.163916, 0.023789]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.030388, -0.545140, 0.018314, 0.051850, 0.327300, -0.502336, 0.198979, 0.020186]
+BEFORE initial_guess_[0].uk: [0.030354, -0.544373, 0.017290, 0.051658, 0.326667, -0.501481, 0.198962, 0.026770]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.074354, -0.512358, 0.015105, 0.051537, 0.304833, -0.475505, 0.229691, 0.016573]
+BEFORE initial_guess_[0].uk: [0.073104, -0.511615, 0.014244, 0.051430, 0.304304, -0.474773, 0.229653, 0.022285]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.066876, -0.517030, 0.007966, 0.049016, 0.312583, -0.475118, 0.226365, 0.014904]
+BEFORE initial_guess_[0].uk: [0.065658, -0.516309, 0.007053, 0.048907, 0.312158, -0.474390, 0.226358, 0.020331]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.070349, -0.507706, 0.005914, 0.053287, 0.306400, -0.472161, 0.229706, 0.013894]
+BEFORE initial_guess_[0].uk: [0.069130, -0.506974, 0.005118, 0.053146, 0.305894, -0.471466, 0.229678, 0.019641]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.071270, -0.500130, 0.004803, 0.057641, 0.300971, -0.470795, 0.230997, 0.012768]
+BEFORE initial_guess_[0].uk: [0.070024, -0.499374, 0.004024, 0.057462, 0.300453, -0.470085, 0.230969, 0.018855]
+[OSQP] Saved factorization sample_350
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.070307, -0.493984, 0.003321, 0.061650, 0.296150, -0.470378, 0.230561, 0.012364]
+BEFORE initial_guess_[0].uk: [0.069044, -0.493218, 0.002555, 0.061445, 0.295625, -0.469655, 0.230532, 0.018631]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.065156, -0.493122, -0.000403, 0.062035, 0.299095, -0.470327, 0.228771, 0.010768]
+BEFORE initial_guess_[0].uk: [0.063739, -0.492243, -0.001286, 0.061724, 0.298594, -0.469503, 0.228765, 0.018138]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.067685, -0.484888, -0.002569, 0.065394, 0.293485, -0.467363, 0.230756, 0.010241]
+BEFORE initial_guess_[0].uk: [0.066262, -0.484008, -0.003353, 0.065068, 0.292903, -0.466549, 0.230725, 0.017833]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.068228, -0.477572, -0.003709, 0.068819, 0.288014, -0.465310, 0.231403, 0.009769]
+BEFORE initial_guess_[0].uk: [0.066751, -0.476654, -0.004488, 0.068444, 0.287403, -0.464466, 0.231372, 0.017744]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.066087, -0.476623, -0.008501, 0.067354, 0.289720, -0.463237, 0.230193, 0.009289]
+BEFORE initial_guess_[0].uk: [0.064887, -0.475830, -0.009390, 0.066962, 0.289201, -0.462392, 0.230180, 0.016938]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [0.067347, -0.469243, -0.010303, 0.070600, 0.284591, -0.460585, 0.231086, 0.008853]
+BEFORE initial_guess_[0].uk: [0.065855, -0.468312, -0.011049, 0.070188, 0.283976, -0.459735, 0.23

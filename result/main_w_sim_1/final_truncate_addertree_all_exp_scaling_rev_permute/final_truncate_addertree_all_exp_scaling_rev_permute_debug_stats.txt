@@ -29,14 +29,14 @@ total_iter_count | mean: 183.150420 | min:  50.000000 | max: 500.000000 | var: 1
 solve_count     | final value: 1549
 max_iter_reached_count | final value: 0
 max_iter_solve_failed_count | final value: 0
-total           | mean:   0.076817 | min:   0.072123 | max:   0.158764 | var:   0.000069 | std:   0.008309 |
-set_env         | mean:   0.065221 | min:   0.063637 | max:   0.081680 | var:   0.000008 | std:   0.002898 |
-set_qp          | mean:   0.000385 | min:   0.000360 | max:   0.000688 | var:   0.000000 | std:   0.000015 |
-init_solver     | mean:   0.001266 | min:   0.000391 | max:   0.044812 | var:   0.000036 | std:   0.005985 |
-solve_qp        | mean:   0.003070 | min:   0.000916 | max:   0.027934 | var:   0.000005 | std:   0.002134 |
-get_alpha       | mean:   0.000067 | min:   0.000060 | max:   0.000192 | var:   0.000000 | std:   0.000006 |
-scaling_time    | mean:   0.000084 | min:   0.000081 | max:   0.000158 | var:   0.000000 | std:   0.000004 |
-permutation_time | mean:   0.000039 | min:   0.000034 | max:   0.000081 | var:   0.000000 | std:   0.000002 |
-factorization_time | mean:   0.000169 | min:   0.000163 | max:   0.000762 | var:   0.000000 | std:   0.000016 |
+total           | mean:   0.080527 | min:   0.071767 | max:   0.372904 | var:   0.001379 | std:   0.037141 |
+set_env         | mean:   0.065196 | min:   0.063414 | max:   0.084345 | var:   0.000008 | std:   0.002877 |
+set_qp          | mean:   0.000367 | min:   0.000345 | max:   0.000669 | var:   0.000000 | std:   0.000018 |
+init_solver     | mean:   0.005483 | min:   0.000384 | max:   0.258720 | var:   0.001264 | std:   0.035547 |
+solve_qp        | mean:   0.002624 | min:   0.000795 | max:   0.027371 | var:   0.000003 | std:   0.001819 |
+get_alpha       | mean:   0.000065 | min:   0.000060 | max:   0.000123 | var:   0.000000 | std:   0.000005 |
+scaling_time    | mean:   0.004315 | min:   0.000086 | max:   0.215562 | var:   0.000874 | std:   0.029570 |
+permutation_time | mean:   0.000036 | min:   0.000033 | max:   0.000281 | var:   0.000000 | std:   0.000008 |
+factorization_time | mean:   0.000167 | min:   0.000161 | max:   0.000279 | var:   0.000000 | std:   0.000005 |
 rho_updates     | mean:   0.728857 | min:   0.000000 | max:   3.000000 | var:   0.375804 | std:   0.613028 |
 

@@ -32,6 +32,252 @@
 extern void osqp_set_permutation_time(OSQPFloat time);
 extern void osqp_set_factorization_time(OSQPFloat time);
 
+// Use the same testcase counter from osqp_api.c (shared for consistent sampling)
+extern OSQPInt g_testcase_count;
+
+// ===== ASIC Testcase: Factorization result saving =====
+#define FACTORIZATION_TESTCASE_SAVE_INTERVAL 50
+#define FACTORIZATION_TESTCASE_DIR "../result/asic_testcases/osqp/factorization"
+
+// Helper: Save CSC matrix in float format
+static void factor_save_csc_float(FILE* f, const char* name, OSQPInt n, OSQPInt m,
+                                   const OSQPInt* Mp, const OSQPInt* Mi, const OSQPFloat* Mx) {
+  OSQPInt nnz = Mp[n];
+  fprintf(f, "# %s (CSC) - %lld x %lld, nnz=%lld\n", name, (long long)m, (long long)n, (long long)nnz);
+  fprintf(f, "# col_ptr\n");
+  for (OSQPInt j = 0; j <= n; j++) {
+    fprintf(f, "%lld", (long long)Mp[j]);
+    if (j < n) fprintf(f, ",");
+  }
+  fprintf(f, "\n# row_idx\n");
+  for (OSQPInt k = 0; k < nnz; k++) {
+    fprintf(f, "%lld", (long long)Mi[k]);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n# values\n");
+  for (OSQPInt k = 0; k < nnz; k++) {
+    fprintf(f, "%.8e", (double)Mx[k]);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+// Helper: Save CSC matrix in hex bits format
+static void factor_save_csc_bits(FILE* f, const char* name, OSQPInt n, OSQPInt m,
+                                  const OSQPInt* Mp, const OSQPInt* Mi, const OSQPFloat* Mx) {
+  OSQPInt nnz = Mp[n];
+  fprintf(f, "# %s (CSC, hex FP32) - %lld x %lld, nnz=%lld\n", name, (long long)m, (long long)n, (long long)nnz);
+  fprintf(f, "# col_ptr\n");
+  for (OSQPInt j = 0; j <= n; j++) {
+    fprintf(f, "%lld", (long long)Mp[j]);
+    if (j < n) fprintf(f, ",");
+  }
+  fprintf(f, "\n# row_idx\n");
+  for (OSQPInt k = 0; k < nnz; k++) {
+    fprintf(f, "%lld", (long long)Mi[k]);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n# values (hex FP32)\n");
+  for (OSQPInt k = 0; k < nnz; k++) {
+    union { float f; uint32_t u; } v;
+    v.f = (float)Mx[k];
+    fprintf(f, "%08x", v.u);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+// Helper: Save vector in float format
+static void factor_save_vector_float(FILE* f, const char* name, const OSQPFloat* data, OSQPInt len) {
+  fprintf(f, "# %s - %lld values\n", name, (long long)len);
+  for (OSQPInt i = 0; i < len; i++) {
+    fprintf(f, "%.8e", (double)data[i]);
+    if (i < len - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+// Helper: Save vector in hex bits format
+static void factor_save_vector_bits(FILE* f, const char* name, const OSQPFloat* data, OSQPInt len) {
+  fprintf(f, "# %s (hex FP32) - %lld values\n", name, (long long)len);
+  for (OSQPInt i = 0; i < len; i++) {
+    union { float f; uint32_t u; } val;
+    val.f = (float)data[i];
+    fprintf(f, "%08x", val.u);
+    if (i < len - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+// Row offset for L full matrix (non-zero values start from this row)
+#define L_FULL_MATRIX_START_ROW 479
+
+// Helper: Save symmetric CSC matrix as full matrix (entire n x n) - float format
+// KKT is symmetric, so we need to fill both upper and lower triangular parts
+static void factor_save_KKT_full_float(FILE* f, const char* name, OSQPInt n,
+                                        const OSQPInt* Kp, const OSQPInt* Ki, const OSQPFloat* Kx) {
+  fprintf(f, "# %s (full matrix) - %lld x %lld\n", name, (long long)n, (long long)n);
+
+  // For each row 0 to n-1
+  for (OSQPInt i = 0; i < n; i++) {
+    // For each column 0 to n-1
+    for (OSQPInt j = 0; j < n; j++) {
+      OSQPFloat val = 0.0;
+      // KKT stores upper triangular part, so K[i][j] is stored at column max(i,j), row min(i,j)
+      OSQPInt col = (i <= j) ? j : i;
+      OSQPInt row = (i <= j) ? i : j;
+      // Search for row in column col
+      for (OSQPInt k = Kp[col]; k < Kp[col + 1]; k++) {
+        if (Ki[k] == row) {
+          val = Kx[k];
+          break;
+        }
+      }
+      fprintf(f, "%.8e", (double)val);
+      if (j < n - 1) fprintf(f, ",");
+    }
+    fprintf(f, "\n");
+  }
+  fprintf(f, "\n");
+}
+
+// Helper: Save symmetric CSC matrix as full matrix (entire n x n) - bits format
+static void factor_save_KKT_full_bits(FILE* f, const char* name, OSQPInt n,
+                                       const OSQPInt* Kp, const OSQPInt* Ki, const OSQPFloat* Kx) {
+  fprintf(f, "# %s (full matrix, hex FP32) - %lld x %lld\n", name, (long long)n, (long long)n);
+
+  // For each row 0 to n-1
+  for (OSQPInt i = 0; i < n; i++) {
+    // For each column 0 to n-1
+    for (OSQPInt j = 0; j < n; j++) {
+      OSQPFloat val = 0.0;
+      // KKT stores upper triangular part, so K[i][j] is stored at column max(i,j), row min(i,j)
+      OSQPInt col = (i <= j) ? j : i;
+      OSQPInt row = (i <= j) ? i : j;
+      // Search for row in column col
+      for (OSQPInt k = Kp[col]; k < Kp[col + 1]; k++) {
+        if (Ki[k] == row) {
+          val = Kx[k];
+          break;
+        }
+      }
+      union { float f; uint32_t u; } v;
+      v.f = (float)val;
+      fprintf(f, "%08x", v.u);
+      if (j < n - 1) fprintf(f, ",");
+    }
+    fprintf(f, "\n");
+  }
+  fprintf(f, "\n");
+}
+
+// Helper: Save lower triangular CSC matrix as full matrix (rows from start_row, all columns) - float format
+// L is lower triangular: L[i][j] = 0 for i < j
+static void factor_save_L_full_float(FILE* f, const char* name, OSQPInt n,
+                                      const OSQPInt* Lp, const OSQPInt* Li, const OSQPFloat* Lx,
+                                      OSQPInt start_row) {
+  OSQPInt num_rows = n - start_row;
+  fprintf(f, "# %s (rows %lld to %lld, all columns) - %lld x %lld\n", name, (long long)start_row, (long long)(n-1), (long long)num_rows, (long long)n);
+
+  // For each row from start_row to n-1
+  for (OSQPInt i = start_row; i < n; i++) {
+    // For each column 0 to n-1
+    for (OSQPInt j = 0; j < n; j++) {
+      OSQPFloat val = 0.0;
+      // L is lower triangular, so L[i][j] exists only if i >= j
+      if (i >= j) {
+        // Search for row i in column j
+        for (OSQPInt k = Lp[j]; k < Lp[j + 1]; k++) {
+          if (Li[k] == i) {
+            val = Lx[k];
+            break;
+          }
+        }
+      }
+      fprintf(f, "%.8e", (double)val);
+      if (j < n - 1) fprintf(f, ",");
+    }
+    fprintf(f, "\n");
+  }
+  fprintf(f, "\n");
+}
+
+// Helper: Save lower triangular CSC matrix as full matrix (rows from start_row, all columns) - bits format
+static void factor_save_L_full_bits(FILE* f, const char* name, OSQPInt n,
+                                     const OSQPInt* Lp, const OSQPInt* Li, const OSQPFloat* Lx,
+                                     OSQPInt start_row) {
+  OSQPInt num_rows = n - start_row;
+  fprintf(f, "# %s (rows %lld to %lld, all columns, hex FP32) - %lld x %lld\n", name, (long long)start_row, (long long)(n-1), (long long)num_rows, (long long)n);
+
+  // For each row from start_row to n-1
+  for (OSQPInt i = start_row; i < n; i++) {
+    // For each column 0 to n-1
+    for (OSQPInt j = 0; j < n; j++) {
+      OSQPFloat val = 0.0;
+      // L is lower triangular, so L[i][j] exists only if i >= j
+      if (i >= j) {
+        // Search for row i in column j
+        for (OSQPInt k = Lp[j]; k < Lp[j + 1]; k++) {
+          if (Li[k] == i) {
+            val = Lx[k];
+            break;
+          }
+        }
+      }
+      union { float f; uint32_t u; } v;
+      v.f = (float)val;
+      fprintf(f, "%08x", v.u);
+      if (j < n - 1) fprintf(f, ",");
+    }
+    fprintf(f, "\n");
+  }
+  fprintf(f, "\n");
+}
+
+// Save factorization results (KKT, L, D, Dinv)
+static void save_factorization_result(OSQPInt sample_id, OSQPInt n,
+                                       const OSQPInt* KKTp, const OSQPInt* KKTi, const OSQPFloat* KKTx,
+                                       const OSQPInt* Lp, const OSQPInt* Li, const OSQPFloat* Lx,
+                                       const OSQPFloat* D, const OSQPFloat* Dinv) {
+  char path_float[256], path_bits[256];
+  snprintf(path_float, sizeof(path_float), "%s/sample_%lld_factorization.csv",
+           FACTORIZATION_TESTCASE_DIR, (long long)sample_id);
+  snprintf(path_bits, sizeof(path_bits), "%s/sample_%lld_factorization_bits.csv",
+           FACTORIZATION_TESTCASE_DIR, (long long)sample_id);
+
+  FILE* f_float = fopen(path_float, "w");
+  if (f_float) {
+    fprintf(f_float, "# OSQP Factorization Result - Sample %lld\n", (long long)sample_id);
+    fprintf(f_float, "# KKT dimension n=%lld\n\n", (long long)n);
+
+    factor_save_csc_float(f_float, "KKT", n, n, KKTp, KKTi, KKTx);
+    factor_save_KKT_full_float(f_float, "KKT_full", n, KKTp, KKTi, KKTx);
+    factor_save_csc_float(f_float, "L", n, n, Lp, Li, Lx);
+    factor_save_L_full_float(f_float, "L_full", n, Lp, Li, Lx, L_FULL_MATRIX_START_ROW);
+    factor_save_vector_float(f_float, "D", D, n);
+    factor_save_vector_float(f_float, "Dinv", Dinv, n);
+
+    fclose(f_float);
+  }
+
+  FILE* f_bits = fopen(path_bits, "w");
+  if (f_bits) {
+    fprintf(f_bits, "# OSQP Factorization Result (hex FP32) - Sample %lld\n", (long long)sample_id);
+    fprintf(f_bits, "# KKT dimension n=%lld\n\n", (long long)n);
+
+    factor_save_csc_bits(f_bits, "KKT", n, n, KKTp, KKTi, KKTx);
+    factor_save_KKT_full_bits(f_bits, "KKT_full", n, KKTp, KKTi, KKTx);
+    factor_save_csc_bits(f_bits, "L", n, n, Lp, Li, Lx);
+    factor_save_L_full_bits(f_bits, "L_full", n, Lp, Li, Lx, L_FULL_MATRIX_START_ROW);
+    factor_save_vector_bits(f_bits, "D", D, n);
+    factor_save_vector_bits(f_bits, "Dinv", Dinv, n);
+
+    fclose(f_bits);
+  }
+
+  printf("[OSQP] Saved factorization sample_%lld\n", (long long)sample_id);
+}
+
 #ifdef OSQP_USE_LONG
 #  define OSQP_INT_FMT "%" PRId64
 #else
@@ -1063,6 +1309,18 @@ OSQPInt init_linsys_solver_qdldl(qdldl_solver**      sp,
     }
     else { // If not embedded option 1 copy pointer to KKT_temp. Do not free it.
         s->KKT = KKT_temp;
+
+        // Save factorization result for ASIC testcase (every FACTORIZATION_TESTCASE_SAVE_INTERVAL runs)
+        // This is for init_linsys_solver_qdldl which is called during osqp_setup
+        // Note: g_testcase_count is incremented after scaling in scale_data()
+        // Since init is called after scaling, g_testcase_count - 1 gives us the current sample ID
+        OSQPInt sample_id = g_testcase_count - 1;
+        if (sample_id >= 0 && (sample_id % FACTORIZATION_TESTCASE_SAVE_INTERVAL == 0)) {
+            save_factorization_result(sample_id, s->KKT->n,
+                                       s->KKT->p, s->KKT->i, s->KKT->x,
+                                       s->L->p, s->L->i, s->L->x,
+                                       s->D, s->Dinv);
+        }
     }
 
 
@@ -1224,6 +1482,16 @@ OSQPInt update_linsys_solver_matrices_qdldl(qdldl_solver*     s,
                                        s->D, s->Dinv, s->etree, s->Lnz);
     }
 #endif
+
+    // Save factorization result for ASIC testcase (every FACTORIZATION_TESTCASE_SAVE_INTERVAL runs)
+    // Note: g_testcase_count is incremented after scaling, so we use (g_testcase_count - 1) to match scaling samples
+    OSQPInt sample_id = g_testcase_count - 1;
+    if (pos_D_count >= 0 && sample_id >= 0 && (sample_id % FACTORIZATION_TESTCASE_SAVE_INTERVAL == 0)) {
+        save_factorization_result(sample_id, s->KKT->n,
+                                   s->KKT->p, s->KKT->i, s->KKT->x,
+                                   s->L->p, s->L->i, s->L->x,
+                                   s->D, s->Dinv);
+    }
 
     //number of positive elements in D should match the
     //dimension of P if P + \sigma I is PD.   Error otherwise.

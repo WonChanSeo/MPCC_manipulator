@@ -5,6 +5,311 @@
 #include "algebra_vector.h"
 #include "algebra_matrix.h"
 
+// ===== ASIC Testcase: Iteration-by-iteration saving =====
+#define OSQP_TESTCASE_SAVE_INTERVAL 50
+#define OSQP_TESTCASE_DIR "../result/asic_testcases/osqp/scaling"
+
+// Use the counter from osqp_api.c (shared across both files)
+extern OSQPInt g_testcase_count;
+
+// Helper: Save CSC matrix in float format
+static void scaling_save_csc_float(FILE* f, const char* name, const OSQPMatrix* M) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPInt* Mi = OSQPMatrix_get_i(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+  OSQPInt m = OSQPMatrix_get_m(M);
+  OSQPInt nnz = Mp[n];
+
+  fprintf(f, "# %s (CSC) - %lld x %lld, nnz=%lld\n", name, (long long)m, (long long)n, (long long)nnz);
+  fprintf(f, "# col_ptr\n");
+  for (OSQPInt j = 0; j <= n; j++) {
+    fprintf(f, "%lld", (long long)Mp[j]);
+    if (j < n) fprintf(f, ",");
+  }
+  fprintf(f, "\n# row_idx\n");
+  for (OSQPInt k = 0; k < nnz; k++) {
+    fprintf(f, "%lld", (long long)Mi[k]);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n# values\n");
+  for (OSQPInt k = 0; k < nnz; k++) {
+    fprintf(f, "%.8e", (double)Mx[k]);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+// Helper: Save CSC matrix in hex bits format
+static void scaling_save_csc_bits(FILE* f, const char* name, const OSQPMatrix* M) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPInt* Mi = OSQPMatrix_get_i(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+  OSQPInt m = OSQPMatrix_get_m(M);
+  OSQPInt nnz = Mp[n];
+
+  fprintf(f, "# %s (CSC, hex FP32) - %lld x %lld, nnz=%lld\n", name, (long long)m, (long long)n, (long long)nnz);
+  fprintf(f, "# col_ptr\n");
+  for (OSQPInt j = 0; j <= n; j++) {
+    fprintf(f, "%lld", (long long)Mp[j]);
+    if (j < n) fprintf(f, ",");
+  }
+  fprintf(f, "\n# row_idx\n");
+  for (OSQPInt k = 0; k < nnz; k++) {
+    fprintf(f, "%lld", (long long)Mi[k]);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n# values (hex FP32)\n");
+  for (OSQPInt k = 0; k < nnz; k++) {
+    union { float f; uint32_t u; } v;
+    v.f = (float)Mx[k];
+    fprintf(f, "%08x", v.u);
+    if (k < nnz - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+// Helper: Save dense matrix (expand CSC) - float format
+static void scaling_save_dense_float(FILE* f, const char* name, const OSQPMatrix* M, int is_symmetric) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPInt* Mi = OSQPMatrix_get_i(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+  OSQPInt m = OSQPMatrix_get_m(M);
+
+  fprintf(f, "# %s (dense) - %lld x %lld\n", name, (long long)m, (long long)n);
+  for (OSQPInt i = 0; i < m; i++) {
+    for (OSQPInt j = 0; j < n; j++) {
+      OSQPFloat val = 0.0;
+      for (OSQPInt k = Mp[j]; k < Mp[j + 1]; k++) {
+        if (Mi[k] == i) { val = Mx[k]; break; }
+      }
+      if (is_symmetric && val == 0.0 && i != j && j < m) {
+        for (OSQPInt k = Mp[i]; k < Mp[i + 1]; k++) {
+          if (Mi[k] == j) { val = Mx[k]; break; }
+        }
+      }
+      fprintf(f, "%.8e", (double)val);
+      if (j < n - 1) fprintf(f, ",");
+    }
+    fprintf(f, "\n");
+  }
+  fprintf(f, "\n");
+}
+
+// Helper: Save dense matrix (expand CSC) - bits format
+static void scaling_save_dense_bits(FILE* f, const char* name, const OSQPMatrix* M, int is_symmetric) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPInt* Mi = OSQPMatrix_get_i(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+  OSQPInt m = OSQPMatrix_get_m(M);
+
+  fprintf(f, "# %s (dense, hex FP32) - %lld x %lld\n", name, (long long)m, (long long)n);
+  for (OSQPInt i = 0; i < m; i++) {
+    for (OSQPInt j = 0; j < n; j++) {
+      OSQPFloat val = 0.0;
+      for (OSQPInt k = Mp[j]; k < Mp[j + 1]; k++) {
+        if (Mi[k] == i) { val = Mx[k]; break; }
+      }
+      if (is_symmetric && val == 0.0 && i != j && j < m) {
+        for (OSQPInt k = Mp[i]; k < Mp[i + 1]; k++) {
+          if (Mi[k] == j) { val = Mx[k]; break; }
+        }
+      }
+      union { float f; uint32_t u; } v;
+      v.f = (float)val;
+      fprintf(f, "%08x", v.u);
+      if (j < n - 1) fprintf(f, ",");
+    }
+    fprintf(f, "\n");
+  }
+  fprintf(f, "\n");
+}
+
+// Helper: Save vector - float format
+static void scaling_save_vector_float(FILE* f, const char* name, const OSQPVectorf* v) {
+  OSQPInt len = OSQPVectorf_length(v);
+  const OSQPFloat* data = OSQPVectorf_data(v);
+  fprintf(f, "# %s - %lld values\n", name, (long long)len);
+  for (OSQPInt i = 0; i < len; i++) {
+    fprintf(f, "%.8e", (double)data[i]);
+    if (i < len - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+// Helper: Save vector - bits format
+static void scaling_save_vector_bits(FILE* f, const char* name, const OSQPVectorf* v) {
+  OSQPInt len = OSQPVectorf_length(v);
+  const OSQPFloat* data = OSQPVectorf_data(v);
+  fprintf(f, "# %s (hex FP32) - %lld values\n", name, (long long)len);
+  for (OSQPInt i = 0; i < len; i++) {
+    union { float f; uint32_t u; } val;
+    val.f = (float)data[i];
+    fprintf(f, "%08x", val.u);
+    if (i < len - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+// Save scaling iteration data
+static void save_scaling_iteration(OSQPWorkspace* work, OSQPInt sample_id, OSQPInt iter) {
+  char path_float[256], path_bits[256];
+
+  // Use "init" for initial data (iter == -1), otherwise use iteration number
+  if (iter < 0) {
+    snprintf(path_float, sizeof(path_float), "%s/sample_%lld_scaling_init.csv",
+             OSQP_TESTCASE_DIR, (long long)sample_id);
+    snprintf(path_bits, sizeof(path_bits), "%s/sample_%lld_scaling_init_bits.csv",
+             OSQP_TESTCASE_DIR, (long long)sample_id);
+  } else {
+    snprintf(path_float, sizeof(path_float), "%s/sample_%lld_scaling_iter_%lld.csv",
+             OSQP_TESTCASE_DIR, (long long)sample_id, (long long)iter);
+    snprintf(path_bits, sizeof(path_bits), "%s/sample_%lld_scaling_iter_%lld_bits.csv",
+             OSQP_TESTCASE_DIR, (long long)sample_id, (long long)iter);
+  }
+
+  FILE* f_float = fopen(path_float, "w");
+  if (f_float) {
+    if (iter < 0) {
+      fprintf(f_float, "# OSQP Scaling Initial (before scaling) - Sample %lld\n", (long long)sample_id);
+    } else {
+      fprintf(f_float, "# OSQP Scaling Iteration %lld - Sample %lld\n", (long long)iter, (long long)sample_id);
+    }
+    fprintf(f_float, "# n=%lld, m=%lld\n\n", (long long)work->data->n, (long long)work->data->m);
+
+    // Save matrices (CSC and dense)
+    scaling_save_csc_float(f_float, "P_csc", work->data->P);
+    scaling_save_csc_float(f_float, "A_csc", work->data->A);
+    scaling_save_dense_float(f_float, "P", work->data->P, 1);
+    scaling_save_dense_float(f_float, "A", work->data->A, 0);
+
+    // Save vectors
+    scaling_save_vector_float(f_float, "q", work->data->q);
+    scaling_save_vector_float(f_float, "l", work->data->l);
+    scaling_save_vector_float(f_float, "u", work->data->u);
+
+    // Save D and E scaling vectors
+    scaling_save_vector_float(f_float, "D", work->scaling->D);
+    scaling_save_vector_float(f_float, "E", work->scaling->E);
+
+    fclose(f_float);
+  }
+
+  FILE* f_bits = fopen(path_bits, "w");
+  if (f_bits) {
+    if (iter < 0) {
+      fprintf(f_bits, "# OSQP Scaling Initial (hex FP32, before scaling) - Sample %lld\n", (long long)sample_id);
+    } else {
+      fprintf(f_bits, "# OSQP Scaling Iteration %lld (hex FP32) - Sample %lld\n", (long long)iter, (long long)sample_id);
+    }
+    fprintf(f_bits, "# n=%lld, m=%lld\n\n", (long long)work->data->n, (long long)work->data->m);
+
+    // Save matrices (CSC and dense)
+    scaling_save_csc_bits(f_bits, "P_csc", work->data->P);
+    scaling_save_csc_bits(f_bits, "A_csc", work->data->A);
+    scaling_save_dense_bits(f_bits, "P", work->data->P, 1);
+    scaling_save_dense_bits(f_bits, "A", work->data->A, 0);
+
+    // Save vectors
+    scaling_save_vector_bits(f_bits, "q", work->data->q);
+    scaling_save_vector_bits(f_bits, "l", work->data->l);
+    scaling_save_vector_bits(f_bits, "u", work->data->u);
+
+    // Save D and E scaling vectors
+    scaling_save_vector_bits(f_bits, "D", work->scaling->D);
+    scaling_save_vector_bits(f_bits, "E", work->scaling->E);
+
+    fclose(f_bits);
+  }
+}
+
+// Helper: Save integer exponent array
+static void scaling_save_exp_array(FILE* f, const char* name, const int32_t* exp_arr, OSQPInt len) {
+  fprintf(f, "# %s (integer exponents) - %lld values\n", name, (long long)len);
+  for (OSQPInt i = 0; i < len; i++) {
+    fprintf(f, "%d", exp_arr[i]);
+    if (i < len - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+}
+
+// Save scaling iteration data with integer exponents (for ASIC bit-level operations)
+static void save_scaling_iteration_exp(OSQPWorkspace* work, OSQPInt sample_id, OSQPInt iter,
+                                        const int32_t* D_exp, const int32_t* E_exp,
+                                        OSQPInt n, OSQPInt m) {
+  char path_float[256], path_bits[256];
+
+  // Use "init" for initial data (iter == -1), otherwise use iteration number
+  if (iter < 0) {
+    snprintf(path_float, sizeof(path_float), "%s/sample_%lld_scaling_init.csv",
+             OSQP_TESTCASE_DIR, (long long)sample_id);
+    snprintf(path_bits, sizeof(path_bits), "%s/sample_%lld_scaling_init_bits.csv",
+             OSQP_TESTCASE_DIR, (long long)sample_id);
+  } else {
+    snprintf(path_float, sizeof(path_float), "%s/sample_%lld_scaling_iter_%lld.csv",
+             OSQP_TESTCASE_DIR, (long long)sample_id, (long long)iter);
+    snprintf(path_bits, sizeof(path_bits), "%s/sample_%lld_scaling_iter_%lld_bits.csv",
+             OSQP_TESTCASE_DIR, (long long)sample_id, (long long)iter);
+  }
+
+  FILE* f_float = fopen(path_float, "w");
+  if (f_float) {
+    if (iter < 0) {
+      fprintf(f_float, "# OSQP Scaling Initial (before scaling) - Sample %lld\n", (long long)sample_id);
+    } else {
+      fprintf(f_float, "# OSQP Scaling Iteration %lld - Sample %lld\n", (long long)iter, (long long)sample_id);
+    }
+    fprintf(f_float, "# n=%lld, m=%lld\n\n", (long long)n, (long long)m);
+
+    // Save matrices (CSC and dense)
+    scaling_save_csc_float(f_float, "P_csc", work->data->P);
+    scaling_save_csc_float(f_float, "A_csc", work->data->A);
+    scaling_save_dense_float(f_float, "P", work->data->P, 1);
+    scaling_save_dense_float(f_float, "A", work->data->A, 0);
+
+    // Save vectors
+    scaling_save_vector_float(f_float, "q", work->data->q);
+    scaling_save_vector_float(f_float, "l", work->data->l);
+    scaling_save_vector_float(f_float, "u", work->data->u);
+
+    // Save D and E as integer exponents (accumulated)
+    scaling_save_exp_array(f_float, "D_exp", D_exp, n);
+    scaling_save_exp_array(f_float, "E_exp", E_exp, m);
+
+    fclose(f_float);
+  }
+
+  FILE* f_bits = fopen(path_bits, "w");
+  if (f_bits) {
+    if (iter < 0) {
+      fprintf(f_bits, "# OSQP Scaling Initial (hex FP32) - Sample %lld\n", (long long)sample_id);
+    } else {
+      fprintf(f_bits, "# OSQP Scaling Iteration %lld (hex FP32) - Sample %lld\n", (long long)iter, (long long)sample_id);
+    }
+    fprintf(f_bits, "# n=%lld, m=%lld\n\n", (long long)n, (long long)m);
+
+    // Save matrices (CSC and dense)
+    scaling_save_csc_bits(f_bits, "P_csc", work->data->P);
+    scaling_save_csc_bits(f_bits, "A_csc", work->data->A);
+    scaling_save_dense_bits(f_bits, "P", work->data->P, 1);
+    scaling_save_dense_bits(f_bits, "A", work->data->A, 0);
+
+    // Save vectors
+    scaling_save_vector_bits(f_bits, "q", work->data->q);
+    scaling_save_vector_bits(f_bits, "l", work->data->l);
+    scaling_save_vector_bits(f_bits, "u", work->data->u);
+
+    // Save D and E as integer exponents (same in bits file)
+    scaling_save_exp_array(f_bits, "D_exp", D_exp, n);
+    scaling_save_exp_array(f_bits, "E_exp", E_exp, m);
+
+    fclose(f_bits);
+  }
+}
+
 // EnvCol row indices for analysis
 // N_eq=99, N_ineqb=259, polytopic_start=358
 // EnvCol rows: polytopic_start + NPC*i + [2..10], where NPC=11, i=0..N-1, N=10
@@ -96,10 +401,153 @@ static inline int osqp_float_unbiased_exp_abs(OSQPFloat x) {
   return (int)e - 127;                  // unbiased
 }
 
-/* 2^{-k} as float */
-static inline OSQPFloat pow2_k_int(int k) { 
-  // printf("2^(%d) = %e\n", k, scalbnf(1.0f, -k));
-  return scalbnf(1.0f, k); }
+/* 2^{k} as float */
+static inline OSQPFloat pow2_k_int(int k) {
+  // printf("2^(%d) = %e\n", k, scalbnf(1.0f, k));
+  return scalbnf(1.0f, k);
+}
+
+/* =========[ Bit-level exponent operations for ASIC ]========= */
+
+// Extract exponent from FP32 bits (returns unbiased exponent, i.e., actual power of 2)
+// FP32: [31:sign][30:23:exp][22:0:mantissa], exp_biased = exp + 127
+static inline int32_t fp32_get_exp(float x) {
+  union { float f; uint32_t u; } v = { x };
+  uint32_t exp_biased = (v.u >> 23) & 0xFF;
+  if (exp_biased == 0) return -127;  // zero or subnormal
+  if (exp_biased == 255) return 128; // inf or nan
+  return (int32_t)exp_biased - 127;
+}
+
+// Scale float by adding exp_delta to its exponent (bit-level, no float multiplication)
+// This is equivalent to: x * 2^exp_delta
+static inline float fp32_scale_by_exp(float x, int32_t exp_delta) {
+  if (x == 0.0f) return 0.0f;
+  union { float f; uint32_t u; } v = { x };
+  uint32_t sign = v.u & 0x80000000u;
+  uint32_t exp_biased = (v.u >> 23) & 0xFF;
+  uint32_t mantissa = v.u & 0x7FFFFFu;
+
+  // Handle special cases
+  if (exp_biased == 0 || exp_biased == 255) return x;  // zero, subnormal, inf, nan
+
+  int32_t new_exp = (int32_t)exp_biased + exp_delta;
+
+  // Clamp to valid range
+  if (new_exp <= 0) return 0.0f;        // underflow to zero
+  if (new_exp >= 255) {                  // overflow to inf
+    v.u = sign | 0x7F800000u;
+    return v.f;
+  }
+
+  v.u = sign | ((uint32_t)new_exp << 23) | mantissa;
+  return v.f;
+}
+
+// Scale vector elements by exponent array (bit-level operation)
+// result[i] = vec[i] * 2^exp_arr[i]
+static void vec_scale_by_exp_array(OSQPVectorf* result, const OSQPVectorf* vec, const int32_t* exp_arr) {
+  OSQPInt len = OSQPVectorf_length(vec);
+  const OSQPFloat* src = OSQPVectorf_data(vec);
+  OSQPFloat* dst = OSQPVectorf_data(result);
+  for (OSQPInt i = 0; i < len; i++) {
+    dst[i] = fp32_scale_by_exp((float)src[i], exp_arr[i]);
+  }
+}
+
+// Scale CSC matrix by left diagonal exponent array (bit-level): M = diag(2^exp_arr) * M
+static void matrix_lmult_diag_exp(OSQPMatrix* M, const int32_t* exp_arr) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPInt* Mi = OSQPMatrix_get_i(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+
+  for (OSQPInt j = 0; j < n; j++) {
+    for (OSQPInt k = Mp[j]; k < Mp[j + 1]; k++) {
+      OSQPInt row = Mi[k];
+      Mx[k] = fp32_scale_by_exp((float)Mx[k], exp_arr[row]);
+    }
+  }
+}
+
+// Scale CSC matrix by right diagonal exponent array (bit-level): M = M * diag(2^exp_arr)
+static void matrix_rmult_diag_exp(OSQPMatrix* M, const int32_t* exp_arr) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+
+  for (OSQPInt j = 0; j < n; j++) {
+    int32_t exp_j = exp_arr[j];
+    for (OSQPInt k = Mp[j]; k < Mp[j + 1]; k++) {
+      Mx[k] = fp32_scale_by_exp((float)Mx[k], exp_j);
+    }
+  }
+}
+
+// Compute column inf-norm exponents for matrix (returns half of max exponent for each column)
+static void matrix_col_exp_half(const OSQPMatrix* M, int32_t* exp_arr) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+
+  for (OSQPInt j = 0; j < n; j++) {
+    int32_t max_exp = -127;
+    for (OSQPInt k = Mp[j]; k < Mp[j + 1]; k++) {
+      int32_t e = fp32_get_exp((float)Mx[k]);
+      if (e > max_exp) max_exp = e;
+    }
+    // Clamp and take half (arithmetic shift right by 1)
+    if (max_exp < EXP_MIN) max_exp = 0;
+    if (max_exp > EXP_MAX) max_exp = EXP_MAX;
+    exp_arr[j] = max_exp >> 1;
+  }
+}
+
+// Compute row inf-norm exponents for CSC matrix (returns half of max exponent for each row)
+static void matrix_row_exp_half(const OSQPMatrix* M, int32_t* exp_arr, OSQPInt m) {
+  OSQPInt* Mp = OSQPMatrix_get_p(M);
+  OSQPInt* Mi = OSQPMatrix_get_i(M);
+  OSQPFloat* Mx = OSQPMatrix_get_x(M);
+  OSQPInt n = OSQPMatrix_get_n(M);
+
+  // Initialize to minimum
+  for (OSQPInt i = 0; i < m; i++) exp_arr[i] = -127;
+
+  // Scan all elements
+  for (OSQPInt j = 0; j < n; j++) {
+    for (OSQPInt k = Mp[j]; k < Mp[j + 1]; k++) {
+      OSQPInt row = Mi[k];
+      int32_t e = fp32_get_exp((float)Mx[k]);
+      if (e > exp_arr[row]) exp_arr[row] = e;
+    }
+  }
+
+  // Clamp and take half
+  for (OSQPInt i = 0; i < m; i++) {
+    if (exp_arr[i] < EXP_MIN) exp_arr[i] = 0;
+    if (exp_arr[i] > EXP_MAX) exp_arr[i] = EXP_MAX;
+    exp_arr[i] = exp_arr[i] >> 1;
+  }
+}
+
+// Compute KKT column exponents: max of P column exp and A column exp (for D)
+// Also compute A row exponents (for E)
+static void col_expmax_KKT_exp(const OSQPMatrix* P, const OSQPMatrix* A,
+                                int32_t* D_exp, int32_t* E_exp, OSQPInt n, OSQPInt m) {
+  // Temporary array for A column exponents
+  int32_t A_col_exp[1024];  // Assuming n <= 1024
+
+  matrix_col_exp_half(P, D_exp);
+  matrix_col_exp_half(A, A_col_exp);
+
+  // D_exp = max(P_col_exp, A_col_exp)
+  for (OSQPInt j = 0; j < n; j++) {
+    if (A_col_exp[j] > D_exp[j]) D_exp[j] = A_col_exp[j];
+  }
+
+  // E_exp = A row exponents
+  matrix_row_exp_half(A, E_exp, m);
+}
 
 /* =========[ Exponent from norms (KKT-aware) ]========= */
 
@@ -224,7 +672,13 @@ static inline OSQPFloat col_expmax_KKT_using_norms_vec(const OSQPVectorf* v) {
 }
 
 
-/* =========[ SCALE ]========= */
+/* =========[ SCALE (Bit-level exponent operations for ASIC) ]========= */
+
+// Static arrays for integer exponents (assuming max dimension 1024)
+static int32_t g_D_exp[1024];      // Column scaling exponents (negated for inverse)
+static int32_t g_E_exp[1024];      // Row scaling exponents (negated for inverse)
+static int32_t g_D_accum[1024];    // Accumulated D exponents
+static int32_t g_E_accum[1024];    // Accumulated E exponents
 
 OSQPInt scale_data(OSQPSolver* solver) {
   OSQPSettings*  settings = solver->settings;
@@ -233,8 +687,12 @@ OSQPInt scale_data(OSQPSolver* solver) {
   const OSQPInt n = work->data->n;
   const OSQPInt m = work->data->m;
 
-  /* 0) 누적 스케일 초기화 */
+  /* 0) 누적 스케일 초기화 (정수 지수로) */
   work->scaling->c = (OSQPFloat)1.0;
+  for (OSQPInt i = 0; i < n; i++) g_D_accum[i] = 0;
+  for (OSQPInt i = 0; i < m; i++) g_E_accum[i] = 0;
+
+  // Also initialize the float versions for compatibility
   OSQPVectorf_set_scalar(work->scaling->D,    1.0);
   OSQPVectorf_set_scalar(work->scaling->Dinv, 1.0);
   OSQPVectorf_set_scalar(work->scaling->E,    1.0);
@@ -243,112 +701,92 @@ OSQPInt scale_data(OSQPSolver* solver) {
   OSQPFloat c_temp;     // Objective function scaling
   OSQPFloat inf_norm_q; // Infinity norm of q
 
-  // const OSQPInt T = (settings->scaling > 0) ? settings->scaling : 2;
-  const OSQPInt T = 10; // ★ 0 허용
+  const OSQPInt T = 10;
 
+  // Check if we should save iteration data for this sample
+  int save_iterations = (g_testcase_count % OSQP_TESTCASE_SAVE_INTERVAL == 0);
 
-  /* ==================== 여기부터 루프 전체 교체 ==================== */
-  // static int scale_call_count = 0;
-  // int print_analysis = (scale_call_count % 100 == 0);  // Print every 100 calls
+  // Save initial data (before any scaling iteration)
+  if (save_iterations) {
+    save_scaling_iteration_exp(work, g_testcase_count, -1, g_D_accum, g_E_accum, n, m);
+  }
 
   for (OSQPInt t = 0; t < T; ++t) {
-  /* 1) 열 패스: KKT 열 최대 exponent */
+    /* 1) Compute column/row exponents using bit-level operations */
+    // g_D_exp, g_E_exp contain half of max exponent (for sqrt effect)
+    col_expmax_KKT_exp(work->data->P, work->data->A, g_D_exp, g_E_exp, n, m);
 
-    // === EnvCol Analysis: Check if EnvCol rows affect column inf-norm BEFORE scaling ===
-    // if (print_analysis) {
-    //     int envcol_affects = check_envcol_affects_col_norm(work->data->A);
-    //     printf("[Scaling iter %d] EnvCol affects col inf-norm: %d / %d columns\n",
-    //            (int)t, envcol_affects, (int)n);
-    // }
+    /* 2) Apply scaling using bit-level exponent operations
+     * We want: P <- D^{-1} P D^{-1}, A <- E^{-1} A D^{-1}, q <- D^{-1} q
+     * where D = diag(2^{D_exp}), E = diag(2^{E_exp})
+     * So D^{-1} = diag(2^{-D_exp}), E^{-1} = diag(2^{-E_exp})
+     * => multiply matrix elements by 2^{-D_exp} or 2^{-E_exp}
+     */
 
-    col_expmax_KKT_using_norms(work->data->P,
-                               work->data->A,
-                               work->D_temp,    // D_temp: P,A 열 노름의 최대값
-                               work->D_temp_A,  // E_temp_A: A 행 노름의 최대값
-                               work->E_temp);   // E_temp: A 행 노름
+    // Compute negated exponents for inverse scaling
+    int32_t neg_D_exp[1024], neg_E_exp[1024];
+    for (OSQPInt i = 0; i < n; i++) neg_D_exp[i] = -g_D_exp[i];
+    for (OSQPInt i = 0; i < m; i++) neg_E_exp[i] = -g_E_exp[i];
 
-    // printf("D_temp (col expmax of P,A): \n");
-    // for (OSQPInt i = 0; i < n; ++i) {
-    //   printf("%e ", VEC_GET(work->D_temp, i));
-    // }
-    // printf("\n");
-    // printf("E_temp (row expmax of A): \n");
-    // for (OSQPInt i = 0; i < m; ++i) {
-    //   printf("%e ", VEC_GET(work->E_temp, i));
-    // }
-    // printf("\n");
+    // P <- D^{-1} P D^{-1} (bit-level: add -D_exp to exponents of matrix elements)
+    matrix_lmult_diag_exp(work->data->P, neg_D_exp);
+    matrix_rmult_diag_exp(work->data->P, neg_D_exp);
 
+    // A <- E^{-1} A D^{-1} (bit-level)
+    matrix_lmult_diag_exp(work->data->A, neg_E_exp);
+    matrix_rmult_diag_exp(work->data->A, neg_D_exp);
 
-    // Copy inverses of D/E over themselves
-    OSQPVectorf_ew_reciprocal(work->D_temp, work->D_temp);
-    OSQPVectorf_ew_reciprocal(work->E_temp, work->E_temp);
+    // q <- D^{-1} q (bit-level)
+    OSQPFloat* q_data = OSQPVectorf_data(work->data->q);
+    for (OSQPInt i = 0; i < n; i++) {
+      q_data[i] = fp32_scale_by_exp((float)q_data[i], neg_D_exp[i]);
+    }
 
-    // P <- DPD
-    OSQPMatrix_lmult_diag(work->data->P, work->D_temp);
-    OSQPMatrix_rmult_diag(work->data->P, work->D_temp);
+    // Update accumulated exponents: D_accum += neg_D_exp, E_accum += neg_E_exp
+    for (OSQPInt i = 0; i < n; i++) g_D_accum[i] += neg_D_exp[i];
+    for (OSQPInt i = 0; i < m; i++) g_E_accum[i] += neg_E_exp[i];
 
-    // A <- EAD
-    OSQPMatrix_lmult_diag(work->data->A, work->E_temp);
-    OSQPMatrix_rmult_diag(work->data->A, work->D_temp);
-
-    // q <- Dq
-    OSQPVectorf_ew_prod(work->data->q, work->data->q, work->D_temp);
-
-    // Update equilibration matrices D and E
-    OSQPVectorf_ew_prod(work->scaling->D, work->scaling->D, work->D_temp);
-    OSQPVectorf_ew_prod(work->scaling->E, work->scaling->E, work->E_temp);
-
-    // //
-    // // Cost normalization step
-    // //
-
-    // // Compute avg norm of cols of P.
-    // // OSQPMatrix_col_norm_inf_by_exponent(work->data->P, work->D_temp);
-    // OSQPMatrix_col_norm_inf(work->data->P, work->D_temp); // original
-    // c_temp = OSQPVectorf_norm_1(work->D_temp);
-    // // printf("c_temp (norm of cols of P): %e\n", c_temp);
-    
-    // c_temp = c_temp / n;
-    // printf("c_temp (avg norm of cols of P): %e\n", c_temp);
-
-    // // c_temp = OSQPMatrix_col_norm_inf_avg_by_exponent(work->data->P);
-
-    // // Compute inf norm of q
-    // inf_norm_q = OSQPVectorf_norm_inf(work->data->q); // original
-    // // inf_norm_q = col_expmax_KKT_using_norms_vec(work->data->q);
-    // inf_norm_q = limit_scaling_scalar(inf_norm_q);
-
-
-    // // Compute max between avg norm of cols of P and inf norm of q
-    // c_temp = c_max(c_temp, inf_norm_q);
-
-    // // Limit scaling (use same function as with vectors)
-    // c_temp = limit_scaling_scalar(c_temp);
-
-    // // Invert scaling c = 1 / cost_measure
-    // c_temp = 1. / c_temp;
-
-    // // Scale Ps
-    // OSQPMatrix_mult_scalar(work->data->P,c_temp);
-
-    // // Scale q
-    // OSQPVectorf_mult_scalar(work->data->q, c_temp);
-
-    // // Update cost scaling
-    // work->scaling->c *= c_temp;
-    
+    // Save iteration data with integer exponents
+    if (save_iterations) {
+      save_scaling_iteration_exp(work, g_testcase_count, t, g_D_accum, g_E_accum, n, m);
+    }
   }
-  /* ==================== 여기까지 루프 전체 교체 ==================== */
+  /* ==================== 루프 끝 ==================== */
 
-    // Store cinv, Dinv, Einv
+  /* 3) After all iterations, compute final D, E float vectors from accumulated exponents
+   * D[i] = 2^{D_accum[i]}, E[i] = 2^{E_accum[i]}
+   * Dinv[i] = 2^{-D_accum[i]}, Einv[i] = 2^{-E_accum[i]}
+   */
+  OSQPFloat* D_data = OSQPVectorf_data(work->scaling->D);
+  OSQPFloat* Dinv_data = OSQPVectorf_data(work->scaling->Dinv);
+  OSQPFloat* E_data = OSQPVectorf_data(work->scaling->E);
+  OSQPFloat* Einv_data = OSQPVectorf_data(work->scaling->Einv);
+
+  for (OSQPInt i = 0; i < n; i++) {
+    // D[i] = 2^{D_accum[i]} using bit-level operation
+    D_data[i] = fp32_scale_by_exp(1.0f, g_D_accum[i]);
+    Dinv_data[i] = fp32_scale_by_exp(1.0f, -g_D_accum[i]);
+  }
+  for (OSQPInt i = 0; i < m; i++) {
+    // E[i] = 2^{E_accum[i]} using bit-level operation
+    E_data[i] = fp32_scale_by_exp(1.0f, g_E_accum[i]);
+    Einv_data[i] = fp32_scale_by_exp(1.0f, -g_E_accum[i]);
+  }
+
+  // Store cinv (c remains 1.0 since we don't do cost normalization)
   work->scaling->cinv = 1. / work->scaling->c;
-  OSQPVectorf_ew_reciprocal(work->scaling->Dinv, work->scaling->D);
-  OSQPVectorf_ew_reciprocal(work->scaling->Einv, work->scaling->E);
 
-
-  // Scale problem vectors l, u
-  OSQPVectorf_ew_prod(work->data->l, work->data->l, work->scaling->E);
-  OSQPVectorf_ew_prod(work->data->u, work->data->u, work->scaling->E);
+  /* 4) Scale problem vectors l, u using bit-level operations
+   * l <- E * l = diag(2^{E_accum}) * l
+   * u <- E * u = diag(2^{E_accum}) * u
+   * Note: we use E (not E^{-1}) for l,u, so we use E_accum directly (not negated)
+   */
+  OSQPFloat* l_data = OSQPVectorf_data(work->data->l);
+  OSQPFloat* u_data = OSQPVectorf_data(work->data->u);
+  for (OSQPInt i = 0; i < m; i++) {
+    l_data[i] = fp32_scale_by_exp((float)l_data[i], g_E_accum[i]);
+    u_data[i] = fp32_scale_by_exp((float)u_data[i], g_E_accum[i]);
+  }
 
   return 0;
 }

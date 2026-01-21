@@ -129,6 +129,10 @@ private:
     /// @param x0 (State) current state
     void generateNewInitialGuess(const State &x0);
 
+    /// @brief generate new initial guess based on emergency stop (maximum deceleration)
+    /// @param x0 (State) current state
+    void generateNewInitialGuess_EmergencyStop(const State &x0);
+
     /// @brief print parameter value
     /// @param param_value (ParamValue) parameter value
     void printParamValue(const ParamValue& param_value);

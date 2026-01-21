@@ -368,6 +368,13 @@ static void save_osqp_testcase(OSQPSolver* solver, OSQPInt sample_id, const char
     save_vector_float(f_float, "q", work->data->q);
     save_vector_float(f_float, "l", work->data->l);
     save_vector_float(f_float, "u", work->data->u);
+
+    // Save D and E scaling vectors (if available)
+    if (work->scaling) {
+      save_vector_float(f_float, "D", work->scaling->D);
+      save_vector_float(f_float, "E", work->scaling->E);
+    }
+
     fclose(f_float);
   }
 
@@ -387,13 +394,20 @@ static void save_osqp_testcase(OSQPSolver* solver, OSQPInt sample_id, const char
     save_vector_bits(f_bits, "q", work->data->q);
     save_vector_bits(f_bits, "l", work->data->l);
     save_vector_bits(f_bits, "u", work->data->u);
+
+    // Save D and E scaling vectors (if available)
+    if (work->scaling) {
+      save_vector_bits(f_bits, "D", work->scaling->D);
+      save_vector_bits(f_bits, "E", work->scaling->E);
+    }
+
     fclose(f_bits);
   }
 
   printf("[OSQP] Saved testcase sample_%lld_%s\n", (long long)sample_id, suffix);
 }
 
-static OSQPInt g_testcase_count = 0;
+OSQPInt g_testcase_count = 0;  // Non-static: shared with scaling.c
 
 #ifdef OSQP_CODEGEN
   #include "codegen.h"
@@ -948,11 +962,6 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
     if (!(work->D_temp) || !(work->D_temp_A) || !(work->E_temp))
       return osqp_error(OSQP_MEM_ALLOC_ERROR);
 
-    // Save testcase before scaling (every OSQP_TESTCASE_SAVE_INTERVAL runs)
-    if (g_testcase_count % OSQP_TESTCASE_SAVE_INTERVAL == 0) {
-      save_osqp_testcase(solver, g_testcase_count, "scaling_before");
-    }
-
     // Scale data with timing
     OSQPTimer* scaling_timer = OSQPTimer_new();
     osqp_tic(scaling_timer);
@@ -962,10 +971,6 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
     g_scaling_time = osqp_toc(scaling_timer);
     OSQPTimer_free(scaling_timer);
 
-    // Save testcase after scaling (every OSQP_TESTCASE_SAVE_INTERVAL runs)
-    if (g_testcase_count % OSQP_TESTCASE_SAVE_INTERVAL == 0) {
-      save_osqp_testcase(solver, g_testcase_count, "scaling_after");
-    }
     g_testcase_count++;
   } else {
     // printf("Skipping scaling...\n");

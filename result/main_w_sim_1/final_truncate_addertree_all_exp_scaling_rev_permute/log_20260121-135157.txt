@@ -1,0 +1,836 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+<frozen importlib._bootstrap>:241: RuntimeWarning: to-Python converter for std::vector<int, std::allocator<int> > already registered; second conversion method ignored.
+[INFO] [1768971118.511546280] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00179826 seconds
+[INFO] [1768971118.511572533] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1768971118.514369218] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1768971118.514385196] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1768971118.514474807] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1768971118.514478054] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[INFO] [1768971118.521264392] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.000997079 seconds
+[INFO] [1768971118.521272425] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1768971118.523058352] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1768971118.523069526] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1768971118.523157621] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1768971118.523161006] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[WARN] [1768971118.523821664] [moveit_ros.robot_model_loader]: No kinematics plugins defined. Fill and load kinematics.yaml!
+[INFO] [1768971118.526082488] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Publishing maintained planning scene on '/planning_scene'
+[INFO] [1768971118.526122281] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting planning scene monitor
+[INFO] [1768971118.526393193] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/planning_scene'
+[INFO] [1768971118.526405497] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Updating internal planning scene state at most every 0.010000 seconds
+link: base_link
+link: base_footprint
+link: default_mount
+link: front_bumper_mount
+link: front_left_wheel
+link: front_right_wheel
+link: fr3_base
+link: fr3_link0
+link: fr3_link1
+link: fr3_link2
+link: fr3_link3
+link: fr3_link4
+link: fr3_link5
+link: fr3_link6
+link: fr3_link7
+link: fr3_link8
+link: fr3_hand
+link: fr3_leftfinger
+link: fr3_rightfinger
+link: fr3_hand_tcp
+link: rgb_camera_link
+link: depth_camera_link
+link: camera_base
+link: imu_camera_link
+link: inertial_link
+link: rear_bumper_mount
+link: rear_left_wheel
+link: rear_right_wheel
+link: top_chassis_link
+link: top_structure_link
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+Default initialization of bounds
+Default initialization of model params
+bounds initialized
+Available cores: 28
+Default threads: 28
+Updated threads: 27
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+bounds initialized
+param values:
+	desired_s_velocity: 0.1
+	tol_envcol: 1
+	tol_selcol: 1
+	tol_sing: 0.018
+cost values:
+	qC: 1000
+	qCNmult: 10
+	qL: 500
+	qOri: 100
+	qSing: 1
+	qVs: 10
+	rdVs: 0.1
+	rddq: 50
+	rdq: 0.002
+bounds values:
+normalization values:
+sqp values:
+generate new initial guess!!
+[Self MLP Logging] Starting Self Collision MLP test case logging to: /home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/self_mlp/
+[MLP Logging] Starting MLP test case logging to: /home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/mlp/
+BEFORE initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+[OSQP] Saved testcase sample_0_scaling_before
+[OSQP] Saved testcase sample_0_scaling_after
+[OSQP] Permutation vector loaded from ../reference_matrix/P_rev.txt (n=658)
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.007306, -0.004023, -0.008672, -0.008097, 0.005052, 0.005895, -0.040963, 0.299952]
+BEFORE initial_guess_[0].uk: [-0.010320, -0.004085, -0.011685, -0.008002, 0.003879, 0.005899, -0.041127, 0.252298]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.018079, -0.006271, -0.020470, -0.011130, 0.007657, 0.009794, -0.078452, 0.518613]
+BEFORE initial_guess_[0].uk: [-0.023878, -0.006334, -0.026269, -0.011045, 0.005425, 0.009794, -0.078608, 0.432019]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.032251, -0.006861, -0.034909, -0.011280, 0.009110, 0.011101, -0.114919, 0.655965]
+BEFORE initial_guess_[0].uk: [-0.040134, -0.006902, -0.042793, -0.011220, 0.006081, 0.011074, -0.115122, 0.543695]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.046055, -0.004114, -0.048389, -0.006966, 0.008302, 0.006642, -0.135381, 0.616622]
+BEFORE initial_guess_[0].uk: [-0.054064, -0.004165, -0.056398, -0.006890, 0.005172, 0.006637, -0.135892, 0.508344]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.059557, -0.004026, -0.061150, -0.007502, 0.005409, 0.007146, -0.147518, 0.571127]
+BEFORE initial_guess_[0].uk: [-0.067320, -0.004098, -0.068914, -0.007392, 0.002359, 0.007191, -0.148089, 0.469596]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.072991, -0.002038, -0.073943, -0.003855, 0.004795, 0.004095, -0.169937, 0.529250]
+BEFORE initial_guess_[0].uk: [-0.080333, -0.002078, -0.081286, -0.003764, 0.001901, 0.004123, -0.170545, 0.434504]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.085706, -0.000420, -0.085782, -0.001822, 0.003452, 0.002095, -0.187024, 0.490612]
+BEFORE initial_guess_[0].uk: [-0.092574, -0.000464, -0.092650, -0.001714, 0.000727, 0.002153, -0.187694, 0.402206]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.097703, 0.000633, -0.096742, -0.000321, 0.002224, 0.001213, -0.203999, 0.454840]
+BEFORE initial_guess_[0].uk: [-0.104095, 0.000599, -0.103134, -0.000210, -0.000321, 0.001283, -0.204679, 0.372604]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.108908, 0.001566, -0.106956, 0.001001, 0.001186, 0.000694, -0.220507, 0.421705]
+BEFORE initial_guess_[0].uk: [-0.114839, 0.001543, -0.112888, 0.001115, -0.001184, 0.000774, -0.221187, 0.345275]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.119360, 0.002501, -0.116437, 0.002291, 0.000331, 0.000304, -0.236483, 0.390996]
+BEFORE initial_guess_[0].uk: [-0.124855, 0.002487, -0.121933, 0.002408, -0.001872, 0.000393, -0.237155, 0.320003]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.129218, 0.003212, -0.125156, 0.003385, -0.000170, 0.000399, -0.253628, 0.362483]
+BEFORE initial_guess_[0].uk: [-0.134302, 0.003213, -0.130241, 0.003497, -0.002206, 0.000486, -0.254235, 0.296815]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.141842, 0.003167, -0.129168, 0.002702, -0.002202, 0.002077, -0.261826, 0.336149]
+BEFORE initial_guess_[0].uk: [-0.146547, 0.003156, -0.133874, 0.002836, -0.004095, 0.002194, -0.262416, 0.275185]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.150470, 0.004883, -0.136930, 0.005652, -0.001470, 0.000365, -0.280631, 0.311680]
+BEFORE initial_guess_[0].uk: [-0.154816, 0.004897, -0.141278, 0.005767, -0.003220, 0.000461, -0.281210, 0.255087]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.158505, 0.006223, -0.143822, 0.007302, -0.001424, -0.000474, -0.295686, 0.288947]
+BEFORE initial_guess_[0].uk: [-0.162516, 0.006237, -0.147835, 0.007422, -0.003042, -0.000370, -0.296225, 0.236567]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.165791, 0.005991, -0.149712, 0.006408, -0.002934, 0.001587, -0.303882, 0.267915]
+BEFORE initial_guess_[0].uk: [-0.169494, 0.005994, -0.153417, 0.006543, -0.004428, 0.001711, -0.304349, 0.219578]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=200
+AFTER initial_guess_[0].uk: [-0.179323, 0.007786, -0.149245, 0.009452, -0.001961, -0.000190, -0.320373, 0.248447]
+BEFORE initial_guess_[0].uk: [-0.182738, 0.007817, -0.152664, 0.009559, -0.003332, -0.000101, -0.320802, 0.203713]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.184380, 0.007863, -0.155511, 0.008618, -0.003200, 0.001394, -0.327066, 0.230347]
+BEFORE initial_guess_[0].uk: [-0.187517, 0.007861, -0.158652, 0.008759, -0.004472, 0.001523, -0.327477, 0.188938]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.189483, 0.009906, -0.161622, 0.012104, -0.002083, -0.000871, -0.341848, 0.213591]
+BEFORE initial_guess_[0].uk: [-0.192374, 0.009935, -0.164516, 0.012213, -0.003247, -0.000780, -0.342226, 0.175280]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.193994, 0.009740, -0.166680, 0.011093, -0.003094, 0.001134, -0.348801, 0.198014]
+BEFORE initial_guess_[0].uk: [-0.196647, 0.009748, -0.169336, 0.011222, -0.004162, 0.001248, -0.349099, 0.162850]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.202815, 0.011833, -0.167419, 0.014662, -0.001929, -0.001206, -0.361940, 0.183641]
+BEFORE initial_guess_[0].uk: [-0.205265, 0.011881, -0.169873, 0.014748, -0.002901, -0.001143, -0.362183, 0.151181]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.206584, 0.011614, -0.171756, 0.013491, -0.002803, 0.000935, -0.367992, 0.170233]
+BEFORE initial_guess_[0].uk: [-0.208820, 0.011639, -0.173996, 0.013600, -0.003690, 0.001024, -0.368164, 0.140522]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.213605, 0.011711, -0.172256, 0.013434, -0.003376, 0.002371, -0.373648, 0.157882]
+BEFORE initial_guess_[0].uk: [-0.215642, 0.011735, -0.174298, 0.013543, -0.004185, 0.002458, -0.373812, 0.130443]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.219161, 0.014744, -0.174330, 0.018435, -0.001772, -0.001640, -0.385123, 0.146413]
+BEFORE initial_guess_[0].uk: [-0.221068, 0.014830, -0.176243, 0.018481, -0.002506, -0.001626, -0.385228, 0.121038]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.221406, 0.013490, -0.177885, 0.015043, -0.003456, 0.002568, -0.387266, 0.135671]
+BEFORE initial_guess_[0].uk: [-0.223136, 0.013534, -0.179621, 0.015135, -0.004124, 0.002640, -0.387266, 0.112730]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.227344, 0.017050, -0.178632, 0.021285, -0.001566, -0.002425, -0.397260, 0.125892]
+BEFORE initial_guess_[0].uk: [-0.228901, 0.017138, -0.180195, 0.021331, -0.002163, -0.002415, -0.397354, 0.104359]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.229573, 0.015814, -0.181058, 0.017843, -0.003164, 0.001812, -0.398695, 0.116626]
+BEFORE initial_guess_[0].uk: [-0.230980, 0.015858, -0.182472, 0.017938, -0.003709, 0.001886, -0.398690, 0.097231]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.234958, 0.019573, -0.181328, 0.024400, -0.001170, -0.003466, -0.407735, 0.108223]
+BEFORE initial_guess_[0].uk: [-0.236216, 0.019663, -0.182593, 0.024448, -0.001651, -0.003456, -0.407819, 0.090005]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.236004, 0.018332, -0.183962, 0.020886, -0.002708, 0.000850, -0.408530, 0.100238]
+BEFORE initial_guess_[0].uk: [-0.237131, 0.018376, -0.185096, 0.020984, -0.003146, 0.000926, -0.408520, 0.083907]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.241358, 0.023435, -0.183647, 0.029434, 0.000071, -0.006872, -0.418287, 0.092983]
+BEFORE initial_guess_[0].uk: [-0.242353, 0.023532, -0.184649, 0.029479, -0.000308, -0.006862, -0.418361, 0.077649]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=200
+AFTER initial_guess_[0].uk: [-0.245343, 0.022059, -0.182432, 0.025793, -0.001491, -0.002311, -0.418323, 0.086149]
+BEFORE initial_guess_[0].uk: [-0.246223, 0.022103, -0.183321, 0.025895, -0.001836, -0.002231, -0.418307, 0.072480]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.247421, 0.022183, -0.183296, 0.026286, -0.001831, -0.000846, -0.420189, 0.079964]
+BEFORE initial_guess_[0].uk: [-0.248186, 0.022246, -0.184069, 0.026370, -0.002126, -0.000791, -0.420207, 0.067318]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.250227, 0.025836, -0.183955, 0.032112, 0.000077, -0.005816, -0.426883, 0.074141]
+BEFORE initial_guess_[0].uk: [-0.250884, 0.025931, -0.184621, 0.032163, -0.000172, -0.005804, -0.426940, 0.062430]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.252201, 0.024432, -0.183670, 0.028376, -0.001388, -0.001267, -0.426250, 0.068666]
+BEFORE initial_guess_[0].uk: [-0.252761, 0.024478, -0.184239, 0.028477, -0.001610, -0.001189, -0.426228, 0.058331]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.252349, 0.029496, -0.186664, 0.036868, 0.001343, -0.008966, -0.433599, 0.063702]
+BEFORE initial_guess_[0].uk: [-0.252814, 0.029594, -0.187137, 0.036913, 0.001170, -0.008957, -0.433647, 0.054015]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.255988, 0.027901, -0.184031, 0.032932, -0.000155, -0.004165, -0.432364, 0.059015]
+BEFORE initial_guess_[0].uk: [-0.256367, 0.027945, -0.184420, 0.033033, -0.000308, -0.004087, -0.432336, 0.050543]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.258102, 0.027819, -0.183151, 0.033164, -0.000542, -0.002515, -0.432636, 0.054805]
+BEFORE initial_guess_[0].uk: [-0.258396, 0.027879, -0.183455, 0.033244, -0.000656, -0.002467, -0.432636, 0.047033]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.257458, 0.031328, -0.185673, 0.038833, 0.001315, -0.007459, -0.437237, 0.050819]
+BEFORE initial_guess_[0].uk: [-0.257673, 0.031418, -0.185899, 0.038878, 0.001238, -0.007456, -0.437271, 0.043670]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.262317, 0.029640, -0.181013, 0.034710, -0.000120, -0.002694, -0.435510, 0.047064]
+BEFORE initial_guess_[0].uk: [-0.262459, 0.029680, -0.181167, 0.034805, -0.000183, -0.002627, -0.435479, 0.040924]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.261598, 0.034572, -0.183478, 0.043094, 0.002572, -0.010474, -0.440977, 0.043561]
+BEFORE initial_guess_[0].uk: [-0.261672, 0.034663, -0.183563, 0.043131, 0.002551, -0.010480, -0.441005, 0.037831]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.262286, 0.032656, -0.182464, 0.038719, 0.001125, -0.005461, -0.438759, 0.040468]
+BEFORE initial_guess_[0].uk: [-0.262295, 0.032690, -0.182485, 0.038812, 0.001113, -0.005399, -0.438724, 0.035632]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.264781, 0.030512, -0.179494, 0.035324, -0.000355, -0.000374, -0.436062, 0.037496]
+BEFORE initial_guess_[0].uk: [-0.264726, 0.030543, -0.179451, 0.035415, -0.000341, -0.000313, -0.436025, 0.033250]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=200
+AFTER initial_guess_[0].uk: [-0.268747, 0.039100, -0.177470, 0.048767, 0.004462, -0.015007, -0.444746, 0.034767]
+BEFORE initial_guess_[0].uk: [-0.268625, 0.039182, -0.177362, 0.048798, 0.004512, -0.015010, -0.444747, 0.030943]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.266787, 0.036723, -0.178438, 0.044283, 0.002934, -0.009452, -0.441743, 0.032225]
+BEFORE initial_guess_[0].uk: [-0.266620, 0.036749, -0.178284, 0.044368, 0.002990, -0.009397, -0.441702, 0.029040]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.269752, 0.034183, -0.174336, 0.040448, 0.001378, -0.003990, -0.438490, 0.029949]
+BEFORE initial_guess_[0].uk: [-0.269529, 0.034209, -0.174127, 0.040527, 0.001455, -0.003941, -0.438448, 0.027237]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.270075, 0.031810, -0.172754, 0.036837, -0.000042, 0.001124, -0.435328, 0.027822]
+BEFORE initial_guess_[0].uk: [-0.269800, 0.031837, -0.172494, 0.036909, 0.000056, 0.001165, -0.435287, 0.025543]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.271077, 0.042332, -0.173419, 0.052646, 0.005818, -0.017280, -0.444692, 0.025617]
+BEFORE initial_guess_[0].uk: [-0.270746, 0.042390, -0.173104, 0.052679, 0.005946, -0.017275, -0.444652, 0.023809]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.272210, 0.039399, -0.170521, 0.048007, 0.004188, -0.011281, -0.440774, 0.023896]
+BEFORE initial_guess_[0].uk: [-0.271847, 0.039417, -0.170173, 0.048075, 0.004318, -0.011243, -0.440726, 0.022429]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.272341, 0.036527, -0.168581, 0.043700, 0.002630, -0.005578, -0.437081, 0.022215]
+BEFORE initial_guess_[0].uk: [-0.271932, 0.036546, -0.168189, 0.043762, 0.002778, -0.005549, -0.437036, 0.021094]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.272199, 0.033808, -0.166801, 0.039610, 0.001183, -0.000257, -0.433478, 0.020652]
+BEFORE initial_guess_[0].uk: [-0.271748, 0.033827, -0.166368, 0.039665, 0.001347, -0.000237, -0.433433, 0.019856]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.271730, 0.043323, -0.168052, 0.053937, 0.006353, -0.017253, -0.440196, 0.019065]
+BEFORE initial_guess_[0].uk: [-0.271233, 0.043370, -0.167572, 0.053956, 0.006545, -0.017267, -0.440137, 0.018693]
+[OSQP] Saved testcase sample_50_scaling_before
+[OSQP] Saved testcase sample_50_scaling_after
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.273590, 0.040081, -0.163866, 0.048915, 0.004727, -0.011153, -0.435865, 0.017768]
+BEFORE initial_guess_[0].uk: [-0.273066, 0.040090, -0.163361, 0.048967, 0.004919, -0.011137, -0.435814, 0.017589]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.272496, 0.036906, -0.162591, 0.044211, 0.003190, -0.005366, -0.431886, 0.016527]
+BEFORE initial_guess_[0].uk: [-0.271936, 0.036914, -0.162050, 0.044257, 0.003395, -0.005360, -0.431838, 0.016602]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=150
+AFTER initial_guess_[0].uk: [-0.273074, 0.033879, -0.159536, 0.039722, 0.001733, 0.000030, -0.427981, 0.015390]
+BEFORE initial_guess_[0].uk: [-0.272480, 0.033886, -0.158961, 0.039762, 0.001951, 0.000027, -0.427935, 0.015707]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.272036, 0.043916, -0.160944, 0.054340, 0.007161, -0.018342, -0.434424, 0.013925]
+BEFORE initial_guess_[0].uk: [-0.271409, 0.043914, -0.160337, 0.054384, 0.007398, -0.018332, -0.434311, 0.014778]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.273078, 0.040147, -0.157091, 0.049168, 0.005457, -0.011809, -0.429330, 0.013278]
+BEFORE initial_guess_[0].uk: [-0.272424, 0.040142, -0.156457, 0.049206, 0.005699, -0.011813, -0.429275, 0.014067]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.272615, 0.036590, -0.154688, 0.044014, 0.003893, -0.005867, -0.425063, 0.012374]
+BEFORE initial_guess_[0].uk: [-0.271932, 0.036587, -0.154026, 0.044042, 0.004145, -0.005884, -0.425013, 0.013338]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.272110, 0.033195, -0.152256, 0.039055, 0.002424, -0.000343, -0.420908, 0.011533]
+BEFORE initial_guess_[0].uk: [-0.271400, 0.033190, -0.151568, 0.039077, 0.002686, -0.000370, -0.420859, 0.012670]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.273149, 0.040556, -0.150588, 0.051102, 0.006331, -0.014816, -0.423108, 0.010542]
+BEFORE initial_guess_[0].uk: [-0.272415, 0.040596, -0.149875, 0.051069, 0.006621, -0.014908, -0.423052, 0.011896]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.272053, 0.037046, -0.148468, 0.044969, 0.004834, -0.008887, -0.418511, 0.009981]
+BEFORE initial_guess_[0].uk: [-0.271300, 0.037028, -0.147737, 0.044988, 0.005112, -0.008923, -0.418459, 0.011443]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.271091, 0.033244, -0.146196, 0.039505, 0.003317, -0.003114, -0.414195, 0.009322]
+BEFORE initial_guess_[0].uk: [-0.270313, 0.033222, -0.145441, 0.039521, 0.003605, -0.003156, -0.414145, 0.010921]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.270235, 0.029593, -0.143757, 0.034276, 0.001891, 0.002283, -0.409961, 0.008712]
+BEFORE initial_guess_[0].uk: [-0.269434, 0.029570, -0.142979, 0.034285, 0.002188, 0.002231, -0.409912, 0.010439]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.271274, 0.040943, -0.142368, 0.049806, 0.007993, -0.019131, -0.416726, 0.007835]
+BEFORE initial_guess_[0].uk: [-0.270514, 0.040788, -0.141634, 0.049949, 0.008271, -0.019033, -0.416459, 0.010286]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.270581, 0.035800, -0.139833, 0.044343, 0.006179, -0.011927, -0.410646, 0.007542]
+BEFORE initial_guess_[0].uk: [-0.269724, 0.035768, -0.139001, 0.044347, 0.006498, -0.011979, -0.410585, 0.009582]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.269596, 0.031519, -0.137132, 0.038278, 0.004586, -0.005809, -0.405981, 0.007065]
+BEFORE initial_guess_[0].uk: [-0.268728, 0.031488, -0.136289, 0.038272, 0.004907, -0.005875, -0.405929, 0.009160]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.268498, 0.027411, -0.134518, 0.032402, 0.003076, -0.000137, -0.401444, 0.006638]
+BEFORE initial_guess_[0].uk: [-0.267617, 0.027377, -0.133662, 0.032391, 0.003402, -0.000214, -0.401392, 0.008807]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.267053, 0.025802, -0.132632, 0.031027, 0.002505, 0.000830, -0.396996, 0.006216]
+BEFORE initial_guess_[0].uk: [-0.266162, 0.025787, -0.131766, 0.030986, 0.002849, 0.000705, -0.396938, 0.008471]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.267094, 0.035054, -0.131377, 0.042852, 0.007567, -0.017683, -0.400994, 0.005622]
+BEFORE initial_guess_[0].uk: [-0.266251, 0.034883, -0.130562, 0.042973, 0.007877, -0.017617, -0.400719, 0.008511]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.265997, 0.029782, -0.128933, 0.036864, 0.005749, -0.010560, -0.394809, 0.005456]
+BEFORE initial_guess_[0].uk: [-0.265058, 0.029726, -0.128021, 0.036851, 0.006099, -0.010642, -0.394748, 0.007905]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.264669, 0.025059, -0.126208, 0.030329, 0.004158, -0.004458, -0.390052, 0.005131]
+BEFORE initial_guess_[0].uk: [-0.263723, 0.025006, -0.125289, 0.030305, 0.004508, -0.004555, -0.390000, 0.007594]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.263288, 0.020497, -0.123519, 0.023972, 0.002643, 0.001192, -0.385419, 0.004827]
+BEFORE initial_guess_[0].uk: [-0.262335, 0.020441, -0.122593, 0.023943, 0.002997, 0.001084, -0.385367, 0.007325]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.262493, 0.016066, -0.120225, 0.017832, 0.001202, 0.006463, -0.380838, 0.004554]
+BEFORE initial_guess_[0].uk: [-0.261531, 0.016009, -0.119290, 0.017797, 0.001560, 0.006346, -0.380788, 0.007087]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.262099, 0.027287, -0.119331, 0.033410, 0.006870, -0.016313, -0.383637, 0.004048]
+BEFORE initial_guess_[0].uk: [-0.261200, 0.027096, -0.118462, 0.033514, 0.007200, -0.016272, -0.383357, 0.007164]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.261209, 0.021399, -0.116425, 0.026981, 0.005027, -0.009160, -0.377332, 0.004041]
+BEFORE initial_guess_[0].uk: [-0.260211, 0.021328, -0.115456, 0.026945, 0.005399, -0.009273, -0.377271, 0.006708]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_iter_count=1, total_iter_count=100
+AFTER initial_guess_[0].uk: [-0.259594, 0.016290, -0.113662, 0.019934, 0.003429, -0.003099, -0.372502, 0.003819]
+BEFORE initial_guess_[0].uk: [-0.258593, 0.016220, -0.112690, 0.019890, 0.003801, -0.003228, -0.372450, 0.006467]
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+[SQP] sqp_iter_=0, sqp_ite
