@@ -136,6 +136,23 @@ QDLDL_API QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const Q
 
 
 /**
+ * Right-looking LDL^T factorization.
+ *
+ * Same inputs/outputs as QDLDL_factor.
+ * Uses a dense column representation internally and processes columns
+ * left-to-right with rank-1 updates (right-looking order).
+ *
+ * @return same as QDLDL_factor
+ */
+QDLDL_API QDLDL_int QDLDL_factor_right_looking(
+    const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* Ai,
+    const QDLDL_float* Ax, QDLDL_int* Lp, QDLDL_int* Li,
+    QDLDL_float* Lx, QDLDL_float* D, QDLDL_float* Dinv,
+    const QDLDL_int* Lnz, const QDLDL_int* etree, QDLDL_bool* bwork,
+    QDLDL_int* iwork, QDLDL_float* fwork);
+
+
+/**
   * Solves LDL'x = b
   *
   * It is assumed that L will be a compressed

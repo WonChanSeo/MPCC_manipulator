@@ -9,6 +9,12 @@
 #include <stdint.h>
 #include <limits.h>
 
+/* =========[ Termination check debug info (exported for logging) ]========= */
+OSQPFloat g_last_eps_prim = 0.0;
+OSQPFloat g_last_eps_dual = 0.0;
+OSQPInt   g_last_prim_check = -1;
+OSQPInt   g_last_dual_check = -1;
+
 /* =========[ FP32 exponent helpers for rho estimation ]========= */
 
 /* Get unbiased exponent of |x| (IEEE-754 float):
@@ -1362,6 +1368,12 @@ OSQPInt check_termination(OSQPSolver* solver,
     // Check dual infeasibility
     dual_inf_check = is_dual_infeasible(solver, eps_dual_inf);
   }
+
+  // Export termination check debug info
+  g_last_eps_prim  = eps_prim;
+  g_last_eps_dual  = eps_dual;
+  g_last_prim_check = prim_res_check;
+  g_last_dual_check = dual_res_check;
 
   if (settings->check_dualgap ) {
     // Compute duality gap tolerance

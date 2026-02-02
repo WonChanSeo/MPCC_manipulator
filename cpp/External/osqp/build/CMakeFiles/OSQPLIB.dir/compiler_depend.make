@@ -1368,7 +1368,9 @@ CMakeFiles/OSQPLIB.dir/algebra/_common/lin_sys/qdldl/qdldl_interface.c.o: ../alg
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
   /usr/include/stdint.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
-  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/fenv.h \
+  /usr/include/x86_64-linux-gnu/bits/fenv.h
 
 CMakeFiles/OSQPLIB.dir/algebra/builtin/algebra_libs.c.o: ../algebra/builtin/algebra_libs.c \
   /usr/include/stdc-predef.h \
@@ -2448,6 +2450,8 @@ CMakeFiles/OSQPLIB.dir/src/util.c.o: ../src/util.c \
 
 ../algebra/builtin/algebra_libs.c:
 
+/usr/include/x86_64-linux-gnu/bits/fenv.h:
+
 /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
 
 /usr/include/x86_64-linux-gnu/bits/fp-fast.h:
@@ -2577,6 +2581,8 @@ include/public/osqp_configure.h:
 /usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
 
 ../src/error.c:
+
+/usr/include/fenv.h:
 
 /usr/include/endian.h:
 

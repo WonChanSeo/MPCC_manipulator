@@ -1,0 +1,23 @@
+# OSQP Solve Metadata - Sample 0
+# rho_updates,iter
+1,100
+
+# rho_update_history (1 entries)
+# admm_iter,rho_old,rho_new
+50,1.25000000e-01,1.56250000e-02
+
+# rho_update_history_hex (1 entries)
+# admm_iter,rho_old_hex,rho_new_hex
+50,3e000000,3c800000
+
+# admm_iteration_log (3 entries)
+# iter,prim_res,dual_res,duality_gap,rel_kkt_error,rho,last_rel_kkt,kkt_threshold,kkt_check,can_adapt_rho,eps_prim,eps_dual,prim_check,dual_check,terminated
+1,1.34791154e-03,1.27915100e+02,-7.22167864e-02,1.27915100e+02,1.25000000e-01,1.00000002e+30,0.00000000e+00,-1,0,0.00000000e+00,0.00000000e+00,-1,-1,0
+50,6.55651093e-07,2.65156984e-01,-8.13297927e-04,2.65156984e-01,1.56250000e-02,2.65156984e-01,0.00000000e+00,-1,1,1.39574811e-03,2.47675087e-03,1,0,0
+100,1.49011612e-06,2.27403641e-03,-3.59117985e-06,2.27403641e-03,1.56250000e-02,2.65156984e-01,0.00000000e+00,-1,1,1.40961912e-03,2.48238980e-03,1,1,1
+
+# admm_iteration_log_hex (3 entries)
+# iter,prim_res_hex,dual_res_hex,duality_gap_hex,rel_kkt_error_hex,rho_hex,last_rel_kkt_hex,kkt_threshold_hex,kkt_check,can_adapt_rho,eps_prim_hex,eps_dual_hex,prim_check,dual_check,terminated
+1,3ab0ac68,42ffd488,bd93e665,42ffd488,3e000000,7149f2ca,00000000,-1,0,00000000,00000000,-1,-1,0
+50,35300000,3e87c2a8,ba553380,3e87c2a8,3c800000,3e87c2a8,00000000,-1,1,3ab6f189,3b2250fc,1,0,0
+100,35c80000,3b150800,b6710000,3b150800,3c800000,3e87c2a8,00000000,-1,1,3ab8c2f8,3b22af97,1,1,1

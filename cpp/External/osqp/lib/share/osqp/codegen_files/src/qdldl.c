@@ -853,6 +853,216 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
     return positiveValuesInD;
 }
 
+
+// ========================================================================
+// Right-looking LDL^T factorization (general, same interface as QDLDL_factor)
+// ========================================================================
+// Uses a dense column representation for the lower-triangular part.
+// For each column j (left to right):
+//   1. Extract D[j] from the diagonal, compute Dinv[j]
+//   2. Scale the sub-diagonal entries by Dinv[j] to get L[:,j]
+//   3. Rank-1 update: for each k > j where L[k,j] != 0,
+//      subtract L[k,j] * L[i,j] * D[j] from column k (rows i >= k)
+// ========================================================================
+
+// Position (0-178) → bank number (0-20)   [kept for hardware variant]
+//   pos 0-79:   bank = pos/8        (banks 0-9, 8 words each)
+//   pos 80-178: bank = 10+(pos-80)/9 (banks 10-20, 9 words each)
+static int pos_to_bank(int pos) {
+    if (pos < 80) return pos / 8;
+    return 10 + (pos - 80) / 9;
+}
+
+// Negate float via sign-bit XOR (matches hardware: value ^ 32'h80000000)
+static float negate_float_hw(float v) {
+    uint32_t u;
+    memcpy(&u, &v, 4);
+    u ^= 0x80000000u;
+    float r;
+    memcpy(&r, &u, 4);
+    return r;
+}
+
+QDLDL_int QDLDL_factor_right_looking(
+    const QDLDL_int n,
+    const QDLDL_int* Ap, const QDLDL_int* Ai, const QDLDL_float* Ax,
+    QDLDL_int* Lp, QDLDL_int* Li, QDLDL_float* Lx,
+    QDLDL_float* D, QDLDL_float* Dinv,
+    const QDLDL_int* Lnz, const QDLDL_int* etree,
+    QDLDL_bool* bwork, QDLDL_int* iwork, QDLDL_float* fwork)
+{
+    QDLDL_int positiveValuesInD = 0;
+    QDLDL_int i, j, k, p;
+
+    // ================================================================
+    // Step 1: Compute L structural pattern (Li, Lp) from etree
+    //         (identical logic to QDLDL_factor's structural phase)
+    // ================================================================
+    {
+        QDLDL_bool* yMarkers        = bwork;
+        QDLDL_int*  yIdx            = iwork;
+        QDLDL_int*  elimBuffer      = iwork + n;
+        QDLDL_int*  LNextSpaceInCol = iwork + 2 * n;
+
+        Lp[0] = 0;
+        for (i = 0; i < n; i++) {
+            Lp[i + 1] = Lp[i] + Lnz[i];
+            yMarkers[i]        = QDLDL_UNUSED;
+            LNextSpaceInCol[i] = Lp[i];
+        }
+
+        for (k = 1; k < n; k++) {
+            QDLDL_int nnzY = 0;
+            for (p = Ap[k]; p < Ap[k + 1]; p++) {
+                QDLDL_int bidx = Ai[p];
+                if (bidx == k) continue;
+
+                QDLDL_int nxt = bidx;
+                if (yMarkers[nxt] == QDLDL_UNUSED) {
+                    yMarkers[nxt] = QDLDL_USED;
+                    QDLDL_int nnzE = 1;
+                    elimBuffer[0] = nxt;
+                    nxt = etree[bidx];
+                    while (nxt != QDLDL_UNKNOWN && nxt < k) {
+                        if (yMarkers[nxt] == QDLDL_USED) break;
+                        yMarkers[nxt] = QDLDL_USED;
+                        elimBuffer[nnzE++] = nxt;
+                        nxt = etree[nxt];
+                    }
+                    while (nnzE) yIdx[nnzY++] = elimBuffer[--nnzE];
+                }
+            }
+            for (i = nnzY - 1; i >= 0; i--) {
+                QDLDL_int cidx = yIdx[i];
+                Li[LNextSpaceInCol[cidx]] = k;
+                LNextSpaceInCol[cidx]++;
+                yMarkers[cidx] = QDLDL_UNUSED;
+            }
+        }
+    }
+
+    // ================================================================
+    // Step 2: Allocate dense column storage
+    //   dense[j * n + i] holds the running value of column j, row i
+    //   Only rows i > j are used (strictly lower triangular part).
+    //   Diagonal values are stored separately in D[].
+    // ================================================================
+    QDLDL_float* dense = (QDLDL_float*)calloc((size_t)n * n, sizeof(QDLDL_float));
+    if (!dense) return -1;
+
+    // Load A (upper triangular CSC) into dense as full lower triangle
+    // A is upper-tri CSC: for each column c, entries have row r <= c
+    // We need the lower triangle: dense[c][r] for r > c, plus diagonal
+    for (QDLDL_int c = 0; c < n; c++) {
+        for (p = Ap[c]; p < Ap[c + 1]; p++) {
+            QDLDL_int r = Ai[p];
+            if (r == c) {
+                D[c] = Ax[p];  // diagonal → D init
+            } else {
+                // A[r,c] with r < c (upper tri) → symmetric lower entry at col r, row c
+                dense[r * n + c] = Ax[p];
+            }
+        }
+    }
+
+    // ================================================================
+    // Step 3: Right-looking factorization
+    //
+    //   For each column j = 0 .. n-1:
+    //     1. D[j] is already accumulated (from init + rank-1 updates)
+    //     2. Dinv[j] = 1/D[j]
+    //     3. Scale sub-diagonal dense[j][i] by Dinv[j] → L[i,j]
+    //     4. Rank-1 update: for each k in L[:,j] (k > j):
+    //          D[k]          -= L[k,j] * dense_orig[j][k]
+    //          dense[k][i]   -= L[k,j] * dense_orig[j][i]   for i > k
+    // ================================================================
+#ifdef OSQP_USE_TRUNCATE
+    int saved_round = fegetround();
+    fesetround(FE_TOWARDZERO);
+#endif
+
+    // First column (j=0) diagonal is already in D[0] from init
+    for (j = 0; j < n; j++) {
+        // D[j] already holds the correct value (init for j=0, updated for j>0)
+        QDLDL_float dj = D[j];
+
+        if (dj == 0.0) {
+            free(dense);
+#ifdef OSQP_USE_TRUNCATE
+            fesetround(saved_round);
+#endif
+            return -1;
+        }
+        if (dj > 0.0) positiveValuesInD++;
+
+        QDLDL_float djinv = reciprocal_nr_fma(dj);
+        Dinv[j] = djinv;
+
+        // Scale sub-diagonal entries of column j to get L[:,j]
+        // and perform rank-1 update on subsequent columns
+        QDLDL_int col_start = Lp[j];
+        QDLDL_int col_end   = Lp[j + 1];
+        QDLDL_int nnz_col   = col_end - col_start;
+
+        // Scale: L[row, j] = dense[j][row] * Dinv[j]
+        for (p = col_start; p < col_end; p++) {
+            QDLDL_int row = Li[p];
+#ifdef OSQP_USE_TRUNCATE
+            volatile float prod = (float)dense[j * n + row] * (float)djinv;
+            Lx[p] = (QDLDL_float)prod;
+#else
+            Lx[p] = dense[j * n + row] * djinv;
+#endif
+        }
+
+        // Rank-1 update: for each nonzero L[k,j] in column j
+        //   D[k]        -= L[k,j] * dense[j][k]   (= L[k,j] * L[k,j] * D[j])
+        //   dense[k][i] -= L[k,j] * dense[j][i]   for each i in L[:,j] with i >= k
+        for (p = col_start; p < col_end; p++) {
+            QDLDL_int k_row = Li[p];
+            QDLDL_float lkj = Lx[p];
+            QDLDL_float dense_jk = dense[j * n + k_row];  // unscaled value
+
+            // Update diagonal D[k]
+#ifdef OSQP_USE_TRUNCATE
+            volatile float prod_d = (float)lkj * (float)dense_jk;
+            D[k_row] = D[k_row] - (QDLDL_float)prod_d;
+#else
+            D[k_row] -= lkj * dense_jk;
+#endif
+
+            // Update sub-diagonal entries in column k_row
+            QDLDL_int q;
+            for (q = p + 1; q < col_end; q++) {
+                QDLDL_int i_row = Li[q];
+                // dense[k_row][i_row] -= L[i_row, j] * dense[j][k_row]
+                //   which is equivalent to: -= Lx[q] ... but we use the unscaled
+                //   form: dense[k_row][i_row] -= L[k_row,j] * dense[j][i_row]
+#ifdef OSQP_USE_TRUNCATE
+                volatile float prod_u = (float)lkj * (float)dense[j * n + i_row];
+                dense[k_row * n + i_row] = dense[k_row * n + i_row] - (QDLDL_float)prod_u;
+#else
+                dense[k_row * n + i_row] -= lkj * dense[j * n + i_row];
+#endif
+            }
+        }
+    }
+
+#ifdef OSQP_USE_TRUNCATE
+    fesetround(saved_round);
+#endif
+
+    // ================================================================
+    // Step 4: Cleanup + CSR conversion for Lsolve/Ltsolve
+    // ================================================================
+    free(dense);
+
+    convert_csc_to_csr(n, Lp, Li, Lx);
+
+    return positiveValuesInD;
+}
+
+
 // Solves (L+I)x = b
 // CSR 포맷 사용 + Adder tree로 row별 연산
 // (L+I)x = b => x_i = b_i - sum_j(L_ij * x_j) for j < i

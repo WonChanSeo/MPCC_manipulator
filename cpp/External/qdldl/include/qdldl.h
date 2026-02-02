@@ -136,17 +136,12 @@ QDLDL_API QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const Q
 
 
 /**
- * Right-looking LDL^T factorization (hardware bit-identical).
+ * Right-looking LDL^T factorization.
  *
- * Same inputs/outputs as QDLDL_factor, plus two hardware parameters.
- * Uses the same operation order as factorization_top.v:
- *   - 658×179 dense SRAM model (rows 479-657)
- *   - bank_sel masking per column
- *   - Separate mul + add (no FMA)
- *   - D[j<380] = -param_rho, D[j<479] = -param_rho_eq
+ * Same inputs/outputs as QDLDL_factor.
+ * Uses a dense column representation internally and processes columns
+ * left-to-right with rank-1 updates (right-looking order).
  *
- * @param  param_rho     hardware rho parameter (FP32)
- * @param  param_rho_eq  hardware rho_eq parameter (FP32)
  * @return same as QDLDL_factor
  */
 QDLDL_API QDLDL_int QDLDL_factor_right_looking(
@@ -154,8 +149,7 @@ QDLDL_API QDLDL_int QDLDL_factor_right_looking(
     const QDLDL_float* Ax, QDLDL_int* Lp, QDLDL_int* Li,
     QDLDL_float* Lx, QDLDL_float* D, QDLDL_float* Dinv,
     const QDLDL_int* Lnz, const QDLDL_int* etree, QDLDL_bool* bwork,
-    QDLDL_int* iwork, QDLDL_float* fwork,
-    float param_rho, float param_rho_eq);
+    QDLDL_int* iwork, QDLDL_float* fwork);
 
 
 /**

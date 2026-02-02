@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <inttypes.h>
+#include <fenv.h>
 
 // External timing setter functions (defined in osqp_api.c)
 extern void osqp_set_permutation_time(OSQPFloat time);
@@ -38,6 +39,13 @@ extern OSQPInt g_testcase_count;
 // ===== ASIC Testcase: Factorization result saving =====
 #define FACTORIZATION_TESTCASE_SAVE_INTERVAL 50
 #define FACTORIZATION_TESTCASE_DIR "../result/asic_testcases/osqp/factorization"
+
+// ===== ASIC Testcase: Solve result saving =====
+#define SOLVE_TESTCASE_SAVE_INTERVAL 50
+#define SOLVE_TESTCASE_DIR "../result/asic_testcases/osqp/solve"
+
+// Track solve calls within each sample for intermediate debug saving
+static OSQPInt g_solve_call_count = 0;  // reset at each factorization
 
 // Helper: Save CSC matrix in float format
 static void factor_save_csc_float(FILE* f, const char* name, OSQPInt n, OSQPInt m,
@@ -276,6 +284,187 @@ static void save_factorization_result(OSQPInt sample_id, OSQPInt n,
   }
 
   printf("[OSQP] Saved factorization sample_%lld\n", (long long)sample_id);
+}
+
+// ===== Solve result saving =====
+
+static int g_solve_dir_created = 0;
+static void ensure_solve_dir(void) {
+  if (!g_solve_dir_created) {
+    // Use system() for portability; harmless if dir already exists
+    system("mkdir -p " SOLVE_TESTCASE_DIR);
+    g_solve_dir_created = 1;
+  }
+}
+
+// Save a single vector to file (float + hex)
+static void save_solve_vector(const char* filepath, const char* label,
+                               OSQPInt sample_id, OSQPInt n,
+                               const OSQPFloat* x) {
+  ensure_solve_dir();
+  FILE* f = fopen(filepath, "w");
+  if (!f) return;
+
+  fprintf(f, "# OSQP Solve Result - Sample %lld - %s\n", (long long)sample_id, label);
+  fprintf(f, "# n=%lld\n\n", (long long)n);
+
+  // Float format
+  fprintf(f, "# x (float) - %lld values\n", (long long)n);
+  for (OSQPInt i = 0; i < n; i++) {
+    fprintf(f, "%.8e", (double)x[i]);
+    if (i < n - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+
+  // Hex format
+  fprintf(f, "# x (hex FP32) - %lld values\n", (long long)n);
+  for (OSQPInt i = 0; i < n; i++) {
+    union { float f; uint32_t u; } v;
+    v.f = (float)x[i];
+    fprintf(f, "%08x", v.u);
+    if (i < n - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+
+  fclose(f);
+}
+
+// Save solve result x (called every SOLVE_TESTCASE_SAVE_INTERVAL samples)
+static void save_solve_result(OSQPInt sample_id, OSQPInt n,
+                               const OSQPFloat* x) {
+  char path[256];
+  snprintf(path, sizeof(path), "%s/sample_%lld_solve.csv",
+           SOLVE_TESTCASE_DIR, (long long)sample_id);
+  save_solve_vector(path, "final", sample_id, n, x);
+  printf("[OSQP] Saved solve result sample_%lld\n", (long long)sample_id);
+}
+
+// Save intermediate solve steps (sample 0, first solve only)
+static void save_solve_intermediate(OSQPInt sample_id, const char* step_name,
+                                     OSQPInt n, const OSQPFloat* x) {
+  char path[256];
+  snprintf(path, sizeof(path), "%s/sample_%lld_solve_%s.csv",
+           SOLVE_TESTCASE_DIR, (long long)sample_id, step_name);
+  save_solve_vector(path, step_name, sample_id, n, x);
+  printf("[OSQP] Saved solve intermediate sample_%lld_%s\n",
+         (long long)sample_id, step_name);
+}
+
+// Save metadata (rho_updates, iter) for a sample
+// ADMM iteration log entry (must match definition in osqp_api.c)
+typedef struct {
+  OSQPInt   iter;
+  OSQPFloat prim_res;
+  OSQPFloat dual_res;
+  OSQPFloat duality_gap;
+  OSQPFloat rel_kkt_error;
+  OSQPFloat rho;
+  OSQPFloat last_rel_kkt;
+  OSQPFloat kkt_threshold;
+  OSQPInt   kkt_check;
+  OSQPInt   can_adapt_rho;
+  OSQPFloat eps_prim;
+  OSQPFloat eps_dual;
+  OSQPInt   prim_check;
+  OSQPInt   dual_check;
+  OSQPInt   terminated;
+} admm_log_entry_t;
+
+void save_solve_metadata(OSQPInt sample_id, OSQPInt rho_updates, OSQPInt iter,
+                          const OSQPInt* rho_update_iters,
+                          const OSQPFloat* rho_update_old,
+                          const OSQPFloat* rho_update_new,
+                          OSQPInt n_rho_updates_logged,
+                          const void* admm_log_ptr, OSQPInt n_admm_log) {
+  if (sample_id < 0 || (sample_id % SOLVE_TESTCASE_SAVE_INTERVAL != 0))
+    return;
+
+  ensure_solve_dir();
+
+  const admm_log_entry_t* admm_log = (const admm_log_entry_t*)admm_log_ptr;
+
+  char path[256];
+  snprintf(path, sizeof(path), "%s/sample_%lld_metadata.csv",
+           SOLVE_TESTCASE_DIR, (long long)sample_id);
+
+  FILE* f = fopen(path, "w");
+  if (!f) return;
+
+  fprintf(f, "# OSQP Solve Metadata - Sample %lld\n", (long long)sample_id);
+  fprintf(f, "# rho_updates,iter\n");
+  fprintf(f, "%lld,%lld\n", (long long)rho_updates, (long long)iter);
+
+  // Helper macro for float-to-hex
+  #define F2H(val) do { union { float f; uint32_t u; } _v; _v.f = (float)(val); fprintf(f, "%08x", _v.u); } while(0)
+
+  // Rho update history (float)
+  fprintf(f, "\n# rho_update_history (%lld entries)\n", (long long)n_rho_updates_logged);
+  fprintf(f, "# admm_iter,rho_old,rho_new\n");
+  for (OSQPInt i = 0; i < n_rho_updates_logged; i++) {
+    fprintf(f, "%lld,%.8e,%.8e\n",
+            (long long)rho_update_iters[i],
+            (double)rho_update_old[i],
+            (double)rho_update_new[i]);
+  }
+
+  // Rho update history (hex)
+  fprintf(f, "\n# rho_update_history_hex (%lld entries)\n", (long long)n_rho_updates_logged);
+  fprintf(f, "# admm_iter,rho_old_hex,rho_new_hex\n");
+  for (OSQPInt i = 0; i < n_rho_updates_logged; i++) {
+    fprintf(f, "%lld,", (long long)rho_update_iters[i]);
+    F2H(rho_update_old[i]); fprintf(f, ",");
+    F2H(rho_update_new[i]); fprintf(f, "\n");
+  }
+
+  // ADMM iteration log (float)
+  fprintf(f, "\n# admm_iteration_log (%lld entries)\n", (long long)n_admm_log);
+  fprintf(f, "# iter,prim_res,dual_res,duality_gap,rel_kkt_error,rho,"
+             "last_rel_kkt,kkt_threshold,kkt_check,can_adapt_rho,"
+             "eps_prim,eps_dual,prim_check,dual_check,terminated\n");
+  for (OSQPInt i = 0; i < n_admm_log; i++) {
+    const admm_log_entry_t* e = &admm_log[i];
+    fprintf(f, "%lld,%.8e,%.8e,%.8e,%.8e,%.8e,"
+               "%.8e,%.8e,%lld,%lld,"
+               "%.8e,%.8e,%lld,%lld,%lld\n",
+            (long long)e->iter,
+            (double)e->prim_res, (double)e->dual_res,
+            (double)e->duality_gap, (double)e->rel_kkt_error,
+            (double)e->rho,
+            (double)e->last_rel_kkt, (double)e->kkt_threshold,
+            (long long)e->kkt_check, (long long)e->can_adapt_rho,
+            (double)e->eps_prim, (double)e->eps_dual,
+            (long long)e->prim_check, (long long)e->dual_check,
+            (long long)e->terminated);
+  }
+
+  // ADMM iteration log (hex)
+  fprintf(f, "\n# admm_iteration_log_hex (%lld entries)\n", (long long)n_admm_log);
+  fprintf(f, "# iter,prim_res_hex,dual_res_hex,duality_gap_hex,rel_kkt_error_hex,rho_hex,"
+             "last_rel_kkt_hex,kkt_threshold_hex,kkt_check,can_adapt_rho,"
+             "eps_prim_hex,eps_dual_hex,prim_check,dual_check,terminated\n");
+  for (OSQPInt i = 0; i < n_admm_log; i++) {
+    const admm_log_entry_t* e = &admm_log[i];
+    fprintf(f, "%lld,", (long long)e->iter);
+    F2H(e->prim_res);      fprintf(f, ",");
+    F2H(e->dual_res);      fprintf(f, ",");
+    F2H(e->duality_gap);   fprintf(f, ",");
+    F2H(e->rel_kkt_error); fprintf(f, ",");
+    F2H(e->rho);           fprintf(f, ",");
+    F2H(e->last_rel_kkt);  fprintf(f, ",");
+    F2H(e->kkt_threshold); fprintf(f, ",");
+    fprintf(f, "%lld,%lld,", (long long)e->kkt_check, (long long)e->can_adapt_rho);
+    F2H(e->eps_prim);      fprintf(f, ",");
+    F2H(e->eps_dual);      fprintf(f, ",");
+    fprintf(f, "%lld,%lld,%lld\n",
+            (long long)e->prim_check, (long long)e->dual_check,
+            (long long)e->terminated);
+  }
+
+  #undef F2H
+
+  fclose(f);
+  printf("[OSQP] Saved solve metadata sample_%lld (rho_updates=%lld, iter=%lld, admm_log=%lld)\n",
+         (long long)sample_id, (long long)rho_updates, (long long)iter, (long long)n_admm_log);
 }
 
 #ifdef OSQP_USE_LONG
@@ -913,11 +1102,12 @@ static OSQPInt LDL_factor(OSQPCscMatrix* A,
 
     // Factor matrix
     osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_NUM_FAC);
-    factor_status = QDLDL_factor(A->n, A->p, A->i, A->x,
+    factor_status = QDLDL_factor_right_looking(A->n, A->p, A->i, A->x,
                                  p->L->p, p->L->i, p->L->x,
                                  p->D, p->Dinv, p->Lnz,
                                  p->etree, p->bwork, p->iwork, p->fwork);
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_NUM_FAC);
+    g_solve_call_count = 0;  // Reset solve counter after factorization
 
 #ifdef QDLDL_ENABLE_SAMPLE_LOGGING
     // Store factor results for sample logging (will be saved on first solve)
@@ -1405,10 +1595,21 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
   OSQPInt    j;
   OSQPInt    n = s->n;
   OSQPInt    m = s->m;
+  OSQPInt    N = s->L->n;  // KKT dimension (n + m)
   OSQPFloat* bv = b->values;
 
   // Direct solver doesn't care about the ADMM iteration
   OSQP_UnusedVar(admm_iter);
+
+  // Determine sample_id and whether to save
+  OSQPInt sample_id = g_testcase_count - 1;
+  OSQPInt is_save_sample = (sample_id >= 0 &&
+                            (sample_id % SOLVE_TESTCASE_SAVE_INTERVAL == 0));
+  OSQPInt is_first_solve = (g_solve_call_count == 0);
+  OSQPInt save_intermediate = (sample_id == 0 && is_first_solve);
+  OSQPInt save_final = (is_save_sample && is_first_solve);
+
+  g_solve_call_count++;
 
   osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_SOLVE);
 
@@ -1418,12 +1619,64 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
     LDLSolve(bv, bv, s->L, s->Dinv, s->P, s->bp);
   } else {
 #endif
-    /* stores solution to the KKT system in s->sol */
+    if (save_intermediate) {
+      // === Sample 0, first solve: step-by-step with intermediate saves ===
+      OSQPFloat* bp = s->bp;
+
+      osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
+
+      // Permute input
+      for (j = 0; j < N; j++) bp[j] = bv[s->P[j]];
+
+      // Step 1: Lsolve
+      QDLDL_Lsolve(N, s->L->p, s->L->i, s->L->x, bp);
+      save_solve_intermediate(sample_id, "after_Lsolve", N, bp);
+
+      // Step 2: Dinv multiply
+      #ifdef OSQP_USE_TRUNCATE
+      {
+        int old_round = fegetround();
+        fesetround(FE_TOWARDZERO);
+        for (j = 0; j < N; j++) bp[j] = bp[j] * s->Dinv[j];
+        fesetround(old_round);
+      }
+      #else
+      for (j = 0; j < N; j++) bp[j] *= s->Dinv[j];
+      #endif
+      save_solve_intermediate(sample_id, "after_Dinv", N, bp);
+
+      // Step 3: Ltsolve
+      QDLDL_Ltsolve(N, s->L->p, s->L->i, s->L->x, bp);
+      save_solve_intermediate(sample_id, "after_Ltsolve", N, bp);
+
+      // Unpermute → s->sol
+      for (j = 0; j < N; j++) s->sol[s->P[j]] = bp[j];
+
+      osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
+
+      // Also save final solve result
+      save_solve_result(sample_id, N, bp);
+    } else if (save_final) {
+      // === Every 50th sample, first solve: normal solve + save result ===
+      OSQPFloat* bp = s->bp;
+
+      osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
+
+      for (j = 0; j < N; j++) bp[j] = bv[s->P[j]];
+      QDLDL_solve(N, s->L->p, s->L->i, s->L->x, s->Dinv, bp);
+      for (j = 0; j < N; j++) s->sol[s->P[j]] = bp[j];
+
+      osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
+
+      save_solve_result(sample_id, N, bp);
+    } else {
+      // === Normal path ===
 #ifdef QDLDL_ENABLE_SAMPLE_LOGGING
-    LDLSolve_with_logging(s->sol, bv, s);
+      LDLSolve_with_logging(s->sol, bv, s);
 #else
-    LDLSolve(s->sol, bv, s->L, s->Dinv, s->P, s->bp);
+      LDLSolve(s->sol, bv, s->L, s->Dinv, s->P, s->bp);
 #endif
+    }
 
     /* copy x_tilde from s->sol */
     for (j = 0 ; j < n ; j++) {
@@ -1469,10 +1722,11 @@ OSQPInt update_linsys_solver_matrices_qdldl(qdldl_solver*     s,
     update_KKT_A(s->KKT, A->csc, Ax_new_idx, A_new_n, s->AtoKKT);
 
     osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_NUM_FAC);
-    pos_D_count = QDLDL_factor(s->KKT->n, s->KKT->p, s->KKT->i, s->KKT->x,
+    pos_D_count = QDLDL_factor_right_looking(s->KKT->n, s->KKT->p, s->KKT->i, s->KKT->x,
         s->L->p, s->L->i, s->L->x, s->D, s->Dinv, s->Lnz,
         s->etree, s->bwork, s->iwork, s->fwork);
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_NUM_FAC);
+    g_solve_call_count = 0;  // Reset solve counter after refactorization
 
 #ifdef QDLDL_ENABLE_SAMPLE_LOGGING
     // Store factor results for sample logging (will be saved on first solve)
@@ -1523,10 +1777,11 @@ OSQPInt update_linsys_solver_rho_vec_qdldl(qdldl_solver*      s,
     update_KKT_param2(s->KKT, s->rho_inv_vec, s->rho_inv, s->rhotoKKT, s->m);
 
     osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_NUM_FAC);
-    retval = QDLDL_factor(s->KKT->n, s->KKT->p, s->KKT->i, s->KKT->x,
+    retval = QDLDL_factor_right_looking(s->KKT->n, s->KKT->p, s->KKT->i, s->KKT->x,
         s->L->p, s->L->i, s->L->x, s->D, s->Dinv, s->Lnz,
         s->etree, s->bwork, s->iwork, s->fwork);
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_NUM_FAC);
+    g_solve_call_count = 0;  // Reset solve counter after rho refactorization
 
 #ifdef QDLDL_ENABLE_SAMPLE_LOGGING
     // Store factor results for sample logging (will be saved on first solve)
@@ -1828,7 +2083,7 @@ OSQPInt adjoint_derivative_qdldl(qdldl_solver**     s,
         goto csc_alloc_fail;
     }
 
-    QDLDL_factor(An, adj_permuted->p, adj_permuted->i, adj_permuted->x, Lp, Li, Lx, D, Dinv, Lnz, etree, bwork, iwork, fwork);
+    QDLDL_factor_right_looking(An, adj_permuted->p, adj_permuted->i, adj_permuted->x, Lp, Li, Lx, D, Dinv, Lnz, etree, bwork, iwork, fwork);
 
     x = (QDLDL_float*)malloc(sizeof(QDLDL_float)*An);
     x_work = (QDLDL_float*)malloc(sizeof(QDLDL_float)*An);

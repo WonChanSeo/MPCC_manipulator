@@ -41,6 +41,52 @@ static OSQPFloat g_factorization_time = 0.0;
 void osqp_set_permutation_time(OSQPFloat time) { g_permutation_time = time; }
 void osqp_set_factorization_time(OSQPFloat time) { g_factorization_time = time; }
 
+// Solve metadata save (defined in qdldl_interface.c)
+extern void save_solve_metadata(OSQPInt sample_id, OSQPInt rho_updates, OSQPInt iter,
+                                 const OSQPInt* rho_update_iters,
+                                 const OSQPFloat* rho_update_old,
+                                 const OSQPFloat* rho_update_new,
+                                 OSQPInt n_rho_updates_logged,
+                                 const void* admm_log, OSQPInt n_admm_log);
+
+// Rho update history buffer (recorded during osqp_solve)
+#define MAX_RHO_UPDATE_LOG 64
+static OSQPInt   g_rho_log_iters[MAX_RHO_UPDATE_LOG];
+static OSQPFloat g_rho_log_old[MAX_RHO_UPDATE_LOG];
+static OSQPFloat g_rho_log_new[MAX_RHO_UPDATE_LOG];
+static OSQPInt   g_rho_log_count = 0;
+
+// ADMM iteration log buffer (recorded at each update_info call)
+#define MAX_ADMM_LOG 256
+typedef struct {
+  OSQPInt   iter;
+  OSQPFloat prim_res;
+  OSQPFloat dual_res;
+  OSQPFloat duality_gap;
+  OSQPFloat rel_kkt_error;
+  OSQPFloat rho;
+  // KKT-based rho adaptation check
+  OSQPFloat last_rel_kkt;     // last_rel_kkt at this point
+  OSQPFloat kkt_threshold;    // adaptive_rho_fraction * last_rel_kkt
+  OSQPInt   kkt_check;        // 1 if rel_kkt_error <= threshold
+  OSQPInt   can_adapt_rho;    // final can_adapt_rho decision
+  // Termination check
+  OSQPFloat eps_prim;
+  OSQPFloat eps_dual;
+  OSQPInt   prim_check;       // 1 if prim_res < eps_prim
+  OSQPInt   dual_check;       // 1 if dual_res < eps_dual
+  OSQPInt   terminated;       // 1 if solver terminated at this iter
+} admm_log_entry_t;
+
+static admm_log_entry_t g_admm_log[MAX_ADMM_LOG];
+
+// Termination check debug info (exported from auxil.c)
+extern OSQPFloat g_last_eps_prim;
+extern OSQPFloat g_last_eps_dual;
+extern OSQPInt   g_last_prim_check;
+extern OSQPInt   g_last_dual_check;
+static OSQPInt g_admm_log_count = 0;
+
 static void logging_signal_handler(int sig) {
   fprintf(stderr, "\nSignal %d received, closing log file...\n", sig);
   if (g_admm_log_file) {
@@ -1068,6 +1114,8 @@ OSQPInt osqp_setup(OSQPSolver**         solverp,
   work->rho_update_from_solve = 0;
 # endif /* ifdef OSQP_ENABLE_PROFILING */
   solver->info->rho_updates   = 0;                      // Rho updates set to 0
+  g_rho_log_count = 0;                                    // Reset rho update history
+  g_admm_log_count = 0;                                   // Reset ADMM iteration log
   solver->info->rho_estimate  = solver->settings->rho;  // Best rho estimate
   solver->info->obj_val       = OSQP_INFTY;
   solver->info->prim_res      = OSQP_INFTY;
@@ -1382,13 +1430,17 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     }
 
     // Check algorithm termination if desired
+    OSQPInt terminated_this_iter = 0;
     if (can_check_termination) {
       if (check_termination(solver, 0)) {
-        // Terminate algorithm
-        // printf("iteration : %d\n", iter);
-        break;
+        terminated_this_iter = 1;
       }
     }
+
+    // KKT check variables for logging
+    OSQPFloat logged_kkt_threshold = 0.0;
+    OSQPInt   logged_kkt_check = -1;  // -1 = not checked
+    OSQPInt   logged_can_adapt_rho = 0;
 
     work->rho_updated = 0;
 #if OSQP_EMBEDDED_MODE != 1 // ON
@@ -1400,6 +1452,8 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
         OSQPInt kkt_check = OSQPScalarf_le_FF(solver->info->rel_kkt_error, threshold);
         log_rho_debug(iter, "KKT_CHECK_FF", kkt_check, solver->info->rel_kkt_error, work->last_rel_kkt,
                       solver->info->rho_estimate, settings->rho);
+        logged_kkt_threshold = threshold;
+        logged_kkt_check = kkt_check;
         if(kkt_check) {
           can_adapt_rho = 1;
         }
@@ -1414,6 +1468,8 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
         OSQPInt kkt_check = (solver->info->rel_kkt_error <= threshold);
         log_rho_debug(iter, "KKT_CHECK", kkt_check, solver->info->rel_kkt_error, work->last_rel_kkt,
                       solver->info->rho_estimate, settings->rho);
+        logged_kkt_threshold = threshold;
+        logged_kkt_check = kkt_check;
         if(kkt_check) {
           can_adapt_rho = 1;
         }
@@ -1422,6 +1478,8 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
         }
       }
     #endif
+
+    logged_can_adapt_rho = can_adapt_rho;
 
     // Log before attempting rho update
     if(can_adapt_rho) {
@@ -1444,6 +1502,39 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     // Store the relative KKT error for the last update
     if(work->rho_updated) {
       work->last_rel_kkt = solver->info->rel_kkt_error;
+    }
+
+    // Record ADMM iteration log entry (only at iterations where update_info was called)
+    if ((can_check_termination || can_print || can_adapt_rho || iter == 1) &&
+        g_admm_log_count < MAX_ADMM_LOG) {
+      admm_log_entry_t* e = &g_admm_log[g_admm_log_count++];
+      e->iter          = iter;
+      e->prim_res      = solver->info->prim_res;
+      e->dual_res      = solver->info->dual_res;
+      e->duality_gap   = solver->info->duality_gap;
+      e->rel_kkt_error = solver->info->rel_kkt_error;
+      e->rho           = settings->rho;
+      e->last_rel_kkt  = work->last_rel_kkt;
+      e->kkt_threshold = logged_kkt_threshold;
+      e->kkt_check     = logged_kkt_check;
+      e->can_adapt_rho = logged_can_adapt_rho;
+      if (can_check_termination) {
+        e->eps_prim    = g_last_eps_prim;
+        e->eps_dual    = g_last_eps_dual;
+        e->prim_check  = g_last_prim_check;
+        e->dual_check  = g_last_dual_check;
+      } else {
+        e->eps_prim    = 0.0;
+        e->eps_dual    = 0.0;
+        e->prim_check  = -1;   // -1 = not checked this iter
+        e->dual_check  = -1;
+      }
+      e->terminated    = terminated_this_iter;
+    }
+
+    // Terminate algorithm if check_termination succeeded
+    if (terminated_this_iter) {
+      break;
     }
 
 #ifdef OSQP_ENABLE_PRINTING // ON
@@ -1574,6 +1665,15 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
   // Store solution
   store_solution(solver, solver->solution);
 
+  // Save solve metadata (rho_updates, iter, rho history) for ASIC testcase
+  {
+    OSQPInt sample_id = g_testcase_count - 1;
+    save_solve_metadata(sample_id, solver->info->rho_updates, solver->info->iter,
+                        g_rho_log_iters, g_rho_log_old, g_rho_log_new,
+                        g_rho_log_count,
+                        (const void*)g_admm_log, g_admm_log_count);
+  }
+
 // Define exit flag for quitting function
 #if defined(OSQP_ENABLE_PROFILING) || defined(OSQP_ENABLE_INTERRUPT) || OSQP_EMBEDDED_MODE != 1 // ON
 exit:
@@ -1610,6 +1710,14 @@ void osqp_set_log_filepath(const char* filepath) {
 
 void osqp_log_rho_update(OSQPInt iter, OSQPFloat rho_old, OSQPFloat rho_new) {
   log_rho_update(iter, rho_old, rho_new);
+
+  // Record to rho update history buffer
+  if (g_rho_log_count < MAX_RHO_UPDATE_LOG) {
+    g_rho_log_iters[g_rho_log_count] = iter;
+    g_rho_log_old[g_rho_log_count]   = rho_old;
+    g_rho_log_new[g_rho_log_count]   = rho_new;
+    g_rho_log_count++;
+  }
 }
 
 void osqp_log_rho_debug(OSQPInt iter, const char* event, OSQPInt can_adapt, OSQPFloat rel_kkt_error,
