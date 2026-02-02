@@ -853,6 +853,268 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
     return positiveValuesInD;
 }
 
+
+// ========================================================================
+// Right-looking LDL^T factorization (hardware bit-identical)
+// ========================================================================
+// Matches the ASIC factorization_top.v operation order exactly:
+//   - 658×179 dense SRAM model (rows 479-657, all 658 columns)
+//   - bank_sel mask on Phase 1 read and Phase 2 read/write
+//   - Separate mul + add (no FMA) via volatile
+//   - Sign-flip via XOR 0x80000000 (matches hardware)
+//   - D[j<380] uses -param_rho, D[j<479] uses -param_rho_eq
+//   - D[j>=479] uses reciprocal_nr_fma (fp32_div equivalent)
+// ========================================================================
+
+// Position (0-178) → bank number (0-20)
+//   pos 0-79:   bank = pos/8        (banks 0-9, 8 words each)
+//   pos 80-178: bank = 10+(pos-80)/9 (banks 10-20, 9 words each)
+static int pos_to_bank(int pos) {
+    if (pos < 80) return pos / 8;
+    return 10 + (pos - 80) / 9;
+}
+
+// Negate float via sign-bit XOR (matches hardware: value ^ 32'h80000000)
+static float negate_float_hw(float v) {
+    uint32_t u;
+    memcpy(&u, &v, 4);
+    u ^= 0x80000000u;
+    float r;
+    memcpy(&r, &u, 4);
+    return r;
+}
+
+QDLDL_int QDLDL_factor_right_looking(
+    const QDLDL_int n,
+    const QDLDL_int* Ap, const QDLDL_int* Ai, const QDLDL_float* Ax,
+    QDLDL_int* Lp, QDLDL_int* Li, QDLDL_float* Lx,
+    QDLDL_float* D, QDLDL_float* Dinv,
+    const QDLDL_int* Lnz, const QDLDL_int* etree,
+    QDLDL_bool* bwork, QDLDL_int* iwork, QDLDL_float* fwork,
+    float param_rho, float param_rho_eq)
+{
+    const int N  = (int)n;    // 658
+    const int NP = 179;       // SRAM positions per row (rows 479-657)
+    const int P0 = 479;       // first SRAM row index
+
+    QDLDL_int positiveValuesInD = 0;
+    QDLDL_int i, k, p;
+    int j, m;
+
+    // Precompute bank for each of the 179 positions (avoids repeated div/mod)
+    int pos_bank[179];
+    for (m = 0; m < NP; m++)
+        pos_bank[m] = pos_to_bank(m);
+
+    // ================================================================
+    // Step 1: Compute L structural pattern (Li, Lp) from etree
+    //         (identical logic to QDLDL_factor's structural phase)
+    // ================================================================
+    {
+        QDLDL_bool* yMarkers       = bwork;
+        QDLDL_int*  yIdx           = iwork;
+        QDLDL_int*  elimBuffer     = iwork + n;
+        QDLDL_int*  LNextSpaceInCol = iwork + 2 * n;
+
+        Lp[0] = 0;
+        for (i = 0; i < n; i++) {
+            Lp[i + 1] = Lp[i] + Lnz[i];
+            yMarkers[i]        = QDLDL_UNUSED;
+            LNextSpaceInCol[i] = Lp[i];
+        }
+
+        for (k = 1; k < n; k++) {
+            QDLDL_int nnzY = 0;
+            for (p = Ap[k]; p < Ap[k + 1]; p++) {
+                QDLDL_int bidx = Ai[p];
+                if (bidx == k) continue;
+
+                QDLDL_int nxt = bidx;
+                if (yMarkers[nxt] == QDLDL_UNUSED) {
+                    yMarkers[nxt] = QDLDL_USED;
+                    QDLDL_int nnzE = 1;
+                    elimBuffer[0] = nxt;
+                    nxt = etree[bidx];
+                    while (nxt != QDLDL_UNKNOWN && nxt < k) {
+                        if (yMarkers[nxt] == QDLDL_USED) break;
+                        yMarkers[nxt] = QDLDL_USED;
+                        elimBuffer[nnzE++] = nxt;
+                        nxt = etree[nxt];
+                    }
+                    while (nnzE) yIdx[nnzY++] = elimBuffer[--nnzE];
+                }
+            }
+            for (i = nnzY - 1; i >= 0; i--) {
+                QDLDL_int cidx = yIdx[i];
+                Li[LNextSpaceInCol[cidx]] = k;
+                LNextSpaceInCol[cidx]++;
+                yMarkers[cidx] = QDLDL_UNUSED;
+            }
+        }
+    }
+
+    // ================================================================
+    // Step 2: Compute bank_sel per column from L fill-in pattern
+    //   For each column j, set bit b in bank_sel if L[:,j] has any
+    //   nonzero at a row that maps to bank b.
+    // ================================================================
+    uint32_t* bsel = (uint32_t*)calloc(n, sizeof(uint32_t));
+    if (!bsel) return -1;
+
+    for (j = 0; j < N; j++) {
+        for (p = Lp[j]; p < Lp[j + 1]; p++) {
+            QDLDL_int row = Li[p];
+            if (row < P0 || row > 657) continue;
+            bsel[j] |= (1u << pos_bank[(int)(row - P0)]);
+        }
+        // Include diagonal position for j >= 479
+        if (j >= P0)
+            bsel[j] |= (1u << pos_bank[j - P0]);
+    }
+
+    // ================================================================
+    // Step 3: Allocate and initialize dense SRAM model
+    //   dense[col * NP + m] = A_full[P0 + m, col]
+    //   Uses symmetry: A[r,c] (upper tri CSC) also gives A[c,r].
+    // ================================================================
+    float* dense  = (float*)calloc((size_t)N * NP, sizeof(float));
+    float* a_diag = (float*)calloc(N, sizeof(float));
+    float* cj     = (float*)calloc(NP, sizeof(float));  // col_j_buf (original)
+    float* sj     = (float*)calloc(NP, sizeof(float));  // scaled_col_j (L[:,j])
+
+    if (!dense || !a_diag || !cj || !sj) {
+        free(bsel); free(dense); free(a_diag); free(cj); free(sj);
+        return -1;
+    }
+
+    for (QDLDL_int c = 0; c < n; c++) {
+        for (p = Ap[c]; p < Ap[c + 1]; p++) {
+            QDLDL_int r = Ai[p];
+            float val = (float)Ax[p];
+
+            if (r == c) a_diag[c] = val;
+
+            // Upper-triangle entry A[r,c] with r <= c
+            // → dense[c][r-P0] if r in SRAM range
+            if (r >= P0 && r <= 657)
+                dense[c * NP + (int)(r - P0)] = val;
+
+            // Symmetric counterpart A[c,r]
+            // → dense[r][c-P0] if c in SRAM range
+            if (c >= P0 && c <= 657 && r != c)
+                dense[(int)r * NP + (int)(c - P0)] = val;
+        }
+    }
+
+    // ================================================================
+    // Step 4: Right-looking factorization (matches hardware FSM)
+    //
+    //   For each column j = 0..657:
+    //     Phase 1: Read col j (masked), extract D[j], scale → L[:,j]
+    //     Phase 2: For k = k_start..657:
+    //              dense[k][m] += (-L[k,j]) * col_j_original[m]
+    // ================================================================
+#ifdef OSQP_USE_TRUNCATE
+    int saved_round = fegetround();
+    fesetround(FE_TOWARDZERO);
+#endif
+
+    for (j = 0; j < N; j++) {
+        uint32_t bs = bsel[j];
+
+        // --- Phase 1: Masked read of SRAM row j → cj[] ---
+        // Non-selected banks read as zero (hardware: bank_data_cap cleared)
+        for (m = 0; m < NP; m++)
+            cj[m] = ((bs >> pos_bank[m]) & 1) ? dense[j * NP + m] : 0.0f;
+
+        // --- Phase 1: D[j] and Dinv[j] ---
+        float dj, djinv;
+        if (j < 380) {
+            dj    = a_diag[j];
+            djinv = negate_float_hw(param_rho);      // hardware: param_rho ^ 32'h80000000
+        } else if (j < P0) {
+            dj    = a_diag[j];
+            djinv = negate_float_hw(param_rho_eq);   // hardware: param_rho_eq ^ 32'h80000000
+        } else {
+            dj    = cj[j - P0];                      // diagonal from SRAM data
+            djinv = reciprocal_nr_fma(dj);            // hardware: fp32_div(1.0, D[j])
+        }
+
+        D[j]    = (QDLDL_float)dj;
+        Dinv[j] = (QDLDL_float)djinv;
+
+        if (dj == 0.0f) {
+            free(bsel); free(dense); free(a_diag); free(cj); free(sj);
+#ifdef OSQP_USE_TRUNCATE
+            fesetround(saved_round);
+#endif
+            return -1;
+        }
+        if (dj > 0.0f) positiveValuesInD++;
+
+        // --- Phase 1: Scale col_j by Dinv → L[:,j] ---
+        // Hardware PE: A*B+0 where A=cj[m], B=djinv broadcast
+        for (m = 0; m < NP; m++) {
+            volatile float prod = cj[m] * djinv;
+            sj[m] = prod;
+        }
+
+        // --- Phase 1: Write-back scaled L[:,j] to dense (ST_P1_SCALE_CAP) ---
+        for (m = 0; m < NP; m++) {
+            if ((bs >> pos_bank[m]) & 1)
+                dense[j * NP + m] = sj[m];
+        }
+
+        // --- Phase 2: Pipelined rank-1 update ---
+        // Hardware: k_start = (col_j >= 479) ? col_j+1 : 479
+        // PE: result[m] = (-L[k,j]) * col_j_original[m] + row_k[m]
+        // Write only to bank_sel[j] positions
+        int ks = (j >= P0) ? (j + 1) : P0;
+
+        for (k = ks; k < N; k++) {
+            int kp = (int)(k - P0);              // position of row k (0-178)
+            float lkj     = sj[kp];              // L[k,j] from scaled column
+            float neg_lkj = negate_float_hw(lkj); // hardware: lkj_value ^ 32'h80000000
+
+            for (m = 0; m < NP; m++) {
+                if (!((bs >> pos_bank[m]) & 1)) continue;
+                // Hardware PE: A*B+C = neg_lkj * cj[m] + dense[k][m]
+                volatile float prod = neg_lkj * cj[m];
+                dense[k * NP + m] = dense[k * NP + m] + prod;
+            }
+        }
+    }
+
+#ifdef OSQP_USE_TRUNCATE
+    fesetround(saved_round);
+#endif
+
+    // ================================================================
+    // Step 5: Extract Lx from dense array using Li pattern
+    //   All Li entries have row >= P0 (KKT structure guarantees this)
+    // ================================================================
+    for (j = 0; j < N; j++) {
+        for (p = Lp[j]; p < Lp[j + 1]; p++) {
+            QDLDL_int row = Li[p];
+            Lx[p] = (QDLDL_float)dense[j * NP + (int)(row - P0)];
+        }
+    }
+
+    // ================================================================
+    // Step 6: Cleanup + CSR conversion for Lsolve/Ltsolve
+    // ================================================================
+    free(bsel);
+    free(dense);
+    free(a_diag);
+    free(cj);
+    free(sj);
+
+    convert_csc_to_csr(n, Lp, Li, Lx);
+
+    return positiveValuesInD;
+}
+
+
 // Solves (L+I)x = b
 // CSR 포맷 사용 + Adder tree로 row별 연산
 // (L+I)x = b => x_i = b_i - sum_j(L_ij * x_j) for j < i
