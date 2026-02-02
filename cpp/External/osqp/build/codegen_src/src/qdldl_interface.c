@@ -29,6 +29,12 @@
 #include <inttypes.h>
 #include <fenv.h>
 
+#if defined(OSQP_USE_TRUNCATE)
+  #define OSQP_ROUNDING_MODE FE_TOWARDZERO
+#elif defined(OSQP_USE_ROUND_TO_EVEN)
+  #define OSQP_ROUNDING_MODE FE_TONEAREST
+#endif
+
 // External timing setter functions (defined in osqp_api.c)
 extern void osqp_set_permutation_time(OSQPFloat time);
 extern void osqp_set_factorization_time(OSQPFloat time);
@@ -1606,7 +1612,12 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
   OSQPInt is_save_sample = (sample_id >= 0 &&
                             (sample_id % SOLVE_TESTCASE_SAVE_INTERVAL == 0));
   OSQPInt is_first_solve = (g_solve_call_count == 0);
-  OSQPInt save_intermediate = (sample_id == 0 && is_first_solve);
+
+  // Use static flag to ensure intermediate saves happen only once per QP
+  // (prevents overwriting by rho update refactorizations that reset g_solve_call_count)
+  static OSQPInt s_intermediate_saved = 0;
+  if (sample_id != 0) s_intermediate_saved = 0;  // reset for next QP
+  OSQPInt save_intermediate = (sample_id == 0 && is_first_solve && !s_intermediate_saved);
   OSQPInt save_final = (is_save_sample && is_first_solve);
 
   g_solve_call_count++;
@@ -1621,6 +1632,8 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
 #endif
     if (save_intermediate) {
       // === Sample 0, first solve: step-by-step with intermediate saves ===
+      // This runs only once per QP (guarded by s_intermediate_saved)
+      s_intermediate_saved = 1;
       OSQPFloat* bp = s->bp;
 
       osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
@@ -1633,10 +1646,10 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
       save_solve_intermediate(sample_id, "after_Lsolve", N, bp);
 
       // Step 2: Dinv multiply
-      #ifdef OSQP_USE_TRUNCATE
+      #ifdef OSQP_ROUNDING_MODE
       {
         int old_round = fegetround();
-        fesetround(FE_TOWARDZERO);
+        fesetround(OSQP_ROUNDING_MODE);
         for (j = 0; j < N; j++) bp[j] = bp[j] * s->Dinv[j];
         fesetround(old_round);
       }

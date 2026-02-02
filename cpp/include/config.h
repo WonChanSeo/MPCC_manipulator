@@ -82,8 +82,11 @@ static const std::string pkg_path =  std::string(BUILD_DIRECTORY) + "/";
 struct BuildOptions {
     bool osqp_use_float;
     bool osqp_use_truncate;
+    bool osqp_use_round_to_even;
     bool nn_use_truncate;
+    bool nn_use_round_to_even;
     bool constraints_use_truncate;
+    bool constraints_use_round_to_even;
     bool ffp_contract_off;
 
     static BuildOptions get() {
@@ -100,16 +103,34 @@ struct BuildOptions {
             opts.osqp_use_truncate = false;
         #endif
 
+        #ifdef OSQP_USE_ROUND_TO_EVEN
+            opts.osqp_use_round_to_even = true;
+        #else
+            opts.osqp_use_round_to_even = false;
+        #endif
+
         #ifdef NN_USE_TRUNCATE
             opts.nn_use_truncate = true;
         #else
             opts.nn_use_truncate = false;
         #endif
 
+        #ifdef NN_USE_ROUND_TO_EVEN
+            opts.nn_use_round_to_even = true;
+        #else
+            opts.nn_use_round_to_even = false;
+        #endif
+
         #ifdef CONSTRAINTS_USE_TRUNCATE
             opts.constraints_use_truncate = true;
         #else
             opts.constraints_use_truncate = false;
+        #endif
+
+        #ifdef CONSTRAINTS_USE_ROUND_TO_EVEN
+            opts.constraints_use_round_to_even = true;
+        #else
+            opts.constraints_use_round_to_even = false;
         #endif
 
         // -ffp-contract=off is a compile flag, we mark it as enabled

@@ -355,9 +355,12 @@ OSQP_USE_HALF:BOOL=OFF
 //Use long integers (64bit) for indexing
 OSQP_USE_LONG:BOOL=ON
 
+//Enable round-to-nearest-even mode (same code structure as truncation)
+OSQP_USE_ROUND_TO_EVEN:BOOL=ON
+
 //Enable truncation mode for OSQP/QDLDL (use truncation instead
 // of rounding)
-OSQP_USE_TRUNCATE:BOOL=ON
+OSQP_USE_TRUNCATE:BOOL=OFF
 
 //The version number of OSQP
 OSQP_VERSION:STRING=0.0.0

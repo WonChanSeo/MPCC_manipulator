@@ -11,17 +11,27 @@ OSQP_USE_FLOAT=ON
 # Truncate Mode Configuration
 # ========================================
 # Truncation mode enabled for all components - hardcoded ON
-OSQP_USE_TRUNCATE=ON
-NN_USE_TRUNCATE=ON
-CONSTRAINTS_USE_TRUNCATE=ON
+OSQP_USE_TRUNCATE=OFF
+NN_USE_TRUNCATE=OFF
+CONSTRAINTS_USE_TRUNCATE=OFF
+
+# ========================================
+# Round-to-Nearest-Even Mode Configuration
+# ========================================
+# Set *_ROUND_TO_EVEN=ON to use round-to-nearest-even instead of truncation
+# (same code structure as truncation, only rounding mode differs)
+# NOTE: TRUNCATE and ROUND_TO_EVEN are mutually exclusive for each component
+OSQP_USE_ROUND_TO_EVEN=ON
+NN_USE_ROUND_TO_EVEN=ON
+CONSTRAINTS_USE_ROUND_TO_EVEN=ON
 
 # ========================================
 # QDLDL Sample Logging Configuration
 # ========================================
 # Set QDLDL_ENABLE_SAMPLE_LOGGING=ON to save QDLDL samples for precision analysis
 # Samples will be saved to QDLDL_SAMPLE_OUTPUT_DIR
-QDLDL_ENABLE_SAMPLE_LOGGING=${QDLDL_ENABLE_SAMPLE_LOGGING:-OFF}
-QDLDL_SAMPLE_OUTPUT_DIR=${QDLDL_SAMPLE_OUTPUT_DIR:-"../../result/qdldl_samples"}
+QDLDL_ENABLE_SAMPLE_LOGGING=OFF
+QDLDL_SAMPLE_OUTPUT_DIR="../../result/qdldl_samples"
 
 echo "========================================="
 echo "Build Configuration:"
@@ -32,6 +42,10 @@ echo "  Truncate Mode:"
 echo "    OSQP_USE_TRUNCATE:        $OSQP_USE_TRUNCATE"
 echo "    NN_USE_TRUNCATE:          $NN_USE_TRUNCATE"
 echo "    CONSTRAINTS_USE_TRUNCATE: $CONSTRAINTS_USE_TRUNCATE"
+echo "  Round-to-Even Mode:"
+echo "    OSQP_USE_ROUND_TO_EVEN:          $OSQP_USE_ROUND_TO_EVEN"
+echo "    NN_USE_ROUND_TO_EVEN:            $NN_USE_ROUND_TO_EVEN"
+echo "    CONSTRAINTS_USE_ROUND_TO_EVEN:   $CONSTRAINTS_USE_ROUND_TO_EVEN"
 echo ""
 echo "  QDLDL Sample Logging:"
 echo "    QDLDL_ENABLE_SAMPLE_LOGGING: $QDLDL_ENABLE_SAMPLE_LOGGING"
@@ -49,6 +63,7 @@ cd build
 cmake .. \
     -DOSQP_USE_FLOAT=$OSQP_USE_FLOAT \
     -DOSQP_USE_TRUNCATE=$OSQP_USE_TRUNCATE \
+    -DOSQP_USE_ROUND_TO_EVEN=$OSQP_USE_ROUND_TO_EVEN \
     -DQDLDL_ENABLE_SAMPLE_LOGGING=$QDLDL_ENABLE_SAMPLE_LOGGING \
     -DCMAKE_INSTALL_PREFIX=$(realpath ../lib)
 make
@@ -96,8 +111,11 @@ cd build
 cmake .. \
     -DOSQP_USE_FLOAT=$OSQP_USE_FLOAT \
     -DOSQP_USE_TRUNCATE=$OSQP_USE_TRUNCATE \
+    -DOSQP_USE_ROUND_TO_EVEN=$OSQP_USE_ROUND_TO_EVEN \
     -DNN_USE_TRUNCATE=$NN_USE_TRUNCATE \
+    -DNN_USE_ROUND_TO_EVEN=$NN_USE_ROUND_TO_EVEN \
     -DCONSTRAINTS_USE_TRUNCATE=$CONSTRAINTS_USE_TRUNCATE \
+    -DCONSTRAINTS_USE_ROUND_TO_EVEN=$CONSTRAINTS_USE_ROUND_TO_EVEN \
     -DQDLDL_ENABLE_SAMPLE_LOGGING=$QDLDL_ENABLE_SAMPLE_LOGGING
 make -j8
 

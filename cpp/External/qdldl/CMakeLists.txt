@@ -210,6 +210,20 @@ if( QDLDL_ENABLE_SAMPLE_LOGGING )
     target_compile_definitions(qdldlobject PRIVATE QDLDL_ENABLE_SAMPLE_LOGGING)
 endif()
 
+# Add truncation mode compile definition if enabled
+option( OSQP_USE_TRUNCATE "Enable truncation mode (use truncation instead of rounding)" OFF )
+if( OSQP_USE_TRUNCATE )
+    target_compile_definitions(qdldlobject PRIVATE OSQP_USE_TRUNCATE)
+    message(STATUS "QDLDL truncation mode enabled for qdldlobject")
+endif()
+
+# Add round-to-even mode compile definition if enabled
+option( OSQP_USE_ROUND_TO_EVEN "Enable round-to-nearest-even mode (same code structure as truncation)" OFF )
+if( OSQP_USE_ROUND_TO_EVEN )
+    target_compile_definitions(qdldlobject PRIVATE OSQP_USE_ROUND_TO_EVEN)
+    message(STATUS "QDLDL round-to-nearest-even mode enabled for qdldlobject")
+endif()
+
 
 # Create Static Library
 # ----------------------------------------------

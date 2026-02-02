@@ -1,7 +1,7 @@
 [
 {
   "directory": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/_deps/qdldl-build",
-  "command": "/usr/bin/cc  -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/_deps/qdldl-build/include  -ffp-contract=off -O3 -O3 -fPIC -o CMakeFiles/qdldlobject.dir/src/qdldl.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/src/qdldl.c",
+  "command": "/usr/bin/cc -DOSQP_USE_ROUND_TO_EVEN -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/include -I/home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/build/_deps/qdldl-build/include  -ffp-contract=off -O3 -O3 -fPIC -o CMakeFiles/qdldlobject.dir/src/qdldl.c.o -c /home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/src/qdldl.c",
   "file": "/home/mms-wonchan/git/MPCC_manipulator/cpp/External/qdldl/src/qdldl.c"
 }
 ]

@@ -9,6 +9,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 # OSQP build options (for BuildOptions struct in config.h)
 option(OSQP_USE_FLOAT "OSQP uses single precision float (mirrors OSQP build)" OFF)
 option(OSQP_USE_TRUNCATE "OSQP uses truncation mode (mirrors OSQP build)" OFF)
+option(OSQP_USE_ROUND_TO_EVEN "OSQP uses round-to-nearest-even mode (same structure as truncation)" OFF)
 
 if(OSQP_USE_FLOAT)
   message(STATUS "OSQP float mode: ON")
@@ -20,6 +21,11 @@ if(OSQP_USE_TRUNCATE)
   add_definitions(-DOSQP_USE_TRUNCATE)
 endif()
 
+if(OSQP_USE_ROUND_TO_EVEN)
+  message(STATUS "OSQP round-to-nearest-even mode: ON")
+  add_definitions(-DOSQP_USE_ROUND_TO_EVEN)
+endif()
+
 # QDLDL Sample Logging option (inherited from OSQP build)
 option(QDLDL_ENABLE_SAMPLE_LOGGING "Enable QDLDL sample data logging" OFF)
 if(QDLDL_ENABLE_SAMPLE_LOGGING)
@@ -29,16 +35,28 @@ endif()
 
 # Truncate mode options (use truncation instead of rounding for float operations)
 option(NN_USE_TRUNCATE "Enable truncation mode for NN inference" OFF)
+option(NN_USE_ROUND_TO_EVEN "Enable round-to-nearest-even mode for NN inference" OFF)
 option(CONSTRAINTS_USE_TRUNCATE "Enable truncation mode for constraints (getEnvcollConstraint)" OFF)
+option(CONSTRAINTS_USE_ROUND_TO_EVEN "Enable round-to-nearest-even mode for constraints" OFF)
 
 if(NN_USE_TRUNCATE)
   message(STATUS "NN truncation mode: ON")
   add_definitions(-DNN_USE_TRUNCATE)
 endif()
 
+if(NN_USE_ROUND_TO_EVEN)
+  message(STATUS "NN round-to-nearest-even mode: ON")
+  add_definitions(-DNN_USE_ROUND_TO_EVEN)
+endif()
+
 if(CONSTRAINTS_USE_TRUNCATE)
   message(STATUS "Constraints truncation mode: ON")
   add_definitions(-DCONSTRAINTS_USE_TRUNCATE)
+endif()
+
+if(CONSTRAINTS_USE_ROUND_TO_EVEN)
+  message(STATUS "Constraints round-to-nearest-even mode: ON")
+  add_definitions(-DCONSTRAINTS_USE_ROUND_TO_EVEN)
 endif()
 
 list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/External/Eigen/cmake")

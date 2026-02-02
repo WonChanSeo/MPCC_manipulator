@@ -5,8 +5,14 @@
 #include <sys/stat.h>
 #include <cstring>
 
-#ifdef NN_USE_TRUNCATE
+#if defined(NN_USE_TRUNCATE) || defined(NN_USE_ROUND_TO_EVEN)
 #include <cfenv>
+#endif
+
+#if defined(NN_USE_TRUNCATE)
+  #define NN_ROUNDING_MODE FE_TOWARDZERO
+#elif defined(NN_USE_ROUND_TO_EVEN)
+  #define NN_ROUNDING_MODE FE_TONEAREST
 #endif
 
 namespace mpcc
@@ -94,7 +100,7 @@ namespace mpcc
             next.reserve(current.size() / 2);
             for (size_t i = 0; i < current.size(); i += 2) {
                 float sum = current[i] + current[i + 1];
-#ifdef NN_USE_TRUNCATE
+#ifdef NN_ROUNDING_MODE
                 // volatile로 메모리에 강제 저장하여 truncate 적용
                 volatile float truncated = sum;
                 float truncated_val = truncated;
@@ -121,7 +127,7 @@ namespace mpcc
         // Stage 1: 모든 곱셈을 병렬로 수행
         for (int i = 0; i < n; ++i) {
             float prod = weight_row(i) * input(i);
-#ifdef NN_USE_TRUNCATE
+#ifdef NN_ROUNDING_MODE
             volatile float truncated = prod;
             products[i] = truncated;
 #else
@@ -135,12 +141,12 @@ namespace mpcc
 
         // Method A: bias + chunk0 -> truncate -> + chunk1 -> truncate
         float result = bias + chunk_sum_0;
-#ifdef NN_USE_TRUNCATE
+#ifdef NN_ROUNDING_MODE
         volatile float truncated_1 = result;
         result = truncated_1;
 #endif
         result = result + chunk_sum_1;
-#ifdef NN_USE_TRUNCATE
+#ifdef NN_ROUNDING_MODE
         volatile float truncated_2 = result;
         result = truncated_2;
 #endif
@@ -367,9 +373,9 @@ namespace mpcc
 
     std::pair<Eigen::VectorXd, Eigen::MatrixXd> EnvCollNNmodel::calculateMlpOutput(Eigen::VectorXd input, bool time_verbose)
     {
-#ifdef NN_USE_TRUNCATE
+#ifdef NN_ROUNDING_MODE
         int old_round = std::fegetround();
-        std::fesetround(FE_TOWARDZERO);
+        std::fesetround(NN_ROUNDING_MODE);
 #endif
 
         // FP32 연산용 임시 변수들
@@ -760,7 +766,7 @@ namespace mpcc
         }
 
         // Convert output from float to double for interface compatibility
-#ifdef NN_USE_TRUNCATE
+#ifdef NN_ROUNDING_MODE
         std::fesetround(old_round);
 #endif
         return std::make_pair(output_f.cast<double>(), output_derivative_f.cast<double>());
@@ -782,14 +788,14 @@ namespace mpcc
 
     std::pair<Eigen::VectorXd, Eigen::MatrixXd> EnvCollNNmodel::calculateMlpOutputBatch(const Eigen::MatrixXd& inputs, bool time_verbose)
     {
-#ifdef NN_USE_TRUNCATE
+#ifdef NN_ROUNDING_MODE
         int old_round_batch = std::fegetround();
-        std::fesetround(FE_TOWARDZERO);
+        std::fesetround(NN_ROUNDING_MODE);
 #endif
 
         const int batch_size = inputs.cols();
         if (batch_size == 0) {
-#ifdef NN_USE_TRUNCATE
+#ifdef NN_ROUNDING_MODE
             std::fesetround(old_round_batch);
 #endif
             return {Eigen::VectorXd(), Eigen::MatrixXd()};
@@ -1082,7 +1088,7 @@ namespace mpcc
         */
 
         // Convert output from float to double for interface compatibility
-#ifdef NN_USE_TRUNCATE
+#ifdef NN_ROUNDING_MODE
         std::fesetround(old_round_batch);
 #endif
         return std::make_pair(mlp_.final_min_output.cast<double>(), mlp_.final_min_jacobian.cast<double>());

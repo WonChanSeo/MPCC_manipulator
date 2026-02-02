@@ -16,8 +16,14 @@
 
 #include "Constraints/constraints.h"
 
-#ifdef CONSTRAINTS_USE_TRUNCATE
+#if defined(CONSTRAINTS_USE_TRUNCATE) || defined(CONSTRAINTS_USE_ROUND_TO_EVEN)
 #include <cfenv>
+#endif
+
+#if defined(CONSTRAINTS_USE_TRUNCATE)
+  #define CONSTRAINTS_ROUNDING_MODE FE_TOWARDZERO
+#elif defined(CONSTRAINTS_USE_ROUND_TO_EVEN)
+  #define CONSTRAINTS_ROUNDING_MODE FE_TONEAREST
 #endif
 
 namespace mpcc{
@@ -415,9 +421,9 @@ void Constraints::getSingularConstraint(const State &x,const Input &u,const Robo
 void Constraints::getEnvcollConstraint(const State &x,const Input &u,const RobotData &rb,int k,
                                        XDConstraintInfo *constraint, XDConstraintsJac* Jac)
 {
-#ifdef CONSTRAINTS_USE_TRUNCATE
+#ifdef CONSTRAINTS_ROUNDING_MODE
     int old_round_envcoll = std::fegetround();
-    std::fesetround(FE_TOWARDZERO);
+    std::fesetround(CONSTRAINTS_ROUNDING_MODE);
 #endif
 
     // compute environment-collision constraints
@@ -458,7 +464,7 @@ void Constraints::getEnvcollConstraint(const State &x,const Input &u,const Robot
         }
     }
 
-#ifdef CONSTRAINTS_USE_TRUNCATE
+#ifdef CONSTRAINTS_ROUNDING_MODE
     std::fesetround(old_round_envcoll);
 #endif
     return;

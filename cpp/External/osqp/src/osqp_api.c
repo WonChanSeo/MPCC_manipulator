@@ -21,9 +21,15 @@
 #include <string.h>
 #include <stdint.h>
 
-// Truncation mode support
-#ifdef OSQP_USE_TRUNCATE
+// Rounding mode support
+#if defined(OSQP_USE_TRUNCATE) || defined(OSQP_USE_ROUND_TO_EVEN)
 #include <fenv.h>
+#endif
+
+#if defined(OSQP_USE_TRUNCATE)
+  #define OSQP_ROUNDING_MODE FE_TOWARDZERO
+#elif defined(OSQP_USE_ROUND_TO_EVEN)
+  #define OSQP_ROUNDING_MODE FE_TONEAREST
 #endif
 
 static FILE* g_admm_log_file = NULL;
@@ -1197,10 +1203,10 @@ OSQPInt osqp_solve(OSQPSolver *solver) {
 
   printf("Starting solver...\n");
 
-#ifdef OSQP_USE_TRUNCATE
-  // Save old rounding mode and set to truncation (toward zero)
+#ifdef OSQP_ROUNDING_MODE
+  // Save old rounding mode and set explicit rounding
   int old_round_mode = fegetround();
-  fesetround(FE_TOWARDZERO);
+  fesetround(OSQP_ROUNDING_MODE);
 #endif
 
   OSQPInt exitflag;
@@ -1691,7 +1697,7 @@ exit:
 
   printf("Solver finished.\n");
 
-#ifdef OSQP_USE_TRUNCATE
+#ifdef OSQP_ROUNDING_MODE
   // Restore old rounding mode
   fesetround(old_round_mode);
 #endif

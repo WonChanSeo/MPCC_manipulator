@@ -90,8 +90,12 @@ _deps/qdldl-build/CMakeFiles/qdldlobject.dir/src/qdldl.c.o: /home/mms-wonchan/gi
   /usr/include/alloca.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
-  /usr/include/x86_64-linux-gnu/bits/stdlib.h
+  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+  /usr/include/fenv.h \
+  /usr/include/x86_64-linux-gnu/bits/fenv.h
 
+
+/usr/include/fenv.h:
 
 /usr/include/alloca.h:
 
@@ -118,6 +122,8 @@ _deps/qdldl-build/CMakeFiles/qdldlobject.dir/src/qdldl.c.o: /home/mms-wonchan/gi
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
 /usr/include/stdlib.h:
+
+/usr/include/x86_64-linux-gnu/bits/fenv.h:
 
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:
 

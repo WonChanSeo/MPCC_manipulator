@@ -29,8 +29,18 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef OSQP_USE_TRUNCATE
+#if defined(OSQP_USE_TRUNCATE) || defined(OSQP_USE_ROUND_TO_EVEN)
 #include <fenv.h>
+#endif
+
+/* Unified rounding mode macro:
+ *   OSQP_USE_TRUNCATE     → FE_TOWARDZERO
+ *   OSQP_USE_ROUND_TO_EVEN → FE_TONEAREST
+ */
+#if defined(OSQP_USE_TRUNCATE)
+  #define OSQP_ROUNDING_MODE FE_TOWARDZERO
+#elif defined(OSQP_USE_ROUND_TO_EVEN)
+  #define OSQP_ROUNDING_MODE FE_TONEAREST
 #endif
 
 #define QDLDL_UNKNOWN (-1)
@@ -154,8 +164,8 @@ static QDLDL_float adder_tree_sum_qdldl(QDLDL_float* buffer, QDLDL_int count) {
         QDLDL_int half = current_size / 2;
         for (QDLDL_int i = 0; i < half; i++) {
             QDLDL_float sum = buffer[2*i] + buffer[2*i + 1];
-#ifdef OSQP_USE_TRUNCATE
-            // truncate는 fesetround(FE_TOWARDZERO)로 이미 설정됨
+#ifdef OSQP_ROUNDING_MODE
+            // rounding mode는 fesetround(OSQP_ROUNDING_MODE)로 이미 설정됨
             volatile QDLDL_float truncated = sum;
             buffer[i] = truncated;
 #else
@@ -201,7 +211,7 @@ static QDLDL_int* g_pending_Lnz = NULL;
 
 // Get precision string based on build configuration
 static const char* get_precision_string(void) {
-#ifdef OSQP_USE_TRUNCATE
+#ifdef OSQP_ROUNDING_MODE
     return "truncate";
 #else
     // Standard precision based on QDLDL_float type
@@ -399,7 +409,7 @@ static void write_sample_metadata(const char* filepath, QDLDL_int n, QDLDL_int n
     fprintf(f, "sizeof_int=%zu\n", sizeof(QDLDL_int));
     fprintf(f, "sizeof_float=%zu\n", sizeof(QDLDL_float));
     fprintf(f, "precision=%s\n", get_precision_string());
-#ifdef OSQP_USE_TRUNCATE
+#ifdef OSQP_ROUNDING_MODE
     fprintf(f, "truncate=ON\n");
 #else
     fprintf(f, "truncate=OFF\n");
@@ -494,11 +504,11 @@ static inline float init_reciprocal(float d) {
     return u.f;
 }
 
-#ifdef OSQP_USE_TRUNCATE
+#ifdef OSQP_ROUNDING_MODE
 // Truncate version: use actual division with truncation (toward zero)
 float reciprocal_nr_fma(float d) {
     int old_round = fegetround();
-    fesetround(FE_TOWARDZERO);
+    fesetround(OSQP_ROUNDING_MODE);
 
     // Use actual division instead of Newton-Raphson MAC
     volatile float result = 1.0f / d;
@@ -767,10 +777,10 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
             tmpIdx = LNextSpaceInCol[cidx];
             yVals_cidx = yVals[cidx];
 
-            #ifdef OSQP_USE_TRUNCATE
+            #ifdef OSQP_ROUNDING_MODE
             // Truncate version: mul/add with truncation (toward zero)
             int old_round_factor = fegetround();
-            fesetround(FE_TOWARDZERO);
+            fesetround(OSQP_ROUNDING_MODE);
 
             for(j = Lp[cidx]; j < tmpIdx; j++) {
                 // yVals[Li[j]] -= Lx[j] * yVals_cidx;
@@ -894,6 +904,19 @@ QDLDL_int QDLDL_factor_right_looking(
     QDLDL_int positiveValuesInD = 0;
     QDLDL_int i, j, k, p;
 
+    // D update debug log file (first KKT-sized factorization only)
+    static int s_kkt_factor_count = 0;
+    FILE* d_log_f = NULL;
+    if (n > 480 && s_kkt_factor_count == 0) {
+        system("mkdir -p ../result/asic_testcases/osqp/factorization");
+        d_log_f = fopen("../result/asic_testcases/osqp/factorization/sample_0_metadata.csv", "w");
+        if (d_log_f) {
+            fprintf(d_log_f, "# D update log for rows 479, 480 (sample 0, n=%d)\n", (int)n);
+            fprintf(d_log_f, "# j,k_row,neg_lkj,dense_jk,prod_d,D_after\n");
+        }
+        s_kkt_factor_count++;
+    }
+
     // ================================================================
     // Step 1: Compute L structural pattern (Li, Lp) from etree
     //         (identical logic to QDLDL_factor's structural phase)
@@ -976,9 +999,9 @@ QDLDL_int QDLDL_factor_right_looking(
     //          D[k]          -= L[k,j] * dense_orig[j][k]
     //          dense[k][i]   -= L[k,j] * dense_orig[j][i]   for i > k
     // ================================================================
-#ifdef OSQP_USE_TRUNCATE
+#ifdef OSQP_ROUNDING_MODE
     int saved_round = fegetround();
-    fesetround(FE_TOWARDZERO);
+    fesetround(OSQP_ROUNDING_MODE);
 #endif
 
     // First column (j=0) diagonal is already in D[0] from init
@@ -988,7 +1011,8 @@ QDLDL_int QDLDL_factor_right_looking(
 
         if (dj == 0.0) {
             free(dense);
-#ifdef OSQP_USE_TRUNCATE
+            if (d_log_f) fclose(d_log_f);
+#ifdef OSQP_ROUNDING_MODE
             fesetround(saved_round);
 #endif
             return -1;
@@ -1007,7 +1031,7 @@ QDLDL_int QDLDL_factor_right_looking(
         // Scale: L[row, j] = dense[j][row] * Dinv[j]
         for (p = col_start; p < col_end; p++) {
             QDLDL_int row = Li[p];
-#ifdef OSQP_USE_TRUNCATE
+#ifdef OSQP_ROUNDING_MODE
             volatile float prod = (float)dense[j * n + row] * (float)djinv;
             Lx[p] = (QDLDL_float)prod;
 #else
@@ -1018,37 +1042,54 @@ QDLDL_int QDLDL_factor_right_looking(
         // Rank-1 update: for each nonzero L[k,j] in column j
         //   D[k]        -= L[k,j] * dense[j][k]   (= L[k,j] * L[k,j] * D[j])
         //   dense[k][i] -= L[k,j] * dense[j][i]   for each i in L[:,j] with i >= k
+        // Implementation: negate lkj via sign-bit flip (XOR 0x80000000),
+        //   then use addition instead of subtraction.
         for (p = col_start; p < col_end; p++) {
             QDLDL_int k_row = Li[p];
-            QDLDL_float lkj = Lx[p];
+            // Negate lkj by flipping sign bit
+            QDLDL_float neg_lkj;
+            {
+                union { float f; uint32_t u; } _v;
+                _v.f = (float)Lx[p];
+                _v.u ^= 0x80000000u;
+                neg_lkj = (QDLDL_float)_v.f;
+            }
             QDLDL_float dense_jk = dense[j * n + k_row];  // unscaled value
 
-            // Update diagonal D[k]
-#ifdef OSQP_USE_TRUNCATE
-            volatile float prod_d = (float)lkj * (float)dense_jk;
-            D[k_row] = D[k_row] - (QDLDL_float)prod_d;
+            // Update diagonal D[k]: D[k] += (-lkj) * dense[j][k]
+#ifdef OSQP_ROUNDING_MODE
+            volatile float prod_d = (float)neg_lkj * (float)dense_jk;
+            D[k_row] = D[k_row] + (QDLDL_float)prod_d;
+            // Debug logging for D[479] and D[480] to file
+            if (d_log_f && (k_row == 479 || k_row == 480)) {
+                union { float f; uint32_t u; } _a, _b, _c, _d;
+                _a.f = (float)neg_lkj;
+                _b.f = (float)dense_jk;
+                _c.f = (float)prod_d;
+                _d.f = (float)D[k_row];
+                fprintf(d_log_f, "%d,%d,%08x,%08x,%08x,%08x\n",
+                        (int)j, (int)k_row, _a.u, _b.u, _c.u, _d.u);
+            }
 #else
-            D[k_row] -= lkj * dense_jk;
+            D[k_row] += neg_lkj * dense_jk;
 #endif
 
             // Update sub-diagonal entries in column k_row
             QDLDL_int q;
             for (q = p + 1; q < col_end; q++) {
                 QDLDL_int i_row = Li[q];
-                // dense[k_row][i_row] -= L[i_row, j] * dense[j][k_row]
-                //   which is equivalent to: -= Lx[q] ... but we use the unscaled
-                //   form: dense[k_row][i_row] -= L[k_row,j] * dense[j][i_row]
-#ifdef OSQP_USE_TRUNCATE
-                volatile float prod_u = (float)lkj * (float)dense[j * n + i_row];
-                dense[k_row * n + i_row] = dense[k_row * n + i_row] - (QDLDL_float)prod_u;
+                // dense[k_row][i_row] += (-lkj) * dense[j][i_row]
+#ifdef OSQP_ROUNDING_MODE
+                volatile float prod_u = (float)neg_lkj * (float)dense[j * n + i_row];
+                dense[k_row * n + i_row] = dense[k_row * n + i_row] + (QDLDL_float)prod_u;
 #else
-                dense[k_row * n + i_row] -= lkj * dense[j * n + i_row];
+                dense[k_row * n + i_row] += neg_lkj * dense[j * n + i_row];
 #endif
             }
         }
     }
 
-#ifdef OSQP_USE_TRUNCATE
+#ifdef OSQP_ROUNDING_MODE
     fesetround(saved_round);
 #endif
 
@@ -1056,6 +1097,11 @@ QDLDL_int QDLDL_factor_right_looking(
     // Step 4: Cleanup + CSR conversion for Lsolve/Ltsolve
     // ================================================================
     free(dense);
+
+    if (d_log_f) {
+        fclose(d_log_f);
+        printf("[QDLDL] Saved D update log to factorization/sample_0_metadata.csv\n");
+    }
 
     convert_csc_to_csr(n, Lp, Li, Lx);
 
@@ -1076,9 +1122,9 @@ void QDLDL_Lsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
         for(i = 0; i < n; i++) {
             QDLDL_float val = x[i];
 
-            #ifdef OSQP_USE_TRUNCATE
+            #ifdef OSQP_ROUNDING_MODE
             int old_round_Lsolve = fegetround();
-            fesetround(FE_TOWARDZERO);
+            fesetround(OSQP_ROUNDING_MODE);
 
             for(j = Lp[i]; j < Lp[i + 1]; j++) {
                 volatile float prod = Lx[j] * val;
@@ -1100,9 +1146,9 @@ void QDLDL_Lsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
     // L은 strictly lower triangular이므로 row i의 열 인덱스는 모두 i보다 작음
     // 따라서 forward substitution: x[i] = b[i] - sum_{j<i} L[i,j] * x[j]
 
-    #ifdef OSQP_USE_TRUNCATE
+    #ifdef OSQP_ROUNDING_MODE
     int old_round_Lsolve = fegetround();
-    fesetround(FE_TOWARDZERO);
+    fesetround(OSQP_ROUNDING_MODE);
     #endif
 
     for (i = 0; i < n; i++) {
@@ -1120,7 +1166,7 @@ void QDLDL_Lsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
             QDLDL_int col = g_L_csr_colind[row_start + j];
             QDLDL_float val = g_L_csr_values[row_start + j];
             QDLDL_float prod = val * x[col];
-            #ifdef OSQP_USE_TRUNCATE
+            #ifdef OSQP_ROUNDING_MODE
             volatile QDLDL_float truncated = prod;
             g_adder_tree_buffer[j] = truncated;
             #else
@@ -1133,7 +1179,7 @@ void QDLDL_Lsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
 
         // Stage 3: x[i] = b[i] - sum
         QDLDL_float result = x[i] - sum;
-        #ifdef OSQP_USE_TRUNCATE
+        #ifdef OSQP_ROUNDING_MODE
         volatile QDLDL_float truncated_result = result;
         x[i] = truncated_result;
         #else
@@ -1141,7 +1187,7 @@ void QDLDL_Lsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
         #endif
     }
 
-    #ifdef OSQP_USE_TRUNCATE
+    #ifdef OSQP_ROUNDING_MODE
     fesetround(old_round_Lsolve);
     #endif
 }
@@ -1161,9 +1207,9 @@ void QDLDL_Ltsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
         for(i = n - 1; i >= 0; i--) {
             QDLDL_float val = x[i];
 
-            #ifdef OSQP_USE_TRUNCATE
+            #ifdef OSQP_ROUNDING_MODE
             int old_round_Ltsolve = fegetround();
-            fesetround(FE_TOWARDZERO);
+            fesetround(OSQP_ROUNDING_MODE);
 
             for(j = Lp[i]; j < Lp[i + 1]; j++) {
                 volatile float prod = Lx[j] * x[Li[j]];
@@ -1195,9 +1241,9 @@ void QDLDL_Ltsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
     // => L^T[col, i] for col < i
     // => x[col]의 계산에 L^T[col, i] * x[i]가 기여
 
-    #ifdef OSQP_USE_TRUNCATE
+    #ifdef OSQP_ROUNDING_MODE
     int old_round_Ltsolve = fegetround();
-    fesetround(FE_TOWARDZERO);
+    fesetround(OSQP_ROUNDING_MODE);
     #endif
 
     // Backward: i = n-1 down to 0
@@ -1215,7 +1261,7 @@ void QDLDL_Ltsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
             QDLDL_int col = g_L_csr_colind[j];  // col < i
             QDLDL_float L_val = g_L_csr_values[j];  // L[i, col] = L^T[col, i]
 
-            #ifdef OSQP_USE_TRUNCATE
+            #ifdef OSQP_ROUNDING_MODE
             volatile QDLDL_float prod = L_val * val;
             x[col] = x[col] - prod;
             #else
@@ -1224,7 +1270,7 @@ void QDLDL_Ltsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
         }
     }
 
-    #ifdef OSQP_USE_TRUNCATE
+    #ifdef OSQP_ROUNDING_MODE
     fesetround(old_round_Ltsolve);
     #endif
 }
@@ -1240,9 +1286,9 @@ void QDLDL_solve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li, co
 
     // printf("After Lsolve\n");
 
-    #ifdef OSQP_USE_TRUNCATE
+    #ifdef OSQP_ROUNDING_MODE
     int old_round_solve = fegetround();
-    fesetround(FE_TOWARDZERO);
+    fesetround(OSQP_ROUNDING_MODE);
 
     for(i = 0; i < n; i++) {
         x[i] = x[i] * Dinv[i];

@@ -397,6 +397,12 @@ if(OSQP_USE_TRUNCATE)
   message(STATUS "OSQP/QDLDL truncation mode enabled for OSQPLIB")
 endif()
 
+option(OSQP_USE_ROUND_TO_EVEN "Enable round-to-nearest-even mode (same code structure as truncation)" OFF)
+if(OSQP_USE_ROUND_TO_EVEN)
+  target_compile_definitions(OSQPLIB PRIVATE OSQP_USE_ROUND_TO_EVEN)
+  message(STATUS "OSQP/QDLDL round-to-nearest-even mode enabled for OSQPLIB")
+endif()
+
 get_property(
   osqplib_includes
   TARGET OSQPLIB
