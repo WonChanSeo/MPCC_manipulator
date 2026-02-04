@@ -242,11 +242,16 @@ static void save_scaling_iteration_exp(OSQPWorkspace* work, OSQPInt sample_id, O
                                         OSQPInt n, OSQPInt m) {
   char path_float[256], path_bits[256];
 
-  // Use "init" for initial data (iter == -1), otherwise use iteration number
-  if (iter < 0) {
+  // iter == -1: init (before scaling), iter == -2: done (after all scaling), else: iteration number
+  if (iter == -1) {
     snprintf(path_float, sizeof(path_float), "%s/sample_%lld_scaling_init.csv",
              OSQP_TESTCASE_DIR, (long long)sample_id);
     snprintf(path_bits, sizeof(path_bits), "%s/sample_%lld_scaling_init_bits.csv",
+             OSQP_TESTCASE_DIR, (long long)sample_id);
+  } else if (iter == -2) {
+    snprintf(path_float, sizeof(path_float), "%s/sample_%lld_scaling_done.csv",
+             OSQP_TESTCASE_DIR, (long long)sample_id);
+    snprintf(path_bits, sizeof(path_bits), "%s/sample_%lld_scaling_done_bits.csv",
              OSQP_TESTCASE_DIR, (long long)sample_id);
   } else {
     snprintf(path_float, sizeof(path_float), "%s/sample_%lld_scaling_iter_%lld.csv",
@@ -255,10 +260,13 @@ static void save_scaling_iteration_exp(OSQPWorkspace* work, OSQPInt sample_id, O
              OSQP_TESTCASE_DIR, (long long)sample_id, (long long)iter);
   }
 
+  const char* phase_str = (iter == -1) ? "Initial (before scaling)" :
+                           (iter == -2) ? "Done (after all scaling)" : NULL;
+
   FILE* f_float = fopen(path_float, "w");
   if (f_float) {
-    if (iter < 0) {
-      fprintf(f_float, "# OSQP Scaling Initial (before scaling) - Sample %lld\n", (long long)sample_id);
+    if (phase_str) {
+      fprintf(f_float, "# OSQP Scaling %s - Sample %lld\n", phase_str, (long long)sample_id);
     } else {
       fprintf(f_float, "# OSQP Scaling Iteration %lld - Sample %lld\n", (long long)iter, (long long)sample_id);
     }
@@ -284,8 +292,8 @@ static void save_scaling_iteration_exp(OSQPWorkspace* work, OSQPInt sample_id, O
 
   FILE* f_bits = fopen(path_bits, "w");
   if (f_bits) {
-    if (iter < 0) {
-      fprintf(f_bits, "# OSQP Scaling Initial (hex FP32) - Sample %lld\n", (long long)sample_id);
+    if (phase_str) {
+      fprintf(f_bits, "# OSQP Scaling %s (hex FP32) - Sample %lld\n", phase_str, (long long)sample_id);
     } else {
       fprintf(f_bits, "# OSQP Scaling Iteration %lld (hex FP32) - Sample %lld\n", (long long)iter, (long long)sample_id);
     }
@@ -789,7 +797,7 @@ OSQPInt scale_data(OSQPSolver* solver) {
 
   // Save final scaled data (after all scaling applied to P, A, q, l, u)
   if (save_iterations) {
-    save_scaling_iteration_exp(work, g_testcase_count, T, g_D_accum, g_E_accum, n, m);
+    save_scaling_iteration_exp(work, g_testcase_count, -2, g_D_accum, g_E_accum, n, m);
   }
 
   return 0;
