@@ -736,20 +736,14 @@ OSQPInt scale_data(OSQPSolver* solver) {
     matrix_lmult_diag_exp(work->data->A, neg_E_exp);
     matrix_rmult_diag_exp(work->data->A, neg_D_exp);
 
-    // q <- D^{-1} q (bit-level)
-    OSQPFloat* q_data = OSQPVectorf_data(work->data->q);
-    for (OSQPInt i = 0; i < n; i++) {
-      q_data[i] = fp32_scale_by_exp((float)q_data[i], neg_D_exp[i]);
-    }
-
     // Update accumulated exponents: D_accum += neg_D_exp, E_accum += neg_E_exp
     for (OSQPInt i = 0; i < n; i++) g_D_accum[i] += neg_D_exp[i];
     for (OSQPInt i = 0; i < m; i++) g_E_accum[i] += neg_E_exp[i];
 
-    // Save iteration data with integer exponents
-    if (save_iterations) {
-      save_scaling_iteration_exp(work, g_testcase_count, t, g_D_accum, g_E_accum, n, m);
-    }
+    // // Save iteration data with integer exponents
+    // if (save_iterations) {
+    //   save_scaling_iteration_exp(work, g_testcase_count, t, g_D_accum, g_E_accum, n, m);
+    // }
   }
   /* ==================== 루프 끝 ==================== */
 
@@ -776,16 +770,26 @@ OSQPInt scale_data(OSQPSolver* solver) {
   // Store cinv (c remains 1.0 since we don't do cost normalization)
   work->scaling->cinv = 1. / work->scaling->c;
 
-  /* 4) Scale problem vectors l, u using bit-level operations
+  /* 4) Scale problem vectors q, l, u using bit-level operations
+   * q <- D^{-1} q = diag(2^{D_accum}) * q  (D_accum is already negated)
    * l <- E * l = diag(2^{E_accum}) * l
    * u <- E * u = diag(2^{E_accum}) * u
-   * Note: we use E (not E^{-1}) for l,u, so we use E_accum directly (not negated)
    */
+  OSQPFloat* q_data = OSQPVectorf_data(work->data->q);
+  for (OSQPInt i = 0; i < n; i++) {
+    q_data[i] = fp32_scale_by_exp((float)q_data[i], g_D_accum[i]);
+  }
+
   OSQPFloat* l_data = OSQPVectorf_data(work->data->l);
   OSQPFloat* u_data = OSQPVectorf_data(work->data->u);
   for (OSQPInt i = 0; i < m; i++) {
     l_data[i] = fp32_scale_by_exp((float)l_data[i], g_E_accum[i]);
     u_data[i] = fp32_scale_by_exp((float)u_data[i], g_E_accum[i]);
+  }
+
+  // Save final scaled data (after all scaling applied to P, A, q, l, u)
+  if (save_iterations) {
+    save_scaling_iteration_exp(work, g_testcase_count, T, g_D_accum, g_E_accum, n, m);
   }
 
   return 0;
