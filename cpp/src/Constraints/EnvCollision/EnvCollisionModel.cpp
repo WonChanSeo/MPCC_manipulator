@@ -21,6 +21,7 @@ namespace mpcc
     // =========== ASIC Test Case Logging ================================
     // ===================================================================
     static int g_asic_sample_count = 0;
+    static const int MLP_TESTCASE_SAVE_INTERVAL = 50;
     static const std::string g_asic_output_dir = "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/mlp/";
     static bool g_asic_dir_initialized = false;
 
@@ -510,18 +511,23 @@ namespace mpcc
 
         // ===== MLP 테스트 케이스 저장 =====
         try {
-            init_asic_output_dir();
-
             int sample_id = g_asic_sample_count++;
+
+            // 첫 번째 샘플일 때만 로그 출력
+            if (sample_id == 0) {
+                init_asic_output_dir();
+                std::cout << "[MLP Logging] Starting MLP test case logging to: " << g_asic_output_dir << std::endl;
+            }
+
+            // MLP_TESTCASE_SAVE_INTERVAL 마다만 저장
+            if (sample_id % MLP_TESTCASE_SAVE_INTERVAL != 0) {
+                // skip
+            } else {
+            init_asic_output_dir();
             bool is_detailed = (sample_id % 100 == 0);  // 100번째 sample마다 상세 저장
 
             std::string filename = g_asic_output_dir + "sample_" + std::to_string(sample_id) + ".csv";
             std::string filename_bits = g_asic_output_dir + "sample_" + std::to_string(sample_id) + "_bits.csv";
-
-            // 첫 번째 샘플일 때만 로그 출력
-            if (sample_id == 0) {
-                std::cout << "[MLP Logging] Starting MLP test case logging to: " << g_asic_output_dir << std::endl;
-            }
 
             std::ofstream file(filename);
             std::ofstream file_bits(filename_bits);
@@ -598,32 +604,31 @@ namespace mpcc
             }
             file_bits << "\n";
 
-            // 4. 100번째 sample마다 상세 정보 저장
-            if (is_detailed) {
-                // ===== 실수 파일: NeRF Jacobian =====
-                if (mlp_.is_nerf) {
-                    file << "# NERF_JACOBIAN - " << nerf_jac_f.rows() << " x " << nerf_jac_f.cols() << "\n";
-                    for (int r = 0; r < nerf_jac_f.rows(); ++r) {
-                        for (int c = 0; c < nerf_jac_f.cols(); ++c) {
-                            file << nerf_jac_f(r, c);
-                            if (c < nerf_jac_f.cols() - 1) file << ",";
-                        }
-                        file << "\n";
+            // 4. NeRF Jacobian (매 샘플 저장)
+            if (mlp_.is_nerf) {
+                file << "# NERF_JACOBIAN - " << nerf_jac_f.rows() << " x " << nerf_jac_f.cols() << "\n";
+                for (int r = 0; r < nerf_jac_f.rows(); ++r) {
+                    for (int c = 0; c < nerf_jac_f.cols(); ++c) {
+                        file << nerf_jac_f(r, c);
+                        if (c < nerf_jac_f.cols() - 1) file << ",";
                     }
                     file << "\n";
+                }
+                file << "\n";
 
-                    // ===== 비트 파일: NeRF Jacobian =====
-                    file_bits << "# NERF_JACOBIAN - " << nerf_jac_f.rows() << " x " << nerf_jac_f.cols() << "\n";
-                    for (int r = 0; r < nerf_jac_f.rows(); ++r) {
-                        for (int c = 0; c < nerf_jac_f.cols(); ++c) {
-                            file_bits << float_to_hex(nerf_jac_f(r, c));
-                            if (c < nerf_jac_f.cols() - 1) file_bits << ",";
-                        }
-                        file_bits << "\n";
+                file_bits << "# NERF_JACOBIAN - " << nerf_jac_f.rows() << " x " << nerf_jac_f.cols() << "\n";
+                for (int r = 0; r < nerf_jac_f.rows(); ++r) {
+                    for (int c = 0; c < nerf_jac_f.cols(); ++c) {
+                        file_bits << float_to_hex(nerf_jac_f(r, c));
+                        if (c < nerf_jac_f.cols() - 1) file_bits << ",";
                     }
                     file_bits << "\n";
                 }
+                file_bits << "\n";
+            }
 
+            // 5. 100번째 sample마다 상세 정보 저장
+            if (is_detailed) {
                 // 각 hidden layer의 pre_activation과 post_activation (ReLU 후)
                 for (int layer = 0; layer < mlp_.n_layer - 1; ++layer) {
                     // ===== 실수 파일: Pre-activation =====
@@ -761,6 +766,7 @@ namespace mpcc
                     std::cerr << "[MLP Logging ERROR] Failed to open file: " << filename << std::endl;
                 }
             }
+            } // end if (sample_id % MLP_TESTCASE_SAVE_INTERVAL == 0)
         } catch (const std::exception& e) {
             std::cerr << "[MLP Logging ERROR] Exception during logging: " << e.what() << std::endl;
         }

@@ -8,35 +8,35 @@
 
 
 === Statistics for Combined Statistics (Debug & Time Data) ===
-q               | mean:  -0.105784 | min:  -2.433190 | max:   1.596820 | var:   1.137043 | std:   1.066322 |
-qdot            | mean:   0.000339 | min:  -0.960737 | max:   0.950521 | var:   0.059495 | std:   0.243917 |
-qddot           | mean:   0.000339 | min:  -0.960737 | max:   0.950521 | var:   0.059495 | std:   0.243917 |
-s               | mean:   0.574289 | min:   0.000015 | max:   0.996472 | var:   0.078734 | std:   0.280596 |
-vs              | mean:   0.064296 | min:   0.003000 | max:   0.099754 | var:   0.001421 | std:   0.037691 |
-dVs             | mean:   0.001459 | min:  -0.850609 | max:   0.655919 | var:   0.015874 | std:   0.125993 |
-ee_vel          | mean:   0.000108 | min:  -0.271086 | max:   0.221140 | var:   0.007977 | std:   0.089312 |
-ee_speed        | mean:   0.132982 | min:   0.007890 | max:   0.271089 | var:   0.006245 | std:   0.079028 |
-sel_min_dist    | mean:   0.115431 | min:   0.016850 | max:   0.225716 | var:   0.004383 | std:   0.066208 |
-env_min_dist    | mean:   0.395679 | min:   0.081747 | max:   0.669012 | var:   0.024167 | std:   0.155457 |
-mani            | mean:   0.079107 | min:   0.048992 | max:   0.094310 | var:   0.000091 | std:   0.009541 |
-contour_error   | mean:   0.000840 | min:   0.000031 | max:   0.004341 | var:   0.000000 | std:   0.000686 |
+q               | mean:  -0.103481 | min:  -2.433567 | max:   1.596823 | var:   1.134872 | std:   1.065304 |
+qdot            | mean:   0.000325 | min:  -0.911368 | max:   0.918581 | var:   0.058037 | std:   0.240910 |
+qddot           | mean:   0.000325 | min:  -0.911368 | max:   0.918581 | var:   0.058037 | std:   0.240910 |
+s               | mean:   0.563406 | min:   0.000015 | max:   0.996602 | var:   0.079912 | std:   0.282688 |
+vs              | mean:   0.064262 | min:   0.003000 | max:   0.099754 | var:   0.001371 | std:   0.037028 |
+dVs             | mean:   0.001385 | min:  -0.868335 | max:   0.655920 | var:   0.015237 | std:   0.123438 |
+ee_vel          | mean:   0.000105 | min:  -0.271098 | max:   0.214612 | var:   0.007835 | std:   0.088514 |
+ee_speed        | mean:   0.132908 | min:   0.007889 | max:   0.271101 | var:   0.005840 | std:   0.076418 |
+sel_min_dist    | mean:   0.113553 | min:   0.015419 | max:   0.225738 | var:   0.004568 | std:   0.067587 |
+env_min_dist    | mean:   0.396971 | min:   0.083741 | max:   0.669354 | var:   0.023927 | std:   0.154684 |
+mani            | mean:   0.079245 | min:   0.048921 | max:   0.094310 | var:   0.000092 | std:   0.009571 |
+contour_error   | mean:   0.000841 | min:   0.000032 | max:   0.004365 | var:   0.000000 | std:   0.000694 |
 spline_ee_pose  | mean:  -0.008888 | min:  -1.000000 | max:   1.000000 | var:   0.214503 | std:   0.463144 |
-pred_ee_pose    | mean:  -0.006023 | min:  -1.000000 | max:   1.000000 | var:   0.214446 | std:   0.463083 |
-ref_ee_pose     | mean:  -0.006255 | min:  -1.000000 | max:   1.000000 | var:   0.214441 | std:   0.463077 |
-iter_count      | mean: 153.387097 | min:  50.000000 | max: 250.000000 | var: 4815.946930 | std:  69.397024 |
-sqp_iter_count  | mean:   0.955484 | min:   0.000000 | max:   1.000000 | var:   0.042534 | std:   0.206239 |
-total_iter_count | mean: 153.387097 | min:  50.000000 | max: 250.000000 | var: 4815.946930 | std:  69.397024 |
-solve_count     | final value: 1550
+pred_ee_pose    | mean:  -0.006163 | min:  -1.000000 | max:   1.000000 | var:   0.214398 | std:   0.463031 |
+ref_ee_pose     | mean:  -0.006381 | min:  -1.000000 | max:   1.000000 | var:   0.214391 | std:   0.463024 |
+iter_count      | mean: 156.189555 | min:  50.000000 | max: 250.000000 | var: 4642.540471 | std:  68.136191 |
+sqp_iter_count  | mean:   0.955513 | min:   0.000000 | max:   1.000000 | var:   0.042508 | std:   0.206175 |
+total_iter_count | mean: 156.189555 | min:  50.000000 | max: 250.000000 | var: 4642.540471 | std:  68.136191 |
+solve_count     | final value: 1551
 max_iter_reached_count | final value: 69
 max_iter_solve_failed_count | final value: 69
-total           | mean:   0.079569 | min:   0.073198 | max:   0.252140 | var:   0.000449 | std:   0.021182 |
-set_env         | mean:   0.066360 | min:   0.064838 | max:   0.075595 | var:   0.000008 | std:   0.002885 |
-set_qp          | mean:   0.000351 | min:   0.000337 | max:   0.000649 | var:   0.000000 | std:   0.000016 |
-init_solver     | mean:   0.003280 | min:   0.000461 | max:   0.144564 | var:   0.000381 | std:   0.019517 |
-solve_qp        | mean:   0.002920 | min:   0.001038 | max:   0.023178 | var:   0.000002 | std:   0.001238 |
+total           | mean:   0.080171 | min:   0.073577 | max:   0.265593 | var:   0.000476 | std:   0.021808 |
+set_env         | mean:   0.066795 | min:   0.065191 | max:   0.079060 | var:   0.000009 | std:   0.003031 |
+set_qp          | mean:   0.000365 | min:   0.000350 | max:   0.000652 | var:   0.000000 | std:   0.000012 |
+init_solver     | mean:   0.003433 | min:   0.000507 | max:   0.147424 | var:   0.000400 | std:   0.019992 |
+solve_qp        | mean:   0.003091 | min:   0.001073 | max:   0.033605 | var:   0.000002 | std:   0.001384 |
 get_alpha       | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
-scaling_time    | mean:   0.000959 | min:   0.000099 | max:   0.044454 | var:   0.000036 | std:   0.005997 |
-permutation_time | mean:   0.000036 | min:   0.000033 | max:   0.000114 | var:   0.000000 | std:   0.000003 |
-factorization_time | mean:   0.000245 | min:   0.000224 | max:   0.002031 | var:   0.000000 | std:   0.000047 |
-rho_updates     | mean:   0.938065 | min:   0.000000 | max:   3.000000 | var:   0.540680 | std:   0.735310 |
+scaling_time    | mean:   0.000996 | min:   0.000099 | max:   0.044120 | var:   0.000038 | std:   0.006156 |
+permutation_time | mean:   0.000043 | min:   0.000036 | max:   0.000078 | var:   0.000000 | std:   0.000003 |
+factorization_time | mean:   0.000265 | min:   0.000246 | max:   0.002336 | var:   0.000000 | std:   0.000054 |
+rho_updates     | mean:   0.958736 | min:   0.000000 | max:   5.000000 | var:   0.548910 | std:   0.740884 |
 

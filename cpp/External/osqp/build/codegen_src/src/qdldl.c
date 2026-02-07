@@ -1161,30 +1161,44 @@ void QDLDL_Lsolve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li,
             continue;
         }
 
-        // Stage 1: 모든 곱셈을 병렬로 수행하여 버퍼에 저장
+        // Stage 1: x[i]의 sign bit 반전 → adder tree 버퍼[0]에 넣고,
+        //          L[i,j]*x[j] 곱셈 결과를 버퍼[1..row_nnz]에 넣음
+        //          입력: { -x[i], L[i,j0]*x[j0], L[i,j1]*x[j1], ... }
+        {
+            union { float f; uint32_t u; } neg_xi;
+            neg_xi.f = (float)x[i];
+            neg_xi.u ^= 0x80000000u;  // sign bit 반전
+            g_adder_tree_buffer[0] = (QDLDL_float)neg_xi.f;
+        }
+
         for (j = 0; j < row_nnz; j++) {
             QDLDL_int col = g_L_csr_colind[row_start + j];
             QDLDL_float val = g_L_csr_values[row_start + j];
             QDLDL_float prod = val * x[col];
             #ifdef OSQP_ROUNDING_MODE
             volatile QDLDL_float truncated = prod;
-            g_adder_tree_buffer[j] = truncated;
+            g_adder_tree_buffer[j + 1] = truncated;
             #else
-            g_adder_tree_buffer[j] = prod;
+            g_adder_tree_buffer[j + 1] = prod;
             #endif
         }
 
-        // Stage 2: Adder tree로 합산
-        QDLDL_float sum = adder_tree_sum_qdldl(g_adder_tree_buffer, row_nnz);
+        // Stage 2: Adder tree로 합산 (row_nnz + 1개)
+        //          = -x[i] + sum(L[i,j]*x[j]) = -(x[i] - sum(L[i,j]*x[j]))
+        QDLDL_float neg_result = adder_tree_sum_qdldl(g_adder_tree_buffer, row_nnz + 1);
 
-        // Stage 3: x[i] = b[i] - sum
-        QDLDL_float result = x[i] - sum;
-        #ifdef OSQP_ROUNDING_MODE
-        volatile QDLDL_float truncated_result = result;
-        x[i] = truncated_result;
-        #else
-        x[i] = result;
-        #endif
+        // Stage 3: 결과의 sign bit 반전 → 최종 결과
+        {
+            union { float f; uint32_t u; } final_val;
+            final_val.f = (float)neg_result;
+            final_val.u ^= 0x80000000u;  // sign bit 반전
+            #ifdef OSQP_ROUNDING_MODE
+            volatile QDLDL_float truncated_result = (QDLDL_float)final_val.f;
+            x[i] = truncated_result;
+            #else
+            x[i] = (QDLDL_float)final_val.f;
+            #endif
+        }
     }
 
     #ifdef OSQP_ROUNDING_MODE
