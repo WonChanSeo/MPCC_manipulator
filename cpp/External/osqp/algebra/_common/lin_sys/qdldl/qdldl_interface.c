@@ -1640,6 +1640,7 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
 
       // Permute input
       for (j = 0; j < N; j++) bp[j] = bv[s->P[j]];
+      save_solve_intermediate(sample_id, "rhs", N, bp);
 
       // Step 1: Lsolve
       QDLDL_Lsolve(N, s->L->p, s->L->i, s->L->x, bp);
