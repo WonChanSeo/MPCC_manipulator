@@ -1671,12 +1671,14 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
       // Also save final solve result
       save_solve_result(sample_id, N, bp);
     } else if (save_final) {
-      // === Every 50th sample, first solve: normal solve + save result ===
+      // === Every 50th sample, first solve: normal solve + save rhs & result ===
       OSQPFloat* bp = s->bp;
 
       osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
 
       for (j = 0; j < N; j++) bp[j] = bv[s->P[j]];
+      save_solve_intermediate(sample_id, "rhs", N, bp);
+
       QDLDL_solve(N, s->L->p, s->L->i, s->L->x, s->Dinv, bp);
       for (j = 0; j < N; j++) s->sol[s->P[j]] = bp[j];
 

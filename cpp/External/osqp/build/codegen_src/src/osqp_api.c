@@ -38,6 +38,100 @@ static OSQPInt g_sqp_iter_count = 0;
 static int g_logging_signal_installed = 0;
 static char g_log_filepath[512] = {0};
 
+// ===== ADMM Variables Logging =====
+// Saves x_tilde, z_tilde, x, z, y per ADMM iteration for sampled QPs
+#define ADMM_VARS_SAVE_INTERVAL 50
+#define ADMM_VARS_DIR "../result/asic_testcases/osqp/solve"
+static FILE* g_admm_vars_file = NULL;
+static FILE* g_admm_vars_bits_file = NULL;
+static int g_admm_vars_dir_created = 0;
+
+static void ensure_admm_vars_dir(void) {
+  if (!g_admm_vars_dir_created) {
+    system("mkdir -p " ADMM_VARS_DIR);
+    g_admm_vars_dir_created = 1;
+  }
+}
+
+static inline void write_float_hex(FILE* f, float val) {
+  union { float f; uint32_t u; } v;
+  v.f = val;
+  fprintf(f, "%08x", v.u);
+}
+
+static void admm_vars_open(OSQPInt sample_id) {
+  ensure_admm_vars_dir();
+  char path[256], path_bits[256];
+  snprintf(path, sizeof(path), "%s/sample_%lld_admm_vars.csv",
+           ADMM_VARS_DIR, (long long)sample_id);
+  snprintf(path_bits, sizeof(path_bits), "%s/sample_%lld_admm_vars_bits.csv",
+           ADMM_VARS_DIR, (long long)sample_id);
+  g_admm_vars_file = fopen(path, "w");
+  g_admm_vars_bits_file = fopen(path_bits, "w");
+  if (g_admm_vars_file) {
+    fprintf(g_admm_vars_file, "# ADMM Variables - Sample %lld\n", (long long)sample_id);
+    fprintf(g_admm_vars_file, "# Per iteration: [BEFORE] x_prev(n), z_prev(m), y(m)  [AFTER] x_tilde(n), z_tilde(m), x(n), z(m), y(m)\n\n");
+  }
+  if (g_admm_vars_bits_file) {
+    fprintf(g_admm_vars_bits_file, "# ADMM Variables (FP32 Hex) - Sample %lld\n", (long long)sample_id);
+    fprintf(g_admm_vars_bits_file, "# Per iteration: [BEFORE] x_prev(n), z_prev(m), y(m)  [AFTER] x_tilde(n), z_tilde(m), x(n), z(m), y(m)\n\n");
+  }
+}
+
+// Helper: write a named vector to both float and hex files
+static void admm_vars_write_vec(const char* label, OSQPInt len, const OSQPFloat* data) {
+  if (!g_admm_vars_file || !g_admm_vars_bits_file) return;
+  OSQPInt i;
+
+  fprintf(g_admm_vars_file, "# %s - %lld values\n", label, (long long)len);
+  for (i = 0; i < len; i++) { fprintf(g_admm_vars_file, "%.8e", (double)data[i]); if (i < len-1) fprintf(g_admm_vars_file, ","); }
+  fprintf(g_admm_vars_file, "\n");
+
+  fprintf(g_admm_vars_bits_file, "# %s - %lld values\n", label, (long long)len);
+  for (i = 0; i < len; i++) { write_float_hex(g_admm_vars_bits_file, (float)data[i]); if (i < len-1) fprintf(g_admm_vars_bits_file, ","); }
+  fprintf(g_admm_vars_bits_file, "\n");
+}
+
+// Write BEFORE update: x_prev, z_prev, y (swap 이후, update 이전)
+static void admm_vars_write_before(OSQPInt iter, const OSQPWorkspace* work) {
+  if (!g_admm_vars_file || !g_admm_vars_bits_file) return;
+
+  OSQPInt n = OSQPVectorf_length(work->x_prev);
+  OSQPInt m = OSQPVectorf_length(work->z_prev);
+
+  fprintf(g_admm_vars_file, "# === iter=%lld BEFORE ===\n", (long long)iter);
+  fprintf(g_admm_vars_bits_file, "# === iter=%lld BEFORE ===\n", (long long)iter);
+
+  admm_vars_write_vec("x_prev", n, OSQPVectorf_data(work->x_prev));
+  admm_vars_write_vec("z_prev", m, OSQPVectorf_data(work->z_prev));
+  admm_vars_write_vec("y", m, OSQPVectorf_data(work->y));
+}
+
+// Write AFTER update: x_tilde, z_tilde, x, z, y
+static void admm_vars_write_after(OSQPInt iter, const OSQPWorkspace* work) {
+  if (!g_admm_vars_file || !g_admm_vars_bits_file) return;
+
+  OSQPInt n = OSQPVectorf_length(work->x);
+  OSQPInt m = OSQPVectorf_length(work->z);
+
+  fprintf(g_admm_vars_file, "# === iter=%lld AFTER ===\n", (long long)iter);
+  fprintf(g_admm_vars_bits_file, "# === iter=%lld AFTER ===\n", (long long)iter);
+
+  admm_vars_write_vec("x_tilde", n, OSQPVectorf_data(work->xtilde_view));
+  admm_vars_write_vec("z_tilde", m, OSQPVectorf_data(work->ztilde_view));
+  admm_vars_write_vec("x", n, OSQPVectorf_data(work->x));
+  admm_vars_write_vec("z", m, OSQPVectorf_data(work->z));
+  admm_vars_write_vec("y", m, OSQPVectorf_data(work->y));
+
+  fprintf(g_admm_vars_file, "\n");
+  fprintf(g_admm_vars_bits_file, "\n");
+}
+
+static void admm_vars_close(void) {
+  if (g_admm_vars_file) { fclose(g_admm_vars_file); g_admm_vars_file = NULL; }
+  if (g_admm_vars_bits_file) { fclose(g_admm_vars_bits_file); g_admm_vars_bits_file = NULL; }
+}
+
 // Detailed timing breakdown for setup phase
 static OSQPFloat g_scaling_time = 0.0;
 static OSQPFloat g_permutation_time = 0.0;
@@ -1270,6 +1364,14 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
 
   // Main ADMM algorithm
 
+  // Open ADMM variables log file for sampled QPs
+  {
+    OSQPInt sample_id = g_testcase_count - 1;
+    if (sample_id >= 0 && (sample_id % ADMM_VARS_SAVE_INTERVAL == 0)) {
+      admm_vars_open(sample_id);
+    }
+  }
+
   max_iter = settings->max_iter;
   for (iter = 1; iter <= max_iter; iter++) {
     osqp_profiler_sec_push(OSQP_PROFILER_SEC_ADMM_ITER);
@@ -1277,6 +1379,9 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     // Update x_prev, z_prev (preallocated, no malloc)
     swap_vectors(&(work->x), &(work->x_prev));
     swap_vectors(&(work->z), &(work->z_prev));
+
+    /* Save BEFORE: x_prev, z_prev, y (update 이전 상태) */
+    admm_vars_write_before(iter, work);
 
     /* ADMM STEPS */
     /* Compute \tilde{x}^{k+1}, \tilde{z}^{k+1} */
@@ -1299,6 +1404,9 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
 
     /* Log iteration values */
     log_admm_iteration(iter, work);
+
+    /* Save AFTER: x_tilde, z_tilde, x, z, y (update 이후 상태) */
+    admm_vars_write_after(iter, work);
 
     /* End of ADMM Steps */
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_ADMM_UPDATE);
@@ -1687,6 +1795,9 @@ exit:
 
   // Close ADMM iteration log file
   close_admm_log();
+
+  // Close ADMM variables log file
+  admm_vars_close();
 
 #ifdef OSQP_ENABLE_INTERRUPT // ON
   // Restore previous signal handler
