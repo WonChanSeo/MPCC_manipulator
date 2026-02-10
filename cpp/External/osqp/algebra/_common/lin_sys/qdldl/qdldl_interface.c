@@ -356,6 +356,93 @@ static void save_solve_intermediate(OSQPInt sample_id, const char* step_name,
          (long long)sample_id, step_name);
 }
 
+// Save L matrix (CSR format) and Dinv vector at solve time
+// CSC→CSR 변환: L의 CSC(col_ptr=Lp, row_idx=Li, val=Lx)를 CSR(row_ptr, col_idx, val)로 변환
+static void save_solve_L_Dinv(OSQPInt sample_id, OSQPInt n,
+                               const OSQPInt* Lp, const OSQPInt* Li, const OSQPFloat* Lx,
+                               const OSQPFloat* Dinv) {
+  ensure_solve_dir();
+
+  OSQPInt nnz = Lp[n];
+  OSQPInt i, j, k;
+
+  // CSC → CSR 변환
+  OSQPInt* row_ptr  = (OSQPInt*)calloc(n + 1, sizeof(OSQPInt));
+  OSQPInt* col_idx  = (OSQPInt*)malloc(nnz * sizeof(OSQPInt));
+  OSQPFloat* values = (OSQPFloat*)malloc(nnz * sizeof(OSQPFloat));
+  if (!row_ptr || !col_idx || !values) {
+    free(row_ptr); free(col_idx); free(values);
+    return;
+  }
+
+  // Pass 1: count entries per row
+  for (k = 0; k < nnz; k++) row_ptr[Li[k] + 1]++;
+  // Cumulative sum → row_ptr
+  for (i = 0; i < n; i++) row_ptr[i + 1] += row_ptr[i];
+  // Pass 2: fill col_idx and values
+  OSQPInt* cursor = (OSQPInt*)calloc(n, sizeof(OSQPInt));
+  for (j = 0; j < n; j++) {
+    for (k = Lp[j]; k < Lp[j + 1]; k++) {
+      OSQPInt row = Li[k];
+      OSQPInt dest = row_ptr[row] + cursor[row];
+      col_idx[dest] = j;
+      values[dest] = Lx[k];
+      cursor[row]++;
+    }
+  }
+  free(cursor);
+
+  // Float file
+  char path[256];
+  snprintf(path, sizeof(path), "%s/sample_%lld_solve_L_Dinv.csv",
+           SOLVE_TESTCASE_DIR, (long long)sample_id);
+  FILE* f = fopen(path, "w");
+  if (f) {
+    fprintf(f, "# L matrix (CSR) and Dinv at solve time - Sample %lld\n", (long long)sample_id);
+    fprintf(f, "# n=%lld, nnz=%lld\n\n", (long long)n, (long long)nnz);
+
+    fprintf(f, "# L (CSR) - %lld x %lld, nnz=%lld\n", (long long)n, (long long)n, (long long)nnz);
+    fprintf(f, "# row_ptr\n");
+    for (i = 0; i <= n; i++) { fprintf(f, "%lld", (long long)row_ptr[i]); if (i < n) fprintf(f, ","); }
+    fprintf(f, "\n# col_idx\n");
+    for (k = 0; k < nnz; k++) { fprintf(f, "%lld", (long long)col_idx[k]); if (k < nnz-1) fprintf(f, ","); }
+    fprintf(f, "\n# values\n");
+    for (k = 0; k < nnz; k++) { fprintf(f, "%.8e", (double)values[k]); if (k < nnz-1) fprintf(f, ","); }
+    fprintf(f, "\n\n");
+
+    factor_save_vector_float(f, "Dinv", Dinv, n);
+    fclose(f);
+  }
+
+  // Hex file
+  char path_bits[256];
+  snprintf(path_bits, sizeof(path_bits), "%s/sample_%lld_solve_L_Dinv_bits.csv",
+           SOLVE_TESTCASE_DIR, (long long)sample_id);
+  FILE* fb = fopen(path_bits, "w");
+  if (fb) {
+    fprintf(fb, "# L matrix (CSR, FP32 Hex) and Dinv at solve time - Sample %lld\n", (long long)sample_id);
+    fprintf(fb, "# n=%lld, nnz=%lld\n\n", (long long)n, (long long)nnz);
+
+    fprintf(fb, "# L (CSR) - %lld x %lld, nnz=%lld\n", (long long)n, (long long)n, (long long)nnz);
+    fprintf(fb, "# row_ptr\n");
+    for (i = 0; i <= n; i++) { fprintf(fb, "%lld", (long long)row_ptr[i]); if (i < n) fprintf(fb, ","); }
+    fprintf(fb, "\n# col_idx\n");
+    for (k = 0; k < nnz; k++) { fprintf(fb, "%lld", (long long)col_idx[k]); if (k < nnz-1) fprintf(fb, ","); }
+    fprintf(fb, "\n# values (hex FP32)\n");
+    for (k = 0; k < nnz; k++) {
+      union { float f; uint32_t u; } v; v.f = (float)values[k];
+      fprintf(fb, "%08x", v.u); if (k < nnz-1) fprintf(fb, ",");
+    }
+    fprintf(fb, "\n\n");
+
+    factor_save_vector_bits(fb, "Dinv", Dinv, n);
+    fclose(fb);
+  }
+
+  free(row_ptr); free(col_idx); free(values);
+  printf("[OSQP] Saved solve L(CSR)/Dinv sample_%lld\n", (long long)sample_id);
+}
+
 // Save metadata (rho_updates, iter) for a sample
 // ADMM iteration log entry (must match definition in osqp_api.c)
 typedef struct {
@@ -1636,6 +1723,9 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
       s_intermediate_saved = 1;
       OSQPFloat* bp = s->bp;
 
+      // Save L matrix and Dinv at solve time
+      save_solve_L_Dinv(sample_id, N, s->L->p, s->L->i, s->L->x, s->Dinv);
+
       osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
 
       // Permute input
@@ -1673,6 +1763,9 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
     } else if (save_final) {
       // === Every 50th sample, first solve: normal solve + save rhs & result ===
       OSQPFloat* bp = s->bp;
+
+      // Save L matrix and Dinv at solve time
+      save_solve_L_Dinv(sample_id, N, s->L->p, s->L->i, s->L->x, s->Dinv);
 
       osqp_profiler_sec_push(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
 
