@@ -123,6 +123,81 @@ static void factor_save_vector_bits(FILE* f, const char* name, const OSQPFloat* 
   fprintf(f, "\n\n");
 }
 
+// Helper: Save CSC matrix as CSR format (float)
+static void factor_save_csr_float(FILE* f, const char* name, OSQPInt n,
+                                   const OSQPInt* Cp, const OSQPInt* Ci, const OSQPFloat* Cx) {
+  OSQPInt nnz = Cp[n];
+  OSQPInt i, j, k;
+
+  OSQPInt* row_ptr  = (OSQPInt*)calloc(n + 1, sizeof(OSQPInt));
+  OSQPInt* col_idx  = (OSQPInt*)malloc(nnz * sizeof(OSQPInt));
+  OSQPFloat* values = (OSQPFloat*)malloc(nnz * sizeof(OSQPFloat));
+  OSQPInt* cursor   = (OSQPInt*)calloc(n, sizeof(OSQPInt));
+  if (!row_ptr || !col_idx || !values || !cursor) { free(row_ptr); free(col_idx); free(values); free(cursor); return; }
+
+  for (k = 0; k < nnz; k++) row_ptr[Ci[k] + 1]++;
+  for (i = 0; i < n; i++) row_ptr[i + 1] += row_ptr[i];
+  for (j = 0; j < n; j++) {
+    for (k = Cp[j]; k < Cp[j + 1]; k++) {
+      OSQPInt row = Ci[k];
+      OSQPInt dest = row_ptr[row] + cursor[row];
+      col_idx[dest] = j;
+      values[dest] = Cx[k];
+      cursor[row]++;
+    }
+  }
+
+  fprintf(f, "# %s (CSR) - %lld x %lld, nnz=%lld\n", name, (long long)n, (long long)n, (long long)nnz);
+  fprintf(f, "# row_ptr\n");
+  for (i = 0; i <= n; i++) { fprintf(f, "%lld", (long long)row_ptr[i]); if (i < n) fprintf(f, ","); }
+  fprintf(f, "\n# col_idx\n");
+  for (k = 0; k < nnz; k++) { fprintf(f, "%lld", (long long)col_idx[k]); if (k < nnz-1) fprintf(f, ","); }
+  fprintf(f, "\n# values\n");
+  for (k = 0; k < nnz; k++) { fprintf(f, "%.8e", (double)values[k]); if (k < nnz-1) fprintf(f, ","); }
+  fprintf(f, "\n\n");
+
+  free(row_ptr); free(col_idx); free(values); free(cursor);
+}
+
+// Helper: Save CSC matrix as CSR format (hex FP32)
+static void factor_save_csr_bits(FILE* f, const char* name, OSQPInt n,
+                                  const OSQPInt* Cp, const OSQPInt* Ci, const OSQPFloat* Cx) {
+  OSQPInt nnz = Cp[n];
+  OSQPInt i, j, k;
+
+  OSQPInt* row_ptr  = (OSQPInt*)calloc(n + 1, sizeof(OSQPInt));
+  OSQPInt* col_idx  = (OSQPInt*)malloc(nnz * sizeof(OSQPInt));
+  OSQPFloat* values = (OSQPFloat*)malloc(nnz * sizeof(OSQPFloat));
+  OSQPInt* cursor   = (OSQPInt*)calloc(n, sizeof(OSQPInt));
+  if (!row_ptr || !col_idx || !values || !cursor) { free(row_ptr); free(col_idx); free(values); free(cursor); return; }
+
+  for (k = 0; k < nnz; k++) row_ptr[Ci[k] + 1]++;
+  for (i = 0; i < n; i++) row_ptr[i + 1] += row_ptr[i];
+  for (j = 0; j < n; j++) {
+    for (k = Cp[j]; k < Cp[j + 1]; k++) {
+      OSQPInt row = Ci[k];
+      OSQPInt dest = row_ptr[row] + cursor[row];
+      col_idx[dest] = j;
+      values[dest] = Cx[k];
+      cursor[row]++;
+    }
+  }
+
+  fprintf(f, "# %s (CSR, hex FP32) - %lld x %lld, nnz=%lld\n", name, (long long)n, (long long)n, (long long)nnz);
+  fprintf(f, "# row_ptr\n");
+  for (i = 0; i <= n; i++) { fprintf(f, "%lld", (long long)row_ptr[i]); if (i < n) fprintf(f, ","); }
+  fprintf(f, "\n# col_idx\n");
+  for (k = 0; k < nnz; k++) { fprintf(f, "%lld", (long long)col_idx[k]); if (k < nnz-1) fprintf(f, ","); }
+  fprintf(f, "\n# values (hex FP32)\n");
+  for (k = 0; k < nnz; k++) {
+    union { float f; uint32_t u; } v; v.f = (float)values[k];
+    fprintf(f, "%08x", v.u); if (k < nnz-1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+
+  free(row_ptr); free(col_idx); free(values); free(cursor);
+}
+
 // Row offset for L full matrix (non-zero values start from this row)
 #define L_FULL_MATRIX_START_ROW 479
 
@@ -267,6 +342,7 @@ static void save_factorization_result(OSQPInt sample_id, OSQPInt n,
     factor_save_csc_float(f_float, "KKT", n, n, KKTp, KKTi, KKTx);
     factor_save_KKT_full_float(f_float, "KKT_full", n, KKTp, KKTi, KKTx);
     factor_save_csc_float(f_float, "L", n, n, Lp, Li, Lx);
+    factor_save_csr_float(f_float, "L", n, Lp, Li, Lx);
     factor_save_L_full_float(f_float, "L_full", n, Lp, Li, Lx, L_FULL_MATRIX_START_ROW);
     factor_save_vector_float(f_float, "D", D, n);
     factor_save_vector_float(f_float, "Dinv", Dinv, n);
@@ -282,6 +358,7 @@ static void save_factorization_result(OSQPInt sample_id, OSQPInt n,
     factor_save_csc_bits(f_bits, "KKT", n, n, KKTp, KKTi, KKTx);
     factor_save_KKT_full_bits(f_bits, "KKT_full", n, KKTp, KKTi, KKTx);
     factor_save_csc_bits(f_bits, "L", n, n, Lp, Li, Lx);
+    factor_save_csr_bits(f_bits, "L", n, Lp, Li, Lx);
     factor_save_L_full_bits(f_bits, "L_full", n, Lp, Li, Lx, L_FULL_MATRIX_START_ROW);
     factor_save_vector_bits(f_bits, "D", D, n);
     factor_save_vector_bits(f_bits, "Dinv", Dinv, n);
@@ -357,40 +434,10 @@ static void save_solve_intermediate(OSQPInt sample_id, const char* step_name,
 }
 
 // Save L matrix (CSR format) and Dinv vector at solve time
-// CSC→CSR 변환: L의 CSC(col_ptr=Lp, row_idx=Li, val=Lx)를 CSR(row_ptr, col_idx, val)로 변환
 static void save_solve_L_Dinv(OSQPInt sample_id, OSQPInt n,
                                const OSQPInt* Lp, const OSQPInt* Li, const OSQPFloat* Lx,
                                const OSQPFloat* Dinv) {
   ensure_solve_dir();
-
-  OSQPInt nnz = Lp[n];
-  OSQPInt i, j, k;
-
-  // CSC → CSR 변환
-  OSQPInt* row_ptr  = (OSQPInt*)calloc(n + 1, sizeof(OSQPInt));
-  OSQPInt* col_idx  = (OSQPInt*)malloc(nnz * sizeof(OSQPInt));
-  OSQPFloat* values = (OSQPFloat*)malloc(nnz * sizeof(OSQPFloat));
-  if (!row_ptr || !col_idx || !values) {
-    free(row_ptr); free(col_idx); free(values);
-    return;
-  }
-
-  // Pass 1: count entries per row
-  for (k = 0; k < nnz; k++) row_ptr[Li[k] + 1]++;
-  // Cumulative sum → row_ptr
-  for (i = 0; i < n; i++) row_ptr[i + 1] += row_ptr[i];
-  // Pass 2: fill col_idx and values
-  OSQPInt* cursor = (OSQPInt*)calloc(n, sizeof(OSQPInt));
-  for (j = 0; j < n; j++) {
-    for (k = Lp[j]; k < Lp[j + 1]; k++) {
-      OSQPInt row = Li[k];
-      OSQPInt dest = row_ptr[row] + cursor[row];
-      col_idx[dest] = j;
-      values[dest] = Lx[k];
-      cursor[row]++;
-    }
-  }
-  free(cursor);
 
   // Float file
   char path[256];
@@ -399,17 +446,8 @@ static void save_solve_L_Dinv(OSQPInt sample_id, OSQPInt n,
   FILE* f = fopen(path, "w");
   if (f) {
     fprintf(f, "# L matrix (CSR) and Dinv at solve time - Sample %lld\n", (long long)sample_id);
-    fprintf(f, "# n=%lld, nnz=%lld\n\n", (long long)n, (long long)nnz);
-
-    fprintf(f, "# L (CSR) - %lld x %lld, nnz=%lld\n", (long long)n, (long long)n, (long long)nnz);
-    fprintf(f, "# row_ptr\n");
-    for (i = 0; i <= n; i++) { fprintf(f, "%lld", (long long)row_ptr[i]); if (i < n) fprintf(f, ","); }
-    fprintf(f, "\n# col_idx\n");
-    for (k = 0; k < nnz; k++) { fprintf(f, "%lld", (long long)col_idx[k]); if (k < nnz-1) fprintf(f, ","); }
-    fprintf(f, "\n# values\n");
-    for (k = 0; k < nnz; k++) { fprintf(f, "%.8e", (double)values[k]); if (k < nnz-1) fprintf(f, ","); }
-    fprintf(f, "\n\n");
-
+    fprintf(f, "# n=%lld\n\n", (long long)n);
+    factor_save_csr_float(f, "L", n, Lp, Li, Lx);
     factor_save_vector_float(f, "Dinv", Dinv, n);
     fclose(f);
   }
@@ -421,25 +459,12 @@ static void save_solve_L_Dinv(OSQPInt sample_id, OSQPInt n,
   FILE* fb = fopen(path_bits, "w");
   if (fb) {
     fprintf(fb, "# L matrix (CSR, FP32 Hex) and Dinv at solve time - Sample %lld\n", (long long)sample_id);
-    fprintf(fb, "# n=%lld, nnz=%lld\n\n", (long long)n, (long long)nnz);
-
-    fprintf(fb, "# L (CSR) - %lld x %lld, nnz=%lld\n", (long long)n, (long long)n, (long long)nnz);
-    fprintf(fb, "# row_ptr\n");
-    for (i = 0; i <= n; i++) { fprintf(fb, "%lld", (long long)row_ptr[i]); if (i < n) fprintf(fb, ","); }
-    fprintf(fb, "\n# col_idx\n");
-    for (k = 0; k < nnz; k++) { fprintf(fb, "%lld", (long long)col_idx[k]); if (k < nnz-1) fprintf(fb, ","); }
-    fprintf(fb, "\n# values (hex FP32)\n");
-    for (k = 0; k < nnz; k++) {
-      union { float f; uint32_t u; } v; v.f = (float)values[k];
-      fprintf(fb, "%08x", v.u); if (k < nnz-1) fprintf(fb, ",");
-    }
-    fprintf(fb, "\n\n");
-
+    fprintf(fb, "# n=%lld\n\n", (long long)n);
+    factor_save_csr_bits(fb, "L", n, Lp, Li, Lx);
     factor_save_vector_bits(fb, "Dinv", Dinv, n);
     fclose(fb);
   }
 
-  free(row_ptr); free(col_idx); free(values);
   printf("[OSQP] Saved solve L(CSR)/Dinv sample_%lld\n", (long long)sample_id);
 }
 
@@ -1700,12 +1725,13 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
                             (sample_id % SOLVE_TESTCASE_SAVE_INTERVAL == 0));
   OSQPInt is_first_solve = (g_solve_call_count == 0);
 
-  // Use static flag to ensure intermediate saves happen only once per QP
+  // Use static flags to ensure saves happen only once per QP
   // (prevents overwriting by rho update refactorizations that reset g_solve_call_count)
   static OSQPInt s_intermediate_saved = 0;
+  static OSQPInt s_final_saved_id = -1;  // sample_id of last saved final
   if (sample_id != 0) s_intermediate_saved = 0;  // reset for next QP
   OSQPInt save_intermediate = (sample_id == 0 && is_first_solve && !s_intermediate_saved);
-  OSQPInt save_final = (is_save_sample && is_first_solve);
+  OSQPInt save_final = (is_save_sample && is_first_solve && sample_id != s_final_saved_id);
 
   g_solve_call_count++;
 
@@ -1719,8 +1745,9 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
 #endif
     if (save_intermediate) {
       // === Sample 0, first solve: step-by-step with intermediate saves ===
-      // This runs only once per QP (guarded by s_intermediate_saved)
+      // This runs only once per QP (guarded by s_intermediate_saved + s_final_saved_id)
       s_intermediate_saved = 1;
+      s_final_saved_id = sample_id;  // save_final 경로의 덮어쓰기도 방지
       OSQPFloat* bp = s->bp;
 
       // Save L matrix and Dinv at solve time
@@ -1778,6 +1805,7 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
       osqp_profiler_sec_pop(OSQP_PROFILER_SEC_LINSYS_BACKSOLVE);
 
       save_solve_result(sample_id, N, bp);
+      s_final_saved_id = sample_id;  // 이 sample에 대해 중복 저장 방지
     } else {
       // === Normal path ===
 #ifdef QDLDL_ENABLE_SAMPLE_LOGGING
@@ -1847,14 +1875,13 @@ OSQPInt update_linsys_solver_matrices_qdldl(qdldl_solver*     s,
 #endif
 
     // Save factorization result for ASIC testcase (every FACTORIZATION_TESTCASE_SAVE_INTERVAL runs)
-    // Note: g_testcase_count is incremented after scaling, so we use (g_testcase_count - 1) to match scaling samples
-    OSQPInt sample_id = g_testcase_count - 1;
-    if (pos_D_count >= 0 && sample_id >= 0 && (sample_id % FACTORIZATION_TESTCASE_SAVE_INTERVAL == 0)) {
-        save_factorization_result(sample_id, s->KKT->n,
-                                   s->KKT->p, s->KKT->i, s->KKT->x,
-                                   s->L->p, s->L->i, s->L->x,
-                                   s->D, s->Dinv);
-    }
+    // NOTE: 이 함수는 matrix update 시 refactorization에서 호출됨.
+    // 초기 factorization은 init_linsys_solver_qdldl에서 이미 저장하므로,
+    // 여기서는 저장하지 않음 (덮어쓰기 방지).
+    // OSQPInt sample_id = g_testcase_count - 1;
+    // if (pos_D_count >= 0 && sample_id >= 0 && (sample_id % FACTORIZATION_TESTCASE_SAVE_INTERVAL == 0)) {
+    //     save_factorization_result(sample_id, ...);
+    // }
 
     //number of positive elements in D should match the
     //dimension of P if P + \sigma I is PD.   Error otherwise.
