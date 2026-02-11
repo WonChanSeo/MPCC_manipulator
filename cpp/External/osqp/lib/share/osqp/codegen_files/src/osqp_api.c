@@ -1370,10 +1370,6 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     OSQPInt sample_id = g_testcase_count - 1;
     if (sample_id >= 0 && (sample_id % ADMM_VARS_SAVE_INTERVAL == 0)) {
       admm_vars_open(sample_id);
-      // Enable ADMM solve logging for sample 0
-      if (sample_id == 0) {
-        osqp_set_qdldl_admm_iteration(0, sample_id, 1);
-      }
     }
   }
 
@@ -1388,6 +1384,14 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     /* Save BEFORE: x_prev, z_prev, y (update 이전 상태) */
     admm_vars_write_before(iter, work);
 
+    /* Set ADMM iteration for QDLDL solve logging (before solve so iter is correct) */
+    {
+      OSQPInt sample_id = g_testcase_count - 1;
+      if (sample_id == 0) {
+        osqp_set_qdldl_admm_iteration(iter, sample_id, 1);
+      }
+    }
+
     /* ADMM STEPS */
     /* Compute \tilde{x}^{k+1}, \tilde{z}^{k+1} */
     osqp_profiler_sec_push(OSQP_PROFILER_SEC_ADMM_KKT_SOLVE);
@@ -1395,14 +1399,6 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_ADMM_KKT_SOLVE);
 
     osqp_profiler_sec_push(OSQP_PROFILER_SEC_ADMM_UPDATE);
-
-    /* Set ADMM iteration for QDLDL solve logging */
-    {
-      OSQPInt sample_id = g_testcase_count - 1;
-      if (sample_id == 0) {
-        osqp_set_qdldl_admm_iteration(iter, sample_id, 1);
-      }
-    }
 
     /* Compute x^{k+1} */
     update_x(solver);
