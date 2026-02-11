@@ -62,21 +62,34 @@ static int g_L_csr_initialized = 0;        // initialization flag
 static QDLDL_float* g_adder_tree_buffer = NULL;
 static QDLDL_int g_adder_tree_buffer_size = 0;
 
+// ========================================
+// ASIC 고정 CSR 패턴 (L_csr.txt에서 로드)
+// ========================================
+static int g_L_csr_pattern_loaded = 0;       // 패턴 로드 완료 플래그
+static int g_L_csr_map_built = 0;            // CSR→CSC 인덱스 매핑 빌드 완료
+static QDLDL_int* g_csr_to_csc_map = NULL;   // CSR position → CSC position (-1이면 미존재)
+
+#define L_CSR_PATTERN_PATH "/home/mms-wonchan/git/MPCC_manipulator/reference_matrix/L_csr.txt"
+
 // CSR 메모리 해제
 static void free_L_csr(void) {
     if (g_L_csr_rowptr) { free(g_L_csr_rowptr); g_L_csr_rowptr = NULL; }
     if (g_L_csr_colind) { free(g_L_csr_colind); g_L_csr_colind = NULL; }
     if (g_L_csr_values) { free(g_L_csr_values); g_L_csr_values = NULL; }
     if (g_adder_tree_buffer) { free(g_adder_tree_buffer); g_adder_tree_buffer = NULL; }
+    if (g_csr_to_csc_map) { free(g_csr_to_csc_map); g_csr_to_csc_map = NULL; }
     g_L_csr_n = 0;
     g_L_csr_nnz = 0;
     g_L_csr_initialized = 0;
     g_adder_tree_buffer_size = 0;
+    g_L_csr_pattern_loaded = 0;
+    g_L_csr_map_built = 0;
 }
 
-// CSC에서 CSR로 변환 (L matrix)
+// CSC에서 CSR로 변환 (L matrix) — 미사용: ASIC 고정 패턴(load_L_csr_pattern)으로 대체됨
 // CSC: Lp (col ptr), Li (row ind), Lx (values)
 // CSR: rowptr, colind, values
+#if 0  // 미사용 (ASIC 고정 패턴 사용)
 static void convert_csc_to_csr(QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li, const QDLDL_float* Lx) {
     QDLDL_int nnz = Lp[n];
     QDLDL_int i, j, col, row, dest;
@@ -141,6 +154,179 @@ static void convert_csc_to_csr(QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int
     while (buf_size < max_row_nnz) buf_size <<= 1;
     g_adder_tree_buffer = (QDLDL_float*)malloc(sizeof(QDLDL_float) * buf_size);
     g_adder_tree_buffer_size = buf_size;
+}
+#endif  // 미사용 convert_csc_to_csr
+
+// ========================================
+// ASIC 고정 CSR 패턴 로드 (L_csr.txt)
+// ========================================
+// L_csr.txt 파싱: 각 줄 = row의 comma-separated column indices (빈 줄 = 0개)
+static void load_L_csr_pattern(const char* filepath, QDLDL_int n) {
+    FILE* fp = fopen(filepath, "r");
+    if (!fp) {
+        printf("[QDLDL] WARNING: Cannot open CSR pattern file: %s\n", filepath);
+        return;
+    }
+
+    // 기존 CSR 해제
+    free_L_csr();
+
+    char line[8192];
+    QDLDL_int* row_counts = (QDLDL_int*)calloc(n, sizeof(QDLDL_int));
+    if (!row_counts) { fclose(fp); return; }
+
+    // Pass 1: 각 row의 nnz 카운트
+    QDLDL_int row = 0;
+    while (row < n && fgets(line, sizeof(line), fp)) {
+        // 개행 제거
+        QDLDL_int len = (QDLDL_int)strlen(line);
+        while (len > 0 && (line[len-1] == '\n' || line[len-1] == '\r')) line[--len] = '\0';
+
+        if (len == 0) {
+            row_counts[row] = 0;
+        } else {
+            // 쉼표 수 + 1 = 항목 수
+            QDLDL_int cnt = 1;
+            for (QDLDL_int c = 0; c < len; c++) {
+                if (line[c] == ',') cnt++;
+            }
+            row_counts[row] = cnt;
+        }
+        row++;
+    }
+    // 파일에 줄이 부족하면 나머지는 0
+    for (; row < n; row++) row_counts[row] = 0;
+
+    // rowptr 계산
+    g_L_csr_rowptr = (QDLDL_int*)malloc(sizeof(QDLDL_int) * (n + 1));
+    if (!g_L_csr_rowptr) { free(row_counts); fclose(fp); return; }
+    g_L_csr_rowptr[0] = 0;
+    for (QDLDL_int i = 0; i < n; i++) {
+        g_L_csr_rowptr[i + 1] = g_L_csr_rowptr[i] + row_counts[i];
+    }
+    QDLDL_int total_nnz = g_L_csr_rowptr[n];
+
+    // colind, values 할당
+    g_L_csr_colind = (QDLDL_int*)malloc(sizeof(QDLDL_int) * (total_nnz > 0 ? total_nnz : 1));
+    g_L_csr_values = (QDLDL_float*)calloc(total_nnz > 0 ? total_nnz : 1, sizeof(QDLDL_float));
+    if (!g_L_csr_colind || !g_L_csr_values) {
+        free(row_counts); fclose(fp);
+        free_L_csr();
+        return;
+    }
+
+    // Pass 2: colind 채우기
+    rewind(fp);
+    row = 0;
+    while (row < n && fgets(line, sizeof(line), fp)) {
+        QDLDL_int len = (QDLDL_int)strlen(line);
+        while (len > 0 && (line[len-1] == '\n' || line[len-1] == '\r')) line[--len] = '\0';
+
+        if (len > 0) {
+            QDLDL_int pos = g_L_csr_rowptr[row];
+            char* ptr = line;
+            while (*ptr) {
+                char* end;
+                long long val = strtoll(ptr, &end, 10);
+                g_L_csr_colind[pos++] = (QDLDL_int)val;
+                if (*end == ',') end++;
+                ptr = end;
+            }
+        }
+        row++;
+    }
+
+    fclose(fp);
+    free(row_counts);
+
+    g_L_csr_n = n;
+    g_L_csr_nnz = total_nnz;
+
+    // Adder tree 버퍼 할당 (max_row_nnz + 1: Lsolve에서 -x[i]도 포함)
+    QDLDL_int max_row_nnz = 0;
+    for (QDLDL_int i = 0; i < n; i++) {
+        QDLDL_int rnnz = g_L_csr_rowptr[i + 1] - g_L_csr_rowptr[i];
+        if (rnnz > max_row_nnz) max_row_nnz = rnnz;
+    }
+    QDLDL_int buf_size = 1;
+    while (buf_size < max_row_nnz + 1) buf_size <<= 1;  // +1 for -x[i]
+    g_adder_tree_buffer = (QDLDL_float*)malloc(sizeof(QDLDL_float) * buf_size);
+    g_adder_tree_buffer_size = buf_size;
+
+    g_L_csr_initialized = 1;
+    g_L_csr_pattern_loaded = 1;
+
+    printf("[QDLDL] Loaded fixed CSR pattern: n=%lld, nnz=%lld, max_row_nnz=%lld, buffer=%lld\n",
+           (long long)n, (long long)total_nnz, (long long)max_row_nnz, (long long)buf_size);
+}
+
+// CSR→CSC 인덱스 매핑 빌드 (매 factorization마다 호출)
+// CSR의 각 entry (row i, col j)에 대해 CSC에서 해당 위치를 찾아 매핑
+static void build_csr_to_csc_map(QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li) {
+    if (g_csr_to_csc_map) { free(g_csr_to_csc_map); g_csr_to_csc_map = NULL; }
+
+    QDLDL_int nnz = g_L_csr_nnz;
+    g_csr_to_csc_map = (QDLDL_int*)malloc(sizeof(QDLDL_int) * (nnz > 0 ? nnz : 1));
+    if (!g_csr_to_csc_map) return;
+
+    // Forward: CSR → CSC 매핑
+    QDLDL_int unmapped = 0;
+    for (QDLDL_int i = 0; i < n; i++) {
+        QDLDL_int csr_start = g_L_csr_rowptr[i];
+        QDLDL_int csr_end = g_L_csr_rowptr[i + 1];
+
+        for (QDLDL_int k = csr_start; k < csr_end; k++) {
+            QDLDL_int col = g_L_csr_colind[k];
+            // CSC column col에서 row i를 binary search
+            QDLDL_int lo = Lp[col];
+            QDLDL_int hi = Lp[col + 1] - 1;
+            QDLDL_int found = -1;
+            while (lo <= hi) {
+                QDLDL_int mid = lo + (hi - lo) / 2;
+                if (Li[mid] == i) { found = mid; break; }
+                else if (Li[mid] < i) lo = mid + 1;
+                else hi = mid - 1;
+            }
+            g_csr_to_csc_map[k] = found;
+            if (found < 0) unmapped++;
+        }
+    }
+
+    // Reverse check: CSC에 있지만 CSR 패턴에 없는 entry 검사
+    QDLDL_int csc_nnz = Lp[n];
+    QDLDL_int missing_from_pattern = 0;
+    for (QDLDL_int col = 0; col < n; col++) {
+        for (QDLDL_int j = Lp[col]; j < Lp[col + 1]; j++) {
+            QDLDL_int row = Li[j];
+            // CSR row 'row'에서 col을 찾기
+            QDLDL_int csr_start = g_L_csr_rowptr[row];
+            QDLDL_int csr_end = g_L_csr_rowptr[row + 1];
+            int found = 0;
+            for (QDLDL_int k = csr_start; k < csr_end; k++) {
+                if (g_L_csr_colind[k] == col) { found = 1; break; }
+            }
+            if (!found) missing_from_pattern++;
+        }
+    }
+
+    g_L_csr_map_built = 1;
+    printf("[QDLDL] CSR map: csc_nnz=%lld, csr_nnz=%lld, unmapped(0-fill)=%lld, missing_from_pattern=%lld\n",
+           (long long)csc_nnz, (long long)nnz, (long long)unmapped, (long long)missing_from_pattern);
+    if (missing_from_pattern > 0) {
+        printf("[QDLDL] ERROR: %lld CSC entries NOT in CSR pattern — these L values will be LOST!\n",
+               (long long)missing_from_pattern);
+    }
+}
+
+// 매핑을 사용하여 CSR values 채우기 (매 factorization 후 호출)
+static void fill_L_csr_values(const QDLDL_float* Lx) {
+    for (QDLDL_int k = 0; k < g_L_csr_nnz; k++) {
+        if (g_csr_to_csc_map[k] >= 0) {
+            g_L_csr_values[k] = Lx[g_csr_to_csc_map[k]];
+        } else {
+            g_L_csr_values[k] = 0.0;
+        }
+    }
 }
 
 // Adder tree 합산 (in-place, 버퍼 사용)
@@ -855,10 +1041,13 @@ QDLDL_int QDLDL_factor(const QDLDL_int n, const QDLDL_int* Ap, const QDLDL_int* 
     //        (int64_t)positiveValuesInD, (int64_t)n);
 
     // ========================================
-    // Factor 완료 후 L을 CSR로 변환 (Lsolve용 adder tree 지원)
-    // L의 CSR은 L^T의 CSC와 동일 (Ltsolve에서도 활용)
+    // ASIC 고정 CSR 패턴으로 L 로드 (Lsolve/Ltsolve용)
     // ========================================
-    convert_csc_to_csr(n, Lp, Li, Lx);
+    if (!g_L_csr_pattern_loaded) {
+        load_L_csr_pattern(L_CSR_PATTERN_PATH, n);
+    }
+    build_csr_to_csc_map(n, Lp, Li);
+    fill_L_csr_values(Lx);
 
     return positiveValuesInD;
 }
@@ -1103,7 +1292,12 @@ QDLDL_int QDLDL_factor_right_looking(
         printf("[QDLDL] Saved D update log to factorization/sample_0_metadata.csv\n");
     }
 
-    convert_csc_to_csr(n, Lp, Li, Lx);
+    // ASIC 고정 CSR 패턴으로 L 로드
+    if (!g_L_csr_pattern_loaded) {
+        load_L_csr_pattern(L_CSR_PATTERN_PATH, n);
+    }
+    build_csr_to_csc_map(n, Lp, Li);
+    fill_L_csr_values(Lx);
 
     return positiveValuesInD;
 }
