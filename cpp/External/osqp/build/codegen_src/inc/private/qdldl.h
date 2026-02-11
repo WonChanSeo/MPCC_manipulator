@@ -228,6 +228,21 @@ QDLDL_API void QDLDL_reset_sample_counter(void);
 QDLDL_API int QDLDL_get_sample_count(void);
 
 /**
+ * Set ADMM iteration for detailed solve logging
+ * @param iter ADMM iteration number
+ * @param sample_id Sample ID
+ * @param enable_logging 1 to enable logging, 0 to disable
+ */
+QDLDL_API void QDLDL_set_admm_iteration(int iter, int sample_id, int enable_logging);
+
+/**
+ * ADMM solve logging global variables (non-static for extern access from OSQP)
+ */
+extern int g_qdldl_current_admm_iteration;
+extern int g_qdldl_enable_admm_solve_logging;
+extern int g_qdldl_current_sample_id;
+
+/**
  * Save a complete QDLDL sample (all inputs and outputs)
  * This saves: Ap, Ai, Ax, Lp, Li, Lx, D, Dinv, etree, Lnz, x_input, x_output
  *

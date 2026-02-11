@@ -1125,7 +1125,19 @@ static int dump_matrix_mask_shape(const OSQPCscMatrix* M, const char* path,
     return st;
 }
 
+// ========================================
+// ADMM iteration tracking wrapper for osqp_api.c
+// Define the globals HERE (in OSQP library) instead of in qdldl.c
+// ========================================
+int g_qdldl_current_admm_iteration = 0;
+int g_qdldl_enable_admm_solve_logging = 0;
+int g_qdldl_current_sample_id = -1;
 
+void osqp_set_qdldl_admm_iteration(OSQPInt iter, OSQPInt sample_id, OSQPInt enable) {
+    g_qdldl_current_admm_iteration = (int)iter;
+    g_qdldl_current_sample_id = (int)sample_id;
+    g_qdldl_enable_admm_solve_logging = (int)enable;
+}
 
 void update_settings_linsys_solver_qdldl(qdldl_solver*       s,
                                          const OSQPSettings* settings) {

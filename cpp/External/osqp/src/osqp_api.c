@@ -13,6 +13,7 @@
 #include "timing.h"
 #include "profilers.h"
 #include "algebra_vector.h"
+#include "qdldl_interface.h"
 
 // ADMM iteration logging
 #include <stdio.h>
@@ -1369,6 +1370,10 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     OSQPInt sample_id = g_testcase_count - 1;
     if (sample_id >= 0 && (sample_id % ADMM_VARS_SAVE_INTERVAL == 0)) {
       admm_vars_open(sample_id);
+      // Enable ADMM solve logging for sample 0
+      if (sample_id == 0) {
+        osqp_set_qdldl_admm_iteration(0, sample_id, 1);
+      }
     }
   }
 
@@ -1390,6 +1395,14 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     osqp_profiler_sec_pop(OSQP_PROFILER_SEC_ADMM_KKT_SOLVE);
 
     osqp_profiler_sec_push(OSQP_PROFILER_SEC_ADMM_UPDATE);
+
+    /* Set ADMM iteration for QDLDL solve logging */
+    {
+      OSQPInt sample_id = g_testcase_count - 1;
+      if (sample_id == 0) {
+        osqp_set_qdldl_admm_iteration(iter, sample_id, 1);
+      }
+    }
 
     /* Compute x^{k+1} */
     update_x(solver);
@@ -1798,6 +1811,9 @@ exit:
 
   // Close ADMM variables log file
   admm_vars_close();
+
+  // Disable ADMM solve logging
+  osqp_set_qdldl_admm_iteration(0, -1, 0);
 
 #ifdef OSQP_ENABLE_INTERRUPT // ON
   // Restore previous signal handler

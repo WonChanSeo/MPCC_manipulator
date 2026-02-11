@@ -147,6 +147,13 @@ void update_settings_linsys_solver_qdldl(qdldl_solver*       s,
 void warm_start_linsys_solver_qdldl(qdldl_solver*      s,
                                     const OSQPVectorf* x);
 
+/**
+ * Set ADMM iteration tracking for QDLDL solve logging (wrapper for OSQP API)
+ * @param iter ADMM iteration number
+ * @param sample_id Sample ID
+ * @param enable 1 to enable logging, 0 to disable
+ */
+void osqp_set_qdldl_admm_iteration(OSQPInt iter, OSQPInt sample_id, OSQPInt enable);
 
 #if OSQP_EMBEDDED_MODE != 1
 /**
