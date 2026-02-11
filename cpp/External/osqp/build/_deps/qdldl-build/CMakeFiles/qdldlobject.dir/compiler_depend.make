@@ -92,8 +92,29 @@ _deps/qdldl-build/CMakeFiles/qdldlobject.dir/src/qdldl.c.o: /home/mms-wonchan/gi
   /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
   /usr/include/x86_64-linux-gnu/bits/stdlib.h \
   /usr/include/fenv.h \
-  /usr/include/x86_64-linux-gnu/bits/fenv.h
+  /usr/include/x86_64-linux-gnu/bits/fenv.h \
+  /usr/include/x86_64-linux-gnu/sys/stat.h \
+  /usr/include/x86_64-linux-gnu/bits/stat.h \
+  /usr/include/x86_64-linux-gnu/bits/struct_stat.h \
+  /usr/include/errno.h \
+  /usr/include/x86_64-linux-gnu/bits/errno.h \
+  /usr/include/linux/errno.h \
+  /usr/include/x86_64-linux-gnu/asm/errno.h \
+  /usr/include/asm-generic/errno.h \
+  /usr/include/asm-generic/errno-base.h
 
+
+/usr/include/asm-generic/errno-base.h:
+
+/usr/include/asm-generic/errno.h:
+
+/usr/include/linux/errno.h:
+
+/usr/include/x86_64-linux-gnu/bits/struct_stat.h:
+
+/usr/include/errno.h:
+
+/usr/include/x86_64-linux-gnu/sys/stat.h:
 
 /usr/include/fenv.h:
 
@@ -123,6 +144,8 @@ _deps/qdldl-build/CMakeFiles/qdldlobject.dir/src/qdldl.c.o: /home/mms-wonchan/gi
 
 /usr/include/stdlib.h:
 
+/usr/include/x86_64-linux-gnu/bits/errno.h:
+
 /usr/include/x86_64-linux-gnu/bits/fenv.h:
 
 /usr/include/x86_64-linux-gnu/bits/string_fortified.h:
@@ -147,9 +170,13 @@ _deps/qdldl-build/CMakeFiles/qdldlobject.dir/src/qdldl.c.o: /home/mms-wonchan/gi
 
 /usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
 
+/usr/include/x86_64-linux-gnu/bits/stat.h:
+
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
+
+/usr/include/x86_64-linux-gnu/asm/errno.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 

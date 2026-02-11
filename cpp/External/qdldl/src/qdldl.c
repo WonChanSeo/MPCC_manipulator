@@ -469,44 +469,6 @@ void QDLDL_set_admm_iteration(int iter, int sample_id, int enable_logging) {
     g_qdldl_enable_admm_solve_logging = enable_logging;
 }
 
-// Save ADMM solve intermediate step
-static void save_admm_solve_step(const char* step_name, QDLDL_int n, const QDLDL_float* x) {
-    if (!g_qdldl_enable_admm_solve_logging || g_qdldl_current_sample_id < 0) return;
-
-    ensure_sample_logging_initialized();
-
-    char filepath[512];
-    snprintf(filepath, sizeof(filepath), "%s/solve/sample_%d_iter_%d_%s.csv",
-             g_qdldl_sample_dir, g_qdldl_current_sample_id, g_qdldl_current_admm_iteration, step_name);
-
-    FILE* f = fopen(filepath, "w");
-    if (!f) return;
-
-    fprintf(f, "# Sample %d, ADMM Iteration %d, Step: %s\n",
-            g_qdldl_current_sample_id, g_qdldl_current_admm_iteration, step_name);
-    fprintf(f, "# n=%lld\n\n", (long long)n);
-
-    // Float values
-    fprintf(f, "# x (float) - %lld values\n", (long long)n);
-    for (QDLDL_int i = 0; i < n; i++) {
-        fprintf(f, "%.17e", (double)x[i]);
-        if (i < n - 1) fprintf(f, ",");
-    }
-    fprintf(f, "\n\n");
-
-    // Hex values (FP32)
-    fprintf(f, "# x (hex FP32) - %lld values\n", (long long)n);
-    for (QDLDL_int i = 0; i < n; i++) {
-        union { float f; uint32_t u; } v;
-        v.f = (float)x[i];
-        fprintf(f, "%08x", v.u);
-        if (i < n - 1) fprintf(f, ",");
-    }
-    fprintf(f, "\n");
-
-    fclose(f);
-}
-
 // Free pending factor data
 static void free_pending_factor_data(void) {
     if (g_pending_Ap) { free(g_pending_Ap); g_pending_Ap = NULL; }
@@ -1538,17 +1500,7 @@ void QDLDL_solve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li, co
                  const QDLDL_float* Dinv, QDLDL_float* x) {
     QDLDL_int i = 0;
 
-    // Save rhs (입력 b, solve 시작 전)
-    #ifdef QDLDL_ENABLE_SAMPLE_LOGGING
-    save_admm_solve_step("rhs", n, x);
-    #endif
-
     QDLDL_Lsolve(n, Lp, Li, Lx, x);
-
-    // Save after Lsolve
-    #ifdef QDLDL_ENABLE_SAMPLE_LOGGING
-    save_admm_solve_step("after_Lsolve", n, x);
-    #endif
 
     #ifdef OSQP_ROUNDING_MODE
     int old_round_solve = fegetround();
@@ -1566,15 +1518,5 @@ void QDLDL_solve(const QDLDL_int n, const QDLDL_int* Lp, const QDLDL_int* Li, co
     }
     #endif
 
-    // Save after Dinv
-    #ifdef QDLDL_ENABLE_SAMPLE_LOGGING
-    save_admm_solve_step("after_Dinv", n, x);
-    #endif
-
     QDLDL_Ltsolve(n, Lp, Li, Lx, x);
-
-    // Save after Ltsolve
-    #ifdef QDLDL_ENABLE_SAMPLE_LOGGING
-    save_admm_solve_step("after_Ltsolve", n, x);
-    #endif
 }

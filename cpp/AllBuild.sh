@@ -30,7 +30,7 @@ CONSTRAINTS_USE_ROUND_TO_EVEN=ON
 # ========================================
 # Set QDLDL_ENABLE_SAMPLE_LOGGING=ON to save QDLDL samples for precision analysis
 # Samples will be saved to QDLDL_SAMPLE_OUTPUT_DIR
-QDLDL_ENABLE_SAMPLE_LOGGING=OFF
+QDLDL_ENABLE_SAMPLE_LOGGING=ON
 QDLDL_SAMPLE_OUTPUT_DIR="../../result/qdldl_samples"
 
 echo "========================================="

@@ -433,6 +433,43 @@ static void save_solve_intermediate(OSQPInt sample_id, const char* step_name,
          (long long)sample_id, step_name);
 }
 
+// Save ADMM solve intermediate step (per iteration)
+static void save_admm_solve_step(const char* step_name, OSQPInt n, const OSQPFloat* x,
+                                   OSQPInt sample_id, OSQPInt iter) {
+  ensure_solve_dir();
+
+  char filepath[512];
+  snprintf(filepath, sizeof(filepath), "%s/sample_%lld_iter_%lld_%s.csv",
+           SOLVE_TESTCASE_DIR, (long long)sample_id, (long long)iter, step_name);
+
+  FILE* f = fopen(filepath, "w");
+  if (!f) return;
+
+  fprintf(f, "# Sample %lld, ADMM Iteration %lld, Step: %s\n",
+          (long long)sample_id, (long long)iter, step_name);
+  fprintf(f, "# n=%lld\n\n", (long long)n);
+
+  // Float values
+  fprintf(f, "# x (float) - %lld values\n", (long long)n);
+  for (OSQPInt i = 0; i < n; i++) {
+    fprintf(f, "%.17e", (double)x[i]);
+    if (i < n - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n\n");
+
+  // Hex values (FP32)
+  fprintf(f, "# x (hex FP32) - %lld values\n", (long long)n);
+  for (OSQPInt i = 0; i < n; i++) {
+    union { float f; uint32_t u; } v;
+    v.f = (float)x[i];
+    fprintf(f, "%08x", v.u);
+    if (i < n - 1) fprintf(f, ",");
+  }
+  fprintf(f, "\n");
+
+  fclose(f);
+}
+
 // Save L matrix (CSR format) and Dinv vector at solve time
 static void save_solve_L_Dinv(OSQPInt sample_id, OSQPInt n,
                                const OSQPInt* Lp, const OSQPInt* Li, const OSQPFloat* Lx,
@@ -1702,7 +1739,39 @@ static void LDLSolve_with_logging(OSQPFloat*           x,
     for (j = 0; j < n; j++) b_input_copy[j] = bp[j];
   }
 
-  QDLDL_solve(s->L->n, s->L->p, s->L->i, s->L->x, s->Dinv, bp);
+  // Check if ADMM iteration logging is enabled
+  extern int g_qdldl_enable_admm_solve_logging;
+  extern int g_qdldl_current_sample_id;
+  extern int g_qdldl_current_admm_iteration;
+
+  if (g_qdldl_enable_admm_solve_logging && g_qdldl_current_sample_id >= 0) {
+    // Save rhs
+    save_admm_solve_step("rhs", n, bp, g_qdldl_current_sample_id, g_qdldl_current_admm_iteration);
+
+    // Step 1: Lsolve
+    QDLDL_Lsolve(s->L->n, s->L->p, s->L->i, s->L->x, bp);
+    save_admm_solve_step("after_Lsolve", n, bp, g_qdldl_current_sample_id, g_qdldl_current_admm_iteration);
+
+    // Step 2: Dinv multiply
+    #ifdef OSQP_ROUNDING_MODE
+    {
+      int old_round = fegetround();
+      fesetround(OSQP_ROUNDING_MODE);
+      for (j = 0; j < n; j++) bp[j] = bp[j] * s->Dinv[j];
+      fesetround(old_round);
+    }
+    #else
+    for (j = 0; j < n; j++) bp[j] *= s->Dinv[j];
+    #endif
+    save_admm_solve_step("after_Dinv", n, bp, g_qdldl_current_sample_id, g_qdldl_current_admm_iteration);
+
+    // Step 3: Ltsolve
+    QDLDL_Ltsolve(s->L->n, s->L->p, s->L->i, s->L->x, bp);
+    save_admm_solve_step("after_Ltsolve", n, bp, g_qdldl_current_sample_id, g_qdldl_current_admm_iteration);
+  } else {
+    // Normal solve without ADMM logging
+    QDLDL_solve(s->L->n, s->L->p, s->L->i, s->L->x, s->Dinv, bp);
+  }
 
   // Save sample only if there's a pending factor (factor was recently called)
   // This will save once per factor call, not on every solve
