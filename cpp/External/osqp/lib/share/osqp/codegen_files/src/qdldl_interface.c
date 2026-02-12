@@ -1839,10 +1839,12 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
       // Permute input
       for (j = 0; j < N; j++) bp[j] = bv[s->P[j]];
       save_solve_intermediate(sample_id, "rhs", N, bp);
+      save_admm_solve_step("rhs", N, bp, g_qdldl_current_sample_id, g_qdldl_current_admm_iteration);
 
       // Step 1: Lsolve
       QDLDL_Lsolve(N, s->L->p, s->L->i, s->L->x, bp);
       save_solve_intermediate(sample_id, "after_Lsolve", N, bp);
+      save_admm_solve_step("after_Lsolve", N, bp, g_qdldl_current_sample_id, g_qdldl_current_admm_iteration);
 
       // Step 2: Dinv multiply
       #ifdef OSQP_ROUNDING_MODE
@@ -1856,10 +1858,12 @@ OSQPInt solve_linsys_qdldl(qdldl_solver* s,
       for (j = 0; j < N; j++) bp[j] *= s->Dinv[j];
       #endif
       save_solve_intermediate(sample_id, "after_Dinv", N, bp);
+      save_admm_solve_step("after_Dinv", N, bp, g_qdldl_current_sample_id, g_qdldl_current_admm_iteration);
 
       // Step 3: Ltsolve
       QDLDL_Ltsolve(N, s->L->p, s->L->i, s->L->x, bp);
       save_solve_intermediate(sample_id, "after_Ltsolve", N, bp);
+      save_admm_solve_step("after_Ltsolve", N, bp, g_qdldl_current_sample_id, g_qdldl_current_admm_iteration);
 
       // Unpermute → s->sol
       for (j = 0; j < N; j++) s->sol[s->P[j]] = bp[j];
