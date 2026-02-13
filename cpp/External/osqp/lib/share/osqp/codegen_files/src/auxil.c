@@ -162,13 +162,10 @@ static void auxil_init_dense_matrices(const OSQPSolver* solver) {
     if (g_dns_initialized) return;  /* already built for this solve */
 
     /* Free old allocations if re-initializing */
-    if (g_dns_initialized) {
-      if (g_A_dns)    { c_free(g_A_dns);    g_A_dns = NULL; }
-      if (g_P_dns)    { c_free(g_P_dns);    g_P_dns = NULL; }
-      if (g_dinv_exp) { c_free(g_dinv_exp); g_dinv_exp = NULL; }
-      if (g_einv_exp) { c_free(g_einv_exp); g_einv_exp = NULL; }
-      g_dns_initialized = 0;
-    }
+    if (g_A_dns)    { c_free(g_A_dns);    g_A_dns = NULL; }
+    if (g_P_dns)    { c_free(g_P_dns);    g_P_dns = NULL; }
+    if (g_dinv_exp) { c_free(g_dinv_exp); g_dinv_exp = NULL; }
+    if (g_einv_exp) { c_free(g_einv_exp); g_einv_exp = NULL; }
 
     OSQPWorkspace* work = solver->work;
     OSQPInt m = work->data->m;
@@ -663,12 +660,11 @@ static OSQPFloat compute_prim_res(OSQPSolver*        solver,
       max_val = update_max_abs_conv(max_val, pr_data[i]);
     work->scaled_prim_res = max_val;
 
-    // Unscale: prim_res = ||Einv * pr||_inf (same logic as original C code)
+    // Unscale: prim_res = ||Einv * pr||_inf (Einv = 2^exp, so use exponent shift)
     if (settings->scaling && !settings->scaled_termination) {
-      const OSQPFloat* einv_data = OSQPVectorf_data(work->scaling->Einv);
       OSQPFloat max_scaled = 0.0f;
       for (OSQPInt i = 0; i < m; i++) {
-        OSQPFloat scaled = fp32_mul_conv(einv_data[i], pr_data[i]);
+        OSQPFloat scaled = exp_adjust_conv(pr_data[i], g_einv_exp[i]);
         max_scaled = update_max_abs_conv(max_scaled, scaled);
       }
       prim_res = max_scaled;
@@ -709,16 +705,15 @@ static OSQPFloat compute_prim_tol(const OSQPSolver* solver,
     const OSQPFloat* ax_data = OSQPVectorf_data(work->Ax);
 
     if (settings->scaling && !settings->scaled_termination) {
-      const OSQPFloat* einv_data = OSQPVectorf_data(work->scaling->Einv);
-      // ||Einv * z|| (same logic as original C code)
+      // ||Einv * z|| (Einv = 2^exp, so use exponent shift)
       OSQPFloat max_einv_z = 0.0f;
       for (OSQPInt i = 0; i < m; i++)
-        max_einv_z = update_max_abs_conv(max_einv_z, fp32_mul_conv(einv_data[i], z_data[i]));
+        max_einv_z = update_max_abs_conv(max_einv_z, exp_adjust_conv(z_data[i], g_einv_exp[i]));
 
       // ||Einv * Ax||
       OSQPFloat max_einv_ax = 0.0f;
       for (OSQPInt i = 0; i < m; i++)
-        max_einv_ax = update_max_abs_conv(max_einv_ax, fp32_mul_conv(einv_data[i], ax_data[i]));
+        max_einv_ax = update_max_abs_conv(max_einv_ax, exp_adjust_conv(ax_data[i], g_einv_exp[i]));
 
       max_rel_eps = update_max_abs_conv(max_einv_z, max_einv_ax);
     } else {
@@ -815,15 +810,14 @@ static OSQPFloat compute_dual_res(OSQPSolver*        solver,
       max_val = update_max_abs_conv(max_val, dr_data[j]);
     work->scaled_dual_res = max_val;
 
-    // Unscale: dual_res = cinv * ||Dinv * dr||_inf (same logic as original C code)
+    // Unscale: dual_res = cinv * ||Dinv * dr||_inf (Dinv = 2^exp, cinv = 1.0)
     if (settings->scaling && !settings->scaled_termination) {
-      const OSQPFloat* dinv_data = OSQPVectorf_data(work->scaling->Dinv);
       OSQPFloat max_scaled = 0.0f;
       for (OSQPInt j = 0; j < n; j++) {
-        OSQPFloat scaled = fp32_mul_conv(dinv_data[j], dr_data[j]);
+        OSQPFloat scaled = exp_adjust_conv(dr_data[j], g_dinv_exp[j]);
         max_scaled = update_max_abs_conv(max_scaled, scaled);
       }
-      dual_res = fp32_mul_conv(work->scaling->cinv, max_scaled);
+      dual_res = max_scaled;  // cinv = 1.0, no-op
     } else {
       dual_res = work->scaled_dual_res;
     }
@@ -873,26 +867,24 @@ static OSQPFloat compute_dual_tol(const OSQPSolver* solver,
     const OSQPFloat* px_data  = OSQPVectorf_data(work->Px);
 
     if (settings->scaling && !settings->scaled_termination) {
-      const OSQPFloat* dinv_data = OSQPVectorf_data(work->scaling->Dinv);
-      // ||Dinv * q|| (same logic as original C code)
+      // ||Dinv * q|| (Dinv = 2^exp, so use exponent shift)
       max_rel_eps = 0.0f;
       for (OSQPInt j = 0; j < n; j++)
-        max_rel_eps = update_max_abs_conv(max_rel_eps, fp32_mul_conv(dinv_data[j], q_data[j]));
+        max_rel_eps = update_max_abs_conv(max_rel_eps, exp_adjust_conv(q_data[j], g_dinv_exp[j]));
 
       // ||Dinv * A'y||
       temp_rel_eps = 0.0f;
       for (OSQPInt j = 0; j < n; j++)
-        temp_rel_eps = update_max_abs_conv(temp_rel_eps, fp32_mul_conv(dinv_data[j], aty_data[j]));
+        temp_rel_eps = update_max_abs_conv(temp_rel_eps, exp_adjust_conv(aty_data[j], g_dinv_exp[j]));
       max_rel_eps = update_max_abs_conv(max_rel_eps, temp_rel_eps);
 
       // ||Dinv * Px||
       temp_rel_eps = 0.0f;
       for (OSQPInt j = 0; j < n; j++)
-        temp_rel_eps = update_max_abs_conv(temp_rel_eps, fp32_mul_conv(dinv_data[j], px_data[j]));
+        temp_rel_eps = update_max_abs_conv(temp_rel_eps, exp_adjust_conv(px_data[j], g_dinv_exp[j]));
       max_rel_eps = update_max_abs_conv(max_rel_eps, temp_rel_eps);
 
-      // Multiply by cinv
-      max_rel_eps = fp32_mul_conv(work->scaling->cinv, max_rel_eps);
+      // cinv = 1.0, no-op
     } else {
       // ||q||
       max_rel_eps = 0.0f;
