@@ -155,6 +155,11 @@ void update_status(OSQPInfo* info,
 OSQPInt check_termination(OSQPSolver* solver,
                           OSQPInt     approximate);
 
+/**
+ * Reset dense matrix cache so it is rebuilt on next convergence check.
+ * Must be called when A/P matrix values change (in-place update).
+ */
+void auxil_reset_dense_cache(void);
 
 # ifndef OSQP_EMBEDDED_MODE
 

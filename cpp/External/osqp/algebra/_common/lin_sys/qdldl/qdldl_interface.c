@@ -530,7 +530,11 @@ void save_solve_metadata(OSQPInt sample_id, OSQPInt rho_updates, OSQPInt iter,
                           const OSQPFloat* rho_update_old,
                           const OSQPFloat* rho_update_new,
                           OSQPInt n_rho_updates_logged,
-                          const void* admm_log_ptr, OSQPInt n_admm_log) {
+                          const void* admm_log_ptr, OSQPInt n_admm_log,
+                          const OSQPFloat* conv_Ax, const OSQPFloat* conv_Px,
+                          const OSQPFloat* conv_Aty, const OSQPFloat* conv_dr,
+                          OSQPInt conv_m, OSQPInt conv_n,
+                          OSQPInt conv_vec_stride_m, OSQPInt conv_vec_stride_n) {
   if (sample_id < 0 || (sample_id % SOLVE_TESTCASE_SAVE_INTERVAL != 0))
     return;
 
@@ -613,6 +617,65 @@ void save_solve_metadata(OSQPInt sample_id, OSQPInt rho_updates, OSQPInt iter,
     fprintf(f, "%lld,%lld,%lld\n",
             (long long)e->prim_check, (long long)e->dual_check,
             (long long)e->terminated);
+  }
+
+  // Convergence vector log (hex) — Ax, Px, Aty, dr per logged iteration
+  if (conv_Ax && conv_m > 0 && conv_n > 0) {
+    // --- Ax vectors (m elements) ---
+    fprintf(f, "\n# conv_Ax_hex (%lld entries, m=%lld)\n", (long long)n_admm_log, (long long)conv_m);
+    fprintf(f, "# iter,Ax[0],Ax[1],...,Ax[m-1]\n");
+    for (OSQPInt k = 0; k < n_admm_log; k++) {
+      const admm_log_entry_t* e = &admm_log[k];
+      fprintf(f, "%lld", (long long)e->iter);
+      const OSQPFloat* vec = conv_Ax + k * conv_vec_stride_m;
+      for (OSQPInt i = 0; i < conv_m; i++) {
+        fprintf(f, ",");
+        F2H(vec[i]);
+      }
+      fprintf(f, "\n");
+    }
+
+    // --- Px vectors (n elements) ---
+    fprintf(f, "\n# conv_Px_hex (%lld entries, n=%lld)\n", (long long)n_admm_log, (long long)conv_n);
+    fprintf(f, "# iter,Px[0],Px[1],...,Px[n-1]\n");
+    for (OSQPInt k = 0; k < n_admm_log; k++) {
+      const admm_log_entry_t* e = &admm_log[k];
+      fprintf(f, "%lld", (long long)e->iter);
+      const OSQPFloat* vec = conv_Px + k * conv_vec_stride_n;
+      for (OSQPInt i = 0; i < conv_n; i++) {
+        fprintf(f, ",");
+        F2H(vec[i]);
+      }
+      fprintf(f, "\n");
+    }
+
+    // --- Aty vectors (n elements) ---
+    fprintf(f, "\n# conv_Aty_hex (%lld entries, n=%lld)\n", (long long)n_admm_log, (long long)conv_n);
+    fprintf(f, "# iter,Aty[0],Aty[1],...,Aty[n-1]\n");
+    for (OSQPInt k = 0; k < n_admm_log; k++) {
+      const admm_log_entry_t* e = &admm_log[k];
+      fprintf(f, "%lld", (long long)e->iter);
+      const OSQPFloat* vec = conv_Aty + k * conv_vec_stride_n;
+      for (OSQPInt i = 0; i < conv_n; i++) {
+        fprintf(f, ",");
+        F2H(vec[i]);
+      }
+      fprintf(f, "\n");
+    }
+
+    // --- dr vectors (n elements): dr = q + Px + Aty ---
+    fprintf(f, "\n# conv_dr_hex (%lld entries, n=%lld)\n", (long long)n_admm_log, (long long)conv_n);
+    fprintf(f, "# iter,dr[0],dr[1],...,dr[n-1]\n");
+    for (OSQPInt k = 0; k < n_admm_log; k++) {
+      const admm_log_entry_t* e = &admm_log[k];
+      fprintf(f, "%lld", (long long)e->iter);
+      const OSQPFloat* vec = conv_dr + k * conv_vec_stride_n;
+      for (OSQPInt i = 0; i < conv_n; i++) {
+        fprintf(f, ",");
+        F2H(vec[i]);
+      }
+      fprintf(f, "\n");
+    }
   }
 
   #undef F2H

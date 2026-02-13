@@ -95,4 +95,7 @@ CMakeFiles/OSQPLIB.dir/src/auxil.c.o: \
  /usr/include/linux/limits.h \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
  /usr/include/x86_64-linux-gnu/bits/pthread_stack_min.h \
- /usr/include/x86_64-linux-gnu/bits/posix2_lim.h
+ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h /usr/include/fenv.h \
+ /usr/include/x86_64-linux-gnu/bits/fenv.h \
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/algebra_impl.h \
+ /home/mms-wonchan/git/MPCC_manipulator/cpp/External/osqp/algebra/builtin/../_common/csc_math.h

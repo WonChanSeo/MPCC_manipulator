@@ -148,7 +148,11 @@ extern void save_solve_metadata(OSQPInt sample_id, OSQPInt rho_updates, OSQPInt 
                                  const OSQPFloat* rho_update_old,
                                  const OSQPFloat* rho_update_new,
                                  OSQPInt n_rho_updates_logged,
-                                 const void* admm_log, OSQPInt n_admm_log);
+                                 const void* admm_log, OSQPInt n_admm_log,
+                                 const OSQPFloat* conv_Ax, const OSQPFloat* conv_Px,
+                                 const OSQPFloat* conv_Aty, const OSQPFloat* conv_dr,
+                                 OSQPInt conv_m, OSQPInt conv_n,
+                                 OSQPInt conv_vec_stride_m, OSQPInt conv_vec_stride_n);
 
 // Rho update history buffer (recorded during osqp_solve)
 #define MAX_RHO_UPDATE_LOG 64
@@ -180,6 +184,17 @@ typedef struct {
 } admm_log_entry_t;
 
 static admm_log_entry_t g_admm_log[MAX_ADMM_LOG];
+
+// Convergence vector log buffers (snapshot at each admm_log entry)
+// Indexed by log entry number: g_conv_Ax[entry_idx * CONV_VEC_MAX_M + i]
+#define CONV_VEC_MAX_M 512   // >= 479
+#define CONV_VEC_MAX_N 256   // >= 179
+
+static OSQPFloat g_conv_Ax[MAX_ADMM_LOG * CONV_VEC_MAX_M];   // Ax[m] per entry
+static OSQPFloat g_conv_Px[MAX_ADMM_LOG * CONV_VEC_MAX_N];   // Px[n] per entry
+static OSQPFloat g_conv_Aty[MAX_ADMM_LOG * CONV_VEC_MAX_N];  // Aty[n] per entry
+static OSQPFloat g_conv_dr[MAX_ADMM_LOG * CONV_VEC_MAX_N];   // dr[n] = q+Px+Aty per entry
+static OSQPInt g_conv_m = 0, g_conv_n = 0;  // actual dimensions (set on first log)
 
 // Termination check debug info (exported from auxil.c)
 extern OSQPFloat g_last_eps_prim;
@@ -1298,6 +1313,9 @@ OSQPInt osqp_solve(OSQPSolver *solver) {
 
   printf("Starting solver...\n");
 
+  /* Force dense matrix rebuild — A/P values may have been updated in-place */
+  auxil_reset_dense_cache();
+
 #ifdef OSQP_ROUNDING_MODE
   // Save old rounding mode and set explicit rounding
   int old_round_mode = fegetround();
@@ -1653,6 +1671,31 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
         e->dual_check  = -1;
       }
       e->terminated    = terminated_this_iter;
+
+      // Snapshot convergence vectors (Ax, Px, Aty, dr computed by update_info)
+      {
+        OSQPInt m = work->data->m;
+        OSQPInt n = work->data->n;
+        OSQPInt idx = g_admm_log_count - 1;  // just-recorded entry index
+        g_conv_m = m;
+        g_conv_n = n;
+
+        // Ax (computed in compute_prim_res)
+        const OSQPFloat* Ax_data = OSQPVectorf_data(work->Ax);
+        memcpy(&g_conv_Ax[idx * CONV_VEC_MAX_M], Ax_data, m * sizeof(OSQPFloat));
+
+        // Px (computed in compute_dual_res)
+        const OSQPFloat* Px_data = OSQPVectorf_data(work->Px);
+        memcpy(&g_conv_Px[idx * CONV_VEC_MAX_N], Px_data, n * sizeof(OSQPFloat));
+
+        // Aty (computed in compute_dual_res)
+        const OSQPFloat* Aty_data = OSQPVectorf_data(work->Aty);
+        memcpy(&g_conv_Aty[idx * CONV_VEC_MAX_N], Aty_data, n * sizeof(OSQPFloat));
+
+        // dr = q + Px + Aty (stored in x_prev by compute_dual_res)
+        const OSQPFloat* dr_data = OSQPVectorf_data(work->x_prev);
+        memcpy(&g_conv_dr[idx * CONV_VEC_MAX_N], dr_data, n * sizeof(OSQPFloat));
+      }
     }
 
     // Terminate algorithm if check_termination succeeded
@@ -1794,7 +1837,10 @@ osqp_profiler_sec_push(OSQP_PROFILER_SEC_OPT_SOLVE);
     save_solve_metadata(sample_id, solver->info->rho_updates, solver->info->iter,
                         g_rho_log_iters, g_rho_log_old, g_rho_log_new,
                         g_rho_log_count,
-                        (const void*)g_admm_log, g_admm_log_count);
+                        (const void*)g_admm_log, g_admm_log_count,
+                        g_conv_Ax, g_conv_Px, g_conv_Aty, g_conv_dr,
+                        g_conv_m, g_conv_n,
+                        CONV_VEC_MAX_M, CONV_VEC_MAX_N);
   }
 
 // Define exit flag for quitting function
