@@ -372,6 +372,13 @@ namespace mpcc
         loadNetwork();
     }
 
+    void EnvCollNNmodel::beginBatchLog(int solve_count, int batch_size) {
+        log_solve_count_ = solve_count;
+        log_batch_size_ = batch_size;
+        log_horizon_idx_ = 0;
+        log_entries_.resize(batch_size);
+    }
+
     std::pair<Eigen::VectorXd, Eigen::MatrixXd> EnvCollNNmodel::calculateMlpOutput(Eigen::VectorXd input, bool time_verbose)
     {
 #ifdef NN_ROUNDING_MODE
@@ -509,266 +516,26 @@ namespace mpcc
             }
         }
 
-        // ===== MLP 테스트 케이스 저장 =====
-        try {
-            int sample_id = g_asic_sample_count++;
-
-            // 첫 번째 샘플일 때만 로그 출력
-            if (sample_id == 0) {
-                init_asic_output_dir();
-                std::cout << "[MLP Logging] Starting MLP test case logging to: " << g_asic_output_dir << std::endl;
+        // ===== Batch logging: 데이터 누적 (OSQP solve_count와 동기화) =====
+        if (log_solve_count_ >= 0 && log_horizon_idx_ < log_batch_size_) {
+            const Eigen::VectorXf& current_input_log = mlp_.is_nerf ? input_nerf_f : input_f;
+            auto& entry = log_entries_[log_horizon_idx_];
+            entry.nerf_input = current_input_log;
+            entry.output = output_f;
+            entry.jacobian = output_derivative_f;
+            if (mlp_.is_nerf) entry.nerf_jac = nerf_jac_f;
+            entry.pre_activations.resize(mlp_.n_layer - 1);
+            entry.post_activations.resize(mlp_.n_layer - 1);
+            for (int ll = 0; ll < mlp_.n_layer - 1; ++ll) {
+                entry.pre_activations[ll] = pre_activation_f[ll];
+                entry.post_activations[ll] = hidden_f[ll];
             }
+            log_horizon_idx_++;
 
-            // MLP_TESTCASE_SAVE_INTERVAL 마다만 저장
-            if (sample_id % MLP_TESTCASE_SAVE_INTERVAL != 0) {
-                // skip
-            } else {
-            init_asic_output_dir();
-            bool is_detailed = (sample_id % 100 == 0);  // 100번째 sample마다 상세 저장
-
-            std::string filename = g_asic_output_dir + "sample_" + std::to_string(sample_id) + ".csv";
-            std::string filename_bits = g_asic_output_dir + "sample_" + std::to_string(sample_id) + "_bits.csv";
-
-            std::ofstream file(filename);
-            std::ofstream file_bits(filename_bits);
-
-            if (file.is_open() && file_bits.is_open()) {
-            // ===== 실수 값 파일 =====
-            file << std::scientific << std::setprecision(8);
-
-            // 헤더 정보
-            file << "# MLP Test Case - Sample " << sample_id << "\n";
-            file << "# Detailed: " << (is_detailed ? "YES" : "NO") << "\n";
-            file << "# n_input: " << mlp_.n_input << ", n_output: " << mlp_.n_output << "\n";
-            file << "# n_hidden_layers: " << (mlp_.n_layer - 1) << "\n\n";
-
-            // 1. 입력 (nerf 적용된 값: [x, sin(x), cos(x)])
-            const Eigen::VectorXf& current_input = mlp_.is_nerf ? input_nerf_f : input_f;
-            file << "# INPUT (nerf_input) - " << current_input.size() << " values\n";
-            for (int i = 0; i < current_input.size(); ++i) {
-                file << current_input(i);
-                if (i < current_input.size() - 1) file << ",";
+            // 배치 완료 시 파일 저장
+            if (log_horizon_idx_ == log_batch_size_) {
+                writeBatchLog();
             }
-            file << "\n\n";
-
-            // 2. 최종 출력 (output layer)
-            file << "# OUTPUT - " << mlp_.n_output << " values\n";
-            for (int i = 0; i < mlp_.n_output; ++i) {
-                file << output_f(i);
-                if (i < mlp_.n_output - 1) file << ",";
-            }
-            file << "\n\n";
-
-            // 3. Jacobian (output x input)
-            file << "# JACOBIAN - " << output_derivative_f.rows() << " x " << output_derivative_f.cols() << "\n";
-            for (int r = 0; r < output_derivative_f.rows(); ++r) {
-                for (int c = 0; c < output_derivative_f.cols(); ++c) {
-                    file << output_derivative_f(r, c);
-                    if (c < output_derivative_f.cols() - 1) file << ",";
-                }
-                file << "\n";
-            }
-            file << "\n";
-
-            // ===== FP32 비트 표현 파일 =====
-            file_bits << "# MLP Test Case (FP32 Bits) - Sample " << sample_id << "\n";
-            file_bits << "# Detailed: " << (is_detailed ? "YES" : "NO") << "\n";
-            file_bits << "# n_input: " << mlp_.n_input << ", n_output: " << mlp_.n_output << "\n";
-            file_bits << "# n_hidden_layers: " << (mlp_.n_layer - 1) << "\n";
-            file_bits << "# Format: 8-digit hexadecimal (32-bit IEEE 754)\n\n";
-
-            // 1. 입력 비트
-            file_bits << "# INPUT (nerf_input) - " << current_input.size() << " values\n";
-            for (int i = 0; i < current_input.size(); ++i) {
-                file_bits << float_to_hex(current_input(i));
-                if (i < current_input.size() - 1) file_bits << ",";
-            }
-            file_bits << "\n\n";
-
-            // 2. 출력 비트
-            file_bits << "# OUTPUT - " << mlp_.n_output << " values\n";
-            for (int i = 0; i < mlp_.n_output; ++i) {
-                file_bits << float_to_hex(output_f(i));
-                if (i < mlp_.n_output - 1) file_bits << ",";
-            }
-            file_bits << "\n\n";
-
-            // 3. Jacobian 비트
-            file_bits << "# JACOBIAN - " << output_derivative_f.rows() << " x " << output_derivative_f.cols() << "\n";
-            for (int r = 0; r < output_derivative_f.rows(); ++r) {
-                for (int c = 0; c < output_derivative_f.cols(); ++c) {
-                    file_bits << float_to_hex(output_derivative_f(r, c));
-                    if (c < output_derivative_f.cols() - 1) file_bits << ",";
-                }
-                file_bits << "\n";
-            }
-            file_bits << "\n";
-
-            // 4. NeRF Jacobian (매 샘플 저장)
-            if (mlp_.is_nerf) {
-                file << "# NERF_JACOBIAN - " << nerf_jac_f.rows() << " x " << nerf_jac_f.cols() << "\n";
-                for (int r = 0; r < nerf_jac_f.rows(); ++r) {
-                    for (int c = 0; c < nerf_jac_f.cols(); ++c) {
-                        file << nerf_jac_f(r, c);
-                        if (c < nerf_jac_f.cols() - 1) file << ",";
-                    }
-                    file << "\n";
-                }
-                file << "\n";
-
-                file_bits << "# NERF_JACOBIAN - " << nerf_jac_f.rows() << " x " << nerf_jac_f.cols() << "\n";
-                for (int r = 0; r < nerf_jac_f.rows(); ++r) {
-                    for (int c = 0; c < nerf_jac_f.cols(); ++c) {
-                        file_bits << float_to_hex(nerf_jac_f(r, c));
-                        if (c < nerf_jac_f.cols() - 1) file_bits << ",";
-                    }
-                    file_bits << "\n";
-                }
-                file_bits << "\n";
-            }
-
-            // 5. 100번째 sample마다 상세 정보 저장
-            if (is_detailed) {
-                // 각 hidden layer의 pre_activation과 post_activation (ReLU 후)
-                for (int layer = 0; layer < mlp_.n_layer - 1; ++layer) {
-                    // ===== 실수 파일: Pre-activation =====
-                    file << "# LAYER_" << layer << "_PRE_ACTIVATION - " << pre_activation_f[layer].size() << " values\n";
-                    for (int h = 0; h < pre_activation_f[layer].size(); ++h) {
-                        file << pre_activation_f[layer](h);
-                        if (h < pre_activation_f[layer].size() - 1) file << ",";
-                    }
-                    file << "\n\n";
-
-                    // ===== 비트 파일: Pre-activation =====
-                    file_bits << "# LAYER_" << layer << "_PRE_ACTIVATION - " << pre_activation_f[layer].size() << " values\n";
-                    for (int h = 0; h < pre_activation_f[layer].size(); ++h) {
-                        file_bits << float_to_hex(pre_activation_f[layer](h));
-                        if (h < pre_activation_f[layer].size() - 1) file_bits << ",";
-                    }
-                    file_bits << "\n\n";
-
-                    // ===== 실수 파일: Post-activation =====
-                    file << "# LAYER_" << layer << "_POST_ACTIVATION - " << hidden_f[layer].size() << " values\n";
-                    for (int h = 0; h < hidden_f[layer].size(); ++h) {
-                        file << hidden_f[layer](h);
-                        if (h < hidden_f[layer].size() - 1) file << ",";
-                    }
-                    file << "\n\n";
-
-                    // ===== 비트 파일: Post-activation =====
-                    file_bits << "# LAYER_" << layer << "_POST_ACTIVATION - " << hidden_f[layer].size() << " values\n";
-                    for (int h = 0; h < hidden_f[layer].size(); ++h) {
-                        file_bits << float_to_hex(hidden_f[layer](h));
-                        if (h < hidden_f[layer].size() - 1) file_bits << ",";
-                    }
-                    file_bits << "\n\n";
-                }
-
-                // 각 layer별 intermediate jacobian 저장
-                file << "# === INTERMEDIATE JACOBIANS ===\n\n";
-                file_bits << "# === INTERMEDIATE JACOBIANS ===\n\n";
-
-                // Layer 0 이후 Jacobian
-                Eigen::MatrixXf temp_derivative_log;
-                if (mlp_.is_nerf) {
-                    Eigen::MatrixXf relu_deriv_0(pre_activation_f[0].size(), 1);
-                    for (int h = 0; h < pre_activation_f[0].size(); ++h) {
-                        relu_deriv_0(h, 0) = (pre_activation_f[0](h) > 0.0f) ? 1.0f : 0.0f;
-                    }
-                    Eigen::MatrixXf weight_scaled = relu_deriv_0.asDiagonal() * mlp_.weight[0];
-
-                    const int jac_rows = weight_scaled.rows();
-                    const int jac_cols = nerf_jac_f.cols();
-                    temp_derivative_log.resize(jac_rows, jac_cols);
-                    for (int r = 0; r < jac_rows; ++r) {
-                        for (int c = 0; c < jac_cols; ++c) {
-                            temp_derivative_log(r, c) = matvec_row_adder_tree(
-                                weight_scaled.row(r), nerf_jac_f.col(c), 0.0f);
-                        }
-                    }
-                } else {
-                    Eigen::MatrixXf relu_deriv_0(pre_activation_f[0].size(), 1);
-                    for (int h = 0; h < pre_activation_f[0].size(); ++h) {
-                        relu_deriv_0(h, 0) = (pre_activation_f[0](h) > 0.0f) ? 1.0f : 0.0f;
-                    }
-                    temp_derivative_log = relu_deriv_0.asDiagonal() * mlp_.weight[0];
-                }
-
-                // ===== 실수 파일: Layer 0 Jacobian =====
-                file << "# JACOBIAN_AFTER_LAYER_0 - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
-                for (int r = 0; r < temp_derivative_log.rows(); ++r) {
-                    for (int c = 0; c < temp_derivative_log.cols(); ++c) {
-                        file << temp_derivative_log(r, c);
-                        if (c < temp_derivative_log.cols() - 1) file << ",";
-                    }
-                    file << "\n";
-                }
-                file << "\n";
-
-                // ===== 비트 파일: Layer 0 Jacobian =====
-                file_bits << "# JACOBIAN_AFTER_LAYER_0 - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
-                for (int r = 0; r < temp_derivative_log.rows(); ++r) {
-                    for (int c = 0; c < temp_derivative_log.cols(); ++c) {
-                        file_bits << float_to_hex(temp_derivative_log(r, c));
-                        if (c < temp_derivative_log.cols() - 1) file_bits << ",";
-                    }
-                    file_bits << "\n";
-                }
-                file_bits << "\n";
-
-                // 나머지 hidden layers의 Jacobian
-                for (int layer = 1; layer < mlp_.n_layer - 1; ++layer) {
-                    Eigen::MatrixXf relu_deriv(pre_activation_f[layer].size(), 1);
-                    for (int h = 0; h < pre_activation_f[layer].size(); ++h) {
-                        relu_deriv(h, 0) = (pre_activation_f[layer](h) > 0.0f) ? 1.0f : 0.0f;
-                    }
-                    Eigen::MatrixXf weight_scaled = relu_deriv.asDiagonal() * mlp_.weight[layer];
-
-                    const int jac_rows = weight_scaled.rows();
-                    const int jac_cols = temp_derivative_log.cols();
-                    Eigen::MatrixXf new_temp(jac_rows, jac_cols);
-                    for (int r = 0; r < jac_rows; ++r) {
-                        for (int c = 0; c < jac_cols; ++c) {
-                            new_temp(r, c) = matvec_row_adder_tree(
-                                weight_scaled.row(r), temp_derivative_log.col(c), 0.0f);
-                        }
-                    }
-                    temp_derivative_log = std::move(new_temp);
-
-                    // ===== 실수 파일: 중간 레이어 Jacobian =====
-                    file << "# JACOBIAN_AFTER_LAYER_" << layer << " - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
-                    for (int r = 0; r < temp_derivative_log.rows(); ++r) {
-                        for (int c = 0; c < temp_derivative_log.cols(); ++c) {
-                            file << temp_derivative_log(r, c);
-                            if (c < temp_derivative_log.cols() - 1) file << ",";
-                        }
-                        file << "\n";
-                    }
-                    file << "\n";
-
-                    // ===== 비트 파일: 중간 레이어 Jacobian =====
-                    file_bits << "# JACOBIAN_AFTER_LAYER_" << layer << " - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
-                    for (int r = 0; r < temp_derivative_log.rows(); ++r) {
-                        for (int c = 0; c < temp_derivative_log.cols(); ++c) {
-                            file_bits << float_to_hex(temp_derivative_log(r, c));
-                            if (c < temp_derivative_log.cols() - 1) file_bits << ",";
-                        }
-                        file_bits << "\n";
-                    }
-                    file_bits << "\n";
-                }
-            }
-
-            file.close();
-            file_bits.close();
-            } else {
-                if (sample_id == 0) {
-                    std::cerr << "[MLP Logging ERROR] Failed to open file: " << filename << std::endl;
-                }
-            }
-            } // end if (sample_id % MLP_TESTCASE_SAVE_INTERVAL == 0)
-        } catch (const std::exception& e) {
-            std::cerr << "[MLP Logging ERROR] Exception during logging: " << e.what() << std::endl;
         }
 
         // Convert output from float to double for interface compatibility
@@ -1098,6 +865,298 @@ namespace mpcc
         std::fesetround(old_round_batch);
 #endif
         return std::make_pair(mlp_.final_min_output.cast<double>(), mlp_.final_min_jacobian.cast<double>());
+    }
+
+    // ===================================================================
+    // =========== Batch Log 저장 (OSQP solve_count 동기화) ==============
+    // ===================================================================
+    void EnvCollNNmodel::writeBatchLog() {
+        try {
+            // 첫 번째 호출 시 로그 출력
+            if (log_solve_count_ == 0) {
+                init_asic_output_dir();
+                std::cout << "[MLP Batch Logging] Starting batch logging to: " << g_asic_output_dir << std::endl;
+            }
+
+            // MLP_TESTCASE_SAVE_INTERVAL 기준으로 저장 여부 결정 (solve_count 기준)
+            if (log_solve_count_ % MLP_TESTCASE_SAVE_INTERVAL != 0) return;
+
+            init_asic_output_dir();
+            bool is_detailed = (log_solve_count_ % 100 == 0);
+
+            std::string filename = g_asic_output_dir + "sample_" + std::to_string(log_solve_count_) + ".csv";
+            std::string filename_bits = g_asic_output_dir + "sample_" + std::to_string(log_solve_count_) + "_bits.csv";
+
+            std::ofstream file(filename);
+            std::ofstream file_bits(filename_bits);
+
+            if (!file.is_open() || !file_bits.is_open()) {
+                if (log_solve_count_ <= 1) {
+                    std::cerr << "[MLP Batch Logging ERROR] Failed to open file: " << filename << std::endl;
+                }
+                return;
+            }
+
+            // ===== 실수 값 파일 헤더 =====
+            file << std::scientific << std::setprecision(8);
+            file << "# MLP Batch Test Case - Solve Count " << log_solve_count_ << "\n";
+            file << "# Batch Size (Horizon): " << log_batch_size_ << "\n";
+            file << "# Detailed: " << (is_detailed ? "YES" : "NO") << "\n";
+            file << "# n_input: " << mlp_.n_input << ", n_output: " << mlp_.n_output << "\n";
+            file << "# n_hidden_layers: " << (mlp_.n_layer - 1) << "\n\n";
+
+            // ===== FP32 비트 파일 헤더 =====
+            file_bits << "# MLP Batch Test Case (FP32 Bits) - Solve Count " << log_solve_count_ << "\n";
+            file_bits << "# Batch Size (Horizon): " << log_batch_size_ << "\n";
+            file_bits << "# Detailed: " << (is_detailed ? "YES" : "NO") << "\n";
+            file_bits << "# n_input: " << mlp_.n_input << ", n_output: " << mlp_.n_output << "\n";
+            file_bits << "# n_hidden_layers: " << (mlp_.n_layer - 1) << "\n";
+            file_bits << "# Format: 8-digit hexadecimal (32-bit IEEE 754)\n\n";
+
+            // ===== 각 Horizon point별 데이터 저장 =====
+            for (int h = 0; h < log_batch_size_; ++h) {
+                const auto& entry = log_entries_[h];
+
+                // --- INPUT ---
+                file << "# HORIZON_" << h << "_INPUT - " << entry.nerf_input.size() << " values\n";
+                for (int i = 0; i < entry.nerf_input.size(); ++i) {
+                    file << entry.nerf_input(i);
+                    if (i < entry.nerf_input.size() - 1) file << ",";
+                }
+                file << "\n\n";
+
+                file_bits << "# HORIZON_" << h << "_INPUT - " << entry.nerf_input.size() << " values\n";
+                for (int i = 0; i < entry.nerf_input.size(); ++i) {
+                    file_bits << float_to_hex(entry.nerf_input(i));
+                    if (i < entry.nerf_input.size() - 1) file_bits << ",";
+                }
+                file_bits << "\n\n";
+
+                // --- OUTPUT ---
+                file << "# HORIZON_" << h << "_OUTPUT - " << entry.output.size() << " values\n";
+                for (int i = 0; i < entry.output.size(); ++i) {
+                    file << entry.output(i);
+                    if (i < entry.output.size() - 1) file << ",";
+                }
+                file << "\n\n";
+
+                file_bits << "# HORIZON_" << h << "_OUTPUT - " << entry.output.size() << " values\n";
+                for (int i = 0; i < entry.output.size(); ++i) {
+                    file_bits << float_to_hex(entry.output(i));
+                    if (i < entry.output.size() - 1) file_bits << ",";
+                }
+                file_bits << "\n\n";
+
+                // --- JACOBIAN ---
+                file << "# HORIZON_" << h << "_JACOBIAN - " << entry.jacobian.rows() << " x " << entry.jacobian.cols() << "\n";
+                for (int r = 0; r < entry.jacobian.rows(); ++r) {
+                    for (int c = 0; c < entry.jacobian.cols(); ++c) {
+                        file << entry.jacobian(r, c);
+                        if (c < entry.jacobian.cols() - 1) file << ",";
+                    }
+                    file << "\n";
+                }
+                file << "\n";
+
+                file_bits << "# HORIZON_" << h << "_JACOBIAN - " << entry.jacobian.rows() << " x " << entry.jacobian.cols() << "\n";
+                for (int r = 0; r < entry.jacobian.rows(); ++r) {
+                    for (int c = 0; c < entry.jacobian.cols(); ++c) {
+                        file_bits << float_to_hex(entry.jacobian(r, c));
+                        if (c < entry.jacobian.cols() - 1) file_bits << ",";
+                    }
+                    file_bits << "\n";
+                }
+                file_bits << "\n";
+
+                // --- NERF_JACOBIAN ---
+                if (mlp_.is_nerf && entry.nerf_jac.size() > 0) {
+                    file << "# HORIZON_" << h << "_NERF_JACOBIAN - " << entry.nerf_jac.rows() << " x " << entry.nerf_jac.cols() << "\n";
+                    for (int r = 0; r < entry.nerf_jac.rows(); ++r) {
+                        for (int c = 0; c < entry.nerf_jac.cols(); ++c) {
+                            file << entry.nerf_jac(r, c);
+                            if (c < entry.nerf_jac.cols() - 1) file << ",";
+                        }
+                        file << "\n";
+                    }
+                    file << "\n";
+
+                    file_bits << "# HORIZON_" << h << "_NERF_JACOBIAN - " << entry.nerf_jac.rows() << " x " << entry.nerf_jac.cols() << "\n";
+                    for (int r = 0; r < entry.nerf_jac.rows(); ++r) {
+                        for (int c = 0; c < entry.nerf_jac.cols(); ++c) {
+                            file_bits << float_to_hex(entry.nerf_jac(r, c));
+                            if (c < entry.nerf_jac.cols() - 1) file_bits << ",";
+                        }
+                        file_bits << "\n";
+                    }
+                    file_bits << "\n";
+                }
+
+                // --- DETAILED: Pre/Post Activation ---
+                if (is_detailed) {
+                    for (int layer = 0; layer < static_cast<int>(entry.pre_activations.size()); ++layer) {
+                        // Pre-activation
+                        file << "# HORIZON_" << h << "_LAYER_" << layer << "_PRE_ACTIVATION - " << entry.pre_activations[layer].size() << " values\n";
+                        for (int i = 0; i < entry.pre_activations[layer].size(); ++i) {
+                            file << entry.pre_activations[layer](i);
+                            if (i < entry.pre_activations[layer].size() - 1) file << ",";
+                        }
+                        file << "\n\n";
+
+                        file_bits << "# HORIZON_" << h << "_LAYER_" << layer << "_PRE_ACTIVATION - " << entry.pre_activations[layer].size() << " values\n";
+                        for (int i = 0; i < entry.pre_activations[layer].size(); ++i) {
+                            file_bits << float_to_hex(entry.pre_activations[layer](i));
+                            if (i < entry.pre_activations[layer].size() - 1) file_bits << ",";
+                        }
+                        file_bits << "\n\n";
+
+                        // Post-activation
+                        file << "# HORIZON_" << h << "_LAYER_" << layer << "_POST_ACTIVATION - " << entry.post_activations[layer].size() << " values\n";
+                        for (int i = 0; i < entry.post_activations[layer].size(); ++i) {
+                            file << entry.post_activations[layer](i);
+                            if (i < entry.post_activations[layer].size() - 1) file << ",";
+                        }
+                        file << "\n\n";
+
+                        file_bits << "# HORIZON_" << h << "_LAYER_" << layer << "_POST_ACTIVATION - " << entry.post_activations[layer].size() << " values\n";
+                        for (int i = 0; i < entry.post_activations[layer].size(); ++i) {
+                            file_bits << float_to_hex(entry.post_activations[layer](i));
+                            if (i < entry.post_activations[layer].size() - 1) file_bits << ",";
+                        }
+                        file_bits << "\n\n";
+                    }
+                }
+            }
+
+            file.close();
+            file_bits.close();
+
+            // ===== Per-layer detail files for sample_0 =====
+            if (log_solve_count_ == 0) {
+                // Note: rounding mode is still active (called from calculateMlpOutput)
+                std::vector<std::ofstream> lf(mlp_.n_layer);
+                std::vector<std::ofstream> lf_bits(mlp_.n_layer);
+
+                for (int layer = 0; layer < mlp_.n_layer; ++layer) {
+                    lf[layer].open(g_asic_output_dir + "sample_0_layer_" + std::to_string(layer) + ".csv");
+                    lf_bits[layer].open(g_asic_output_dir + "sample_0_layer_" + std::to_string(layer) + "_bits.csv");
+                    if (!lf[layer].is_open() || !lf_bits[layer].is_open()) {
+                        std::cerr << "[MLP Batch Logging ERROR] Failed to open layer file for layer " << layer << std::endl;
+                        continue;
+                    }
+                    lf[layer] << std::scientific << std::setprecision(8);
+
+                    lf[layer] << "# MLP Layer " << layer << " Detail - Sample 0\n";
+                    lf[layer] << "# Batch Size (Horizon): " << log_batch_size_ << "\n";
+                    if (layer < mlp_.n_layer - 1) {
+                        lf[layer] << "# Layer type: hidden, neurons: " << static_cast<int>(mlp_.n_hidden(layer)) << "\n\n";
+                    } else {
+                        lf[layer] << "# Layer type: output, neurons: " << mlp_.n_output << "\n\n";
+                    }
+
+                    lf_bits[layer] << "# MLP Layer " << layer << " Detail (FP32 Bits) - Sample 0\n";
+                    lf_bits[layer] << "# Batch Size (Horizon): " << log_batch_size_ << "\n";
+                    lf_bits[layer] << "# Format: 8-digit hexadecimal (32-bit IEEE 754)\n\n";
+                }
+
+                for (int h = 0; h < log_batch_size_; ++h) {
+                    const auto& entry = log_entries_[h];
+                    Eigen::MatrixXf temp_derivative_log;
+
+                    for (int layer = 0; layer < mlp_.n_layer; ++layer) {
+                        auto& f = lf[layer];
+                        auto& fb = lf_bits[layer];
+                        if (!f.is_open()) continue;
+
+                        if (layer < mlp_.n_layer - 1) {
+                            // Hidden layer: pre/post activation
+                            const auto& pre = entry.pre_activations[layer];
+                            const auto& post = entry.post_activations[layer];
+
+                            f << "# HORIZON_" << h << "_PRE_ACTIVATION - " << pre.size() << " values\n";
+                            fb << "# HORIZON_" << h << "_PRE_ACTIVATION - " << pre.size() << " values\n";
+                            for (int i = 0; i < pre.size(); ++i) {
+                                f << pre(i); fb << float_to_hex(pre(i));
+                                if (i < pre.size() - 1) { f << ","; fb << ","; }
+                            }
+                            f << "\n\n"; fb << "\n\n";
+
+                            f << "# HORIZON_" << h << "_POST_ACTIVATION - " << post.size() << " values\n";
+                            fb << "# HORIZON_" << h << "_POST_ACTIVATION - " << post.size() << " values\n";
+                            for (int i = 0; i < post.size(); ++i) {
+                                f << post(i); fb << float_to_hex(post(i));
+                                if (i < post.size() - 1) { f << ","; fb << ","; }
+                            }
+                            f << "\n\n"; fb << "\n\n";
+
+                            // Recompute intermediate Jacobian up to this layer
+                            if (layer == 0) {
+                                Eigen::VectorXf relu_deriv(pre.size());
+                                for (int i = 0; i < relu_deriv.size(); ++i)
+                                    relu_deriv(i) = (pre(i) > 0.0f) ? 1.0f : 0.0f;
+                                Eigen::MatrixXf weight_scaled = relu_deriv.asDiagonal() * mlp_.weight[0];
+
+                                if (mlp_.is_nerf && entry.nerf_jac.size() > 0) {
+                                    const int jr = weight_scaled.rows(), jc = entry.nerf_jac.cols();
+                                    temp_derivative_log.resize(jr, jc);
+                                    for (int r = 0; r < jr; ++r)
+                                        for (int c = 0; c < jc; ++c)
+                                            temp_derivative_log(r, c) = matvec_row_adder_tree(
+                                                weight_scaled.row(r), entry.nerf_jac.col(c), 0.0f);
+                                } else {
+                                    temp_derivative_log = weight_scaled;
+                                }
+                            } else {
+                                Eigen::VectorXf relu_deriv(pre.size());
+                                for (int i = 0; i < relu_deriv.size(); ++i)
+                                    relu_deriv(i) = (pre(i) > 0.0f) ? 1.0f : 0.0f;
+                                Eigen::MatrixXf weight_scaled = relu_deriv.asDiagonal() * mlp_.weight[layer];
+
+                                const int jr = weight_scaled.rows(), jc = temp_derivative_log.cols();
+                                Eigen::MatrixXf new_temp(jr, jc);
+                                for (int r = 0; r < jr; ++r)
+                                    for (int c = 0; c < jc; ++c)
+                                        new_temp(r, c) = matvec_row_adder_tree(
+                                            weight_scaled.row(r), temp_derivative_log.col(c), 0.0f);
+                                temp_derivative_log = std::move(new_temp);
+                            }
+                        } else {
+                            // Output layer: output values
+                            f << "# HORIZON_" << h << "_OUTPUT - " << entry.output.size() << " values\n";
+                            fb << "# HORIZON_" << h << "_OUTPUT - " << entry.output.size() << " values\n";
+                            for (int i = 0; i < entry.output.size(); ++i) {
+                                f << entry.output(i); fb << float_to_hex(entry.output(i));
+                                if (i < entry.output.size() - 1) { f << ","; fb << ","; }
+                            }
+                            f << "\n\n"; fb << "\n\n";
+
+                            // Output Jacobian from stored entry (exact inference result)
+                            temp_derivative_log = entry.jacobian;
+                        }
+
+                        // Write intermediate Jacobian for this layer
+                        f << "# HORIZON_" << h << "_JACOBIAN - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
+                        fb << "# HORIZON_" << h << "_JACOBIAN - " << temp_derivative_log.rows() << " x " << temp_derivative_log.cols() << "\n";
+                        for (int r = 0; r < temp_derivative_log.rows(); ++r) {
+                            for (int c = 0; c < temp_derivative_log.cols(); ++c) {
+                                f << temp_derivative_log(r, c); fb << float_to_hex(temp_derivative_log(r, c));
+                                if (c < temp_derivative_log.cols() - 1) { f << ","; fb << ","; }
+                            }
+                            f << "\n"; fb << "\n";
+                        }
+                        f << "\n"; fb << "\n";
+                    }
+                }
+
+                for (int layer = 0; layer < mlp_.n_layer; ++layer) {
+                    if (lf[layer].is_open()) lf[layer].close();
+                    if (lf_bits[layer].is_open()) lf_bits[layer].close();
+                }
+                std::cout << "[MLP Batch Logging] Per-layer detail files saved for sample_0 ("
+                          << mlp_.n_layer << " layers)" << std::endl;
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "[MLP Batch Logging ERROR] Exception: " << e.what() << std::endl;
+        }
     }
 
     // ▼▼▼▼▼ 파일 하단에 getter 함수 구현을 추가합니다. ▼▼▼▼▼

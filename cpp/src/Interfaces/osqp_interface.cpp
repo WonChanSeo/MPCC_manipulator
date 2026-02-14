@@ -18,6 +18,27 @@
 #include "osqp_api_functions.h"
 #include <chrono>
 #include <fstream>
+#include <iomanip>
+#include <cstring>
+
+#if defined(CONSTRAINTS_USE_TRUNCATE) || defined(CONSTRAINTS_USE_ROUND_TO_EVEN)
+#include <cfenv>
+#endif
+
+#if defined(CONSTRAINTS_USE_TRUNCATE)
+  #define CONSTRAINTS_ROUNDING_MODE FE_TOWARDZERO
+#elif defined(CONSTRAINTS_USE_ROUND_TO_EVEN)
+  #define CONSTRAINTS_ROUNDING_MODE FE_TONEAREST
+#endif
+
+// FP32 hex helper for constraint logging
+static std::string constraint_float_to_hex(float value) {
+    uint32_t bits;
+    std::memcpy(&bits, &value, sizeof(float));
+    std::stringstream ss;
+    ss << std::hex << std::setw(8) << std::setfill('0') << bits;
+    return ss.str();
+}
 
 // Global log file for solveQP failures
 static std::ofstream g_solveQP_fail_log;
@@ -352,6 +373,26 @@ void OsqpInterface::setPolytopicConstraints(const std::vector<OptVariables> &ini
     if(l_ineqp) l_ineqp->setZero(N_ineqp);
     if(u_ineqp) u_ineqp->setZero(N_ineqp);
 
+    // ===== Constraint logging 준비 =====
+    static const int CONSTRAINT_SAVE_INTERVAL = 50;
+    static const std::string g_constraint_output_dir = "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/constraints/";
+    static bool g_constraint_dir_initialized = false;
+    bool should_log_constraints = (sqp_iter_ == 0 && current_solve_count_ >= 0
+                                   && current_solve_count_ % CONSTRAINT_SAVE_INTERVAL == 0);
+
+    struct EnvCollLogEntry {
+        Eigen::VectorXd env_min_dist;       // MLP output (PANDA_NUM_LINKS)
+        Eigen::MatrixXd d_env_min_dist;     // MLP Jacobian (PANDA_NUM_LINKS x PANDA_DOF)
+        double obs_radius;
+        Eigen::VectorXd constraint_c;       // constraint value (PANDA_NUM_LINKS)
+        Eigen::MatrixXd jac_c_x;            // Jacobian wrt state - raw (PANDA_NUM_LINKS x NX)
+        Eigen::MatrixXd jac_c_u;            // Jacobian wrt input - raw (PANDA_NUM_LINKS x NU)
+        Eigen::MatrixXd jac_c_x_scaled;    // Jacobian wrt state * T_x (A matrix에 들어가는 값)
+        Eigen::MatrixXd jac_c_u_scaled;    // Jacobian wrt input * T_u (A matrix에 들어가는 값)
+    };
+    std::vector<EnvCollLogEntry> constraint_log_entries;
+    if (should_log_constraints) constraint_log_entries.resize(N + 1);
+
     for(size_t i=0;i<=N;i++)
     {
         assert(rb_[i].isUpdated() == true);
@@ -369,21 +410,219 @@ void OsqpInterface::setPolytopicConstraints(const std::vector<OptVariables> &ini
         }
         if(jac_constr_ineqp)
         {
-            jac_constr_ineqp->block(NPC*i, NX*i, NPC, NX) = jac_constr_k.c_x*normalization_param_.T_x;
-            if(i!=N) jac_constr_ineqp->block(NPC*i, NX*(N+1) + NU*i, NPC, NU) = jac_constr_k.c_u*normalization_param_.T_u;
+            // Non-EnvCollision rows (selcol, sing): double precision T_x/T_u multiplication
+            const int n_non_envcol = si_index.con_envcol1;  // selcol + sing rows
+            jac_constr_ineqp->block(NPC*i, NX*i, n_non_envcol, NX) =
+                jac_constr_k.c_x.topRows(n_non_envcol) * normalization_param_.T_x;
+            if(i!=N) jac_constr_ineqp->block(NPC*i, NX*(N+1) + NU*i, n_non_envcol, NU) =
+                jac_constr_k.c_u.topRows(n_non_envcol) * normalization_param_.T_u;
 
+            // EnvCollision rows: FP32 precision T_x/T_u multiplication, then zero-pad to double
+            // jac_c_x EnvCollision values are already FP32 (cast to double in getEnvcollConstraint)
+            // T_x/T_u are diagonal matrices; each element is a single FP32 multiply (no accumulation error)
+            {
+#ifdef CONSTRAINTS_ROUNDING_MODE
+                int old_round = std::fegetround();
+                std::fesetround(CONSTRAINTS_ROUNDING_MODE);
+#endif
+                Eigen::Matrix<float, PANDA_NUM_LINKS, NX> envcol_cx_f =
+                    jac_constr_k.c_x.block(si_index.con_envcol1, 0, PANDA_NUM_LINKS, NX).cast<float>();
+                Eigen::Matrix<float, NX, NX> T_x_f = normalization_param_.T_x.cast<float>();
+                jac_constr_ineqp->block(NPC*i + si_index.con_envcol1, NX*i, PANDA_NUM_LINKS, NX) =
+                    (envcol_cx_f * T_x_f).cast<double>();
+
+                if(i!=N) {
+                    Eigen::Matrix<float, PANDA_NUM_LINKS, NU> envcol_cu_f =
+                        jac_constr_k.c_u.block(si_index.con_envcol1, 0, PANDA_NUM_LINKS, NU).cast<float>();
+                    Eigen::Matrix<float, NU, NU> T_u_f = normalization_param_.T_u.cast<float>();
+                    jac_constr_ineqp->block(NPC*i + si_index.con_envcol1, NX*(N+1) + NU*i, PANDA_NUM_LINKS, NU) =
+                        (envcol_cu_f * T_u_f).cast<double>();
+                }
+#ifdef CONSTRAINTS_ROUNDING_MODE
+                std::fesetround(old_round);
+#endif
+            }
         }
-        if(constr_ineqp) 
+        if(constr_ineqp)
         {
             constr_ineqp->segment(NPC*i, NPC) = constr_info_k.c_vec;
         }
-        if(l_ineqp) 
+        if(l_ineqp)
         {
             l_ineqp->segment(NPC*i, NPC) = constr_info_k.c_lvec;
         }
-        if(u_ineqp) 
+        if(u_ineqp)
         {
             u_ineqp->segment(NPC*i, NPC) = constr_info_k.c_uvec;
+        }
+
+        // Accumulate constraint data for logging
+        if (should_log_constraints) {
+            auto& entry = constraint_log_entries[i];
+            entry.env_min_dist = rb_[i].env_min_dist_;
+            entry.d_env_min_dist = rb_[i].d_env_min_dist_;
+            entry.obs_radius = rb_[i].obs_radius_;
+            entry.constraint_c = constr_info_k.c_vec.segment(si_index.con_envcol1, PANDA_NUM_LINKS);
+            if (jac_constr_ineqp) {
+                entry.jac_c_x = jac_constr_k.c_x.block(si_index.con_envcol1, 0, PANDA_NUM_LINKS, NX);
+                entry.jac_c_u = jac_constr_k.c_u.block(si_index.con_envcol1, 0, PANDA_NUM_LINKS, NU);
+                // A matrix에 실제 들어가는 스케일링된 값 (FP32 precision, same rounding mode)
+#ifdef CONSTRAINTS_ROUNDING_MODE
+                int old_round_log = std::fegetround();
+                std::fesetround(CONSTRAINTS_ROUNDING_MODE);
+#endif
+                entry.jac_c_x_scaled = (entry.jac_c_x.cast<float>() * normalization_param_.T_x.cast<float>()).cast<double>();
+                if (i != N)
+                    entry.jac_c_u_scaled = (entry.jac_c_u.cast<float>() * normalization_param_.T_u.cast<float>()).cast<double>();
+#ifdef CONSTRAINTS_ROUNDING_MODE
+                std::fesetround(old_round_log);
+#endif
+            }
+        }
+    }
+
+    // ===== Constraint logging: 파일 저장 =====
+    if (should_log_constraints) {
+        try {
+            if (!g_constraint_dir_initialized) {
+                system(("mkdir -p " + g_constraint_output_dir).c_str());
+                g_constraint_dir_initialized = true;
+                std::cout << "[Constraint Logging] Starting constraint logging to: " << g_constraint_output_dir << std::endl;
+            }
+
+            std::string filename = g_constraint_output_dir + "constraints_sample_" + std::to_string(current_solve_count_) + ".csv";
+            std::string filename_bits = g_constraint_output_dir + "constraints_sample_" + std::to_string(current_solve_count_) + "_bits.csv";
+            std::ofstream file(filename);
+            std::ofstream file_bits(filename_bits);
+            if (!file.is_open() || !file_bits.is_open()) {
+                std::cerr << "[Constraint Logging ERROR] Failed to open: " << filename << std::endl;
+            } else {
+                file << std::scientific << std::setprecision(8);
+
+                // ===== 실수 값 파일 헤더 =====
+                file << "# EnvColl Constraint Results - Solve Count " << current_solve_count_ << "\n";
+                file << "# SQP Iteration: " << sqp_iter_ << "\n";
+                file << "# Horizon Points: " << (N + 1) << "\n";
+                file << "# PANDA_NUM_LINKS: " << PANDA_NUM_LINKS << "\n";
+                file << "# PANDA_DOF: " << PANDA_DOF << "\n";
+                file << "# NX: " << NX << ", NU: " << NU << "\n\n";
+
+                // ===== FP32 비트 파일 헤더 =====
+                file_bits << "# EnvColl Constraint Results (FP32 Bits) - Solve Count " << current_solve_count_ << "\n";
+                file_bits << "# SQP Iteration: " << sqp_iter_ << "\n";
+                file_bits << "# Horizon Points: " << (N + 1) << "\n";
+                file_bits << "# PANDA_NUM_LINKS: " << PANDA_NUM_LINKS << "\n";
+                file_bits << "# PANDA_DOF: " << PANDA_DOF << "\n";
+                file_bits << "# NX: " << NX << ", NU: " << NU << "\n";
+                file_bits << "# Format: 8-digit hexadecimal (32-bit IEEE 754)\n\n";
+
+                for (size_t h = 0; h <= N; ++h) {
+                    const auto& entry = constraint_log_entries[h];
+
+                    // MLP output: env_min_dist (per-link minimum distance)
+                    file << "# HORIZON_" << h << "_ENV_MIN_DIST - " << PANDA_NUM_LINKS << " values\n";
+                    file_bits << "# HORIZON_" << h << "_ENV_MIN_DIST - " << PANDA_NUM_LINKS << " values\n";
+                    for (int j = 0; j < PANDA_NUM_LINKS; ++j) {
+                        file << entry.env_min_dist(j);
+                        file_bits << constraint_float_to_hex(static_cast<float>(entry.env_min_dist(j)));
+                        if (j < PANDA_NUM_LINKS - 1) { file << ","; file_bits << ","; }
+                    }
+                    file << "\n\n"; file_bits << "\n\n";
+
+                    // MLP Jacobian: d_env_min_dist (PANDA_NUM_LINKS x PANDA_DOF)
+                    file << "# HORIZON_" << h << "_D_ENV_MIN_DIST - " << PANDA_NUM_LINKS << " x " << PANDA_DOF << "\n";
+                    file_bits << "# HORIZON_" << h << "_D_ENV_MIN_DIST - " << PANDA_NUM_LINKS << " x " << PANDA_DOF << "\n";
+                    for (int r = 0; r < PANDA_NUM_LINKS; ++r) {
+                        for (int c = 0; c < PANDA_DOF; ++c) {
+                            file << entry.d_env_min_dist(r, c);
+                            file_bits << constraint_float_to_hex(static_cast<float>(entry.d_env_min_dist(r, c)));
+                            if (c < PANDA_DOF - 1) { file << ","; file_bits << ","; }
+                        }
+                        file << "\n"; file_bits << "\n";
+                    }
+                    file << "\n"; file_bits << "\n";
+
+                    // Obstacle radius
+                    file << "# HORIZON_" << h << "_OBS_RADIUS\n";
+                    file_bits << "# HORIZON_" << h << "_OBS_RADIUS\n";
+                    file << entry.obs_radius << "\n\n";
+                    file_bits << constraint_float_to_hex(static_cast<float>(entry.obs_radius)) << "\n\n";
+
+                    // Constraint value c = -d_min_dist * dq + RBF (PANDA_NUM_LINKS values)
+                    file << "# HORIZON_" << h << "_CONSTRAINT_C - " << PANDA_NUM_LINKS << " values\n";
+                    file_bits << "# HORIZON_" << h << "_CONSTRAINT_C - " << PANDA_NUM_LINKS << " values\n";
+                    for (int j = 0; j < PANDA_NUM_LINKS; ++j) {
+                        file << entry.constraint_c(j);
+                        file_bits << constraint_float_to_hex(static_cast<float>(entry.constraint_c(j)));
+                        if (j < PANDA_NUM_LINKS - 1) { file << ","; file_bits << ","; }
+                    }
+                    file << "\n\n"; file_bits << "\n\n";
+
+                    // Constraint Jacobian wrt state (PANDA_NUM_LINKS x NX)
+                    if (entry.jac_c_x.size() > 0) {
+                        file << "# HORIZON_" << h << "_JAC_C_X - " << entry.jac_c_x.rows() << " x " << entry.jac_c_x.cols() << "\n";
+                        file_bits << "# HORIZON_" << h << "_JAC_C_X - " << entry.jac_c_x.rows() << " x " << entry.jac_c_x.cols() << "\n";
+                        for (int r = 0; r < entry.jac_c_x.rows(); ++r) {
+                            for (int c = 0; c < entry.jac_c_x.cols(); ++c) {
+                                file << entry.jac_c_x(r, c);
+                                file_bits << constraint_float_to_hex(static_cast<float>(entry.jac_c_x(r, c)));
+                                if (c < entry.jac_c_x.cols() - 1) { file << ","; file_bits << ","; }
+                            }
+                            file << "\n"; file_bits << "\n";
+                        }
+                        file << "\n"; file_bits << "\n";
+                    }
+
+                    // Constraint Jacobian wrt input (PANDA_NUM_LINKS x NU)
+                    if (entry.jac_c_u.size() > 0) {
+                        file << "# HORIZON_" << h << "_JAC_C_U - " << entry.jac_c_u.rows() << " x " << entry.jac_c_u.cols() << "\n";
+                        file_bits << "# HORIZON_" << h << "_JAC_C_U - " << entry.jac_c_u.rows() << " x " << entry.jac_c_u.cols() << "\n";
+                        for (int r = 0; r < entry.jac_c_u.rows(); ++r) {
+                            for (int c = 0; c < entry.jac_c_u.cols(); ++c) {
+                                file << entry.jac_c_u(r, c);
+                                file_bits << constraint_float_to_hex(static_cast<float>(entry.jac_c_u(r, c)));
+                                if (c < entry.jac_c_u.cols() - 1) { file << ","; file_bits << ","; }
+                            }
+                            file << "\n"; file_bits << "\n";
+                        }
+                        file << "\n"; file_bits << "\n";
+                    }
+
+                    // Scaled Jacobian wrt state: JAC_C_X * T_x (A matrix에 실제 들어가는 값)
+                    if (entry.jac_c_x_scaled.size() > 0) {
+                        file << "# HORIZON_" << h << "_JAC_C_X_SCALED - " << entry.jac_c_x_scaled.rows() << " x " << entry.jac_c_x_scaled.cols() << " (= JAC_C_X * T_x, A matrix)\n";
+                        file_bits << "# HORIZON_" << h << "_JAC_C_X_SCALED - " << entry.jac_c_x_scaled.rows() << " x " << entry.jac_c_x_scaled.cols() << " (= JAC_C_X * T_x, A matrix)\n";
+                        for (int r = 0; r < entry.jac_c_x_scaled.rows(); ++r) {
+                            for (int c = 0; c < entry.jac_c_x_scaled.cols(); ++c) {
+                                file << entry.jac_c_x_scaled(r, c);
+                                file_bits << constraint_float_to_hex(static_cast<float>(entry.jac_c_x_scaled(r, c)));
+                                if (c < entry.jac_c_x_scaled.cols() - 1) { file << ","; file_bits << ","; }
+                            }
+                            file << "\n"; file_bits << "\n";
+                        }
+                        file << "\n"; file_bits << "\n";
+                    }
+
+                    // Scaled Jacobian wrt input: JAC_C_U * T_u (A matrix에 실제 들어가는 값, k!=N만)
+                    if (entry.jac_c_u_scaled.size() > 0) {
+                        file << "# HORIZON_" << h << "_JAC_C_U_SCALED - " << entry.jac_c_u_scaled.rows() << " x " << entry.jac_c_u_scaled.cols() << " (= JAC_C_U * T_u, A matrix)\n";
+                        file_bits << "# HORIZON_" << h << "_JAC_C_U_SCALED - " << entry.jac_c_u_scaled.rows() << " x " << entry.jac_c_u_scaled.cols() << " (= JAC_C_U * T_u, A matrix)\n";
+                        for (int r = 0; r < entry.jac_c_u_scaled.rows(); ++r) {
+                            for (int c = 0; c < entry.jac_c_u_scaled.cols(); ++c) {
+                                file << entry.jac_c_u_scaled(r, c);
+                                file_bits << constraint_float_to_hex(static_cast<float>(entry.jac_c_u_scaled(r, c)));
+                                if (c < entry.jac_c_u_scaled.cols() - 1) { file << ","; file_bits << ","; }
+                            }
+                            file << "\n"; file_bits << "\n";
+                        }
+                        file << "\n"; file_bits << "\n";
+                    }
+                }
+                file.close();
+                file_bits.close();
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "[Constraint Logging ERROR] Exception: " << e.what() << std::endl;
         }
     }
 }

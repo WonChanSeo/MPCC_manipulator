@@ -1,0 +1,1838 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+<frozen importlib._bootstrap>:241: RuntimeWarning: to-Python converter for std::vector<int, std::allocator<int> > already registered; second conversion method ignored.
+[INFO] [1771078210.536581988] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00558818 seconds
+[INFO] [1771078210.536647393] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1771078210.544310451] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1771078210.544342667] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1771078210.544592017] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1771078210.544601884] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[INFO] [1771078210.553909737] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00101327 seconds
+[INFO] [1771078210.553919513] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1771078210.555732971] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1771078210.555743772] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1771078210.555832342] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1771078210.555835778] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[WARN] [1771078210.556504381] [moveit_ros.robot_model_loader]: No kinematics plugins defined. Fill and load kinematics.yaml!
+[INFO] [1771078210.558752174] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Publishing maintained planning scene on '/planning_scene'
+[INFO] [1771078210.558801082] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting planning scene monitor
+[INFO] [1771078210.559069942] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/planning_scene'
+[INFO] [1771078210.559077757] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Updating internal planning scene state at most every 0.010000 seconds
+link: base_link
+link: base_footprint
+link: default_mount
+link: front_bumper_mount
+link: front_left_wheel
+link: front_right_wheel
+link: fr3_base
+link: fr3_link0
+link: fr3_link1
+link: fr3_link2
+link: fr3_link3
+link: fr3_link4
+link: fr3_link5
+link: fr3_link6
+link: fr3_link7
+link: fr3_link8
+link: fr3_hand
+link: fr3_leftfinger
+link: fr3_rightfinger
+link: fr3_hand_tcp
+link: rgb_camera_link
+link: depth_camera_link
+link: camera_base
+link: imu_camera_link
+link: inertial_link
+link: rear_bumper_mount
+link: rear_left_wheel
+link: rear_right_wheel
+link: top_chassis_link
+link: top_structure_link
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+Default initialization of model params
+bounds initialized
+Available cores: 28
+Default threads: 28
+Updated threads: 27
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+bounds initialized
+param values:
+	desired_s_velocity: 0.1
+	tol_envcol: 1
+	tol_selcol: 1
+	tol_sing: 0.018
+cost values:
+	qC: 1000
+	qCNmult: 10
+	qL: 500
+	qOri: 100
+	qSing: 1
+	qVs: 10
+	rdVs: 0.1
+	rddq: 50
+	rdq: 0.002
+bounds values:
+normalization values:
+sqp values:
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+[MLP Batch Logging] Starting batch logging to: /home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/mlp/
+BEFORE initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+[OSQP] Permutation vector loaded from ../reference_matrix/P_rev.txt (n=658)
+[QDLDL] Saved D update log to factorization/sample_0_metadata.csv
+[QDLDL] Loaded fixed CSR pattern: n=658, nnz=9701, max_row_nnz=118, buffer=128
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] Sample logging initialized: /home/mms-wonchan/git/MPCC_manipulator/result/qdldl_samples_truncate
+[OSQP] Saved factorization sample_0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[OSQP] Saved solve L(CSR)/Dinv sample_0
+[OSQP] Saved solve intermediate sample_0_rhs
+[OSQP] Saved solve intermediate sample_0_after_Lsolve
+[OSQP] Saved solve intermediate sample_0_after_Dinv
+[OSQP] Saved solve intermediate sample_0_after_Ltsolve
+[OSQP] Saved solve result sample_0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[OSQP] Saved solve metadata sample_0 (rho_updates=1, iter=100, admm_log=3)
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.007276, -0.004022, -0.008701, -0.008100, 0.005050, 0.005895, -0.040962, 0.299952]
+BEFORE initial_guess_[0].uk: [-0.010290, -0.004084, -0.011714, -0.008004, 0.003877, 0.005899, -0.041126, 0.252298]
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.018023, -0.006272, -0.020522, -0.011132, 0.007647, 0.009796, -0.078448, 0.518609]
+BEFORE initial_guess_[0].uk: [-0.023822, -0.006335, -0.026321, -0.011047, 0.005416, 0.009795, -0.078604, 0.432016]
+[QDLDL] CSR map: csc_nnz=9681, csr_nnz=9701, unmapped(0-fill)=20, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9681, csr_nnz=9701, unmapped(0-fill)=20, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.032294, -0.006854, -0.034864, -0.011307, 0.009108, 0.011115, -0.114921, 0.655919]
+BEFORE initial_guess_[0].uk: [-0.040177, -0.006896, -0.042748, -0.011248, 0.006079, 0.011088, -0.115123, 0.543654]
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.046049, -0.004118, -0.048394, -0.006969, 0.008305, 0.006648, -0.135381, 0.616627]
+BEFORE initial_guess_[0].uk: [-0.054058, -0.004169, -0.056403, -0.006892, 0.005175, 0.006643, -0.135891, 0.508347]
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.059489, -0.004028, -0.061217, -0.007505, 0.005412, 0.007150, -0.147517, 0.571123]
+BEFORE initial_guess_[0].uk: [-0.067252, -0.004100, -0.068981, -0.007395, 0.002362, 0.007195, -0.148088, 0.469592]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.072886, -0.002039, -0.074047, -0.003854, 0.004798, 0.004096, -0.169936, 0.529253]
+BEFORE initial_guess_[0].uk: [-0.080228, -0.002079, -0.081390, -0.003764, 0.001904, 0.004124, -0.170545, 0.434507]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.085545, -0.000420, -0.085940, -0.001821, 0.003452, 0.002095, -0.187022, 0.490605]
+BEFORE initial_guess_[0].uk: [-0.092413, -0.000463, -0.092809, -0.001714, 0.000727, 0.002152, -0.187692, 0.402200]
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.097450, 0.000635, -0.096991, -0.000321, 0.002224, 0.001212, -0.203995, 0.454833]
+BEFORE initial_guess_[0].uk: [-0.103842, 0.000601, -0.103383, -0.000210, -0.000322, 0.001282, -0.204676, 0.372599]
+[QDLDL] CSR map: csc_nnz=9681, csr_nnz=9701, unmapped(0-fill)=20, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9681, csr_nnz=9701, unmapped(0-fill)=20, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9681, csr_nnz=9701, unmapped(0-fill)=20, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.108661, 0.001568, -0.107200, 0.001000, 0.001187, 0.000693, -0.220505, 0.421707]
+BEFORE initial_guess_[0].uk: [-0.114592, 0.001545, -0.113132, 0.001114, -0.001184, 0.000773, -0.221185, 0.345276]
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.119103, 0.002503, -0.116692, 0.002291, 0.000333, 0.000303, -0.236482, 0.390997]
+BEFORE initial_guess_[0].uk: [-0.124598, 0.002489, -0.122188, 0.002408, -0.001871, 0.000392, -0.237153, 0.320004]
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.128961, 0.003214, -0.125409, 0.003385, -0.000171, 0.000399, -0.253624, 0.362479]
+BEFORE initial_guess_[0].uk: [-0.134046, 0.003216, -0.130494, 0.003497, -0.002207, 0.000485, -0.254232, 0.296811]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.138460, 0.003152, -0.132546, 0.002712, -0.002203, 0.002076, -0.261820, 0.336140]
+BEFORE initial_guess_[0].uk: [-0.143165, 0.003141, -0.137252, 0.002846, -0.004096, 0.002194, -0.262410, 0.275175]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.147673, 0.004885, -0.139722, 0.005653, -0.001470, 0.000364, -0.280626, 0.311682]
+BEFORE initial_guess_[0].uk: [-0.152020, 0.004898, -0.144070, 0.005768, -0.003220, 0.000460, -0.281206, 0.255088]
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.156140, 0.006224, -0.146183, 0.007304, -0.001423, -0.000474, -0.295683, 0.288947]
+BEFORE initial_guess_[0].uk: [-0.160152, 0.006238, -0.150197, 0.007424, -0.003041, -0.000370, -0.296221, 0.236566]
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.164848, 0.006004, -0.150651, 0.006400, -0.002937, 0.001589, -0.303878, 0.267920]
+BEFORE initial_guess_[0].uk: [-0.168551, 0.006007, -0.154355, 0.006535, -0.004430, 0.001712, -0.304345, 0.219585]
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.173159, 0.007779, -0.155411, 0.009451, -0.001957, -0.000186, -0.320376, 0.248454]
+BEFORE initial_guess_[0].uk: [-0.176574, 0.007811, -0.158829, 0.009558, -0.003328, -0.000098, -0.320804, 0.203719]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.180405, 0.007861, -0.159486, 0.008609, -0.003195, 0.001401, -0.327069, 0.230355]
+BEFORE initial_guess_[0].uk: [-0.183544, 0.007859, -0.162627, 0.008750, -0.004467, 0.001531, -0.327480, 0.188945]
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.192665, 0.009906, -0.158439, 0.012102, -0.002080, -0.000868, -0.341846, 0.213597]
+BEFORE initial_guess_[0].uk: [-0.195555, 0.009934, -0.161333, 0.012211, -0.003245, -0.000778, -0.342225, 0.175285]
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.196851, 0.009727, -0.163822, 0.011105, -0.003092, 0.001131, -0.348798, 0.198005]
+BEFORE initial_guess_[0].uk: [-0.199504, 0.009735, -0.166479, 0.011234, -0.004161, 0.001245, -0.349096, 0.162841]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.201599, 0.011835, -0.168634, 0.014666, -0.001928, -0.001209, -0.361939, 0.183641]
+BEFORE initial_guess_[0].uk: [-0.204049, 0.011883, -0.171088, 0.014752, -0.002900, -0.001147, -0.362182, 0.151181]
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9683, csr_nnz=9701, unmapped(0-fill)=18, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.205560, 0.011600, -0.172776, 0.013505, -0.002804, 0.000929, -0.367984, 0.170233]
+BEFORE initial_guess_[0].uk: [-0.207797, 0.011625, -0.175016, 0.013614, -0.003692, 0.001018, -0.368156, 0.140521]
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.210098, 0.011716, -0.175764, 0.013432, -0.003374, 0.002369, -0.373651, 0.157892]
+BEFORE initial_guess_[0].uk: [-0.212135, 0.011740, -0.177806, 0.013541, -0.004183, 0.002456, -0.373814, 0.130452]
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.218169, 0.014747, -0.175324, 0.018432, -0.001767, -0.001639, -0.385126, 0.146417]
+BEFORE initial_guess_[0].uk: [-0.220077, 0.014833, -0.177237, 0.018478, -0.002502, -0.001626, -0.385231, 0.121041]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.220982, 0.013483, -0.178305, 0.015049, -0.003456, 0.002566, -0.387257, 0.135672]
+BEFORE initial_guess_[0].uk: [-0.222712, 0.013526, -0.180040, 0.015141, -0.004125, 0.002638, -0.387258, 0.112732]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.227188, 0.017054, -0.178791, 0.021284, -0.001562, -0.002426, -0.397263, 0.125894]
+BEFORE initial_guess_[0].uk: [-0.228745, 0.017142, -0.180353, 0.021329, -0.002159, -0.002416, -0.397357, 0.104361]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.229095, 0.015817, -0.181539, 0.017843, -0.003159, 0.001811, -0.398698, 0.116629]
+BEFORE initial_guess_[0].uk: [-0.230502, 0.015860, -0.182952, 0.017938, -0.003704, 0.001885, -0.398693, 0.097234]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.234576, 0.019576, -0.181713, 0.024399, -0.001165, -0.003467, -0.407738, 0.108219]
+BEFORE initial_guess_[0].uk: [-0.235834, 0.019666, -0.182977, 0.024447, -0.001646, -0.003457, -0.407822, 0.090001]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.235693, 0.018310, -0.184274, 0.020901, -0.002703, 0.000846, -0.408527, 0.100241]
+BEFORE initial_guess_[0].uk: [-0.236820, 0.018354, -0.185408, 0.020999, -0.003142, 0.000923, -0.408516, 0.083909]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.241191, 0.023442, -0.183816, 0.029431, 0.000077, -0.006874, -0.418291, 0.092981]
+BEFORE initial_guess_[0].uk: [-0.242186, 0.023539, -0.184819, 0.029476, -0.000302, -0.006864, -0.418365, 0.077648]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.245425, 0.022062, -0.182351, 0.025791, -0.001487, -0.002312, -0.418324, 0.086152]
+BEFORE initial_guess_[0].uk: [-0.246305, 0.022107, -0.183240, 0.025893, -0.001832, -0.002231, -0.418307, 0.072484]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.245900, 0.022154, -0.184853, 0.026299, -0.001807, -0.000844, -0.420267, 0.079738]
+BEFORE initial_guess_[0].uk: [-0.246670, 0.022217, -0.185631, 0.026382, -0.002104, -0.000789, -0.420286, 0.067078]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.249867, 0.025845, -0.184294, 0.032105, 0.000086, -0.005817, -0.426873, 0.074154]
+BEFORE initial_guess_[0].uk: [-0.250527, 0.025939, -0.184963, 0.032156, -0.000164, -0.005804, -0.426930, 0.062434]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.253119, 0.024439, -0.182736, 0.028371, -0.001387, -0.001267, -0.426238, 0.068673]
+BEFORE initial_guess_[0].uk: [-0.253680, 0.024486, -0.183307, 0.028473, -0.001610, -0.001189, -0.426216, 0.058332]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.252964, 0.029493, -0.186037, 0.036873, 0.001346, -0.008970, -0.433584, 0.063714]
+BEFORE initial_guess_[0].uk: [-0.253429, 0.029591, -0.186511, 0.036919, 0.001172, -0.008961, -0.433632, 0.054022]
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.257339, 0.027909, -0.182667, 0.032931, -0.000158, -0.004169, -0.432348, 0.059025]
+BEFORE initial_guess_[0].uk: [-0.257719, 0.027952, -0.183057, 0.033033, -0.000312, -0.004091, -0.432321, 0.050550]
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.256409, 0.027819, -0.184845, 0.033163, -0.000528, -0.002516, -0.432635, 0.054818]
+BEFORE initial_guess_[0].uk: [-0.256703, 0.027879, -0.185149, 0.033244, -0.000642, -0.002468, -0.432635, 0.047042]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.259877, 0.031332, -0.183240, 0.038834, 0.001309, -0.007462, -0.437218, 0.050835]
+BEFORE initial_guess_[0].uk: [-0.260093, 0.031423, -0.183466, 0.038879, 0.001232, -0.007460, -0.437252, 0.043684]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.259167, 0.029619, -0.184203, 0.034719, -0.000077, -0.002693, -0.435592, 0.046848]
+BEFORE initial_guess_[0].uk: [-0.259315, 0.029659, -0.184362, 0.034814, -0.000142, -0.002626, -0.435562, 0.040693]
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.260790, 0.034572, -0.184250, 0.043084, 0.002584, -0.010472, -0.440930, 0.043690]
+BEFORE initial_guess_[0].uk: [-0.260865, 0.034663, -0.184335, 0.043121, 0.002562, -0.010478, -0.440957, 0.037956]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.261760, 0.032662, -0.182987, 0.038713, 0.001137, -0.005460, -0.438752, 0.040482]
+BEFORE initial_guess_[0].uk: [-0.261769, 0.032696, -0.183008, 0.038805, 0.001125, -0.005398, -0.438718, 0.035643]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.266037, 0.030519, -0.178223, 0.035321, -0.000358, -0.000375, -0.436041, 0.037523]
+BEFORE initial_guess_[0].uk: [-0.265981, 0.030549, -0.178180, 0.035412, -0.000345, -0.000314, -0.436004, 0.033274]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.266285, 0.039155, -0.179999, 0.048772, 0.004510, -0.015023, -0.444887, 0.034315]
+BEFORE initial_guess_[0].uk: [-0.266174, 0.039236, -0.179901, 0.048804, 0.004556, -0.015025, -0.444888, 0.030467]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.267964, 0.036694, -0.177199, 0.044291, 0.002927, -0.009450, -0.441685, 0.032247]
+BEFORE initial_guess_[0].uk: [-0.267802, 0.036720, -0.177052, 0.044375, 0.002981, -0.009396, -0.441643, 0.029046]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.267411, 0.034163, -0.176688, 0.040446, 0.001414, -0.003976, -0.438542, 0.029707]
+BEFORE initial_guess_[0].uk: [-0.267197, 0.034189, -0.176489, 0.040525, 0.001488, -0.003927, -0.438501, 0.026969]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.269011, 0.033849, -0.174241, 0.040591, 0.001085, -0.002660, -0.436904, 0.027872]
+BEFORE initial_guess_[0].uk: [-0.268744, 0.033897, -0.173988, 0.040640, 0.001188, -0.002655, -0.436884, 0.025474]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.271063, 0.040234, -0.172904, 0.050335, 0.004666, -0.013581, -0.442126, 0.025753]
+BEFORE initial_guess_[0].uk: [-0.270745, 0.040316, -0.172601, 0.050343, 0.004795, -0.013620, -0.442125, 0.023706]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.269952, 0.037724, -0.172327, 0.045304, 0.003203, -0.008172, -0.438799, 0.024000]
+BEFORE initial_guess_[0].uk: [-0.269591, 0.037741, -0.171982, 0.045373, 0.003333, -0.008140, -0.438755, 0.022502]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272180, 0.034997, -0.168318, 0.041157, 0.001686, -0.002730, -0.435243, 0.022260]
+BEFORE initial_guess_[0].uk: [-0.271773, 0.035011, -0.167928, 0.041224, 0.001833, -0.002702, -0.435199, 0.021120]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.271214, 0.041189, -0.169489, 0.051513, 0.005130, -0.013763, -0.439203, 0.020673]
+BEFORE initial_guess_[0].uk: [-0.270765, 0.041260, -0.169057, 0.051512, 0.005310, -0.013815, -0.439191, 0.019742]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.273239, 0.038441, -0.165326, 0.046207, 0.003650, -0.008266, -0.435570, 0.019160]
+BEFORE initial_guess_[0].uk: [-0.272755, 0.038450, -0.164859, 0.046267, 0.003826, -0.008250, -0.435523, 0.018665]
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+[OSQP] Saved factorization sample_50
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[OSQP] Saved solve L(CSR)/Dinv sample_50
+[OSQP] Saved solve intermediate sample_50_rhs
+[OSQP] Saved solve result sample_50
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+[OSQP] Saved solve metadata sample_50 (rho_updates=2, iter=150, admm_log=4)
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.273154, 0.035479, -0.163194, 0.041762, 0.002156, -0.002748, -0.431768, 0.017834]
+BEFORE initial_guess_[0].uk: [-0.272630, 0.035484, -0.162688, 0.041818, 0.002347, -0.002736, -0.431722, 0.017627]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.271910, 0.041529, -0.164243, 0.051881, 0.005530, -0.013783, -0.434959, 0.016250]
+BEFORE initial_guess_[0].uk: [-0.271357, 0.041591, -0.163708, 0.051870, 0.005751, -0.013852, -0.434939, 0.016203]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272551, 0.038474, -0.161014, 0.046269, 0.004056, -0.008205, -0.430959, 0.015381]
+BEFORE initial_guess_[0].uk: [-0.271964, 0.038473, -0.160446, 0.046317, 0.004271, -0.008205, -0.430910, 0.015683]
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272306, 0.035270, -0.158665, 0.041516, 0.002559, -0.002626, -0.426958, 0.014327]
+BEFORE initial_guess_[0].uk: [-0.271685, 0.035265, -0.158064, 0.041562, 0.002787, -0.002631, -0.426910, 0.014861]
+[QDLDL] CSR map: csc_nnz=9681, csr_nnz=9701, unmapped(0-fill)=20, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9681, csr_nnz=9701, unmapped(0-fill)=20, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.274174, 0.043130, -0.156646, 0.053278, 0.006919, -0.017088, -0.431929, 0.013029]
+BEFORE initial_guess_[0].uk: [-0.273517, 0.043145, -0.156009, 0.053295, 0.007172, -0.017120, -0.431853, 0.013944]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.273183, 0.039282, -0.154693, 0.047844, 0.005316, -0.010813, -0.427113, 0.012379]
+BEFORE initial_guess_[0].uk: [-0.272506, 0.039271, -0.154037, 0.047882, 0.005566, -0.010824, -0.427059, 0.013341]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272480, 0.035702, -0.152443, 0.042644, 0.003763, -0.004945, -0.422817, 0.011542]
+BEFORE initial_guess_[0].uk: [-0.271774, 0.035690, -0.151758, 0.042675, 0.004024, -0.004967, -0.422767, 0.012675]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.271803, 0.032266, -0.150094, 0.037660, 0.002305, 0.000527, -0.418620, 0.010765]
+BEFORE initial_guess_[0].uk: [-0.271071, 0.032253, -0.149384, 0.037684, 0.002576, 0.000496, -0.418571, 0.012061]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.272887, 0.042510, -0.148756, 0.051977, 0.007723, -0.018633, -0.424263, 0.009723]
+BEFORE initial_guess_[0].uk: [-0.272144, 0.042433, -0.148037, 0.052061, 0.008000, -0.018591, -0.424077, 0.011675]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.271888, 0.037948, -0.146618, 0.046623, 0.005979, -0.011695, -0.418533, 0.009322]
+BEFORE initial_guess_[0].uk: [-0.271102, 0.037925, -0.145854, 0.046642, 0.006271, -0.011728, -0.418474, 0.010973]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.271396, 0.033939, -0.143722, 0.040934, 0.004393, -0.005642, -0.414000, 0.008677]
+BEFORE initial_guess_[0].uk: [-0.270591, 0.033919, -0.142940, 0.040942, 0.004691, -0.005690, -0.413948, 0.010427]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.270667, 0.030101, -0.141008, 0.035427, 0.002897, -0.000037, -0.409579, 0.008117]
+BEFORE initial_guess_[0].uk: [-0.269843, 0.030078, -0.140208, 0.035429, 0.003202, -0.000095, -0.409528, 0.009976]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.269369, 0.028819, -0.139264, 0.034587, 0.002447, 0.000697, -0.405500, 0.007612]
+BEFORE initial_guess_[0].uk: [-0.268531, 0.028817, -0.138450, 0.034557, 0.002772, 0.000589, -0.405447, 0.009572]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.270181, 0.038746, -0.137626, 0.047209, 0.007826, -0.018484, -0.410527, 0.006823]
+BEFORE initial_guess_[0].uk: [-0.269385, 0.038583, -0.136857, 0.047345, 0.008118, -0.018398, -0.410258, 0.009470]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.269344, 0.033610, -0.135081, 0.041534, 0.006010, -0.011295, -0.404389, 0.006646]
+BEFORE initial_guess_[0].uk: [-0.268452, 0.033568, -0.134215, 0.041532, 0.006342, -0.011359, -0.404328, 0.008869]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.267981, 0.029170, -0.132611, 0.035291, 0.004423, -0.005184, -0.399698, 0.006227]
+BEFORE initial_guess_[0].uk: [-0.267080, 0.029131, -0.131735, 0.035279, 0.004757, -0.005263, -0.399645, 0.008488]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.266226, 0.024883, -0.130513, 0.029229, 0.002922, 0.000464, -0.395131, 0.005857]
+BEFORE initial_guess_[0].uk: [-0.265314, 0.024839, -0.129627, 0.029211, 0.003260, 0.000375, -0.395080, 0.008176]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.264892, 0.020733, -0.127976, 0.023385, 0.001499, 0.005733, -0.390634, 0.005497]
+BEFORE initial_guess_[0].uk: [-0.263968, 0.020686, -0.127078, 0.023362, 0.001843, 0.005635, -0.390583, 0.007873]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.265311, 0.032385, -0.126594, 0.039724, 0.007412, -0.017527, -0.394209, 0.004931]
+BEFORE initial_guess_[0].uk: [-0.264444, 0.032205, -0.125755, 0.039840, 0.007730, -0.017468, -0.393933, 0.007928]
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.264069, 0.026878, -0.124182, 0.033525, 0.005577, -0.010340, -0.387984, 0.004837]
+BEFORE initial_guess_[0].uk: [-0.263105, 0.026817, -0.123245, 0.033502, 0.005936, -0.010434, -0.387924, 0.007389]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.263308, 0.021970, -0.120741, 0.026766, 0.003965, -0.004199, -0.383182, 0.004572]
+BEFORE initial_guess_[0].uk: [-0.262338, 0.021913, -0.119799, 0.026731, 0.004324, -0.004310, -0.383130, 0.007125]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.261831, 0.017258, -0.118015, 0.020179, 0.002439, 0.001455, -0.378516, 0.004309]
+BEFORE initial_guess_[0].uk: [-0.260855, 0.017197, -0.117067, 0.020139, 0.002802, 0.001335, -0.378465, 0.006885]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.260276, 0.012676, -0.115362, 0.013811, 0.000999, 0.006712, -0.373909, 0.004065]
+BEFORE initial_guess_[0].uk: [-0.259292, 0.012611, -0.114407, 0.013768, 0.001365, 0.006583, -0.373859, 0.006664]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.259679, 0.023361, -0.114443, 0.028767, 0.006461, -0.015569, -0.376221, 0.003601]
+BEFORE initial_guess_[0].uk: [-0.258763, 0.023163, -0.113559, 0.028865, 0.006797, -0.015540, -0.375939, 0.006755]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.258823, 0.017419, -0.111416, 0.022148, 0.004605, -0.008442, -0.369904, 0.003615]
+BEFORE initial_guess_[0].uk: [-0.257808, 0.017340, -0.110430, 0.022105, 0.004983, -0.008567, -0.369844, 0.006319]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.257145, 0.012144, -0.108598, 0.014924, 0.003004, -0.002416, -0.365045, 0.003429]
+BEFORE initial_guess_[0].uk: [-0.256129, 0.012066, -0.107611, 0.014871, 0.003381, -0.002556, -0.364993, 0.006103]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.254793, 0.007072, -0.106454, 0.007881, 0.001484, 0.003141, -0.360311, 0.003249]
+BEFORE initial_guess_[0].uk: [-0.253776, 0.006989, -0.105467, 0.007826, 0.001862, 0.002992, -0.360261, 0.005915]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.253768, 0.002076, -0.102970, 0.001069, 0.000020, 0.008331, -0.355606, 0.003081]
+BEFORE initial_guess_[0].uk: [-0.252749, 0.001990, -0.101981, 0.001009, 0.000399, 0.008172, -0.355556, 0.005739]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.252948, 0.011715, -0.101710, 0.014534, 0.004996, -0.012779, -0.356684, 0.002755]
+BEFORE initial_guess_[0].uk: [-0.252009, 0.011500, -0.100802, 0.014613, 0.005342, -0.012779, -0.356400, 0.005894]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.251787, 0.005412, -0.098849, 0.007535, 0.003138, -0.005838, -0.350333, 0.002789]
+BEFORE initial_guess_[0].uk: [-0.250745, 0.005312, -0.097837, 0.007476, 0.003527, -0.005991, -0.350274, 0.005493]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.249860, -0.000197, -0.096025, -0.000068, 0.001544, 0.000020, -0.345419, 0.002668]
+BEFORE initial_guess_[0].uk: [-0.248821, -0.000297, -0.095015, -0.000136, 0.001930, -0.000149, -0.345369, 0.005318]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.247980, -0.005653, -0.093144, -0.007485, 0.000015, 0.005436, -0.340610, 0.002546]
+BEFORE initial_guess_[0].uk: [-0.246943, -0.005755, -0.092138, -0.007558, 0.000401, 0.005258, -0.340561, 0.005162]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.246059, -0.010976, -0.090312, -0.014688, -0.001439, 0.010456, -0.335843, 0.002434]
+BEFORE initial_guess_[0].uk: [-0.245025, -0.011083, -0.089308, -0.014763, -0.001054, 0.010270, -0.335794, 0.005018]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.244828, -0.006941, -0.087968, -0.008395, 0.000951, -0.001497, -0.333676, 0.002231]
+BEFORE initial_guess_[0].uk: [-0.243893, -0.007162, -0.087066, -0.008347, 0.001304, -0.001559, -0.333409, 0.005143]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.243081, -0.012977, -0.085655, -0.015970, -0.000664, 0.004369, -0.327611, 0.002255]
+BEFORE initial_guess_[0].uk: [-0.242034, -0.013093, -0.084639, -0.016049, -0.000272, 0.004177, -0.327555, 0.004821]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.240989, -0.018590, -0.082833, -0.023515, -0.002119, 0.009445, -0.322771, 0.002169]
+BEFORE initial_guess_[0].uk: [-0.239949, -0.018711, -0.081823, -0.023598, -0.001731, 0.009246, -0.322724, 0.004664]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.238956, -0.022599, -0.079770, -0.030097, -0.002628, 0.011671, -0.320254, 0.002019]
+BEFORE initial_guess_[0].uk: [-0.238021, -0.022870, -0.078868, -0.030020, -0.002298, 0.011645, -0.320034, 0.004674]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.238039, -0.017428, -0.077867, -0.020442, 0.000352, -0.003276, -0.317111, 0.001920]
+BEFORE initial_guess_[0].uk: [-0.237103, -0.017665, -0.076964, -0.020405, 0.000700, -0.003348, -0.316845, 0.004666]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.236036, -0.023876, -0.075653, -0.028317, -0.001358, 0.002737, -0.310950, 0.001959]
+BEFORE initial_guess_[0].uk: [-0.234992, -0.024005, -0.074640, -0.028409, -0.000968, 0.002527, -0.310895, 0.004359]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.233797, -0.029873, -0.072747, -0.036313, -0.002865, 0.007908, -0.306006, 0.001891]
+BEFORE initial_guess_[0].uk: [-0.232768, -0.030007, -0.071749, -0.036410, -0.002481, 0.007690, -0.305960, 0.004196]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.231544, -0.035742, -0.069857, -0.044098, -0.004318, 0.012689, -0.301143, 0.001820]
+BEFORE initial_guess_[0].uk: [-0.230530, -0.035881, -0.068874, -0.044198, -0.003940, 0.012463, -0.301099, 0.004049]
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.229360, -0.039998, -0.066682, -0.050936, -0.004793, 0.014609, -0.298470, 0.001699]
+BEFORE initial_guess_[0].uk: [-0.228463, -0.040289, -0.065817, -0.050874, -0.004478, 0.014558, -0.298257, 0.004026]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.227178, -0.038178, -0.065243, -0.045476, -0.003315, 0.004885, -0.293471, 0.001662]
+BEFORE initial_guess_[0].uk: [-0.226288, -0.038418, -0.064384, -0.045473, -0.002978, 0.004755, -0.293232, 0.003990]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.225734, -0.044484, -0.062352, -0.053741, -0.004879, 0.010030, -0.287505, 0.001669]
+BEFORE initial_guess_[0].uk: [-0.224738, -0.044632, -0.061387, -0.053852, -0.004505, 0.009787, -0.287454, 0.003728]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.219901, -0.050134, -0.062835, -0.061439, -0.006074, 0.013951, -0.283006, 0.001607]
+BEFORE initial_guess_[0].uk: [-0.218982, -0.050354, -0.061944, -0.061487, -0.005738, 0.013777, -0.282893, 0.003595]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.215397, -0.055350, -0.062057, -0.068611, -0.006990, 0.016880, -0.279090, 0.001531]
+BEFORE initial_guess_[0].uk: [-0.214529, -0.055628, -0.061216, -0.068605, -0.006681, 0.016764, -0.278923, 0.003485]
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.218907, -0.057787, -0.053754, -0.070889, -0.006874, 0.014421, -0.274938, 0.001488]
+BEFORE initial_guess_[0].uk: [-0.218069, -0.058086, -0.052948, -0.070858, -0.006574, 0.014319, -0.274721, 0.003440]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.216719, -0.063936, -0.051409, -0.078294, -0.008256, 0.018608, -0.269459, 0.001492]
+BEFORE initial_guess_[0].uk: [-0.215837, -0.064174, -0.050558, -0.078344, -0.007934, 0.018421, -0.269346, 0.003242]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.213099, -0.065032, -0.050022, -0.079829, -0.007323, 0.013743, -0.266332, 0.001385]
+BEFORE initial_guess_[0].uk: [-0.212297, -0.065373, -0.049249, -0.079773, -0.007048, 0.013675, -0.266103, 0.003181]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.212417, -0.071837, -0.046389, -0.087034, -0.009046, 0.018658, -0.260216, 0.001419]
+BEFORE initial_guess_[0].uk: [-0.211514, -0.072018, -0.045515, -0.087166, -0.008706, 0.018385, -0.260168, 0.002970]
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+[OSQP] Saved factorization sample_100
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[OSQP] Saved solve L(CSR)/Dinv sample_100
+[OSQP] Saved solve intermediate sample_100_rhs
+[OSQP] Saved solve result sample_100
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+[OSQP] Saved solve metadata sample_100 (rho_updates=1, iter=100, admm_log=3)
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.207238, -0.076908, -0.045979, -0.094266, -0.009820, 0.020826, -0.256118, 0.001314]
+BEFORE initial_guess_[0].uk: [-0.206442, -0.077223, -0.045211, -0.094271, -0.009545, 0.020690, -0.255971, 0.002807]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.205106, -0.075386, -0.043805, -0.089880, -0.008183, 0.010405, -0.250521, 0.001328]
+BEFORE initial_guess_[0].uk: [-0.204362, -0.075693, -0.043084, -0.089893, -0.007910, 0.010240, -0.250314, 0.002788]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.205735, -0.082032, -0.038793, -0.098178, -0.009784, 0.014940, -0.244486, 0.001313]
+BEFORE initial_guess_[0].uk: [-0.204893, -0.082232, -0.037979, -0.098324, -0.009466, 0.014641, -0.244441, 0.002570]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.200618, -0.088339, -0.038486, -0.106289, -0.011169, 0.018791, -0.239327, 0.001253]
+BEFORE initial_guess_[0].uk: [-0.199799, -0.088550, -0.037692, -0.106439, -0.010862, 0.018484, -0.239291, 0.002398]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.196127, -0.094575, -0.037533, -0.114204, -0.012518, 0.022332, -0.234218, 0.001195]
+BEFORE initial_guess_[0].uk: [-0.195334, -0.094796, -0.036761, -0.114358, -0.012219, 0.022016, -0.234183, 0.002239]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.192165, -0.100412, -0.035954, -0.121862, -0.013631, 0.025085, -0.229461, 0.001129]
+BEFORE initial_guess_[0].uk: [-0.191448, -0.100714, -0.035254, -0.121941, -0.013372, 0.024841, -0.229369, 0.002090]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.188611, -0.105733, -0.034088, -0.128906, -0.014417, 0.026791, -0.225134, 0.001057]
+BEFORE initial_guess_[0].uk: [-0.187945, -0.106102, -0.033438, -0.128926, -0.014191, 0.026610, -0.224999, 0.001949]
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.187017, -0.104279, -0.031500, -0.124429, -0.012347, 0.015846, -0.220208, 0.000404]
+BEFORE initial_guess_[0].uk: [-0.186398, -0.104642, -0.030896, -0.124464, -0.012122, 0.015634, -0.220023, 0.001333]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.184356, -0.110839, -0.029871, -0.132325, -0.013888, 0.019582, -0.214187, 0.000982]
+BEFORE initial_guess_[0].uk: [-0.183632, -0.111092, -0.029163, -0.132498, -0.013612, 0.019234, -0.214146, 0.001694]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.181212, -0.117080, -0.027623, -0.140138, -0.015223, 0.022709, -0.208890, 0.000798]
+BEFORE initial_guess_[0].uk: [-0.180496, -0.117343, -0.026923, -0.140314, -0.014952, 0.022353, -0.208857, 0.001443]
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.178205, -0.123222, -0.025209, -0.147726, -0.016509, 0.025544, -0.203653, 0.000706]
+BEFORE initial_guess_[0].uk: [-0.177500, -0.123493, -0.024519, -0.147905, -0.016242, 0.025179, -0.203621, 0.001283]
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fill)=14, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.175308, -0.129237, -0.022717, -0.155091, -0.017740, 0.028083, -0.198425, 0.000630]
+BEFORE initial_guess_[0].uk: [-0.174611, -0.129516, -0.022033, -0.155273, -0.017475, 0.027712, -0.198393, 0.001144]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.172571, -0.135136, -0.020100, -0.162252, -0.018915, 0.030350, -0.193207, 0.000561]
+BEFORE initial_guess_[0].uk: [-0.171876, -0.135422, -0.019420, -0.162436, -0.018650, 0.029972, -0.193175, 0.001018]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.169992, -0.140922, -0.017354, -0.169214, -0.020033, 0.032358, -0.188007, 0.000497]
+BEFORE initial_guess_[0].uk: [-0.169298, -0.141214, -0.016674, -0.169399, -0.019767, 0.031975, -0.187975, 0.000904]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.167521, -0.146601, -0.014529, -0.175989, -0.021095, 0.034121, -0.182832, 0.000436]
+BEFORE initial_guess_[0].uk: [-0.166823, -0.146897, -0.013845, -0.176176, -0.020827, 0.033734, -0.182800, 0.000798]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.165771, -0.148603, -0.010937, -0.178306, -0.019959, 0.029095, -0.178661, 0.000312]
+BEFORE initial_guess_[0].uk: [-0.165181, -0.149056, -0.010360, -0.178328, -0.019762, 0.028878, -0.178497, 0.000666]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.163861, -0.154672, -0.008624, -0.184456, -0.021272, 0.031391, -0.172847, 0.000336]
+BEFORE initial_guess_[0].uk: [-0.163150, -0.154973, -0.007926, -0.184645, -0.020997, 0.031004, -0.172808, 0.000627]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.161408, -0.160322, -0.005848, -0.191108, -0.022280, 0.032950, -0.167715, 0.000301]
+BEFORE initial_guess_[0].uk: [-0.160682, -0.160623, -0.005136, -0.191296, -0.022000, 0.032560, -0.167683, 0.000556]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.161191, -0.166160, -0.000843, -0.198037, -0.023211, 0.034519, -0.162764, 0.000065]
+BEFORE initial_guess_[0].uk: [-0.160454, -0.166460, -0.000121, -0.198219, -0.022926, 0.034131, -0.162733, 0.000314]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.159979, -0.171839, 0.003174, -0.204670, -0.024093, 0.035857, -0.157826, 0.000306]
+BEFORE initial_guess_[0].uk: [-0.159230, -0.172139, 0.003906, -0.204848, -0.023803, 0.035471, -0.157795, 0.000486]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.157207, -0.175275, 0.005661, -0.207699, -0.023763, 0.033028, -0.151976, 0.000301]
+BEFORE initial_guess_[0].uk: [-0.156507, -0.175632, 0.006346, -0.207816, -0.023491, 0.032699, -0.151872, 0.000463]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.155824, -0.181087, 0.008838, -0.214699, -0.024585, 0.034312, -0.146876, 0.000250]
+BEFORE initial_guess_[0].uk: [-0.155050, -0.181382, 0.009596, -0.214868, -0.024283, 0.033933, -0.146840, 0.000380]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.153771, -0.186795, 0.011965, -0.221297, -0.025397, 0.035394, -0.142106, 0.000208]
+BEFORE initial_guess_[0].uk: [-0.152981, -0.187088, 0.012739, -0.221458, -0.025090, 0.035025, -0.142075, 0.000317]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.151463, -0.192507, 0.014884, -0.227801, -0.026175, 0.036337, -0.137407, 0.000168]
+BEFORE initial_guess_[0].uk: [-0.150661, -0.192795, 0.015672, -0.227956, -0.025862, 0.035976, -0.137376, 0.000257]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.149031, -0.198200, 0.017679, -0.234236, -0.026910, 0.037132, -0.132743, 0.000130]
+BEFORE initial_guess_[0].uk: [-0.148217, -0.198483, 0.018478, -0.234384, -0.026592, 0.036778, -0.132712, 0.000201]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.146567, -0.202533, 0.020495, -0.238102, -0.026666, 0.035114, -0.126287, 0.000090]
+BEFORE initial_guess_[0].uk: [-0.145767, -0.202795, 0.021279, -0.238261, -0.026326, 0.034742, -0.126220, 0.000152]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.144269, -0.208065, 0.022851, -0.244808, -0.027198, 0.035631, -0.121467, 0.000070]
+BEFORE initial_guess_[0].uk: [-0.143435, -0.208335, 0.023670, -0.244940, -0.026869, 0.035295, -0.121432, 0.000109]
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.141661, -0.213777, 0.025450, -0.251203, -0.027854, 0.036183, -0.116939, 0.000034]
+BEFORE initial_guess_[0].uk: [-0.140816, -0.214042, 0.026283, -0.251324, -0.027523, 0.035862, -0.116909, 0.000059]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.139009, -0.219497, 0.028076, -0.257514, -0.028478, 0.036631, -0.112450, -0.000004]
+BEFORE initial_guess_[0].uk: [-0.138157, -0.219753, 0.028916, -0.257626, -0.028144, 0.036321, -0.112420, 0.000006]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.136266, -0.224384, 0.030848, -0.262235, -0.028265, 0.035303, -0.105631, -0.000054]
+BEFORE initial_guess_[0].uk: [-0.135437, -0.224625, 0.031665, -0.262350, -0.027909, 0.034986, -0.105559, -0.000047]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.133929, -0.229996, 0.033114, -0.268675, -0.028680, 0.035507, -0.100943, -0.000074]
+BEFORE initial_guess_[0].uk: [-0.133068, -0.230237, 0.033963, -0.268769, -0.028338, 0.035219, -0.100908, -0.000087]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.131267, -0.235744, 0.035708, -0.274941, -0.029223, 0.035718, -0.096551, -0.000110]
+BEFORE initial_guess_[0].uk: [-0.130400, -0.235978, 0.036565, -0.275023, -0.028880, 0.035445, -0.096522, -0.000137]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.128555, -0.241516, 0.038330, -0.281163, -0.029740, 0.035840, -0.092179, -0.000154]
+BEFORE initial_guess_[0].uk: [-0.127687, -0.241741, 0.039188, -0.281236, -0.029397, 0.035579, -0.092151, -0.000194]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.125637, -0.247117, 0.041184, -0.287011, -0.029618, 0.035466, -0.084874, -0.000221]
+BEFORE initial_guess_[0].uk: [-0.124803, -0.247335, 0.042008, -0.287080, -0.029257, 0.035211, -0.084797, -0.000264]
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.123298, -0.252873, 0.043388, -0.293206, -0.029932, 0.035372, -0.080251, -0.000509]
+BEFORE initial_guess_[0].uk: [-0.122436, -0.253085, 0.044242, -0.293262, -0.029586, 0.035132, -0.080218, -0.000540]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.120355, -0.258872, 0.046210, -0.299694, -0.029945, 0.035541, -0.073137, -0.000773]
+BEFORE initial_guess_[0].uk: [-0.119522, -0.259082, 0.047036, -0.299740, -0.029587, 0.035315, -0.073064, -0.000785]
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9685, csr_nnz=9701, unmapped(0-fill)=16, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.117961, -0.264726, 0.048457, -0.305777, -0.030244, 0.035294, -0.068635, -0.000793]
+BEFORE initial_guess_[0].uk: [-0.117105, -0.264928, 0.049306, -0.305817, -0.029900, 0.035075, -0.068604, -0.000833]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.115193, -0.270601, 0.051034, -0.311909, -0.030641, 0.034961, -0.064393, -0.000806]
+BEFORE initial_guess_[0].uk: [-0.114340, -0.270799, 0.051882, -0.311943, -0.030301, 0.034749, -0.064368, -0.000876]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.112211, -0.277182, 0.054062, -0.319310, -0.030767, 0.035916, -0.057076, -0.000828]
+BEFORE initial_guess_[0].uk: [-0.111396, -0.277388, 0.054872, -0.319329, -0.030415, 0.035723, -0.057002, -0.000928]
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9691, csr_nnz=9701, unmapped(0-fill)=10, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.109869, -0.283085, 0.056365, -0.325094, -0.030984, 0.035380, -0.052581, -0.000856]
+BEFORE initial_guess_[0].uk: [-0.109034, -0.283281, 0.057196, -0.325117, -0.030646, 0.035179, -0.052551, -0.000998]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.106968, -0.289864, 0.059437, -0.332799, -0.031156, 0.036639, -0.045404, -0.000844]
+BEFORE initial_guess_[0].uk: [-0.106165, -0.290074, 0.060236, -0.332807, -0.030810, 0.036458, -0.045335, -0.001035]
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9697, csr_nnz=9701, unmapped(0-fill)=4, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.105469, -0.295824, 0.062603, -0.338444, -0.031261, 0.035895, -0.041028, -0.000330]
+BEFORE initial_guess_[0].uk: [-0.104648, -0.296025, 0.063419, -0.338462, -0.030928, 0.035697, -0.041001, -0.000654]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.102651, -0.302814, 0.065793, -0.346466, -0.031461, 0.037457, -0.033980, -0.000470]
+BEFORE initial_guess_[0].uk: [-0.101862, -0.303034, 0.066579, -0.346468, -0.031122, 0.037279, -0.033915, -0.000842]
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.100015, -0.308139, 0.067923, -0.351205, -0.031525, 0.036378, -0.029606, -0.000507]
+BEFORE initial_guess_[0].uk: [-0.099211, -0.308352, 0.068724, -0.351223, -0.031197, 0.036173, -0.029580, -0.000954]
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.097330, -0.314424, 0.071232, -0.358563, -0.031631, 0.038004, -0.022705, -0.000662]
+BEFORE initial_guess_[0].uk: [-0.096558, -0.314668, 0.072002, -0.358567, -0.031298, 0.037817, -0.022644, -0.001178]
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9699, csr_nnz=9701, unmapped(0-fill)=2, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.093701, -0.321310, 0.072966, -0.365660, -0.031825, 0.039291, -0.015966, -0.001471]
+BEFORE initial_guess_[0].uk: [-0.092935, -0.321564, 0.073731, -0.365673, -0.031495, 0.039095, -0.015907, -0.001970]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.091872, -0.326107, 0.075863, -0.369614, -0.031666, 0.037663, -0.011835, -0.000766]
+BEFORE initial_guess_[0].uk: [-0.091091, -0.326357, 0.076643, -0.369650, -0.031345, 0.037424, -0.011813, -0.001481]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.087983, -0.332890, 0.077982, -0.377333, -0.031900, 0.039239, -0.005256, -0.001216]
+BEFORE initial_guess_[0].uk: [-0.087229, -0.333179, 0.078738, -0.377358, -0.031576, 0.039017, -0.005202, -0.001996]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.086508, -0.338965, 0.081701, -0.383673, -0.031788, 0.040507, 0.000920, -0.000972]
+BEFORE initial_guess_[0].uk: [-0.085757, -0.339274, 0.082453, -0.383706, -0.031465, 0.040265, 0.000972, -0.001938]
+[QDLDL] CSR map: csc_nnz=9695, csr_nnz=9701, unmapped(0-fill)=6, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.083281, -0.343740, 0.083283, -0.387119, -0.031642, 0.038371, 0.005012, -0.001423]
+BEFORE initial_guess_[0].uk: [-0.082515, -0.344049, 0.084052, -0.387191, -0.031325, 0.038073, 0.005032, -0.002481]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[OSQP] Saved factorization sample_150
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[OSQP] Saved solve L(CSR)/Dinv sample_150
+[OSQP] Saved solve intermediate sample_150_rhs
+[OSQP] Saved solve result sample_150
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[OSQP] Saved solve metadata sample_150 (rho_updates=1, iter=100, admm_log=3)
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.081177, -0.353604, 0.087476, -0.399949, -0.031967, 0.046191, 0.014443, -0.001548]
+BEFORE initial_guess_[0].uk: [-0.080452, -0.354001, 0.088206, -0.399978, -0.031642, 0.045943, 0.014520, -0.002791]
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9689, csr_nnz=9701, unmapped(0-fill)=12, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.078464, -0.357343, 0.089021, -0.401540, -0.031568, 0.043519, 0.018346, -0.001225]
+BEFORE initial_guess_[0].uk: [-0.077699, -0.357711, 0.089791, -0.401644, -0.031248, 0.043164, 0.018366, -0.002710]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.075486, -0.361179, 0.091137, -0.404426, -0.031217, 0.040515, 0.021953, -0.001282]
+BEFORE initial_guess_[0].uk: [-0.074716, -0.361574, 0.091915, -0.404554, -0.030896, 0.040119, 0.021968, -0.002984]
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9693, csr_nnz=9701, unmapped(0-fill)=8, missing_from_pattern=0
+Solver finished.
+AFTER initial_guess_[0].uk: [-0.073373, -0.367074, 0.094662, -0.410953, -0.031033, 0.041159, 0.027615, -0.001581]
+BEFORE initial_guess_[0].uk: [-0.072617, -0.367533, 0.095428, -0.411076, -0.030705, 0.040765, 0.027659, -0.003505]
+[QDLDL] CSR map: csc_nnz=9687, csr_nnz=9701, unmapped(0-fil

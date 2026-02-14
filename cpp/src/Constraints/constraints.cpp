@@ -255,63 +255,88 @@ double getDRBF_double(const double &delta, const double &h)
 // Used only by getEnvcollConstraint
 // ========================================
 
-// ---- 사용자 근사 다항식들 (float-only, mul + add) ----
-static inline float poly_log2_1pf_deg3(float f) {
-    float p = 0.15391353f * f + (-0.56775215f);
-    p = p * f + 1.41348539f;
-    return f * p;
+// ---- ASIC bit-exact rounding helper ----
+// 매 연산 후 volatile을 통해 FP32 precision으로 rounding을 강제한다.
+// CONSTRAINTS_ROUNDING_MODE가 정의되지 않으면 no-op.
+#ifdef CONSTRAINTS_ROUNDING_MODE
+static inline float rf(float v) {
+    volatile float tmp = v;
+    return tmp;
 }
-static inline float poly_log2_1pf_deg4(float f) {
-    float p = (-0.07915037f) * f + 0.31221427f;
-    p = p * f + (-0.66951521f);
-    p = p * f + 1.43609808f;
-    return f * p;
-}
-static inline float poly_log2_1pf_deg5(float f) {
-    float p = 0.04588701f * f + (-0.19442591f);
-    p = p * f + 0.41542437f;
-    p = p * f + (-0.70868282f);
-    p = p * f + 1.44182586f;
-    return f * p;
-}
-static inline float poly_log2_1pf_deg6(float f) {
-    float p = (-0.03465904f) * f + 0.14683537f;
-    p = p * f + (-0.30403335f);
-    p = p * f + 0.46972589f;
-    p = p * f + (-0.72056392f);
-    p = p * f + 1.44269504f;  // = 1/ln(2)
-    return f * p;
-}
+#else
+static inline float rf(float v) { return v; }
+#endif
 
+// ---- 근사 다항식 (각 mul, add 연산마다 rounding 적용) ----
+static inline float poly_log2_1pf_deg6(float f) {
+    // p = (((((c5*f + c4)*f + c3)*f + c2)*f + c1)*f + c0) 형태
+    // 각 mul과 add를 분리하여 rounding 적용
+    float mul0 = rf((-0.03465904f) * f);
+    float p    = rf(mul0 + 0.14683537f);
+
+    float mul1 = rf(p * f);
+    p          = rf(mul1 + (-0.30403335f));
+
+    float mul2 = rf(p * f);
+    p          = rf(mul2 + 0.46972589f);
+
+    float mul3 = rf(p * f);
+    p          = rf(mul3 + (-0.72056392f));
+
+    float mul4 = rf(p * f);
+    p          = rf(mul4 + 1.44269504f);   // 1/ln(2)
+
+    return rf(f * p);
+}
 
 float mac_log2(float y) {
     if (y <= 0.0f) return NAN;
 
     int e;
-    float m = frexpf(y, &e);       // y = m * 2^e, m∈[0.5,1)
-    float m_prime = m * 2.0f;      // ∈[1,2)
+    float m       = frexpf(y, &e);            // y = m * 2^e, m∈[0.5,1)
+    float m_prime = rf(m * 2.0f);             // ∈[1,2)
     int   e_prime = e - 1;
-    float f = m_prime - 1.0f;      // ∈[0,1)
+    float f       = rf(m_prime - 1.0f);       // ∈[0,1)
 
-    // --- 여기서 원하는 차수 선택 ---
-    // float log_m = poly_log2_1pf_cubic(f);   // 3차: 더 가벼움(~2% 오차)
-    float log_m = poly_log2_1pf_deg6(f);    // 4차: 정밀(~0.5% 오차)
+    float log_m   = poly_log2_1pf_deg6(f);    // 내부에서 매 연산마다 rounding 적용됨
 
-    return log_m + (float)e_prime;
+    return rf(log_m + static_cast<float>(e_prime));
 }
 
 float mac_ln(float y) {
-    return mac_log2(y) * 0.6931471805599453f;  // LN2 (float)
+    float log2_val = mac_log2(y);
+    return rf(log2_val * 0.6931471805599453f);  // * LN2
 }
 
 float getRBF_float(const float& delta, const float& h) {
     const float one = 1.0f, half = 0.5f;
-    const float t = h - delta;
-    const float inv = one / (delta + one);
-    const float inv2 = inv * inv;                 // 1/(delta+1)^2
 
-    if (h >= delta) return -mac_ln(h + one);
-    return -mac_ln(delta + one) - inv * t + half * inv2 * t * t;
+    // 공통 중간값 (매 연산마다 rounding)
+    float t             = rf(h - delta);               // h - δ
+    float delta_plus_one = rf(delta + one);             // δ + 1
+    float inv           = rf(one / delta_plus_one);     // 1 / (δ + 1)
+    float inv2          = rf(inv * inv);                // inv²
+
+    if (h >= delta) {
+        // -ln(h + 1)
+        float h_plus_one = rf(h + one);
+        float ln_val     = mac_ln(h_plus_one);          // ln(h+1), 내부에서 rounding 적용
+        return -ln_val;                                  // sign flip은 IEEE 754에서 exact
+    }
+
+    // -ln(δ+1) - inv*t + 0.5*inv²*t²
+    float ln_val        = mac_ln(delta_plus_one);       // ln(δ+1)
+    float neg_ln        = -ln_val;                      // -ln(δ+1), exact
+
+    float inv_t         = rf(inv * t);                  // inv * t
+    float term1         = rf(neg_ln - inv_t);           // -ln(δ+1) - inv*t
+
+    float t_sq          = rf(t * t);                    // t²
+    float inv2_tsq      = rf(inv2 * t_sq);              // inv² * t²
+    float half_inv2_tsq = rf(half * inv2_tsq);          // 0.5 * inv² * t²
+
+    float result        = rf(term1 + half_inv2_tsq);    // 최종 합산
+    return result;
 }
 
 Eigen::VectorXf getRBF_float(const Eigen::VectorXf& delta, const Eigen::VectorXf &h)
@@ -323,12 +348,24 @@ Eigen::VectorXf getRBF_float(const Eigen::VectorXf& delta, const Eigen::VectorXf
 
 float getDRBF_float(const float& delta, const float& h) {
     const float one = 1.0f;
-    const float t = h - delta;
-    const float inv = one / (delta + one);
-    const float inv2 = inv * inv;                 // 1/(delta+1)^2
 
-    if (h >= delta) return -one / (h + one);
-    return -inv + inv2 * t;
+    // 공통 중간값 (매 연산마다 rounding)
+    float t              = rf(h - delta);               // h - δ
+    float delta_plus_one = rf(delta + one);             // δ + 1
+    float inv            = rf(one / delta_plus_one);    // 1 / (δ + 1)
+    float inv2           = rf(inv * inv);               // inv²
+
+    if (h >= delta) {
+        // -1 / (h + 1)
+        float h_plus_one = rf(h + one);
+        float inv_h      = rf(one / h_plus_one);
+        return -inv_h;                                   // sign flip, exact
+    }
+
+    // -inv + inv² * t
+    float inv2_t = rf(inv2 * t);                        // inv² * t
+    float result = rf(-inv + inv2_t);                   // -inv + inv²*t
+    return result;
 }
 
 Eigen::VectorXf getDRBF_float(const Eigen::VectorXf &delta, const Eigen::VectorXf &h)

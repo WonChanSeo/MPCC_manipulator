@@ -111,7 +111,25 @@ namespace mpcc
             std::vector<double> getReluAvgDeactivatedCounts() const;
             std::vector<int> getReluMinDeactivatedCounts() const;
             std::vector<int> getReluMaxDeactivatedCounts() const;
+
+            // Batch logging: OSQP solve_count와 MLP 샘플 번호 동기화
+            void beginBatchLog(int solve_count, int batch_size);
+
         private:
+            // Batch logging 관련
+            struct BatchLogEntry {
+                Eigen::VectorXf nerf_input;
+                Eigen::VectorXf output;
+                Eigen::MatrixXf jacobian;
+                Eigen::MatrixXf nerf_jac;
+                std::vector<Eigen::VectorXf> pre_activations;
+                std::vector<Eigen::VectorXf> post_activations;
+            };
+            int log_solve_count_ = -1;
+            int log_batch_size_ = 0;
+            int log_horizon_idx_ = 0;
+            std::vector<BatchLogEntry> log_entries_;
+            void writeBatchLog();
             std::string file_path_;
             MLP mlp_;
 

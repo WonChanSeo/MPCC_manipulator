@@ -302,6 +302,7 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     solver_interface_->setInitialGuess(initial_guess_);
 
     // 5. 환경 데이터 설정
+    solver_interface_->getEnvColNN()->beginBatchLog(solve_count_, N + 1);
     auto start_env = std::chrono::high_resolution_clock::now();
     solver_interface_->setEnvData(obs_positions, obs_radius);
     auto end_env = std::chrono::high_resolution_clock::now();
@@ -321,7 +322,7 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     Status sqp_status;
     ComputeTime time_nmpc;
     int total_iter_count = 0;
-    solver_interface_->solveOCP(initial_guess_, &sqp_status, &time_nmpc, iter_count, sqp_iter_count, total_iter_count, solve_count_ + 1);
+    solver_interface_->solveOCP(initial_guess_, &sqp_status, &time_nmpc, iter_count, sqp_iter_count, total_iter_count, solve_count_);
    
     // Track max_iter reached cases
     bool is_max_iter_reached = (sqp_status == MAX_ITER_EXCEEDED || sqp_status == QP_MaxIterReached);
