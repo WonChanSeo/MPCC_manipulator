@@ -900,8 +900,8 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     OsqpEigen::Solver solver_;
     // settings
     solver_.settings()->setWarmStart(false);
-    solver_.settings()->getSettings()->eps_abs = 1e-3;
-    solver_.settings()->getSettings()->eps_rel = 1e-4;
+    solver_.settings()->getSettings()->eps_abs = 9.765625e-04f;    // 2^(-10), 0x3A800000, was 1e-3
+    solver_.settings()->getSettings()->eps_rel = 1.220703125e-04f; // 2^(-13), 0x39000000, was 1e-4
     solver_.settings()->getSettings()->verbose = false;
 
     // set the initial data of the QP solver
@@ -1498,8 +1498,8 @@ bool OsqpInterface::solveQPWithScaling(const Eigen::MatrixXd &P, const Eigen::Ve
     // Setup solver
     OsqpEigen::Solver solver_;
     solver_.settings()->setWarmStart(false);
-    solver_.settings()->getSettings()->eps_abs = 1e-3;
-    solver_.settings()->getSettings()->eps_rel = 1e-4;
+    solver_.settings()->getSettings()->eps_abs = 9.765625e-04f;    // 2^(-10), 0x3A800000, was 1e-3
+    solver_.settings()->getSettings()->eps_rel = 1.220703125e-04f; // 2^(-13), 0x39000000, was 1e-4
     solver_.settings()->getSettings()->verbose = false;
 
     auto start_init = std::chrono::high_resolution_clock::now();
