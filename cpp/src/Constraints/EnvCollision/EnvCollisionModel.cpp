@@ -34,6 +34,15 @@ namespace mpcc
         }
     }
 
+    // FP32 sign bit flip (bit-level)
+    float fp32_negate(float value) {
+        uint32_t bits;
+        std::memcpy(&bits, &value, sizeof(float));
+        bits ^= 0x80000000u;
+        std::memcpy(&value, &bits, sizeof(float));
+        return value;
+    }
+
     // FP32를 16진수 비트 표현으로 변환하는 헬퍼 함수
     std::string float_to_hex(float value) {
         uint32_t bits;
@@ -398,12 +407,10 @@ namespace mpcc
         if (mlp_.is_nerf)
         {
             input_nerf_f.resize(3 * mlp_.n_input);
-            Eigen::VectorXf sinInput = input_f.array().sin();
-            Eigen::VectorXf cosInput = input_f.array().cos();
 
             input_nerf_f.segment(0 * mlp_.n_input, mlp_.n_input) = input_f;
-            input_nerf_f.segment(1 * mlp_.n_input, mlp_.n_input) = sinInput;
-            input_nerf_f.segment(2 * mlp_.n_input, mlp_.n_input) = cosInput;
+            input_nerf_f.segment(1 * mlp_.n_input, mlp_.n_input) = input_f.array().sin();
+            input_nerf_f.segment(2 * mlp_.n_input, mlp_.n_input) = input_f.array().cos();
         }
 
         // weight/bias는 이미 float 타입으로 저장됨 (bf16 precision 값)
@@ -441,8 +448,12 @@ namespace mpcc
                 {
                     nerf_jac_f.setZero(3 * mlp_.n_input, mlp_.n_input);
                     nerf_jac_f.block(0 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).setIdentity();
-                    nerf_jac_f.block(1 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).diagonal() = input_f.array().cos();
-                    nerf_jac_f.block(2 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).diagonal() = -input_f.array().sin();
+                    // forward pass에서 이미 계산된 nerf input [x, sin(x), cos(x)] 재사용
+                    nerf_jac_f.block(1 * mlp_.n_input, 0, mlp_.n_input, mlp_.n_input).diagonal() = input_nerf_f.segment(2 * mlp_.n_input, mlp_.n_input);  // cos(x)
+                    // -sin(x): bit-level sign flip
+                    for (int j = 0; j < mlp_.n_input; ++j) {
+                        nerf_jac_f(2 * mlp_.n_input + j, j) = fp32_negate(input_nerf_f(mlp_.n_input + j));
+                    }
 
                     // Jacobian도 adder tree로 계산
                     const int jac_rows = hidden_derivative_f[0].rows();
@@ -650,9 +661,12 @@ namespace mpcc
                 Eigen::MatrixXf nerf_jac(3 * mlp_.n_input, mlp_.n_input);
                 nerf_jac.setZero();
                 nerf_jac.topRows(mlp_.n_input).setIdentity();
-                Eigen::VectorXf input_f_i = inputs.col(i).cast<float>();
-                nerf_jac.middleRows(mlp_.n_input, mlp_.n_input).diagonal() = input_f_i.array().cos();
-                nerf_jac.bottomRows(mlp_.n_input).diagonal() = -input_f_i.array().sin();
+                // forward pass에서 이미 계산된 nerf input [x, sin(x), cos(x)] 재사용
+                nerf_jac.middleRows(mlp_.n_input, mlp_.n_input).diagonal() = mlp_.batch_input_nerf.col(i).segment(2 * mlp_.n_input, mlp_.n_input);  // cos(x)
+                // -sin(x): bit-level sign flip
+                for (int j = 0; j < mlp_.n_input; ++j) {
+                    nerf_jac(2 * mlp_.n_input + j, j) = fp32_negate(mlp_.batch_input_nerf(mlp_.n_input + j, i));
+                }
                 Eigen::MatrixXf relu_deriv_0 = batch_ReLU_derivative_f(mlp_.pre_activations[0].col(i));
                 Eigen::MatrixXf weight_scaled = relu_deriv_0.asDiagonal() * mlp_.weight[0];
 
