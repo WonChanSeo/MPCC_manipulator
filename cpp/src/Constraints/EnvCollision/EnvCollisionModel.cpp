@@ -650,8 +650,9 @@ namespace mpcc
                 Eigen::MatrixXf nerf_jac(3 * mlp_.n_input, mlp_.n_input);
                 nerf_jac.setZero();
                 nerf_jac.topRows(mlp_.n_input).setIdentity();
-                nerf_jac.middleRows(mlp_.n_input, mlp_.n_input).diagonal() = inputs.col(i).array().cos().cast<float>();
-                nerf_jac.bottomRows(mlp_.n_input).diagonal() = (-inputs.col(i).array().sin()).cast<float>();
+                Eigen::VectorXf input_f_i = inputs.col(i).cast<float>();
+                nerf_jac.middleRows(mlp_.n_input, mlp_.n_input).diagonal() = input_f_i.array().cos();
+                nerf_jac.bottomRows(mlp_.n_input).diagonal() = -input_f_i.array().sin();
                 Eigen::MatrixXf relu_deriv_0 = batch_ReLU_derivative_f(mlp_.pre_activations[0].col(i));
                 Eigen::MatrixXf weight_scaled = relu_deriv_0.asDiagonal() * mlp_.weight[0];
 

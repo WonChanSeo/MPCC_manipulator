@@ -2,6 +2,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "algebra_vector.h"
 #include "algebra_matrix.h"
 
@@ -11,6 +12,14 @@
 
 // Use the counter from osqp_api.c (shared across both files)
 extern OSQPInt g_testcase_count;
+
+static int g_scaling_dir_initialized = 0;
+static void init_scaling_dir(void) {
+  if (!g_scaling_dir_initialized) {
+    system("mkdir -p " OSQP_TESTCASE_DIR);
+    g_scaling_dir_initialized = 1;
+  }
+}
 
 // Helper: Save CSC matrix in float format
 static void scaling_save_csc_float(FILE* f, const char* name, const OSQPMatrix* M) {
@@ -240,6 +249,7 @@ static void scaling_save_exp_array(FILE* f, const char* name, const int32_t* exp
 static void save_scaling_iteration_exp(OSQPWorkspace* work, OSQPInt sample_id, OSQPInt iter,
                                         const int32_t* D_exp, const int32_t* E_exp,
                                         OSQPInt n, OSQPInt m) {
+  init_scaling_dir();
   char path_float[256], path_bits[256];
 
   // iter == -1: init (before scaling), iter == -2: done (after all scaling), else: iteration number
