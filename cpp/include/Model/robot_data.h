@@ -27,6 +27,7 @@ struct RobotData
     double sel_min_dist_;                               // Minimum distance between robot links
     Eigen::Matrix<double,PANDA_DOF,1> d_sel_min_dist_;  // Jacobian of minimum distance between robot links
 
+    Eigen::Vector3d obs_position_;                                      // Obstacle position (cached for ASIC test case)
     double obs_radius_;                                               // Radius of external sphere obstacle
     Eigen::Matrix<double, PANDA_NUM_LINKS, 1> env_min_dist_;          // Minimum distance between robot links and enviornment
     Eigen::Matrix<double,PANDA_NUM_LINKS,PANDA_DOF> d_env_min_dist_;  // Jacobian of minimum distance between robot links and enviornment
@@ -75,6 +76,8 @@ struct RobotData
     {
         assert(is_data_valid == true);
         obs_radius_ = obs_radius;
+        if (obs_positions.rows() > 0)
+            obs_position_ = obs_positions.row(0).transpose();
 
         const int num_obstacles = obs_positions.rows();
 

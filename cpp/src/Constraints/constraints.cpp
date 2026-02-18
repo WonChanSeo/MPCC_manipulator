@@ -484,9 +484,20 @@ void Constraints::getEnvcollConstraint(const State &x,const Input &u,const Robot
         constraint->setZero(PANDA_NUM_LINKS);
         if(k != N)
         {
+            // c_val = -d_min_dist * dq + RBF, computed with rf() after each mul/add
+            // to match ASIC per-operation rounding behavior.
+            Eigen::Matrix<float, PANDA_NUM_LINKS, 1> c_val;
+            Eigen::Matrix<float, PANDA_DOF, 1> dq_f = dq.cast<float>();
+            for(int i = 0; i < PANDA_NUM_LINKS; i++) {
+                float acc = rf(-d_min_dist(i, 0) * dq_f(0));
+                for(int j = 1; j < PANDA_DOF; j++) {
+                    acc = rf(acc + rf(-d_min_dist(i, j) * dq_f(j)));
+                }
+                c_val(i) = rf(acc + RBF(i));
+            }
             constraint->c_l = Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Constant(-INF).cast<double>();
-            constraint->c_u = Eigen::Matrix<float, PANDA_NUM_LINKS, 1>::Zero().cast<double>();
-            constraint->c = (-d_min_dist*dq.cast<float>() + RBF).cast<double>();
+            constraint->c_u = (-c_val).cast<double>();  // FP32 negation (bit flip)
+            constraint->c.setZero(PANDA_NUM_LINKS);
         }
     }
     if(Jac)

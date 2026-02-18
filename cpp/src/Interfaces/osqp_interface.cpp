@@ -31,6 +31,21 @@
   #define CONSTRAINTS_ROUNDING_MODE FE_TONEAREST
 #endif
 
+// Enable this to save ASIC end-to-end test cases with EnvCollision parts zeroed out.
+// Simulation runs normally (original data goes to solveQP). A separate copy with
+// EnvCollision zeroed is saved to files. In the saved test case:
+//   - A matrix: EnvCollision rows zeroed (ASIC fills from MLP)
+//   - u vector: EnvCollision slots contain dq (ASIC reads dq, then overwrites with proper u)
+//   - l vector: EnvCollision slots remain -INF (unchanged)
+//   - P, q: unchanged (not affected by EnvCollision)
+#define ASIC_ENVCOL_ZERO_MODE
+
+#ifdef ASIC_ENVCOL_ZERO_MODE
+#define ASIC_TESTCASE_SAVE_INTERVAL 50
+#define ASIC_TESTCASE_DIR "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/e2e"
+static bool g_asic_dir_initialized = false;
+#endif
+
 // FP32 hex helper for constraint logging
 static std::string constraint_float_to_hex(float value) {
     uint32_t bits;
@@ -699,6 +714,238 @@ void OsqpInterface::setQP(const std::vector<OptVariables> &initial_guess,
     setConstraints(initial_guess, jac_constr, constr, l, u);
 }
 
+#ifdef ASIC_ENVCOL_ZERO_MODE
+// Helper: write a c_float vector in both float and hex format
+static void asic_write_vector(FILE* f_float, FILE* f_bits, const char* name,
+                               const Eigen::Matrix<c_float, Eigen::Dynamic, 1>& v) {
+    auto to_hex = [](c_float val) -> uint32_t {
+        float fv = (float)val; uint32_t bits;
+        std::memcpy(&bits, &fv, sizeof(float)); return bits;
+    };
+    const int len = v.size();
+    fprintf(f_float, "# %s - %d values\n", name, len);
+    fprintf(f_bits,  "# %s (hex FP32) - %d values\n", name, len);
+    for(int i = 0; i < len; i++) {
+        fprintf(f_float, "%.8e", (double)v(i));
+        fprintf(f_bits,  "%08x", to_hex(v(i)));
+        if(i < len-1) { fprintf(f_float, ","); fprintf(f_bits, ","); }
+    }
+    fprintf(f_float, "\n\n"); fprintf(f_bits, "\n\n");
+}
+
+// Helper: write a sparse matrix CSC in both formats
+static void asic_write_csc(FILE* f_float, FILE* f_bits, const char* name,
+                            Eigen::SparseMatrix<c_float>& sp, int rows, int cols) {
+    auto to_hex = [](c_float val) -> uint32_t {
+        float fv = (float)val; uint32_t bits;
+        std::memcpy(&bits, &fv, sizeof(float)); return bits;
+    };
+    sp.makeCompressed();
+    long long nnz = sp.nonZeros();
+    // float
+    fprintf(f_float, "# %s (CSC) - %d x %d, nnz=%lld\n", name, rows, cols, nnz);
+    fprintf(f_float, "# col_ptr\n");
+    for(int j = 0; j <= cols; j++) { fprintf(f_float, "%d", (int)sp.outerIndexPtr()[j]); if(j < cols) fprintf(f_float, ","); }
+    fprintf(f_float, "\n# row_idx\n");
+    for(int k = 0; k < nnz; k++) { fprintf(f_float, "%d", (int)sp.innerIndexPtr()[k]); if(k < nnz-1) fprintf(f_float, ","); }
+    fprintf(f_float, "\n# values\n");
+    for(int k = 0; k < nnz; k++) { fprintf(f_float, "%.8e", (double)sp.valuePtr()[k]); if(k < nnz-1) fprintf(f_float, ","); }
+    fprintf(f_float, "\n\n");
+    // bits
+    fprintf(f_bits, "# %s (CSC, hex FP32) - %d x %d, nnz=%lld\n", name, rows, cols, nnz);
+    fprintf(f_bits, "# col_ptr\n");
+    for(int j = 0; j <= cols; j++) { fprintf(f_bits, "%d", (int)sp.outerIndexPtr()[j]); if(j < cols) fprintf(f_bits, ","); }
+    fprintf(f_bits, "\n# row_idx\n");
+    for(int k = 0; k < nnz; k++) { fprintf(f_bits, "%d", (int)sp.innerIndexPtr()[k]); if(k < nnz-1) fprintf(f_bits, ","); }
+    fprintf(f_bits, "\n# values (hex FP32)\n");
+    for(int k = 0; k < nnz; k++) { fprintf(f_bits, "%08x", to_hex(sp.valuePtr()[k])); if(k < nnz-1) fprintf(f_bits, ","); }
+    fprintf(f_bits, "\n\n");
+}
+
+// Helper: write a dense matrix in both formats
+static void asic_write_dense(FILE* f_float, FILE* f_bits, const char* name,
+                              const Eigen::MatrixXf& dense) {
+    auto to_hex = [](float val) -> uint32_t {
+        uint32_t bits; std::memcpy(&bits, &val, sizeof(float)); return bits;
+    };
+    const int rows = dense.rows(), cols = dense.cols();
+    fprintf(f_float, "# %s (dense) - %d x %d\n", name, rows, cols);
+    fprintf(f_bits,  "# %s (dense, hex FP32) - %d x %d\n", name, rows, cols);
+    for(int i = 0; i < rows; i++) {
+        for(int j = 0; j < cols; j++) {
+            fprintf(f_float, "%.8e", (double)dense(i,j));
+            fprintf(f_bits,  "%08x", to_hex(dense(i,j)));
+            if(j < cols-1) { fprintf(f_float, ","); fprintf(f_bits, ","); }
+        }
+        fprintf(f_float, "\n"); fprintf(f_bits, "\n");
+    }
+    fprintf(f_float, "\n"); fprintf(f_bits, "\n");
+}
+
+void OsqpInterface::saveAsicE2EInput(
+    const Eigen::MatrixXd &P, const Eigen::VectorXd &q,
+    const Eigen::MatrixXd &A, const Eigen::VectorXd &l, const Eigen::VectorXd &u,
+    const std::vector<OptVariables> &initial_guess, int sample_id)
+{
+    if (!g_asic_dir_initialized) {
+        system("mkdir -p " ASIC_TESTCASE_DIR);
+        g_asic_dir_initialized = true;
+    }
+
+    // Create modified copies (original data untouched)
+    Eigen::MatrixXd A_mod = A;
+    Eigen::VectorXd u_mod = u;
+
+    for(int i = 0; i <= N; i++)
+    {
+        const int row_start = N_eq + N_ineqb + NPC * i + si_index.con_envcol1;
+        A_mod.block(row_start, 0, PANDA_NUM_LINKS, N_var).setZero();
+        u_mod.segment(row_start, PANDA_NUM_LINKS).setZero();
+        if(i != N)
+        {
+            for(int j = 0; j < PANDA_DOF; j++)
+                u_mod(row_start + j) = initial_guess[i].uk.get_dq(j);
+        }
+    }
+
+    const int n = N_var, m = N_constr;
+
+    // Reverse permute: v[i] -> v[n-1-i], M[i][j] -> M[rows-1-i][cols-1-j]
+    // MLP inputs are NOT permuted; only OSQP matrices are.
+    Eigen::MatrixXd P_rev(n, n), A_rev(m, n);
+    Eigen::VectorXd q_rev(n), l_rev(m), u_rev(m);
+    for(int i = 0; i < n; i++) {
+        q_rev(i) = q(n - 1 - i);
+        for(int j = 0; j < n; j++)
+            P_rev(i, j) = P(n - 1 - i, n - 1 - j);
+    }
+    for(int i = 0; i < m; i++) {
+        l_rev(i) = l(m - 1 - i);
+        u_rev(i) = u_mod(m - 1 - i);
+        for(int j = 0; j < n; j++)
+            A_rev(i, j) = A_mod(m - 1 - i, n - 1 - j);
+    }
+
+    // Cast to c_float
+    Eigen::SparseMatrix<c_float> P_sp = P_rev.cast<c_float>().sparseView();
+    Eigen::SparseMatrix<c_float> A_sp = A_rev.cast<c_float>().sparseView();
+    Eigen::Matrix<c_float, Eigen::Dynamic, 1> q_cf = q_rev.cast<c_float>();
+    Eigen::Matrix<c_float, Eigen::Dynamic, 1> l_cf = l_rev.cast<c_float>();
+    Eigen::Matrix<c_float, Eigen::Dynamic, 1> u_cf = u_rev.cast<c_float>();
+
+    char path_f[512], path_b[512];
+    snprintf(path_f, sizeof(path_f), "%s/sample_%d_e2e_input.csv", ASIC_TESTCASE_DIR, sample_id);
+    snprintf(path_b, sizeof(path_b), "%s/sample_%d_e2e_input_bits.csv", ASIC_TESTCASE_DIR, sample_id);
+    FILE* ff = fopen(path_f, "w");
+    FILE* fb = fopen(path_b, "w");
+    if(!ff || !fb) { if(ff) fclose(ff); if(fb) fclose(fb); return; }
+
+    fprintf(ff, "# ASIC End-to-End Input - Sample %d\n", sample_id);
+    fprintf(ff, "# n=%d, m=%d, N=%d\n\n", n, m, (int)N);
+    fprintf(fb, "# ASIC End-to-End Input (hex FP32) - Sample %d\n", sample_id);
+    fprintf(fb, "# n=%d, m=%d, N=%d\n\n", n, m, (int)N);
+
+    // ===== 1. MLP NeRF inputs per horizon step =====
+    for(int i = 0; i <= N; i++)
+    {
+        // Reconstruct MLP input: [q1..q7, obs_x, obs_y, obs_z]
+        Eigen::VectorXf input_f = Eigen::VectorXf(PANDA_DOF + 3);
+        input_f.head(PANDA_DOF) = rb_[i].q_.cast<float>();
+        input_f.tail(3) = rb_[i].obs_position_.cast<float>();
+
+        // NeRF encoding: [x, sin(x), cos(x)]
+        Eigen::VectorXf nerf_f(3 * (PANDA_DOF + 3));
+        nerf_f.segment(0 * (PANDA_DOF + 3), PANDA_DOF + 3) = input_f;
+        nerf_f.segment(1 * (PANDA_DOF + 3), PANDA_DOF + 3) = input_f.array().sin();
+        nerf_f.segment(2 * (PANDA_DOF + 3), PANDA_DOF + 3) = input_f.array().cos();
+
+        char label[64];
+        snprintf(label, sizeof(label), "HORIZON_%d_MLP_NERF_INPUT", i);
+        Eigen::Matrix<c_float, Eigen::Dynamic, 1> nerf_cf = nerf_f.cast<c_float>();
+        asic_write_vector(ff, fb, label, nerf_cf);
+    }
+
+    // ===== 2. OSQP matrices (EnvCol zeroed, dq in u) =====
+    // P_csc
+    asic_write_csc(ff, fb, "P_csc", P_sp, n, n);
+    // A_csc
+    asic_write_csc(ff, fb, "A_csc", A_sp, m, n);
+
+    // P dense (symmetrized)
+    Eigen::MatrixXf P_dense = Eigen::MatrixXf::Zero(n, n);
+    for(int j = 0; j < n; j++)
+        for(Eigen::SparseMatrix<c_float>::InnerIterator it(P_sp, j); it; ++it)
+            P_dense(it.row(), j) = it.value();
+    for(int i = 0; i < n; i++)
+        for(int j = i+1; j < n; j++)
+            if(P_dense(i,j) == 0.f && P_dense(j,i) != 0.f) P_dense(i,j) = P_dense(j,i);
+    asic_write_dense(ff, fb, "P", P_dense);
+
+    // A dense
+    Eigen::MatrixXf A_dense = Eigen::MatrixXf::Zero(m, n);
+    for(int j = 0; j < n; j++)
+        for(Eigen::SparseMatrix<c_float>::InnerIterator it(A_sp, j); it; ++it)
+            A_dense(it.row(), j) = it.value();
+    asic_write_dense(ff, fb, "A", A_dense);
+
+    asic_write_vector(ff, fb, "q", q_cf);
+    asic_write_vector(ff, fb, "l", l_cf);
+    asic_write_vector(ff, fb, "u", u_cf);
+
+    // D_exp, E_exp (all zeros)
+    fprintf(ff, "# D_exp - %d values\n", n);
+    fprintf(fb, "# D_exp - %d values\n", n);
+    for(int i = 0; i < n; i++) { fprintf(ff, "0"); fprintf(fb, "0"); if(i<n-1) { fprintf(ff, ","); fprintf(fb, ","); } }
+    fprintf(ff, "\n\n"); fprintf(fb, "\n\n");
+    fprintf(ff, "# E_exp - %d values\n", m);
+    fprintf(fb, "# E_exp - %d values\n", m);
+    for(int i = 0; i < m; i++) { fprintf(ff, "0"); fprintf(fb, "0"); if(i<m-1) { fprintf(ff, ","); fprintf(fb, ","); } }
+    fprintf(ff, "\n\n"); fprintf(fb, "\n\n");
+
+    // ===== 3. Parameters (obs_radius, tol_envcol) =====
+    fprintf(ff, "# obs_radius - 1 value\n%.8e\n\n", rb_[0].obs_radius_);
+    fprintf(fb, "# obs_radius (hex FP32) - 1 value\n");
+    { float v = (float)rb_[0].obs_radius_; uint32_t b; std::memcpy(&b, &v, sizeof(float)); fprintf(fb, "%08x\n\n", b); }
+
+    fclose(ff);
+    fclose(fb);
+}
+
+void OsqpInterface::saveAsicE2EOutput(
+    const Eigen::VectorXd &step, const Eigen::VectorXd &step_lambda, int sample_id)
+{
+    if (!g_asic_dir_initialized) {
+        system("mkdir -p " ASIC_TESTCASE_DIR);
+        g_asic_dir_initialized = true;
+    }
+
+    // Reverse permute: v[i] -> v[n-1-i] to match ASIC reversed index space
+    const int n = step.size();
+    const int m = step_lambda.size();
+    Eigen::Matrix<c_float, Eigen::Dynamic, 1> x_cf(n), y_cf(m);
+    for(int i = 0; i < n; i++) x_cf(i) = static_cast<c_float>(step(n - 1 - i));
+    for(int i = 0; i < m; i++) y_cf(i) = static_cast<c_float>(step_lambda(m - 1 - i));
+
+    char path_f[512], path_b[512];
+    snprintf(path_f, sizeof(path_f), "%s/sample_%d_e2e_output.csv", ASIC_TESTCASE_DIR, sample_id);
+    snprintf(path_b, sizeof(path_b), "%s/sample_%d_e2e_output_bits.csv", ASIC_TESTCASE_DIR, sample_id);
+    FILE* ff = fopen(path_f, "w");
+    FILE* fb = fopen(path_b, "w");
+    if(!ff || !fb) { if(ff) fclose(ff); if(fb) fclose(fb); return; }
+
+    fprintf(ff, "# ASIC End-to-End Golden Output - Sample %d\n", sample_id);
+    fprintf(ff, "# x (primal) size=%d, y (dual) size=%d\n\n", (int)x_cf.size(), (int)y_cf.size());
+    fprintf(fb, "# ASIC End-to-End Golden Output (hex FP32) - Sample %d\n", sample_id);
+    fprintf(fb, "# x (primal) size=%d, y (dual) size=%d\n\n", (int)x_cf.size(), (int)y_cf.size());
+
+    asic_write_vector(ff, fb, "x", x_cf);
+    asic_write_vector(ff, fb, "y", y_cf);
+
+    fclose(ff);
+    fclose(fb);
+}
+#endif
+
 bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status, ComputeTime *mpc_time, int &iter_count, int &sqp_iter_count, int &total_iter_count, int solve_count)
 {
     auto start_total = std::chrono::high_resolution_clock::now();
@@ -782,6 +1029,11 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         auto end_set_qp = std::chrono::high_resolution_clock::now();
         auto start_solve_qp = std::chrono::high_resolution_clock::now();
 
+#ifdef ASIC_ENVCOL_ZERO_MODE
+        if(current_solve_count_ >= 0 && current_solve_count_ % ASIC_TESTCASE_SAVE_INTERVAL == 0)
+            saveAsicE2EInput(Hess_, grad_obj_, jac_constr_, l_-constr_, u_-constr_, initial_guess_, current_solve_count_);
+#endif
+
         // Solve QP
         if(!solveQP(Hess_, grad_obj_, jac_constr_, l_-constr_, u_-constr_, step_, step_lambda_, qp_status_, iter_count))
         {
@@ -823,6 +1075,11 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         }
 
         total_iter_count += iter_count;
+
+#ifdef ASIC_ENVCOL_ZERO_MODE
+        if(current_solve_count_ >= 0 && current_solve_count_ % ASIC_TESTCASE_SAVE_INTERVAL == 0)
+            saveAsicE2EOutput(step_, step_lambda_, current_solve_count_);
+#endif
 
         auto end_solve_qp = std::chrono::high_resolution_clock::now();
 
@@ -927,6 +1184,11 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         auto end_set_qp = std::chrono::high_resolution_clock::now();
         auto start_solve_qp = std::chrono::high_resolution_clock::now();
 
+#ifdef ASIC_ENVCOL_ZERO_MODE
+        if(sqp_iter_ == 0 && current_solve_count_ >= 0 && current_solve_count_ % ASIC_TESTCASE_SAVE_INTERVAL == 0)
+            saveAsicE2EInput(Hess_, grad_obj_, jac_constr_, l_-constr_, u_-constr_, initial_guess_, current_solve_count_);
+#endif
+
         // solve QP to get step_ and step_lambda_
         if(!solveQP(Hess_, grad_obj_, jac_constr_, l_-constr_, u_-constr_, step_, step_lambda_, qp_status_, iter_count))
         {
@@ -960,6 +1222,10 @@ bool OsqpInterface::solveOCP(std::vector<OptVariables> &opt_sol, Status *status,
         {
             // Accumulate QP iterations for successful solve
             total_iter_count += iter_count;
+#ifdef ASIC_ENVCOL_ZERO_MODE
+            if(sqp_iter_ == 0 && current_solve_count_ >= 0 && current_solve_count_ % ASIC_TESTCASE_SAVE_INTERVAL == 0)
+                saveAsicE2EOutput(step_, step_lambda_, current_solve_count_);
+#endif
         }
 
         // printf("qp_status_: %d\n", qp_status_);

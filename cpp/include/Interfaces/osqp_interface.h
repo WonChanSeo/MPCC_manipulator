@@ -198,6 +198,12 @@ private:
     void saveMatrixToFile(const Eigen::MatrixBase<Derived>& Matrix, const std::string& matrixName, const std::string& filename);
     void saveSparseMatrixToFile(const Eigen::SparseMatrix<float, 0, int>& Matrix, const std::string& matrixName, const std::string& filename);
     
+    void saveAsicE2EInput(
+        const Eigen::MatrixXd &P, const Eigen::VectorXd &q,
+        const Eigen::MatrixXd &A, const Eigen::VectorXd &l, const Eigen::VectorXd &u,
+        const std::vector<OptVariables> &initial_guess, int sample_id);
+    void saveAsicE2EOutput(
+        const Eigen::VectorXd &step, const Eigen::VectorXd &step_lambda, int sample_id);
     bool isNan(const Eigen::MatrixXd& x);
     double constraint_norm(const Eigen::VectorXd &constr, const Eigen::VectorXd &l, const Eigen::VectorXd &u);
     std::vector<OptVariables> vectorToOptvar(const Eigen::VectorXd& opt_var_vec);
