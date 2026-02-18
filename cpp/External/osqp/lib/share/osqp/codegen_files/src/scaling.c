@@ -847,13 +847,24 @@ OSQPInt unscale_solution(OSQPVectorf*       usolx,
                          const OSQPVectorf* soly,
                          OSQPWorkspace*     work) {
 
-  // primal
-  OSQPVectorf_ew_prod(usolx,solx,work->scaling->D);
+  OSQPInt n = OSQPVectorf_length(solx);
+  OSQPInt m = OSQPVectorf_length(soly);
 
-  // dual
-  OSQPVectorf_ew_prod(usoly,soly,work->scaling->E);
+  // primal: x_out[i] = x_scaled[i] * 2^{D_accum[i]}  (exponent bit-shift)
+  const OSQPFloat* sx = OSQPVectorf_data((OSQPVectorf*)solx);
+  OSQPFloat*       ux = OSQPVectorf_data(usolx);
+  for (OSQPInt i = 0; i < n; i++) {
+    ux[i] = fp32_scale_by_exp((float)sx[i], g_D_accum[i]);
+  }
 
-  OSQPVectorf_mult_scalar(usoly,work->scaling->cinv);
+  // dual: y_out[i] = y_scaled[i] * 2^{E_accum[i]} * cinv
+  // cinv = 1.0 (no cost normalization), so just exponent shift
+  const OSQPFloat* sy = OSQPVectorf_data((OSQPVectorf*)soly);
+  OSQPFloat*       uy = OSQPVectorf_data(usoly);
+  for (OSQPInt i = 0; i < m; i++) {
+    uy[i] = fp32_scale_by_exp((float)sy[i], g_E_accum[i]);
+  }
+
   return 0;
 }
 

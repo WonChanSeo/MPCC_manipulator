@@ -909,6 +909,51 @@ void OsqpInterface::saveAsicE2EInput(
 
     fclose(ff);
     fclose(fb);
+
+    // ===== after_envcoll: original A, u with EnvCol applied, reverse permuted =====
+    system("mkdir -p " ASIC_TESTCASE_DIR "/after_envcoll");
+
+    // Reverse permute the original (non-zeroed) A and u
+    Eigen::VectorXd u_orig_rev(m);
+    Eigen::MatrixXd A_orig_rev(m, n);
+    for(int i = 0; i < m; i++) {
+        u_orig_rev(i) = u(m - 1 - i);
+        for(int j = 0; j < n; j++)
+            A_orig_rev(i, j) = A(m - 1 - i, n - 1 - j);
+    }
+
+    Eigen::SparseMatrix<c_float> A_orig_sp = A_orig_rev.cast<c_float>().sparseView();
+    Eigen::Matrix<c_float, Eigen::Dynamic, 1> u_orig_cf = u_orig_rev.cast<c_float>();
+
+    char path_af[512], path_ab[512];
+    snprintf(path_af, sizeof(path_af), "%s/after_envcoll/sample_%d_after_envcoll.csv", ASIC_TESTCASE_DIR, sample_id);
+    snprintf(path_ab, sizeof(path_ab), "%s/after_envcoll/sample_%d_after_envcoll_bits.csv", ASIC_TESTCASE_DIR, sample_id);
+    FILE* af = fopen(path_af, "w");
+    FILE* ab = fopen(path_ab, "w");
+    if(!af || !ab) { if(af) fclose(af); if(ab) fclose(ab); return; }
+
+    fprintf(af, "# After EnvColl - reverse permuted (verification) - Sample %d\n", sample_id);
+    fprintf(af, "# n=%d, m=%d\n\n", n, m);
+    fprintf(ab, "# After EnvColl - reverse permuted (hex FP32) - Sample %d\n", sample_id);
+    fprintf(ab, "# n=%d, m=%d\n\n", n, m);
+
+    // P, q, l are identical to e2e_input (EnvCol doesn't affect them)
+    asic_write_csc(af, ab, "P_csc", P_sp, n, n);
+    asic_write_csc(af, ab, "A_csc", A_orig_sp, m, n);
+    asic_write_dense(af, ab, "P", P_dense);
+
+    Eigen::MatrixXf A_orig_dense = Eigen::MatrixXf::Zero(m, n);
+    for(int j = 0; j < n; j++)
+        for(Eigen::SparseMatrix<c_float>::InnerIterator it(A_orig_sp, j); it; ++it)
+            A_orig_dense(it.row(), j) = it.value();
+    asic_write_dense(af, ab, "A", A_orig_dense);
+
+    asic_write_vector(af, ab, "q", q_cf);
+    asic_write_vector(af, ab, "l", l_cf);
+    asic_write_vector(af, ab, "u", u_orig_cf);
+
+    fclose(af);
+    fclose(ab);
 }
 
 void OsqpInterface::saveAsicE2EOutput(
