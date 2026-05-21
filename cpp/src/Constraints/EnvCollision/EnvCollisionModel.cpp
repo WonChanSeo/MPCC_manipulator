@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <sys/stat.h>
 #include <cstring>
+#include <cstdlib>
 
 #if defined(NN_USE_TRUNCATE) || defined(NN_USE_ROUND_TO_EVEN)
 #include <cfenv>
@@ -22,7 +23,16 @@ namespace mpcc
     // ===================================================================
     static int g_asic_sample_count = 0;
     static const int MLP_TESTCASE_SAVE_INTERVAL = 50;
-    static const std::string g_asic_output_dir = "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/mlp/";
+    static std::string resolve_asic_output_dir() {
+        const char* base_dir = std::getenv("ASIC_TESTCASE_BASE_DIR");
+        if (base_dir && base_dir[0] != '\0') {
+            std::string dir(base_dir);
+            if (dir.back() != '/') dir += "/";
+            return dir + "mlp/";
+        }
+        return "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases_runtime/mlp/";
+    }
+    static const std::string g_asic_output_dir = resolve_asic_output_dir();
     static bool g_asic_dir_initialized = false;
 
     void init_asic_output_dir() {
@@ -1231,6 +1241,5 @@ namespace mpcc
         return mlp_.max_deactivated_per_layer;
     }
 }
-
 
 

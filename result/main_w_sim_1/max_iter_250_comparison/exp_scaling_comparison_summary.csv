@@ -1,0 +1,39 @@
+variant,label,metric,metric_label,value,baseline_value,relative_change_percent,common_samples
+final_truncate_addertree_all_max_iter_250,Baseline,mani_mean,Manipulability mean,0.08982807075478666,0.08982807075478666,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,contour_error_mean,Contour error mean,9.317551278230116e-05,9.317551278230116e-05,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,contour_error_rms,Contour error RMS,0.00010009924816432707,0.00010009924816432707,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,self_dist_mean,Self-collision distance mean,0.21622463315725327,0.21622463315725327,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,self_dist_min,Self-collision distance min,0.21621036529541016,0.21621036529541016,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,env_dist_nearest_mean,Nearest environment distance mean,0.14731692522764206,0.14731692522764206,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,env_dist_nearest_min,Nearest environment distance min,0.14719487726688385,0.14719487726688385,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,ee_speed_mean,End-effector speed mean,0.028410238083501804,0.028410238083501804,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,admm_iter_mean,ADMM iterations mean,112.5,112.5,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,admm_iter_p95,ADMM iterations p95,142.49999999999997,142.49999999999997,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,admm_iter_max,ADMM iterations max,150.0,150.0,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,rho_updates_mean,Rho updates mean,1.0,1.0,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,total_time_ms_mean,Total time mean (ms),82.623437,82.623437,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,total_time_ms_p95,Total time p95 (ms),100.37446994999999,100.37446994999999,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,solve_qp_ms_mean,Solve QP mean (ms),5.370977250120094,5.370977250120094,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,scaling_ms_mean,Scaling time mean (ms),0.06649224997090641,0.06649224997090641,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,init_solver_ms_mean,Init solver mean (ms),0.29541949999999995,0.29541949999999995,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,factorization_ms_mean,Factorization mean (ms),0.07598125012009405,0.07598125012009405,0.0,4
+final_truncate_addertree_all_max_iter_250,Baseline,permutation_ms_mean,Permutation mean (ms),0.037405749935714994,0.037405749935714994,0.0,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,mani_mean,Manipulability mean,0.0898183754770761,0.08982807075478666,-0.010793149211697143,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,contour_error_mean,Contour error mean,0.0,9.317551278230116e-05,-100.0,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,contour_error_rms,Contour error RMS,0.0,0.00010009924816432707,-100.0,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,self_dist_mean,Self-collision distance mean,0.21624816954135895,0.21622463315725327,0.010885153907771975,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,self_dist_min,Self-collision distance min,0.21624816954135895,0.21621036529541016,0.01748493690260373,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,env_dist_nearest_mean,Nearest environment distance mean,0.1471649669110775,0.14731692522764206,-0.1031506164887339,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,env_dist_nearest_min,Nearest environment distance min,0.1468242108821869,0.14719487726688385,-0.25182016628533416,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,ee_speed_mean,End-effector speed mean,0.0,0.028410238083501804,-100.0,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,admm_iter_mean,ADMM iterations mean,250.0,112.5,122.22222222222223,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,admm_iter_p95,ADMM iterations p95,250.0,142.49999999999997,75.43859649122811,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,admm_iter_max,ADMM iterations max,250.0,150.0,66.66666666666667,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,rho_updates_mean,Rho updates mean,3.0,1.0,200.0,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,total_time_ms_mean,Total time mean (ms),201.75590075000002,82.623437,144.18725252255,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,total_time_ms_p95,Total time p95 (ms),501.83130119999987,100.37446994999999,399.9591045910175,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,solve_qp_ms_mean,Solve QP mean (ms),55.17960101751833,5.370977250120094,927.3661281340286,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,scaling_ms_mean,Scaling time mean (ms),11.268296193520655,0.06649224997090641,16846.781314290132,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,init_solver_ms_mean,Init solver mean (ms),37.46696,0.29541949999999995,12582.629278026674,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,factorization_ms_mean,Factorization mean (ms),0.9763787675183266,0.07598125012009405,1185.0259320228174,4
+final_truncate_addertree_all_exp_scaling_max_iter_250,Exp scaling,permutation_ms_mean,Permutation mean (ms),0.04284224996808916,0.037405749935714994,14.533861884114778,4

@@ -1,0 +1,26 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+<frozen importlib._bootstrap>:241: RuntimeWarning: to-Python converter for std::vector<int, std::allocator<int> > already registered; second conversion method ignored.
+1779340973.712263 [0]    python3: failed to enumerate interfaces for "udp": -1
+[ERROR] [1779340973.712279430] [rmw_cyclonedds_cpp]: rmw_create_node: failed to create domain, error Error
+
+>>> [rcutils|error_handling.c:108] rcutils_set_error_state()
+This error state is being overwritten:
+
+  'error not set, at ./src/rcl/node.c:263'
+
+with this new error message:
+
+  'rcl node's rmw handle is invalid, at ./src/rcl/node.c:415'
+
+rcutils_reset_error() should be called after error handling to avoid this.
+<<<
+[ERROR] [1779340973.712294941] [rcl]: Failed to fini publisher for node: 1
+Traceback (most recent call last):
+  File "/home/mms-wonchan/git/MPCC_manipulator/python/main_w_sim_1.py", line 688, in <module>
+    main(args)
+  File "/home/mms-wonchan/git/MPCC_manipulator/python/main_w_sim_1.py", line 208, in main
+    pc = PlanningScene(arm_names=["fr3"], arm_dofs=[7], base_link="world", urdf_xml=urdf_xml, srdf_xml=srdf_xml)
+  File "/home/mms-wonchan/ros2_ws/install/suhan_robot_model_tools2/local/lib/python3.10/dist-packages/srmt2/planning_scene/planning_scene.py", line 141, in __init__
+    self.pc = PlanningSceneCollisionCheck(node_name, topic_name, _urdf_xml, _srdf_xml)
+RuntimeError: failed to initialize rcl node: rcl node's rmw handle is invalid, at ./src/rcl/node.c:415

@@ -10,6 +10,8 @@ import argparse
 import scipy.io
 import os 
 import sys
+import xacro
+from ament_index_python.packages import get_package_share_directory
 
 ## ROS library
 import rclpy
@@ -49,6 +51,13 @@ param_value = {'cost': {
 
 obs_radius = 5         # unit: [cm]
 obs_speed = 0.05       # unit: [m/s]
+
+def load_husky_fr3_descriptions():
+    config_dir = os.path.join(get_package_share_directory("husky_fr3_moveit_config"), "config")
+    urdf_xml = xacro.process_file(os.path.join(config_dir, "husky_fr3.urdf.xacro")).toxml()
+    with open(os.path.join(config_dir, "husky_fr3.srdf"), "r", encoding="utf-8") as f:
+        srdf_xml = f.read()
+    return urdf_xml, srdf_xml
 
 def print_stats(data_dict, name, build_options=None):
     """
@@ -195,7 +204,8 @@ def save_stats_as_image(data_dict, title, filename):
 
 def main(args):
     ## Create Planning Scene
-    pc = PlanningScene(arm_names=["fr3"], arm_dofs=[7], base_link="world")
+    urdf_xml, srdf_xml = load_husky_fr3_descriptions()
+    pc = PlanningScene(arm_names=["fr3"], arm_dofs=[7], base_link="world", urdf_xml=urdf_xml, srdf_xml=srdf_xml)
     
     ## Obstacle information
     num_obstacles = 1  # <-- 첫 번째 장애물만 활성화

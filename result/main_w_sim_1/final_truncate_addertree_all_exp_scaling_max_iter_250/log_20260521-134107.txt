@@ -1,0 +1,719 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+<frozen importlib._bootstrap>:241: RuntimeWarning: to-Python converter for std::vector<int, std::allocator<int> > already registered; second conversion method ignored.
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+getifaddrs: Operation not permitted
+[37;1m2026-05-21 13:41:08.057 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-05-21 13:41:08.057 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+[INFO] [1779338468.066838160] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.00310396 seconds
+[INFO] [1779338468.066854412] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1779338468.074953482] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1779338468.074964695] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1779338468.075068408] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1779338468.075072046] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[INFO] [1779338468.089212483] [moveit_rdf_loader.rdf_loader]: Loaded robot model in 0.000976082 seconds
+[INFO] [1779338468.089220038] [moveit_robot_model.robot_model]: Loading robot model 'husky_fr3'...
+[WARN] [1779338468.091040524] [moveit_robot_model.robot_model]: Link camera_base has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[WARN] [1779338468.091051205] [moveit_robot_model.robot_model]: Link top_chassis_link has visual geometry but no collision geometry. Collision geometry will be left empty. Fix your URDF file by explicitly specifying collision geometry.
+[ERROR] [1779338468.091148184] [moveit_robot_model.robot_model]: Group 'fr3' was specified as parent group for end-effector 'franka_hand' but it does not include the parent link 'fr3_link8'
+[WARN] [1779338468.091151450] [moveit_robot_model.robot_model]: Could not identify parent group for end-effector 'franka_hand'
+[WARN] [1779338468.093454043] [moveit_ros.robot_model_loader]: No kinematics plugins defined. Fill and load kinematics.yaml!
+[INFO] [1779338468.096482864] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Publishing maintained planning scene on '/planning_scene'
+[INFO] [1779338468.096533423] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Starting planning scene monitor
+[INFO] [1779338468.096589393] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Listening to '/planning_scene'
+[INFO] [1779338468.096594500] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Updating internal planning scene state at most every 0.010000 seconds
+link: base_link
+link: base_footprint
+link: default_mount
+link: front_bumper_mount
+link: front_left_wheel
+link: front_right_wheel
+link: fr3_base
+link: fr3_link0
+link: fr3_link1
+link: fr3_link2
+link: fr3_link3
+link: fr3_link4
+link: fr3_link5
+link: fr3_link6
+link: fr3_link7
+link: fr3_link8
+link: fr3_hand
+link: fr3_leftfinger
+link: fr3_rightfinger
+link: fr3_hand_tcp
+link: rgb_camera_link
+link: depth_camera_link
+link: camera_base
+link: imu_camera_link
+link: inertial_link
+link: rear_bumper_mount
+link: rear_left_wheel
+link: rear_right_wheel
+link: top_chassis_link
+link: top_structure_link
+getifaddrs: Operation not permitted
+[37;1m2026-05-21 13:41:08.102 [31;1m[[37;1mTRANSPORT_UDP[31;1m Error] [37mError creating socket: Operation not permitted[34;1m -> Function [36minit[m
+[37;1m2026-05-21 13:41:08.102 [31;1m[[37;1mRTPS_PARTICIPANT[31;1m Error] [37mUser transport failed to register.[34;1m -> Function [36mRTPSParticipantImpl[m
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+Default initialization of model params
+bounds initialized
+Available cores: 28
+Default threads: 28
+Updated threads: 27
+Franka Panda Robot Model is loaded!
+Franka Panda Robot Model is loaded!
+bounds initialized
+param values:
+	desired_s_velocity: 0.1
+	tol_envcol: 1
+	tol_selcol: 1
+	tol_sing: 0.018
+cost values:
+	qC: 1000
+	qCNmult: 10
+	qL: 500
+	qOri: 100
+	qSing: 1
+	qVs: 10
+	rdVs: 0.1
+	rddq: 50
+	rdq: 0.002
+bounds values:
+normalization values:
+sqp values:
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+[MLP Batch Logging] Starting batch logging to: /home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/mlp/
+[MLP Batch Logging] Per-layer detail files saved for sample_0 (5 layers)
+BEFORE initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+[Constraint Logging] Starting constraint logging to: /home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/constraints/
+[OSQP] Permutation vector loaded from ../reference_matrix/P_rev.txt (n=658)
+[QDLDL] Saved D update log to factorization/sample_0_metadata.csv
+[QDLDL] Loaded fixed CSR pattern: n=658, nnz=9701, max_row_nnz=118, buffer=128
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[OSQP] Saved factorization sample_0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[OSQP] Saved solve L(CSR)/Dinv sample_0
+[OSQP] Saved solve intermediate sample_0_rhs
+[OSQP] Saved solve intermediate sample_0_after_Lsolve
+[OSQP] Saved solve intermediate sample_0_after_Dinv
+[OSQP] Saved solve intermediate sample_0_after_Ltsolve
+[OSQP] Saved solve result sample_0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[OSQP] Saved solve metadata sample_0 (rho_updates=3, iter=250, admm_log=6)
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=0, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=1, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=2, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=3, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+AFTER initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+====================================================================
+[MPC] Generating a new initial guess based on maximum deceleration.
+====================================================================
+BEFORE initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+Initialization finished.
+Allocations finished.
+Setup successful.
+Solver is ready.
+Starting solver...
+Solver initialization verified.
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+[QDLDL] CSR map: csc_nnz=9618, csr_nnz=9701, unmapped(0-fill)=83, missing_from_pattern=0
+Solver finished.
+[solveQP FAIL] solver status=7 (not Solved/SolvedInaccurate) at solve_count=4, sqp_iter=0
+[RTI] QP solve FAILED : 7 
+===================================================
+================ QP did not solved ================
+================ Max Iter reached ==================
+===================================================
+/home/mms-wonchan/.local/lib/python3.10/site-packages/numpy/core/fromnumeric.py:3504: RuntimeWarning: Mean of empty slice.
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/home/mms-wonchan/.local/lib/python3.10/site-packages/numpy/core/_methods.py:129: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+posx and posy should be finite values
+posx and posy should be finite values
+/home/mms-wonchan/git/MPCC_manipulator/python/main_w_sim_1.py:616: UserWarning: Attempting to set identical bottom == top == -0.0 results in singular transformations; automatically expanding.
+  plt.ylim(-max(debug_data["contour_error"])*0.3, max(debug_data["contour_error"])*1.2)
+track X:  [0.554 0.554 0.553 0.551 0.547 0.544 0.539 0.533 0.527 0.52  0.512 0.503
+ 0.494 0.484 0.473 0.462 0.45  0.438 0.426 0.413 0.4   0.386 0.373 0.359
+ 0.345 0.331 0.317 0.303 0.289 0.276 0.263 0.25  0.237 0.224 0.213 0.201
+ 0.19  0.18  0.171 0.162 0.153 0.146 0.139 0.133 0.128 0.123 0.12  0.117
+ 0.115 0.115 0.115 0.115 0.117 0.12  0.123 0.128 0.133 0.139 0.146 0.153
+ 0.162 0.171 0.18  0.19  0.201 0.213 0.225 0.237 0.25  0.263 0.276 0.289
+ 0.303 0.317 0.331 0.345 0.359 0.373 0.386 0.4   0.413 0.426 0.438 0.45
+ 0.462 0.473 0.484 0.494 0.503 0.512 0.52  0.527 0.533 0.539 0.544 0.547
+ 0.551 0.553 0.554 0.554]
+track Y:  [ 0.    -0.028 -0.055 -0.082 -0.107 -0.13  -0.152 -0.171 -0.187 -0.2
+ -0.21  -0.217 -0.22  -0.219 -0.215 -0.208 -0.197 -0.183 -0.166 -0.147
+ -0.125 -0.101 -0.075 -0.048 -0.021  0.007  0.035  0.062  0.088  0.113
+  0.136  0.157  0.175  0.191  0.203  0.212  0.218  0.22   0.219  0.214
+  0.206  0.194  0.179  0.162  0.141  0.119  0.095  0.069  0.042  0.014
+ -0.014 -0.042 -0.069 -0.095 -0.119 -0.141 -0.162 -0.179 -0.194 -0.206
+ -0.214 -0.219 -0.22  -0.218 -0.212 -0.203 -0.191 -0.175 -0.157 -0.136
+ -0.113 -0.088 -0.062 -0.035 -0.007  0.021  0.048  0.075  0.101  0.125
+  0.147  0.166  0.183  0.197  0.208  0.215  0.219  0.22   0.217  0.21
+  0.2    0.187  0.171  0.152  0.13   0.107  0.082  0.055  0.028  0.   ]
+track Z:  [0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521
+ 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521
+ 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521
+ 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521
+ 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521
+ 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521
+ 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521
+ 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521 0.521
+ 0.521 0.521 0.521 0.521]
+track R:  [[[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]
+
+ [[ 1.  0.  0.]
+  [ 0. -1.  0.]
+  [ 0.  0. -1.]]]
+MPC did not solve properly!!
+
+================================================================================
+=== ReLU Deactivation Statistics ===
+================================================================================
+Layer    Total Units     Avg Deact       Min Deact       Max Deact       Deact %        
+--------------------------------------------------------------------------------
+================================================================================
+
+Saved figure to ../result/main_w_sim_1/final_truncate_addertree_all_exp_scaling_max_iter_250/final_truncate_addertree_all_exp_scaling_max_iter_250_inference_times.png
+Data written to ../result/main_w_sim_1/final_truncate_addertree_all_exp_scaling_max_iter_250/final_truncate_addertree_all_exp_scaling_max_iter_250_debug_data.mat
+Data written to ../result/main_w_sim_1/final_truncate_addertree_all_exp_scaling_max_iter_250/final_truncate_addertree_all_exp_scaling_max_iter_250_time_data.mat
+mean nmpc time[sec]: 0.201756 
+max nmpc time[sec]: 0.576781 
+Saved figure to ../result/main_w_sim_1/final_truncate_addertree_all_exp_scaling_max_iter_250/final_truncate_addertree_all_exp_scaling_max_iter_250_computation_times.png
+/home/mms-wonchan/git/MPCC_manipulator/python/main_w_sim_1.py:679: UserWarning: Matplotlib is currently using agg, which is a non-GUI backend, so cannot show the figure.
+  plt.show()
+[INFO] [1779338469.430749136] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Stopped publishing maintained planning scene.
+[INFO] [1779338469.430761864] [moveit_ros.planning_scene_monitor.planning_scene_monitor]: Stopping planning scene monitor
+AFTER initial_guess_[0].uk: [0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+MPC did not solve, status: 5, num_valid_guess_failed: 5
+Franka Panda Robot Model is removed!
+Deleting Osqp Interface
+NN model terminate
+MLP terminate
+NN model terminate
+MLP terminate
+Franka Panda Robot Model is removed!
+Deleting Solver Interface
+Franka Panda Robot Model is removed!
+Franka Panda Robot Model is removed!
+NN model terminate
+MLP terminate
+NN model terminate
+MLP terminate
+Saved figure to ../result/main_w_sim_1/final_truncate_addertree_all_exp_scaling_max_iter_250/final_truncate_addertree_all_exp_scaling_max_iter_250_performance_metrics.png
+Statistics data saved to ../result/main_w_sim_1/final_truncate_addertree_all_exp_scaling_max_iter_250/final_truncate_addertree_all_exp_scaling_max_iter_250_debug_stats.txt
+ReLU deactivation statistics saved to ../result/main_w_sim_1/final_truncate_addertree_all_exp_scaling_max_iter_250/final_truncate_addertree_all_exp_scaling_max_iter_250_relu_deactivation_stats.txt
+
+=== Statistics for debug_data ===
+q               | mean:   0.112200 | min:  -1.570796 | max:   1.570796 | var:   0.780504 | std:   0.883462 |
+qdot            | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+qddot           | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+s               | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+vs              | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+dVs             | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+ee_vel          | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+ee_speed        | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+sel_min_dist    | mean:   0.216248 | min:   0.216248 | max:   0.216248 | var:   0.000000 | std:   0.000000 |
+env_min_dist    | mean:   0.347338 | min:   0.146824 | max:   0.611482 | var:   0.023324 | std:   0.152721 |
+mani            | mean:   0.089818 | min:   0.089818 | max:   0.089818 | var:   0.000000 | std:   0.000000 |
+contour_error   | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+spline_ee_pose  | mean:  -0.008888 | min:  -1.000000 | max:   1.000000 | var:   0.214503 | std:   0.463144 |
+pred_ee_pose    | mean:   0.004725 | min:  -1.000000 | max:   1.000000 | var:   0.223666 | std:   0.472934 |
+ref_ee_pose     | mean:   0.004725 | min:  -1.000000 | max:   1.000000 | var:   0.223666 | std:   0.472934 |
+iter_count      | mean: 250.000000 | min: 250.000000 | max: 250.000000 | var:   0.000000 | std:   0.000000 |
+sqp_iter_count  | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+total_iter_count | mean: 250.000000 | min: 250.000000 | max: 250.000000 | var:   0.000000 | std:   0.000000 |
+solve_count     | final value: 4
+max_iter_reached_count | final value: 4
+max_iter_solve_failed_count | final value: 4
+
+
+=== Statistics for time_data ===
+total           | mean:   0.201756 | min:   0.076454 | max:   0.576781 | var:   0.046881 | std:   0.216521 |
+set_env         | mean:   0.089735 | min:   0.062716 | max:   0.170363 | var:   0.002167 | std:   0.046551 |
+set_qp          | mean:   0.001448 | min:   0.000341 | max:   0.004751 | var:   0.000004 | std:   0.001907 |
+init_solver     | mean:   0.037467 | min:   0.000666 | max:   0.147762 | var:   0.004055 | std:   0.063679 |
+solve_qp        | mean:   0.055180 | min:   0.006447 | max:   0.201233 | var:   0.007111 | std:   0.084324 |
+get_alpha       | mean:   0.000000 | min:   0.000000 | max:   0.000000 | var:   0.000000 | std:   0.000000 |
+scaling_time    | mean:   0.011268 | min:   0.000093 | max:   0.044788 | var:   0.000375 | std:   0.019352 |
+permutation_time | mean:   0.000043 | min:   0.000035 | max:   0.000055 | var:   0.000000 | std:   0.000007 |
+factorization_time | mean:   0.000976 | min:   0.000427 | max:   0.002546 | var:   0.000001 | std:   0.000907 |
+rho_updates     | mean:   3.000000 | min:   3.000000 | max:   3.000000 | var:   0.000000 | std:   0.000000 |
+

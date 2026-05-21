@@ -44,6 +44,14 @@ echo ">> OSQP log: $OSQP_LOG_PATH"
 export INITIAL_GUESS_LOG_PATH="$out_dir/initialGuess_calls.txt"
 echo ">> initialGuess log: $INITIAL_GUESS_LOG_PATH"
 
+# Set detailed fallback/projection diagnostics path
+export FALLBACK_DIAGNOSTICS_LOG_PATH="$out_dir/fallback_diagnostics.csv"
+echo ">> fallback diagnostics: $FALLBACK_DIAGNOSTICS_LOG_PATH"
+
+# Route generated ASIC/MLP testcase logs under this run directory.
+export ASIC_TESTCASE_BASE_DIR="$out_dir/asic_testcases"
+echo ">> ASIC testcase base: $ASIC_TESTCASE_BASE_DIR"
+
 # python에 추가 인자 전달: "${@:3}" (3번째 인자부터)
 python3 "$script_dir/${script}.py" --name "$name" "${@:3}" |& tee "$log"
 status=${PIPESTATUS[0]}   # tee 파이프에서도 python 종료코드 보존

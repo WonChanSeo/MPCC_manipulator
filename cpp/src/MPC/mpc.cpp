@@ -21,10 +21,35 @@
 #include <Eigen/Core>
 #include <cstdlib>    // std::getenv
 #include <fstream>    // for logging
+#include <iomanip>    // std::setprecision
 #include "osqp_api_functions.h"
 
 // Global log file for generateNewInitialGuess calls
 static std::ofstream g_initialGuess_log;
+static std::ofstream g_fallback_diagnostic_log;
+
+static bool ensureFallbackDiagnosticLogOpen()
+{
+    const char* log_path = std::getenv("FALLBACK_DIAGNOSTICS_LOG_PATH");
+    if (!log_path || log_path[0] == '\0') return false;
+
+    if (!g_fallback_diagnostic_log.is_open()) {
+        g_fallback_diagnostic_log.open(log_path, std::ios::out | std::ios::trunc);
+        if (g_fallback_diagnostic_log.is_open()) {
+            g_fallback_diagnostic_log
+                << "solve_count,cold_start,reason,valid_before_projection,path_deviation_triggered,"
+                << "last_s,projected_s,projection_delta_s,abs_projection_delta_s,max_dist_proj,"
+                << "num_valid_guess_failed_before,num_valid_guess_failed_after,obstacle_switched,"
+                << "status,solved,is_max_iter_reached,iter_count,sqp_iter_count,total_iter_count,"
+                << "valid_after_solve,ee_x,ee_y,ee_z,x0_vs,"
+                << "x0_q1,x0_q2,x0_q3,x0_q4,x0_q5,x0_q6,x0_q7,"
+                << "u0_dq1,u0_dq2,u0_dq3,u0_dq4,u0_dq5,u0_dq6,u0_dq7,u0_dVs,"
+                << "guess0_s_before_start,guess0_vs_before_start,guess0_dVs_before_start,"
+                << "mpc_u_dVs_after_solve\n";
+        }
+    }
+    return g_fallback_diagnostic_log.is_open();
+}
 
 namespace mpcc {
 
@@ -259,14 +284,23 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     double last_s = x0.s;
     int iter_count = 0;
     int sqp_iter_count = 0;
+    const bool valid_before_projection = valid_initial_guess_;
+    const unsigned int num_valid_guess_failed_before = num_valid_guess_failed_;
+    const double guess0_s_before_start = initial_guess_[0].xk.s;
+    const double guess0_vs_before_start = initial_guess_[0].xk.vs;
+    const double guess0_dVs_before_start = initial_guess_[0].uk.dVs;
 
     // 1. 현재 상태(x0) 보정 (EE pose로 경로 투영)
     Eigen::Matrix4d ee_pose = robot_->getEETransformation(stateToJointVector(x0));
     x0.s = track_.projectOnSpline(last_s, ee_pose);
+    const double projection_delta_s = x0.s - last_s;
+    const double abs_projection_delta_s = std::fabs(projection_delta_s);
+    bool path_deviation_triggered = false;
 
     // 2. 경로 이탈 확인 → Cold start 플래그
-    if(std::fabs(last_s - x0.s) > param_.max_dist_proj) 
+    if(abs_projection_delta_s > param_.max_dist_proj) 
     {
+        path_deviation_triggered = true;
         valid_initial_guess_ = false;
         num_valid_guess_failed_++;
     }
@@ -308,7 +342,8 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
     auto end_env = std::chrono::high_resolution_clock::now();
 
     // 6. 장애물 스위치 감지 → 다음 스텝 Cold start
-    if (solver_interface_->getEnvColNN()->obstacle_switched) {
+    const bool obstacle_switched = solver_interface_->getEnvColNN()->obstacle_switched;
+    if (obstacle_switched) {
         std::cout << "[MPC] Obstacle switch detected! Forcing a new initial guess for the next step." << std::endl;
         valid_initial_guess_ = false;
     }
@@ -369,6 +404,54 @@ bool MPC::runMPC_(MPCReturn &mpc_return, State &x0, Input &u0, const Eigen::Matr
         if (is_max_iter_reached) {
             max_iter_solve_failed_count_++;
         }
+    }
+
+    if (ensureFallbackDiagnosticLogOpen()) {
+        std::string reason = "warm_start";
+        const bool cold_start = !valid_before_projection || path_deviation_triggered;
+        if (path_deviation_triggered) {
+            reason = "path_deviation";
+        } else if (!valid_before_projection && solve_count_ == 0) {
+            reason = "initial_guess_unavailable";
+        } else if (!valid_before_projection) {
+            reason = "previous_invalid_guess";
+        }
+
+        g_fallback_diagnostic_log << std::setprecision(17)
+            << (solve_count_ + 1) << ','
+            << (cold_start ? 1 : 0) << ','
+            << reason << ','
+            << (valid_before_projection ? 1 : 0) << ','
+            << (path_deviation_triggered ? 1 : 0) << ','
+            << last_s << ','
+            << x0.s << ','
+            << projection_delta_s << ','
+            << abs_projection_delta_s << ','
+            << param_.max_dist_proj << ','
+            << num_valid_guess_failed_before << ','
+            << num_valid_guess_failed_ << ','
+            << (obstacle_switched ? 1 : 0) << ','
+            << static_cast<int>(sqp_status) << ','
+            << ((sqp_status == SOLVED) ? 1 : 0) << ','
+            << (is_max_iter_reached ? 1 : 0) << ','
+            << iter_count << ','
+            << sqp_iter_count << ','
+            << total_iter_count << ','
+            << (valid_initial_guess_ ? 1 : 0) << ','
+            << ee_pose(0, 3) << ','
+            << ee_pose(1, 3) << ','
+            << ee_pose(2, 3) << ','
+            << x0.vs << ','
+            << x0.q1 << ',' << x0.q2 << ',' << x0.q3 << ',' << x0.q4 << ','
+            << x0.q5 << ',' << x0.q6 << ',' << x0.q7 << ','
+            << u0.dq1 << ',' << u0.dq2 << ',' << u0.dq3 << ',' << u0.dq4 << ','
+            << u0.dq5 << ',' << u0.dq6 << ',' << u0.dq7 << ',' << u0.dVs << ','
+            << guess0_s_before_start << ','
+            << guess0_vs_before_start << ','
+            << guess0_dVs_before_start << ','
+            << initial_guess_[0].uk.dVs
+            << '\n';
+        g_fallback_diagnostic_log.flush();
     }
 
     printf("AFTER initial_guess_[0].uk: [%f, %f, %f, %f, %f, %f, %f, %f]\n",

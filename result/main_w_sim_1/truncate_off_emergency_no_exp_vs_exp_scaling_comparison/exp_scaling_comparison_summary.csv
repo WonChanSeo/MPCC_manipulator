@@ -1,0 +1,39 @@
+variant,label,metric,metric_label,value,baseline_value,relative_change_percent,common_samples
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,mani_mean,Manipulability mean,0.07880400015209355,0.07880400015209355,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,contour_error_mean,Contour error mean,0.0009457521987010744,0.0009457521987010744,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,contour_error_rms,Contour error RMS,0.0012168842765685692,0.0012168842765685692,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,self_dist_mean,Self-collision distance mean,0.11887821891832691,0.11887821891832691,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,self_dist_min,Self-collision distance min,0.01836763508617878,0.01836763508617878,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,env_dist_nearest_mean,Nearest environment distance mean,0.20151773952741328,0.20151773952741328,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,env_dist_nearest_min,Nearest environment distance min,0.07611183822154999,0.07611183822154999,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,ee_speed_mean,End-effector speed mean,0.133083567018352,0.133083567018352,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,admm_iter_mean,ADMM iterations mean,155.61652679147838,155.61652679147838,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,admm_iter_p95,ADMM iterations p95,250.0,250.0,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,admm_iter_max,ADMM iterations max,250.0,250.0,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,rho_updates_mean,Rho updates mean,0.6772111039380245,0.6772111039380245,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,total_time_ms_mean,Total time mean (ms),69.12169066107165,69.12169066107165,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,total_time_ms_p95,Total time p95 (ms),76.55984120000001,76.55984120000001,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,solve_qp_ms_mean,Solve QP mean (ms),1.7138858599567801,1.7138858599567801,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,scaling_ms_mean,Scaling time mean (ms),0.06733353846150528,0.06733353846150528,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,init_solver_ms_mean,Init solver mean (ms),0.28612526791478377,0.28612526791478377,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,factorization_ms_mean,Factorization mean (ms),0.07574970760042109,0.07574970760042109,0.0,1549
+final_truncate_off_no_exp_scaling_emergency_max_iter_250,Baseline,permutation_ms_mean,Permutation mean (ms),0.03742180699421684,0.03742180699421684,0.0,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,mani_mean,Manipulability mean,0.07914856191624683,0.07880400015209355,0.437238926308661,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,contour_error_mean,Contour error mean,0.0008307636796747256,0.0009457521987010744,-12.158419423637358,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,contour_error_rms,Contour error RMS,0.0010914249912824556,0.0012168842765685692,-10.309878079770243,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,self_dist_mean,Self-collision distance mean,0.11444412655599315,0.11887821891832691,-3.7299451511635806,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,self_dist_min,Self-collision distance min,0.01620420441031456,0.01836763508617878,-11.77849334284821,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,env_dist_nearest_mean,Nearest environment distance mean,0.20701992175054212,0.20151773952741328,2.7303711504665618,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,env_dist_nearest_min,Nearest environment distance min,0.08279459178447723,0.07611183822154999,8.78017627622495,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,ee_speed_mean,End-effector speed mean,0.1330283123207729,0.133083567018352,-0.041518798163480725,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,admm_iter_mean,ADMM iterations mean,150.45190445448677,155.61652679147838,-3.3188135241651144,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,admm_iter_p95,ADMM iterations p95,250.0,250.0,0.0,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,admm_iter_max,ADMM iterations max,250.0,250.0,0.0,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,rho_updates_mean,Rho updates mean,0.9335054874112331,0.6772111039380245,37.845567206863684,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,total_time_ms_mean,Total time mean (ms),81.71512136991608,69.12169066107165,18.21921684554059,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,total_time_ms_p95,Total time p95 (ms),79.8958504,76.55984120000001,4.3573878259298064,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,solve_qp_ms_mean,Solve QP mean (ms),9.08575536384902,1.7138858599567801,430.1260472548703,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,scaling_ms_mean,Scaling time mean (ms),0.9726965890536635,0.06733353846150528,1344.5944937377028,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,init_solver_ms_mean,Init solver mean (ms),3.5723320806972243,0.28612526791478377,1148.5203095593663,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,factorization_ms_mean,Factorization mean (ms),0.44891050781286873,0.07574970760042109,492.62341998845324,1549
+final_truncate_off_round_to_even_exp_scaling_max_iter_250,Exp scaling,permutation_ms_mean,Permutation mean (ms),0.03994905364555665,0.03742180699421684,6.753406247139175,1549

@@ -20,6 +20,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cstring>
+#include <cstdlib>
 
 #if defined(CONSTRAINTS_USE_TRUNCATE) || defined(CONSTRAINTS_USE_ROUND_TO_EVEN)
 #include <cfenv>
@@ -42,8 +43,17 @@
 
 #ifdef ASIC_ENVCOL_ZERO_MODE
 #define ASIC_TESTCASE_SAVE_INTERVAL 50
-#define ASIC_TESTCASE_DIR "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/e2e"
 static bool g_asic_dir_initialized = false;
+static std::string resolve_asic_e2e_output_dir()
+{
+    const char* base_dir = std::getenv("ASIC_TESTCASE_BASE_DIR");
+    if (base_dir && base_dir[0] != '\0') {
+        std::string dir(base_dir);
+        if (dir.back() != '/') dir += "/";
+        return dir + "e2e";
+    }
+    return "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases_runtime/e2e";
+}
 #endif
 
 // FP32 hex helper for constraint logging
@@ -380,6 +390,17 @@ void OsqpInterface::setBounds(const std::vector<OptVariables> &initial_guess,
     }
 }
 
+static std::string resolve_constraint_output_dir()
+{
+    const char* base_dir = std::getenv("ASIC_TESTCASE_BASE_DIR");
+    if (base_dir && base_dir[0] != '\0') {
+        std::string dir(base_dir);
+        if (dir.back() != '/') dir += "/";
+        return dir + "constraints/";
+    }
+    return "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases_runtime/constraints/";
+}
+
 void OsqpInterface::setPolytopicConstraints(const std::vector<OptVariables> &initial_guess,
                                             Eigen::MatrixXd *jac_constr_ineqp, Eigen::VectorXd *constr_ineqp, Eigen::VectorXd *l_ineqp, Eigen::VectorXd *u_ineqp)
 {
@@ -390,7 +411,7 @@ void OsqpInterface::setPolytopicConstraints(const std::vector<OptVariables> &ini
 
     // ===== Constraint logging 준비 =====
     static const int CONSTRAINT_SAVE_INTERVAL = 50;
-    static const std::string g_constraint_output_dir = "/home/mms-wonchan/git/MPCC_manipulator/result/asic_testcases/constraints/";
+    static const std::string g_constraint_output_dir = resolve_constraint_output_dir();
     static bool g_constraint_dir_initialized = false;
     bool should_log_constraints = (sqp_iter_ == 0 && current_solve_count_ >= 0
                                    && current_solve_count_ % CONSTRAINT_SAVE_INTERVAL == 0);
@@ -787,8 +808,9 @@ void OsqpInterface::saveAsicE2EInput(
     const Eigen::MatrixXd &A, const Eigen::VectorXd &l, const Eigen::VectorXd &u,
     const std::vector<OptVariables> &initial_guess, int sample_id)
 {
+    const std::string asic_dir = resolve_asic_e2e_output_dir();
     if (!g_asic_dir_initialized) {
-        system("mkdir -p " ASIC_TESTCASE_DIR);
+        system(("mkdir -p " + asic_dir).c_str());
         g_asic_dir_initialized = true;
     }
 
@@ -834,8 +856,8 @@ void OsqpInterface::saveAsicE2EInput(
     Eigen::Matrix<c_float, Eigen::Dynamic, 1> u_cf = u_rev.cast<c_float>();
 
     char path_f[512], path_b[512];
-    snprintf(path_f, sizeof(path_f), "%s/sample_%d_e2e_input.csv", ASIC_TESTCASE_DIR, sample_id);
-    snprintf(path_b, sizeof(path_b), "%s/sample_%d_e2e_input_bits.csv", ASIC_TESTCASE_DIR, sample_id);
+    snprintf(path_f, sizeof(path_f), "%s/sample_%d_e2e_input.csv", asic_dir.c_str(), sample_id);
+    snprintf(path_b, sizeof(path_b), "%s/sample_%d_e2e_input_bits.csv", asic_dir.c_str(), sample_id);
     FILE* ff = fopen(path_f, "w");
     FILE* fb = fopen(path_b, "w");
     if(!ff || !fb) { if(ff) fclose(ff); if(fb) fclose(fb); return; }
@@ -911,7 +933,7 @@ void OsqpInterface::saveAsicE2EInput(
     fclose(fb);
 
     // ===== after_envcoll: original A, u with EnvCol applied, reverse permuted =====
-    system("mkdir -p " ASIC_TESTCASE_DIR "/after_envcoll");
+    system(("mkdir -p " + asic_dir + "/after_envcoll").c_str());
 
     // Reverse permute the original (non-zeroed) A and u
     Eigen::VectorXd u_orig_rev(m);
@@ -926,8 +948,8 @@ void OsqpInterface::saveAsicE2EInput(
     Eigen::Matrix<c_float, Eigen::Dynamic, 1> u_orig_cf = u_orig_rev.cast<c_float>();
 
     char path_af[512], path_ab[512];
-    snprintf(path_af, sizeof(path_af), "%s/after_envcoll/sample_%d_after_envcoll.csv", ASIC_TESTCASE_DIR, sample_id);
-    snprintf(path_ab, sizeof(path_ab), "%s/after_envcoll/sample_%d_after_envcoll_bits.csv", ASIC_TESTCASE_DIR, sample_id);
+    snprintf(path_af, sizeof(path_af), "%s/after_envcoll/sample_%d_after_envcoll.csv", asic_dir.c_str(), sample_id);
+    snprintf(path_ab, sizeof(path_ab), "%s/after_envcoll/sample_%d_after_envcoll_bits.csv", asic_dir.c_str(), sample_id);
     FILE* af = fopen(path_af, "w");
     FILE* ab = fopen(path_ab, "w");
     if(!af || !ab) { if(af) fclose(af); if(ab) fclose(ab); return; }
@@ -959,8 +981,9 @@ void OsqpInterface::saveAsicE2EInput(
 void OsqpInterface::saveAsicE2EOutput(
     const Eigen::VectorXd &step, const Eigen::VectorXd &step_lambda, int sample_id)
 {
+    const std::string asic_dir = resolve_asic_e2e_output_dir();
     if (!g_asic_dir_initialized) {
-        system("mkdir -p " ASIC_TESTCASE_DIR);
+        system(("mkdir -p " + asic_dir).c_str());
         g_asic_dir_initialized = true;
     }
 
@@ -972,8 +995,8 @@ void OsqpInterface::saveAsicE2EOutput(
     for(int i = 0; i < m; i++) y_cf(i) = static_cast<c_float>(step_lambda(m - 1 - i));
 
     char path_f[512], path_b[512];
-    snprintf(path_f, sizeof(path_f), "%s/sample_%d_e2e_output.csv", ASIC_TESTCASE_DIR, sample_id);
-    snprintf(path_b, sizeof(path_b), "%s/sample_%d_e2e_output_bits.csv", ASIC_TESTCASE_DIR, sample_id);
+    snprintf(path_f, sizeof(path_f), "%s/sample_%d_e2e_output.csv", asic_dir.c_str(), sample_id);
+    snprintf(path_b, sizeof(path_b), "%s/sample_%d_e2e_output_bits.csv", asic_dir.c_str(), sample_id);
     FILE* ff = fopen(path_f, "w");
     FILE* fb = fopen(path_b, "w");
     if(!ff || !fb) { if(ff) fclose(ff); if(fb) fclose(fb); return; }
@@ -1450,6 +1473,7 @@ bool OsqpInterface::solveQP(const Eigen::MatrixXd &P, const Eigen::VectorXd &q, 
     OsqpEigen::Solver solver_;
     // settings
     solver_.settings()->setWarmStart(false);
+    solver_.settings()->setMaxIteration(250);
     solver_.settings()->getSettings()->eps_abs = 9.765625e-04f;    // 2^(-10), 0x3A800000, was 1e-3
     solver_.settings()->getSettings()->eps_rel = 1.220703125e-04f; // 2^(-13), 0x39000000, was 1e-4
     solver_.settings()->getSettings()->verbose = false;
@@ -2048,6 +2072,7 @@ bool OsqpInterface::solveQPWithScaling(const Eigen::MatrixXd &P, const Eigen::Ve
     // Setup solver
     OsqpEigen::Solver solver_;
     solver_.settings()->setWarmStart(false);
+    solver_.settings()->setMaxIteration(250);
     solver_.settings()->getSettings()->eps_abs = 9.765625e-04f;    // 2^(-10), 0x3A800000, was 1e-3
     solver_.settings()->getSettings()->eps_rel = 1.220703125e-04f; // 2^(-13), 0x39000000, was 1e-4
     solver_.settings()->getSettings()->verbose = false;

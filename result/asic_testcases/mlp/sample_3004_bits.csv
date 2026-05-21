@@ -1,0 +1,23 @@
+# MLP Test Case (FP32 Bits) - Sample 3004
+# Detailed: NO
+# n_input: 10, n_output: 9
+# n_hidden_layers: 4
+# Format: 8-digit hexadecimal (32-bit IEEE 754)
+
+# INPUT (nerf_input) - 30 values
+be99d81d,bf0ddd3a,3db06482,c006f738,3d3c4cfe,3fc69ff3,3f0f08ec,3ef5c28f,3e5f3b64,3f18b439,be978a24,bf06b6c8,3db02cb2,bf5bd4a4,3d3c3c03,3f7fee13,3f07b544,3eec6e51,3e5d77d1,3f0fcede,3f7487b0,3f59b02c,3f7f0d11,bf033054,3f7fbac2,3c9c0da0,3f5911e2,3f631219,3f79f0e4,3f53ca61
+
+# OUTPUT - 9 values
+3f275bc4,3f0b3e82,3efe4803,3f025ba1,3eee140b,3e654735,3e878c2d,3e6f738d,3e46b5e9
+
+# JACOBIAN - 9 x 10
+3c2416b5,ba87a4d4,bba81ec6,3a814afb,3afa1ca5,3ae449cb,b9881244,3f2cddf1,3eb3432f,3f182711
+bb563220,3bb1aeda,bc2d1061,bb81f353,3873b520,ba096a1e,bae2e2f2,3f4b9a0a,3edfdbb2,3ebe5517
+3da58ffe,3adeb4a0,bc8f15e5,baf9e93c,ba6f2cc7,ba764394,bb56dec7,3f56e1c1,3e916318,3ed4021a
+3dc7fea5,be87d194,bcc39085,3c224871,3a1d0722,b8a37450,3b415c7a,3f68628e,3eb7ffe9,be056b86
+3d8e73cf,be9a652f,bd8bf30b,3dab4f1e,3ab13695,395d6420,3b19efdf,3f61b077,3ec59b56,be72a518
+be716c61,be88e23d,bed7ff37,3e1742b3,3c176e9a,bbb59802,3be307be,3f1150be,3f401a4c,becfd66c
+bebdad5b,be5a4859,bf0e4dd5,3e34cbf9,bb6752e1,3c792f74,3c6a9c01,3eace64d,3f5b554c,bee9fdce
+bec7b121,be2537c6,bf0e4d2b,3e071171,bd3c0794,3c927c99,bbd87868,3e80536b,3f58e4f7,beb10f3c
+bea13229,be05c1e8,bee80be9,3d37473e,bd8bd192,bd00970b,3c58a990,3ec57d22,3f4a76fa,be2eded3
+

@@ -1,0 +1,30 @@
+/usr/lib/python3/dist-packages/scipy/__init__.py:146: UserWarning: A NumPy version >=1.17.3 and <1.25.0 is required for this version of SciPy (detected version 1.26.4
+  warnings.warn(f"A NumPy version >={np_minversion} and <{np_maxversion}"
+<frozen importlib._bootstrap>:241: RuntimeWarning: to-Python converter for std::vector<int, std::allocator<int> > already registered; second conversion method ignored.
+1779338386.496021 [0]    python3: failed to enumerate interfaces for "udp": -1
+[ERROR] [1779338386.496039179] [rmw_cyclonedds_cpp]: rmw_create_node: failed to create domain, error Error
+
+>>> [rcutils|error_handling.c:108] rcutils_set_error_state()
+This error state is being overwritten:
+
+  'error not set, at ./src/rcl/node.c:263'
+
+with this new error message:
+
+  'rcl node's rmw handle is invalid, at ./src/rcl/node.c:415'
+
+rcutils_reset_error() should be called after error handling to avoid this.
+<<<
+[ERROR] [1779338386.496054054] [rcl]: Failed to fini publisher for node: 1
+Traceback (most recent call last):
+  File "/home/mms-wonchan/git/MPCC_manipulator/python/main_w_sim_1.py", line 678, in <module>
+    main(args)
+  File "/home/mms-wonchan/git/MPCC_manipulator/python/main_w_sim_1.py", line 198, in main
+    pc = PlanningScene(arm_names=["fr3"], arm_dofs=[7], base_link="world")
+  File "/home/mms-wonchan/ros2_ws/install/suhan_robot_model_tools2/local/lib/python3.10/dist-packages/srmt2/planning_scene/planning_scene.py", line 130, in __init__
+    _urdf_xml = fetch_remote_param(param_node_name, urdf_description_param)
+  File "/home/mms-wonchan/ros2_ws/install/suhan_robot_model_tools2/local/lib/python3.10/dist-packages/srmt2/utils/ros_utils.py", line 23, in fetch_remote_param
+    tmp_node = Node("tracik_param_client")
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/node.py", line 175, in __init__
+    self.__node = _rclpy.Node(
+rclpy._rclpy_pybind11.RCLError: error creating node: rcl node's rmw handle is invalid, at ./src/rcl/node.c:415
